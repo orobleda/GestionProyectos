@@ -46,7 +46,7 @@
                               </HBox>
                               <HBox alignment="TOP_RIGHT">
                                  <children>
-                                    <ImageView fx:id="imAniadirPresupuesto" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="imAniadirPresupuesto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/aniadir.png" />
                                        </image>
@@ -110,7 +110,7 @@
                                  <children>
                                     <Label prefWidth="175.0" text="Descripción Presupuesto" />
                                     <TextArea fx:id="taDesc" disable="true" editable="false" prefWidth="300.0" />
-                                    <ImageView fx:id="imEditDesc" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imEditDesc" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/edit.png" />
                                        </image>
@@ -124,7 +124,7 @@
                                  <children>
                                     <Label prefWidth="175.0" text="Tipo Presupuesto" />
                                     <ComboBox fx:id="cbTipoPrep" disable="true" prefWidth="300.0" />
-                                    <ImageView fx:id="imEditTipoPres" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imEditTipoPres" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/edit.png" />
                                        </image>
@@ -139,7 +139,7 @@
                               </HBox>
                               <HBox alignment="TOP_RIGHT">
                                  <children>
-                                    <ImageView fx:id="imAniadirSistma" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imAniadirSistma" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/aniadir.png" />
                                        </image>
@@ -170,12 +170,12 @@
                               </HBox>
                               <HBox alignment="TOP_RIGHT">
                                  <children>
-                                    <ImageView fx:id="imVersionarPres" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imVersionarPres" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/nuevaVersion.png" />
                                        </image>
                                     </ImageView>
-                                    <ImageView fx:id="imGuardarPresupuesto" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imGuardarPresupuesto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/guardar.jpg" />
                                        </image>
@@ -183,7 +183,7 @@
                                           <Insets left="20.0" right="25.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <ImageView fx:id="imEliminarPres" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                    <ImageView fx:id="imEliminarPres" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                                        <image>
                                           <Image url="@../../../../imgs/iconos/eliminar.png" />
                                        </image>
