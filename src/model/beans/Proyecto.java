@@ -69,6 +69,31 @@ public class Proyecto implements Cargable{
         return salida;
 	}
 	
+	
+	public ArrayList<Proyecto> listadoProyectosGGP() {			
+		ConsultaBD consulta = new ConsultaBD();
+		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaProyectos", null, this);
+		
+		Iterator<Cargable> itProyecto = proyectos.iterator();
+		ArrayList<Proyecto> salida = new ArrayList<Proyecto>();
+		
+		while (itProyecto.hasNext()) {
+			Proyecto p = (Proyecto) itProyecto.next();
+			try {
+				p.cargaProyecto();
+				int tpProyecto = new Integer((String) p.getValorParametro(MetaParamProyecto.TIPO_PROYECTO));
+				if (tpProyecto == TipoProyecto.ID_EVOLUTIVO || tpProyecto == TipoProyecto.ID_PROYECTO)
+					salida.add(p);
+				
+			} catch (Exception  ex) {
+				ex.printStackTrace();
+			}
+			
+		}
+		
+        return salida;
+	}
+	
 	public ArrayList<Proyecto> listadoDemandas() {			
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaProyectos", null, this);

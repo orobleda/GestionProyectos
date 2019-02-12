@@ -7,8 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.GestionPresupuestos">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -35,7 +34,7 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </VBox.margin>
                <children>
-                  <ImageView fx:id="imNuevoProyecto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imNuevoProyecto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/Nuevo3_PAS.png" />
                      </image>
@@ -43,7 +42,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <ImageView fx:id="imBuscarVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imBuscarVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/Buscar3_PAS.png" />
                      </image>
@@ -60,7 +59,7 @@
       </VBox>
    </top>
    <center>
-      <ScrollPane prefHeight="300.0" BorderPane.alignment="CENTER">
+      <ScrollPane prefHeight="600.0" prefWidth="800.0" BorderPane.alignment="CENTER">
          <content>
             <VBox>
                <children>
@@ -82,7 +81,7 @@
                   <HBox alignment="TOP_CENTER">
                      <children>
                         <TableView fx:id="tDemandas" prefHeight="200.0" prefWidth="200.0" />
-                        <ImageView fx:id="imAniadirDemanda" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                        <ImageView fx:id="imAniadirDemanda" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../imgs/iconos/Mas3_PAS.png" />
                            </image>
@@ -121,12 +120,12 @@
                         <Insets bottom="15.0" left="400.0" right="15.0" top="15.0" />
                      </VBox.margin>
                      <children>
-                        <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                        <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="imGuardarNuevaVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                        <ImageView fx:id="imGuardarNuevaVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../imgs/iconos/GuardarAniadir3_PAS.png" />
                            </image>

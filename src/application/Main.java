@@ -27,6 +27,7 @@ import ui.Administracion.Festivos.GestionFestivos;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.EstimacionesInternas.EstimacionesInternas;
 import ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones;
+import ui.Economico.GestionPresupuestos.GestionPresupuestos;
 import ui.GestionProyectos.AltaModProyecto;
 import ui.GestionProyectos.ConsultaProyectos;
 import ui.Recursos.GestionRecursos.AltaModRecurso;
@@ -58,7 +59,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase, 900, 650);
 	        scene.getStylesheets().add("application.css");
 	        
-	        EstimacionesInternas c = new EstimacionesInternas();
+	        GestionPresupuestos c = new GestionPresupuestos();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();
@@ -113,6 +114,8 @@ public class Main extends Application {
 		
 		TreeItem<String> model31 = new TreeItem<String>("Gestión Estimaciones");
 	    model3.getChildren().add(model31);
+		TreeItem<String> model311 = new TreeItem<String>("Gestión Presupuestos");
+	    model3.getChildren().add(model311);
 	    TreeItem<String> model32 = new TreeItem<String>("Control Presupuestario");
 	    model3.getChildren().add(model32);
 	    TreeItem<String> model34 = new TreeItem<String>("Estimaciones Por Horas");
@@ -173,6 +176,9 @@ public class Main extends Application {
 		        
 		        if ("Gestión Tarifas".equals(name))
 		        	controlPantalla = new ui.Economico.Tarifas.GestionTarifas();
+		        
+		        if ("Gestión Presupuestos".equals(name))
+		        	controlPantalla = new GestionPresupuestos();
 		        
 		        if ("Control Presupuestario".equals(name))
 		        	controlPantalla = new ControlPresupuestario();
