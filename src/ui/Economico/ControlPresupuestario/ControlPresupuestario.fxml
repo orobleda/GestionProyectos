@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ControlPresupuestario">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <VBox alignment="TOP_CENTER">
+                     <children>
+                        <ComboBox fx:id="cbIzquda">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </ComboBox>
+                        <TableView fx:id="tbResumenIzqda" prefHeight="65.0" />
+                        <Accordion fx:id="acIzqda">
+                           <panes>
+                              <TitledPane fx:id="tpIzqda" animated="false" text="Detalle">
+                                 <content>
+                                    <TableView fx:id="tbIzqda" />
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER">
+                     <children>
+                        <ComboBox fx:id="cbDrcha">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </ComboBox>
+                        <TableView fx:id="tbResumenDcha" prefHeight="65.0" />
+                        <Accordion fx:id="acDrcha">
+                           <panes>
+                              <TitledPane animated="false" text="Detalle">
+                                 <content>
+                                    <TableView fx:id="tbDrcha" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <TableView fx:id="tbResumenDiferencia" prefHeight="65.0" />
+                        <Accordion fx:id="acResumen">
+                           <panes>
+                              <TitledPane animated="false" text="Detalle">
+                                 <content>
+                                    <TableView fx:id="tbDiferencia" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="15.0" top="50.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <Accordion>
+              <panes>
+                <TitledPane fx:id="panTopeImput" animated="false" text="Patrón Imputaciones" />
+                <TitledPane fx:id="panDetalleProyecto" animated="false" text="Detalle Proyecto" />
+              </panes>
+            </Accordion>
+         </children>
+      </VBox>
+   </center>
+   <top>
+      <HBox alignment="CENTER" minHeight="60.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Proyecto">
+               <HBox.margin>
+                  <Insets left="15.0" right="25.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="cbProyectos" prefWidth="500.0" />
+            <HBox fx:id="hbContJerarquia">
+               <HBox.margin>
+                  <Insets left="40.0" />
+               </HBox.margin>
+               <children>
+                  <ImageView id="imJerarquia" fx:id="imJerarquia" pickOnBounds="true" preserveRatio="true" styleClass="imJerarquia">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/jerarquia_PAS.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <ImageView fx:id="imListado" layoutX="701.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/listado_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="15.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imPPM" layoutX="726.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/PPM_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+</BorderPane>

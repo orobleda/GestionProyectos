@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="imgs/iconos/menuPpal"/>
+	<classpathentry excluding="menuPpal/" kind="src" path="imgs/iconos"/>
+	<classpathentry kind="src" path="css"/>
+	<classpathentry kind="src" path="plantillas"/>
+	<classpathentry excluding="iconos/|iconos/menuPpal/" kind="src" path="imgs"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/controlsfx-8.40.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-contrib.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/serializer-2.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xalan-2.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sqlite-jdbc-3.14.2.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

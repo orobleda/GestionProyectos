@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<Pane prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="ui.Economico.ControlPresupuestario.EdicionEstImp.FraccionUnitariaImputacion">
+  <children>
+    <HBox prefHeight="-1.0" prefWidth="-1.0">
+      <children>
+        <Label text="Sistema" />
+        <ComboBox fx:id="cbSistema" disable="true" prefWidth="200.0">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+          <HBox.margin>
+            <Insets left="50.0" />
+          </HBox.margin>
+        </ComboBox>
+        <Label text="Fracción">
+          <HBox.margin>
+            <Insets left="45.0" />
+          </HBox.margin>
+        </Label>
+        <TextField fx:id="tFraccion" prefWidth="65.0">
+          <HBox.margin>
+            <Insets left="10.0" fx:id="x1" />
+          </HBox.margin>
+        </TextField>
+        <Label text="Horas">
+          <HBox.margin>
+            <Insets left="30.0" />
+          </HBox.margin>
+        </Label>
+        <TextField id="tValor" fx:id="tHoras" disable="true" editable="false" prefWidth="65.0" HBox.margin="$x1" />
+        <Label text="Importe">
+          <HBox.margin>
+            <Insets left="30.0" />
+          </HBox.margin>
+        </Label>
+        <TextField id="tValor" fx:id="tImporte" disable="true" editable="false" prefWidth="65.0">
+          <HBox.margin>
+            <Insets left="10.0" fx:id="x1" />
+          </HBox.margin>
+        </TextField>
+      </children>
+      <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
+    </HBox>
+  </children>
+</Pane>

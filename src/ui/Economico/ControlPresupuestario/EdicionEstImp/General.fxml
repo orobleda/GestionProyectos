@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="ui.Economico.ControlPresupuestario.EdicionEstImp.General">
+  <bottom>
+    <VBox fx:id="vDetalle" BorderPane.alignment="CENTER">
+      <BorderPane.margin>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </BorderPane.margin>
+    </VBox>
+  </bottom>
+  <center>
+    <VBox BorderPane.alignment="CENTER">
+      <children>
+        <HBox alignment="TOP_CENTER">
+          <children>
+            <ImageView fx:id="imNuevo" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Nuevo3_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imFraccionar" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Fraccionar3_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imAprobar" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Aprobar3_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imDesaprobar" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/DesAprobar_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imEditar" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Editar3_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imEliminar" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Eliminar3_PAS.png" />
+              </image>
+            </ImageView>
+            <ImageView fx:id="imCopiarDrcha" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@../../../../../imgs/iconos/Enlazar3_PAS.png" />
+              </image>
+            </ImageView>
+          </children>
+          <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+          </VBox.margin>
+        </HBox>
+      </children>
+    </VBox>
+  </center>
+  <top>
+    <VBox fx:id="vInfo" BorderPane.alignment="CENTER">
+      <BorderPane.margin>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </BorderPane.margin>
+    </VBox>
+  </top>
+</BorderPane>

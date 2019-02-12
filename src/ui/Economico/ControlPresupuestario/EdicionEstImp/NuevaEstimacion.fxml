@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion">
+  <children>
+    <Accordion fx:id="acSimulacion" expandedPane="$null">
+      <panes>
+        <TitledPane id="x1" fx:id="tDatos" animated="false" expanded="false" text="Datos">
+          <content>
+            <VBox id="VBox" alignment="CENTER" spacing="5.0">
+              <children>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Tipo">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <ComboBox fx:id="cbTipo" prefWidth="150.0" />
+                  </children>
+                  <VBox.margin>
+                    <Insets />
+                  </VBox.margin>
+                </HBox>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Recurso">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <ComboBox fx:id="cbRecurso" prefWidth="150.0">
+                      <HBox.margin>
+                        <Insets right="35.0" />
+                      </HBox.margin>
+                    </ComboBox>
+                    <Label prefWidth="100.0" text="Tarifa" />
+                    <ComboBox fx:id="cbTarifa" prefWidth="150.0" />
+                  </children>
+                  <VBox.margin>
+                    <Insets top="20.0" />
+                  </VBox.margin>
+                </HBox>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Sistema">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <ComboBox fx:id="cbSistema" prefWidth="150.0">
+                      <HBox.margin>
+                        <Insets right="35.0" />
+                      </HBox.margin>
+                    </ComboBox>
+                    <CheckBox fx:id="ckbIncNoPred" mnemonicParsing="false" selected="true" text="Incluir no predeterminados" />
+                  </children>
+                  <VBox.margin>
+                    <Insets top="40.0" />
+                  </VBox.margin>
+                </HBox>
+                <HBox>
+                  <children>
+                    <CheckBox fx:id="ckbActPred" mnemonicParsing="false" text="Actualizar Predeterminados">
+                      <HBox.margin>
+                        <Insets left="305.0" />
+                      </HBox.margin>
+                    </CheckBox>
+                  </children>
+                </HBox>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Naturaleza Coste">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <ComboBox fx:id="cbNatCoste" prefWidth="150.0">
+                      <HBox.margin>
+                        <Insets right="35.0" />
+                      </HBox.margin>
+                    </ComboBox>
+                    <Label prefWidth="100.0" text="Gerencia" />
+                    <ComboBox fx:id="cbGerencia" prefWidth="150.0" />
+                  </children>
+                  <VBox.margin>
+                    <Insets top="10.0" />
+                  </VBox.margin>
+                </HBox>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Horas">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <TextField fx:id="tfHoras">
+                      <HBox.margin>
+                        <Insets right="35.0" />
+                      </HBox.margin>
+                    </TextField>
+                    <Label prefWidth="100.0" text="Coste" />
+                    <TextField fx:id="tfCoste" />
+                  </children>
+                  <VBox.margin>
+                    <Insets top="40.0" />
+                  </VBox.margin>
+                </HBox>
+                <HBox>
+                  <children>
+                    <Label prefWidth="100.0" text="Mes">
+                      <HBox.margin>
+                        <Insets right="20.0" />
+                      </HBox.margin>
+                    </Label>
+                    <ComboBox fx:id="cbMes" prefWidth="150.0">
+                      <HBox.margin>
+                        <Insets right="35.0" />
+                      </HBox.margin>
+                    </ComboBox>
+                  </children>
+                  <VBox.margin>
+                    <Insets top="10.0" />
+                  </VBox.margin>
+                </HBox>
+              </children>
+              <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+              </padding>
+            </VBox>
+          </content>
+        </TitledPane>
+        <TitledPane fx:id="tSimulacion" animated="false" disable="true" expanded="false" text="Slot Destino">
+          <content>
+            <VBox id="VBox" alignment="TOP_LEFT" spacing="5.0">
+              <children>
+                <Label text="Antes de la Modificación" />
+                <TableView fx:id="tResumen" prefHeight="-1.0" prefWidth="-1.0" />
+                <Label text="Después de la Modificación">
+                  <VBox.margin>
+                    <Insets top="15.0" />
+                  </VBox.margin>
+                </Label>
+                <TableView id="tResumen" fx:id="tResumenD" prefHeight="-1.0" prefWidth="-1.0" />
+              </children>
+              <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+              </padding>
+            </VBox>
+          </content>
+        </TitledPane>
+      </panes>
+    </Accordion>
+    <HBox alignment="TOP_RIGHT">
+      <children>
+        <ImageView fx:id="imAnalizar" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../../../../../imgs/iconos/Analizar3_PAS.png" />
+          </image>
+        </ImageView>
+        <ImageView id="imGuardar" fx:id="imGuardarMas" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../../../../../imgs/iconos/GuardarAniadir3_PAS.png" />
+          </image>
+        </ImageView>
+        <ImageView id="imGuardar" fx:id="imGuardarBorrar" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../../../../../imgs/iconos/GuardarBorrar3_PAS.png" />
+          </image>
+        </ImageView>
+        <ImageView id="imGuardar" fx:id="imGuardarEditar" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../../../../../imgs/iconos/GuardarEditar3_PAS.png" />
+          </image>
+        </ImageView>
+      </children>
+      <VBox.margin>
+        <Insets bottom="15.0" top="15.0" />
+      </VBox.margin>
+    </HBox>
+  </children>
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+  </padding>
+</VBox>

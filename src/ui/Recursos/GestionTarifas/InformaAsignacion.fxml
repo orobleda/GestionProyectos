@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionTarifas.InformaAsignacion">
+   <children>
+      <VBox>
+         <children>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Tarifa">
+                     <HBox.margin>
+                        <Insets right="25.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="cbTarifa" prefWidth="415.0">
+                     <HBox.margin>
+                        <Insets right="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="15.0" top="15.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Fecha Inicio">
+                     <HBox.margin>
+                        <Insets right="25.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="tFechaInicio" />
+                  <Label prefWidth="75.0" text="Fecha Fin">
+                     <HBox.margin>
+                        <Insets left="25.0" right="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="tFechaFin" />
+               </children>
+               <VBox.margin>
+                  <Insets left="15.0" right="25.0" top="15.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="TOP_RIGHT">
+               <VBox.margin>
+                  <Insets bottom="25.0" right="25.0" top="25.0" />
+               </VBox.margin>
+               <children>
+                  <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/guardar.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

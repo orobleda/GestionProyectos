@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accesoBD>
+	<acceso>
+		<query>select id estId, codigo estCod, descripcion estDesc, final estFinal from ESTADO_PROYECTO where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaEstados</id>
+		<tabla>ESTADO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id estPId, idProyecto estPProy, idEstado estPEst, bloque estPBloque from ESTADO_ASIGNADO_PROYECTO where 1=1 $B$and idProyecto=||1||$E$</query>
+		<id tipo="C">cConsultaEstadoProyecto</id>
+		<tabla>ESTADO_ASIGNADO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id provId, descripcion provDesc, nombreCorto provNomCorto from PROVEEDOR</query>
+		<id tipo="C">cConsultaProveedores</id>
+		<tabla>PROVEEDOR</tabla>
+	</acceso>
+	<acceso>
+		<query>select id tipId, codigo tipCod, descripcion tipDesc from TIPO_PROYECTO where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaTipos</id>
+		<tabla>TIPO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id tipPPId, selector tipPPSelector, descripcion tipPPDesc from TIPO_PARM_PROY where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaTipoParmProy</id>
+		<tabla>TIPO_PARM_PROY</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id transId, tipoProyecto transTipProy, estadoInicial transEstIni, estadoFinal transEstFin from TRANS_ESTADOS</query>
+		<id tipo="C">cConsultaTransEstados</id>
+		<tabla>TRANS_ESTADOS</tabla>
+	</acceso>
+	<acceso>
+		<query>select max(id) proyId from PROYECTO</query>
+		<id tipo="C">cMaxIdProyecto</id>
+		<tabla>PROYECTO</tabla>
+	</acceso>
+	<acceso>
+		<query>select max(id) recId from RECURSO</query>
+		<id tipo="C">cMaxIdRecurso</id>
+		<tabla>RECURSO</tabla>
+	</acceso>
+	<acceso>
+		<query>select id proyId, Nombre proyNom from PROYECTO</query>
+		<id tipo="C">cListaProyectos</id>
+		<tabla>PROYECTO</tabla>
+	</acceso>
+	<acceso>
+		<query>select id recId, Nombre recNom from RECURSO</query>
+		<id tipo="C">cListaRecursos</id>
+		<tabla>RECURSO</tabla>
+	</acceso>
+	<acceso>
+		<query>select id mpProyId, tipo mpTipo, descripcion mpDesc, tipoDato mpTipoDato from META_PARM_PROY</query>
+		<id tipo="C">cMetaParmProy</id>
+		<tabla>META_PARM_PROY</tabla>
+	</acceso>
+	<acceso>
+		<query>select id mpRecId, tipo mpRecTipo, descripcion mpRecDesc, tipoDato mpRecTipoDato from META_PARM_REC</query>
+		<id tipo="C">cMetaParmRecurso</id>
+		<tabla>META_PARM_REC</tabla>
+	</acceso>
+	<acceso>
+		<query>insert into PROYECTO (id,Nombre) values ($B$||1||$E$,$B$||2||$E$)</query>
+		<id tipo="I">iAltaProy</id>
+		<tabla>PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+	</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into RECURSO (id,Nombre) values ($B$||1||$E$,$B$||2||$E$)</query>
+		<id tipo="I">iAltaRec</id>
+		<tabla>RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+	</parametros>
+	</acceso>
+	<acceso>
+		<query>select id paramId, idProyecto parProyIdProy, cod_parm parProyCodParm, valorTexto parProyvalorTxt, valorEntero parProyValorInt, valorReal parProyValorReal, valorFecha parProyValorFx, fecFinVig parProyFecFinVig FROM PARM_PROYECTO where 1=1 $B$and idProyecto=||1||$E$ and fecFinVig is null</query>
+		<id tipo="C">cConsultaParmProy</id>
+		<tabla>PARM_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id paramId, idRecurso parRecIdRec, cod_parm parRecCodParm, valorTexto parRecvalorTxt, valorEntero parRecValorInt, valorReal parRecValorReal, valorFecha parRecValorFx, fecFinVig parRecFecFinVig FROM PARM_RECURSO where 1=1 $B$and idRecurso=||1||$E$ and fecFinVig is null</query>
+		<id tipo="C">cConsultaParmRecurso</id>
+		<tabla>PARM_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE PARM_PROYECTO SET fecFinVig = $B$||1||$E$ WHERE idProyecto = $B$||2||$E$ and  cod_parm in ($B$||3||$E$) and fecFinVig is null</query>
+		<id tipo="U">uVenceParametros</id>
+		<tabla>PARM_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="dat"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="listInt"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE PARM_RECURSO SET fecFinVig = $B$||1||$E$ WHERE idRecurso = $B$||2||$E$ and  cod_parm in ($B$||3||$E$) and fecFinVig is null</query>
+		<id tipo="U">uVenceParametrosRecurso</id>
+		<tabla>PARM_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="dat"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="listInt"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARM_PROYECTO (id, idProyecto, cod_parm, valorTexto, valorEntero, valorReal, valorFecha, fecFinVig) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$, $B$||8||$E$)</query>
+		<id tipo="I">iAltaParamProy</id>
+		<tabla>PARM_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="str"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="dat"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARM_RECURSO (id, idRecurso, cod_parm, valorTexto, valorEntero, valorReal, valorFecha, fecFinVig) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$, $B$||8||$E$)</query>
+		<id tipo="I">iAltaParamRec</id>
+		<tabla>PARM_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="str"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="dat"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(id) paramId from PARM_PROYECTO</query>
+		<id tipo="C">cMaxIdParamProyecto</id>
+		<tabla>PARM_PROYECTO</tabla>
+	</acceso>
+	<acceso>
+		<query>select max(id) paramRId from PARM_RECURSO</query>
+		<id tipo="C">cMaxIdParamRecurso</id>
+		<tabla>PARM_RECURSO</tabla>
+	</acceso>
+	<acceso>
+		<query>delete from PROYECTO where id = $B$||1||$E$</query>
+		<id tipo="D">dDelProyecto</id>
+		<tabla>PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>	
+	<acceso>
+		<query>delete from RECURSO where id = $B$||1||$E$</query>
+		<id tipo="D">dDelRecurso</id>
+		<tabla>RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>	
+	<acceso>
+		<query>delete from PARM_PROYECTO where idProyecto = $B$||1||$E$</query>
+		<id tipo="D">dDelParamProyecto</id>
+		<tabla>PARM_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARM_RECURSO where idRecurso = $B$||1||$E$</query>
+		<id tipo="D">dDelParamRecurso</id>
+		<tabla>PARM_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(id) presId from PRESUPUESTO</query>
+		<id tipo="C">cMaxIdPresupuesto</id>
+		<tabla>PRESUPUESTO</tabla>
+	</acceso>
+	<acceso>
+		<query>select id tpPId, codigo tpPCod, descripcion tpPDesc from META_TIPO_PRESUPUESTO where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaTipoPresupuesto</id>
+		<tabla>META_TIPO_PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id areaId, codigo areaCod, descripcion areaDesc, responsable areaResp from META_AREA where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaAreas</id>
+		<tabla>META_AREA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id metcId, codigo metcCod, descripcion metcDesc, gestEco metGesEco from META_CONCEPTO where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaMetaConceptos</id>
+		<tabla>META_CONCEPTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id metbId, grupo metbGrupo, codigo metbCod, descripcion metbDesc from META_BLOQUE where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaMetaBloque</id>
+		<tabla>META_BLOQUE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id forId, codigo forCod, descripcion forDesc from META_FORMATO_PROYECTO where 1=1 $B$and codigo=||1||$E$</query>
+		<id tipo="C">cConsultaFormatoProyecto</id>
+		<tabla>META_FORMATO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id costId, descripcion costDesc, idArea costSistema, idPresupuesto costPres from COSTE where 1=1 $B$and idPresupuesto=||1||$E$ $B$and id=||2||$E$</query>
+		<id tipo="C">cCostes</id>
+		<tabla>COSTE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id relcfId, idConcepto relcfConcepto, idFormato relcfFormato from REL_CONCEPTO_FORMATO where 1=1 $B$and idPresupuesto=||1||$E$</query>
+		<id tipo="C">cRelConceptoFormato</id>
+		<tabla>REL_CONCEPTO_FORMATO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id presId, version vsPresupuesto, idProyecto presProy, descripcion presDesc, fxAlta presFxAlta, idTipoPresupuesto presTipoP from PRESUPUESTO where 1=1 $B$and id = ||1||$E$ $B$and idProyecto = ||2||$E$</query>
+		<id tipo="C">cConsultaPresupuesto</id>
+		<tabla>PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(version) vsPresupuesto from presupuesto where idproyecto = $B$||1||$E$</query>
+		<id tipo="C">cConsultaMaxVsProy</id>
+		<tabla>PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PRESUPUESTO (id, version, fxAlta, idProyecto, idTipoPresupuesto, descripcion) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$)</query>
+		<id tipo="I">iAltaPresupuesto</id>
+		<tabla>PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE PRESUPUESTO SET version = $B$||1||$E$, idTipoPresupuesto = $B$||2||$E$, descripcion = $B$||3||$E$ where id = $B$||4||$E$</query>
+		<id tipo="U">uActualizaPresupuesto</id>
+		<tabla>PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PRESUPUESTO where id = $B$||1||$E$</query>
+		<id tipo="D">dDelPresupuesto</id>
+		<tabla>PRESUPUESTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(id) costId from Coste</query>
+		<id tipo="C">cMaxIdCoste</id>
+		<tabla>Coste</tabla>
+	</acceso>
+	<acceso>
+		<query>Insert into Coste (id, descripcion, version, idArea, idPresupuesto) values ($B$||1||$E$, "", 1, $B$||2||$E$, $B$||3||$E$)</query>
+		<id tipo="I">iAltaCoste</id>
+		<tabla>Coste</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from Coste where id = $B$||1||$E$</query>
+		<id tipo="D">dDelCoste</id>
+		<tabla>Coste</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Select id concId, valor concValor, valorEstimado concValorEstimado, horas concHoras, horasEstimado concHorasEstimado, porcentaje concPorcentaje, esPorcentaje concEsPorcentaje, respectoPorcentaje  concRespectoPorcentaje, idCoste concIdCoste, tipoConcepto concTipoConcepto, idTarifa concIdTarifa, baseCalculo concBaseCalculo from Concepto where 1=1 $B$and id = ||1||$E$ $B$and idCoste = ||2||$E$</query>
+		<id tipo="C">cConsultaConcepto</id>
+		<tabla>Concepto</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into CONCEPTO (id, valor, valorEstimado, horas, horasEstimado, porcentaje, esPorcentaje, respectoPorcentaje, idCoste, tipoConcepto, idTarifa, baseCalculo) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$,$B$||7||$E$, $B$||8||$E$, $B$||9||$E$, $B$||10||$E$, $B$||11||$E$, $B$||12||$E$)</query>
+		<id tipo="I">iAltaConcepto</id>
+		<tabla>CONCEPTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="rea"></parametro>
+			<parametro id="3" tipo="rea"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="int"></parametro>
+			<parametro id="8" tipo="int"></parametro>
+			<parametro id="9" tipo="int"></parametro>
+			<parametro id="10" tipo="int"></parametro>
+			<parametro id="11" tipo="int"></parametro>
+			<parametro id="12" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE CONCEPTO SET valor = $B$||2||$E$, valorEstimado = $B$||3||$E$, horas = $B$||4||$E$, horasEstimado = $B$||5||$E$, porcentaje = $B$||6||$E$, esPorcentaje = $B$||7||$E$, respectoPorcentaje = $B$||8||$E$, idCoste = $B$||9||$E$, tipoConcepto = $B$||10||$E$, idTarifa = $B$||11||$E$, baseCalculo = $B$||12||$E$  where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaConcepto</id>
+		<tabla>CONCEPTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="rea"></parametro>
+			<parametro id="3" tipo="rea"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="int"></parametro>
+			<parametro id="8" tipo="int"></parametro>
+			<parametro id="9" tipo="int"></parametro>
+			<parametro id="10" tipo="int"></parametro>
+			<parametro id="11" tipo="int"></parametro>
+			<parametro id="12" tipo="int"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(id) concId from Concepto</query>
+		<id tipo="C">cMaxIdConcepto</id>
+		<tabla>CONCEPTO</tabla>
+	</acceso>
+	<acceso>
+		<query>delete from Concepto where id = $B$||1||$E$</query>
+		<id tipo="D">dDelConcepto</id>
+		<tabla>CONCEPTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id festId, fxFestivo festFx from FESTIVO where 1=1 $B$and fxFestivo like ||1||$E$</query>
+		<id tipo="C">cConsultaFestivos</id>
+		<tabla>FESTIVOS</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into FESTIVO (id,fxFestivo) values  ($B$||1||$E$, $B$||2||$E$)</query>
+		<id tipo="I">iAltaFestivos</id>
+		<tabla>FESTIVO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso> 
+		<query>DELETE FROM FESTIVO where fxFestivo = $B$||1||$E$</query>
+		<id tipo="D">dBorraFestivo</id>
+		<tabla>FESTIVO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id tarId, desarrollo tarDesa, mantenimiento tarMante, idProveedor tarProv, valorHora tarValor, fInicioVigencia tarIniVig, fFinVigencia tarFinVig  from TARIFA where 1=1 $B$and idProveedor=||1||$E$ $B$and mantenimiento=||2||$E$ $B$and desarrollo=||3||$E$ $B$and tsIniVigencia&lt;=||4||$E$ $B$and tsFinVigencia&gt;=||5||$E$ $B$and id=||6||$E$</query>
+		<id tipo="C">cConsultaTarifa</id>
+		<tabla>TARIFA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE TARIFA SET desarrollo = $B$||2||$E$, mantenimiento = $B$||3||$E$, idProveedor = $B$||4||$E$, valorHora = $B$||5||$E$, fInicioVigencia = $B$||6||$E$, fFinVigencia = $B$||7||$E$, tsIniVigencia = $B$||8||$E$, tsFinVigencia = $B$||9||$E$  where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaTarifa</id>
+		<tabla>TARIFA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="dat"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="rea"></parametro>
+			<parametro id="9" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select max(id) tarId from TARIFA</query>
+		<id tipo="C">cMaxIdTarifa</id>
+		<tabla>TARIFA</tabla>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO TARIFA (id,desarrollo,mantenimiento,idProveedor,valorHora,fInicioVigencia,fFinVigencia,tsIniVigencia,tsFinVigencia) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$,$B$||8||$E$,$B$||9||$E$)</query>
+		<id tipo="I">iInsertaTarifa</id>
+		<tabla>TARIFA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="dat"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="rea"></parametro>
+			<parametro id="9" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>DELETE FROM TARIFA where id = $B$||1||$E$</query>
+		<id tipo="D">iDeleteTarifa</id>
+		<tabla>TARIFA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO REL_TARIFA_RECURSO (id,idRecurso,idTarifa,fInicioVig,fFInVig,tsInicioVig,tsFinVig) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$)</query>
+		<id tipo="I">iInsertaRelTarifaRecurso</id>
+		<tabla>REL_TARIFA_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="dat"></parametro>
+			<parametro id="5" tipo="dat"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE REL_TARIFA_RECURSO SET idRecurso = $B$||2||$E$,idTarifa = $B$||3||$E$,fInicioVig=$B$||4||$E$,fFInVig=$B$||5||$E$,tsInicioVig=$B$||6||$E$,tsFinVig=$B$||7||$E$ where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaRelTarifaRecurso</id>
+		<tabla>REL_TARIFA_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="dat"></parametro>
+			<parametro id="5" tipo="dat"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id reltrId,idRecurso reltrIdRec,idTarifa reltrIdTar,fInicioVig reltrFIni,fFInVig reltrFfin,tsInicioVig reltrtsIniv,tsFinVig reltrtsFinv from REL_TARIFA_RECURSO</query>
+		<id tipo="C">cMaxIdRelTarifaRec</id>
+		<tabla>REL_TARIFA_RECURSO</tabla>
+	</acceso>
+	<acceso>
+		<query>select id reltrId,idRecurso reltrIdRec,idTarifa reltrIdTar,fInicioVig reltrFIni,fFInVig reltrFfin,tsInicioVig reltrtsIniv,tsFinVig reltrtsFinv from REL_TARIFA_RECURSO where 1=1 $B$and idRecurso=||1||$E$ $B$and tsInicioVig&lt;=||2||$E$ $B$and (tsFinVig is null or tsFinVig&gt;=||3||)$E$ </query>
+		<id tipo="C">cRelTarifaRec</id>
+		<tabla>REL_TARIFA_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="rea"></parametro>
+			<parametro id="3" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from REL_TARIFA_RECURSO where 1=1 $B$and idRecurso=||1||$E$ $B$and id=||2||$E$</query>
+		<id tipo="C">dRelTarRecurso</id>
+		<tabla>REL_TARIFA_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id mjId, codJornada mjCodJornada, diaSemana mjDiaSemana, horas mjHoras, horasVerano mjHorasVerano, finVerano mjFinVerano , inicioVerano mjInicioVerano   from META_JORNADA</query>
+		<id tipo="C">cConsultaMetaJornadas</id>
+		<tabla>META_JORNADA</tabla>
+	</acceso>
+	<acceso>
+		<query>select id vaId, ausencia vaAusencia, horas vaHoras, tsDia vaTsDia, fxDia vaFxDia, idRecurso vaRecurso from VACACIONES  where 1=1 $B$and idRecurso=||3||$E$ $B$and tsDia&gt;=||1||$E$ $B$and tsDia&lt;=||2||$E$</query>
+		<id tipo="C">cConsultaVacasAusencias</id>
+		<tabla>VACACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="long"></parametro>
+			<parametro id="2" tipo="long"></parametro>			
+			<parametro id="3" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from VACACIONES where 1=1 $B$and idRecurso=||3||$E$ $B$and tsDia&gt;=||1||$E$ $B$and tsDia&lt;=||2||$E$</query>
+		<id tipo="U">cLimpiaVacasAusencias</id>
+		<tabla>VACACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>			
+			<parametro id="3" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO VACACIONES (id,ausencia,horas,fxDia,tsDia,idRecurso) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$)</query>
+		<id tipo="I">cInsertaVacasAusencias</id>
+		<tabla>VACACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="rea"></parametro>
+			<parametro id="4" tipo="dat"></parametro>
+			<parametro id="5" tipo="long"></parametro>
+			<parametro id="6" tipo="int"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id estHId, recurso estHRecurso, proyecto estHProyecto, sistema estHSistema, gerencia estHGerencia, natCoste estHNatCoste, fxInicio estHFxInicio, tsInicio estHTsInicio, fxFin estHFxFin, tsFin estHTsFin, horas estHHoras, importe estHImporte, aprobacion estAprobacion from ESTIMACIONESHORAS  where 1=1 $B$and proyecto=||1||$E$ $B$and recurso=||2||$E$ $B$and sistema=||3||$E$ $B$and natCoste=||4||$E$ $B$and tsInicio=||5||$E$ $B$and tsFin=||6||$E$</query>
+		<id tipo="C">cConsultaEstimacionesProyecto</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>			
+			<parametro id="3" tipo="int"></parametro>			
+			<parametro id="4" tipo="int"></parametro>			
+			<parametro id="5" tipo="long"></parametro>			
+			<parametro id="6" tipo="long"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id estHId, recurso estHRecurso, proyecto estHProyecto, sistema estHSistema, gerencia estHGerencia, natCoste estHNatCoste, fxInicio estHFxInicio, tsInicio estHTsInicio, fxFin estHFxFin, tsFin estHTsFin, horas estHHoras, importe estHImporte, aprobacion estAprobacion from ESTIMACIONESHORAS  where 1=1 $B$and proyecto=||1||$E$ $B$and recurso=||2||$E$ $B$and sistema=||3||$E$ $B$and natCoste=||4||$E$ $B$and tsInicio&gt;=||5||$E$ $B$and tsFin&lt;=||6||$E$</query>
+		<id tipo="C">cConsultaEstimacionesProyecto</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>			
+			<parametro id="3" tipo="int"></parametro>			
+			<parametro id="4" tipo="int"></parametro>			
+			<parametro id="5" tipo="long"></parametro>			
+			<parametro id="6" tipo="long"></parametro>	
+		</parametros>
+	</acceso>	
+	<acceso>
+		<query>select id impId, recurso impRecurso, proyecto impProyecto, gerencia impGerencia, sistema impSistema, natCoste impNatCoste, pedido impPedido, fxInicio impFxInicio, tsInicio impTsInicio, fxFin impFxFin, tsFin impTsFin, horas impHoras, importe impImporte, tarifa impTarifa, OT impOT, estado impEstado, fxEnvioSAP impFxEnvioSAP, tsEnvioSAP impTsEnvioSAP, tipo impTipo from IMPUTACIONES  where 1=1 $B$and proyecto=||1||$E$ $B$and recurso=||2||$E$ $B$and sistema=||3||$E$ $B$and natCoste=||4||$E$ $B$and tsInicio=||5||$E$ $B$and tsFin=||6||$E$</query>
+		<id tipo="C">cConsultaImputacionesProyecto</id>
+		<tabla>IMPUTACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+			<parametro id="2" tipo="int"></parametro>			
+			<parametro id="3" tipo="int"></parametro>			
+			<parametro id="4" tipo="int"></parametro>			
+			<parametro id="5" tipo="long"></parametro>			
+			<parametro id="6" tipo="long"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select  	id tpId,	idProyecto tpIdProyecto,	idConcepto tpIdConcepto,	anio tpAnio,	cantidad tpCantidad,	porcentaje tpPorcentaje,	resto tpResto,	version tpVersion,	dsVersion tpDsVersion,	idSistema tpSistema from TOPE_IMPUTACION where 1=1 $B$and idProyecto=||1||$E$</query>
+		<id tipo="C">cListaTopes</id>
+		<tabla>TOPE_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select  	id relrsId,	idRecurso relrsIdRec,	idArea relrsIdSis from REL_RECURSO_AREA where 1=1 $B$and idRecurso=||1||$E$</query>
+		<id tipo="C">cRelRecSistema</id>
+		<tabla>REL_RECURSO_AREA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO REL_RECURSO_AREA (id,idRecurso,idArea) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$)</query>
+		<id tipo="I">iInsertaRelRecursoSistema</id>
+		<tabla>REL_RECURSO_AREA</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>DELETE FROM REL_RECURSO_AREA where id = $B$||1||$E$</query>
+		<id tipo="D">dRelRecursoSistema</id>
+		<tabla>REL_RECURSO_AREA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO ESTIMACIONESHORAS (id,recurso,proyecto,sistema,gerencia,natCoste,fxInicio,tsInicio,fxFin,tsFin,horas,importe,aprobacion) VALUES ( $B$||1||$E$,$B$||2||$E$,$B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$,$B$||8||$E$,$B$||9||$E$,$B$||10||$E$,$B$||11||$E$,$B$||12||$E$,$B$||13||$E$)</query>
+		<id tipo="I">iAltaEstimacion</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="long"></parametro>
+			<parametro id="9" tipo="dat"></parametro>
+			<parametro id="10" tipo="long"></parametro>
+			<parametro id="11" tipo="rea"></parametro>
+			<parametro id="12" tipo="rea"></parametro>
+			<parametro id="13" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO IMPUTACIONES (id,	recurso,	proyecto,	gerencia,	sistema,	natCoste,	pedido,	fxInicio,	tsInicio,	fxFin,	tsFin,	horas,	importe,	tarifa,	OT,	Estado,	fxEnvioSAP,	tsEnvioSAP, tipo) VALUES ( $B$||1||$E$,$B$||2||$E$,$B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$,$B$||8||$E$,$B$||9||$E$,$B$||10||$E$,$B$||11||$E$,$B$||12||$E$,$B$||13||$E$,$B$||14||$E$,$B$||15||$E$,$B$||16||$E$,$B$||17||$E$,$B$||18||$E$,$B$||19||$E$)</query>
+		<id tipo="I">iAltaimputacion</id>
+		<tabla>IMPUTACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="str"></parametro>
+			<parametro id="8" tipo="dat"></parametro>
+			<parametro id="9" tipo="long"></parametro>
+			<parametro id="10" tipo="dat"></parametro>
+			<parametro id="11" tipo="long"></parametro>
+			<parametro id="12" tipo="rea"></parametro>
+			<parametro id="13" tipo="rea"></parametro>
+			<parametro id="14" tipo="rea"></parametro>
+			<parametro id="15" tipo="str"></parametro>
+			<parametro id="16" tipo="int"></parametro>
+			<parametro id="17" tipo="dat"></parametro>
+			<parametro id="18" tipo="long"></parametro>
+			<parametro id="19" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from ESTIMACIONESHORAS where id = $B$||1||$E$</query>
+		<id tipo="D">dDelEstimacion</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from IMPUTACIONES where id = $B$||1||$E$</query>
+		<id tipo="D">dDelImputacion</id>
+		<tabla>IMPUTACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE ESTIMACIONESHORAS SET recurso=$B$||2||$E$,proyecto=$B$||3||$E$,sistema=$B$||4||$E$,gerencia=$B$||5||$E$,natCoste=$B$||6||$E$,fxInicio=$B$||7||$E$,tsInicio=$B$||8||$E$,fxFin=$B$||9||$E$,tsFin=$B$||10||$E$,horas=$B$||11||$E$,importe=$B$||12||$E$ WHERE  id=$B$||1||$E$</query>
+		<id tipo="U">uActualizaEstimacion</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="long"></parametro>
+			<parametro id="9" tipo="dat"></parametro>
+			<parametro id="10" tipo="long"></parametro>
+			<parametro id="11" tipo="rea"></parametro>
+			<parametro id="12" tipo="rea"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE ESTIMACIONESHORAS SET aprobacion=$B$||2||$E$ WHERE  id=$B$||1||$E$</query>
+		<id tipo="U">uCambiaEstadoEstimacion</id>
+		<tabla>ESTIMACIONESHORAS</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE IMPUTACIONES SET 	recurso=$B$||2||$E$,	proyecto=$B$||3||$E$,	gerencia=$B$||4||$E$,	sistema=$B$||5||$E$,	natCoste=$B$||6||$E$,	fxInicio=$B$||7||$E$,	tsInicio=$B$||8||$E$,	fxFin=$B$||9||$E$,	tsFin=$B$||10||$E$,	horas=$B$||11||$E$,	importe=$B$||12||$E$,	tarifa=$B$||13||$E$ WHERE  id=$B$||1||$E$</query>
+		<id tipo="U">uActualizaImputacion</id>
+		<tabla>IMPUTACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="str"></parametro>
+			<parametro id="8" tipo="long"></parametro>
+			<parametro id="9" tipo="dat"></parametro>
+			<parametro id="10" tipo="long"></parametro>
+			<parametro id="11" tipo="rea"></parametro>
+			<parametro id="12" tipo="rea"></parametro>
+			<parametro id="13" tipo="rea"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select  id frImid,  idImputacion frImidImputacion,  tipo frImtipo,  porcentaje frImporcentaje,  horas frImhoras,  importe frImimporte, sistema frImSistema from FRACCION_IMPUTACION where  1=1 $B$and idImputacion=||1||$E$</query>
+		<id tipo="C">cListaFracciones</id>
+		<tabla>FRACCION_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select  fr.id frImid,  fr.idImputacion frImidImputacion,  fr.tipo frImtipo,  fr.porcentaje frImporcentaje,  fr.horas frImhoras,  fr.importe frImimporte, fr.sistema frImSistema from FRACCION_IMPUTACION fr, IMPUTACIONES i, PROYECTO p where p.id = i.proyecto and i.id = fr.idImputacion $B$and p.id=||1||$E$</query>
+		<id tipo="C">cListaFraccionesProyecto</id>
+		<tabla>FRACCION_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+	<query>delete from FRACCION_IMPUTACION where idImputacion = $B$||1||$E$</query>
+		<id tipo="D">cEliminaFraccionesImputacion</id>
+		<tabla>FRACCION_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO FRACCION_IMPUTACION (id,	idImputacion, tipo,	porcentaje,	horas,	importe, sistema) VALUES ( $B$||1||$E$,$B$||2||$E$,$B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$)</query>
+		<id tipo="I">iAltaFraccionimputacion</id>
+		<tabla>FRACCION_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="int"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE IMPUTACIONES SET 	tipo=$B$||1||$E$ WHERE  id=$B$||2||$E$</query>
+		<id tipo="U">uActualizaTipoImputacion</id>
+		<tabla>IMPUTACIONES</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>DELETE FROM TOPE_IMPUTACION WHERE  idProyecto=$B$||1||$E$</query>
+		<id tipo="D">dBorraTopes</id>
+		<tabla>TOPE_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO TOPE_IMPUTACION (id,	idProyecto, idConcepto,	anio,	cantidad,	porcentaje, resto,	version, dsVersion, idSistema) VALUES ( $B$||1||$E$,$B$||2||$E$,$B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$,$B$||8||$E$,$B$||9||$E$,$B$||10||$E$)</query>
+		<id tipo="I">iAltaTopeimputacion</id>
+		<tabla>TOPE_IMPUTACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="rea"></parametro>
+			<parametro id="7" tipo="int"></parametro>
+			<parametro id="8" tipo="int"></parametro>
+			<parametro id="9" tipo="str"></parametro>
+			<parametro id="10" tipo="str"></parametro>			
+		</parametros>
+	</acceso>	
+</accesoBD>

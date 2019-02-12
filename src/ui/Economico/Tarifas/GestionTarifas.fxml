@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.Tarifas.GestionTarifas">
+   <children>
+      <Accordion AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <panes>
+          <TitledPane fx:id="tpFiltros" animated="false" text="Criterios de Consulta">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <HBox>
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <HBox>
+                                       <children>
+                                          <Label prefWidth="100.0" text="Proveedor">
+                                             <HBox.margin>
+                                                <Insets left="25.0" right="25.0" top="25.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="cbProveedores" prefWidth="300.0">
+                                             <HBox.margin>
+                                                <Insets right="25.0" top="25.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label prefWidth="100.0" text="Vigentes">
+                                             <HBox.margin>
+                                                <Insets left="25.0" right="25.0" top="25.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ToggleSwitch fx:id="tsVigentes" prefHeight="18.0" prefWidth="27.0">
+                                             <HBox.margin>
+                                                <Insets right="25.0" top="25.0" />
+                                             </HBox.margin>
+                                          </ToggleSwitch>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label prefWidth="100.0" text="Sólo Desarrollo">
+                                             <HBox.margin>
+                                                <Insets left="25.0" right="25.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ToggleSwitch fx:id="tsDesarrollo" prefHeight="18.0" prefWidth="27.0">
+                                             <HBox.margin>
+                                                <Insets right="25.0" />
+                                             </HBox.margin>
+                                          </ToggleSwitch>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label prefWidth="100.0" text="Mantenimiento">
+                                             <HBox.margin>
+                                                <Insets left="25.0" right="25.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ToggleSwitch fx:id="tsMantenimiento" prefHeight="18.0" prefWidth="27.0">
+                                             <HBox.margin>
+                                                <Insets right="25.0" />
+                                             </HBox.margin>
+                                          </ToggleSwitch>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="TOP_RIGHT">
+                                       <children>
+                                          <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../imgs/iconos/buscar.png" />
+                                             </image>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" />
+                     </padding>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane fx:id="tpResultados" animated="false" text="Resultados">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <VBox>
+                           <children>
+                              <HBox alignment="TOP_RIGHT">
+                                 <children>
+                                    <ImageView fx:id="imAniadirTarifa" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoEnabled">
+                                       <image>
+                                          <Image url="@../../../../imgs/iconos/aniadir.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <padding>
+                                    <Insets right="25.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <TableView fx:id="tTarifas" prefHeight="400.0" prefWidth="800.0">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TableView>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox alignment="TOP_RIGHT">
+                                 <children>
+                                    <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                                       <image>
+                                          <Image url="@../../../../imgs/iconos/guardar.jpg" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets right="35.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+   </children>
+</AnchorPane>

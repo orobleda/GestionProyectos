@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
+
+<AnchorPane fx:id="anchor" maxHeight="628.0" maxWidth="600.0" prefHeight="628.0" prefWidth="764.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GestionProyectos.ConsultaProyectos">
+   <children>
+      <Accordion layoutX="-9.0" layoutY="-8.0" prefWidth="800.0">
+        <panes>
+          <TitledPane animated="false" text="Criterios Búsqueda">
+               <content>
+                  <StackPane>
+                     <children>
+                        <VBox>
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" text="Nombre Proyecto (contiene)">
+                                       <padding>
+                                          <Insets right="15.0" />
+                                       </padding>
+                                    </Label>
+                                    <TextField fx:id="tNomProyecto" maxWidth="425.0" prefHeight="25.0" prefWidth="425.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="15.0" right="15.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="165.0" text="Id Proyecto">
+                                       <padding>
+                                          <Insets right="15.0" />
+                                       </padding>
+                                    </Label>
+                                    <TextField fx:id="tIdProyecto" maxWidth="70.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="15.0" right="15.0" top="15.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="180.0" text="Tipo">
+                                       <padding>
+                                          <Insets left="15.0" />
+                                       </padding>
+                                    </Label>
+                                    <ComboBox fx:id="cbTipo" prefHeight="25.0" prefWidth="122.0" />
+                                    <Label prefHeight="17.0" prefWidth="180.0" text="Estado">
+                                       <padding>
+                                          <Insets left="95.0" />
+                                       </padding>
+                                    </Label>
+                                    <ComboBox fx:id="cbEstado" prefHeight="25.0" prefWidth="122.0" />
+                                 </children>
+                                 <opaqueInsets>
+                                    <Insets left="15.0" top="15.0" />
+                                 </opaqueInsets>
+                                 <padding>
+                                    <Insets top="15.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <ToggleSwitch fx:id="tsSoloAbiertos" selected="true" text="Sólo abiertos" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="180.0" right="15.0" top="15.0" />
+                                 </padding>
+                              </HBox>
+                              <ImageView fx:id="bBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@../../../imgs/iconos/buscar.png" />
+                                 </image>
+                                 <VBox.margin>
+                                    <Insets left="575.0" top="15.0" />
+                                 </VBox.margin>
+                              </ImageView>
+                           </children>
+                        </VBox>
+                     </children>
+                  </StackPane>
+               </content>
+            </TitledPane>
+          <TitledPane animated="false" prefHeight="323.0" prefWidth="480.0" text="Resultados">
+               <content>
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn prefWidth="40.0" text="Id" />
+                      <TableColumn prefWidth="73.0" text="Código" />
+                        <TableColumn prefWidth="237.0" text="Nombre" />
+                        <TableColumn prefWidth="82.0" text="Fecha Inicio" />
+                        <TableColumn prefWidth="81.0" text="Fecha Fin" />
+                        <TableColumn prefWidth="72.0" text="Tipo" />
+                        <TableColumn prefWidth="82.0" text="Estado" />
+                        <TableColumn prefWidth="65.0" text="Finalizado" />
+                    </columns>
+                  </TableView>
+               </content></TitledPane>
+        </panes>
+         <padding>
+            <Insets left="10.0" right="10.0" top="7.0" />
+         </padding>
+      </Accordion>
+   </children>
+</AnchorPane>
