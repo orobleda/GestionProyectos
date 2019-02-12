@@ -43,6 +43,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			//Empieza el show
 			Main.sesion = new HashMap<String, Object>();
 			
 			new CargaInicial().load();
