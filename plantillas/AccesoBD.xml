@@ -819,5 +819,37 @@
 			<parametro id="9" tipo="str"></parametro>
 			<parametro id="10" tipo="str"></parametro>			
 		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id rpdId,idProyecto rpdIdProy,idvsPresupuesto rpdIdvsPres,idDemanda rpdIdDem,idPresupuesto rpdIdPres,idvsPresupuesto rpdIdvsPres,idvsPresupuestoDem rpdIdvsPresDem from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$  $B$and idvsPresupuesto=||2||$E$</query>
+		<id tipo="C">cRelProyDem</id>
+		<tabla>REL_PROYECTO_DEMANDA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO REL_PROYECTO_DEMANDA (id,idProyecto,idvsPresupuesto,idDemanda,idPresupuesto,idvsPresupuestoDem) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$, $B$||6||$E$)</query>
+		<id tipo="I">iInsertaRelProyectoDemanda</id>
+		<tabla>REL_PROYECTO_DEMANDA</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>			
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$ $B$and idvsPresupuesto=||2||$E$ $B$and id=||2||$E$</query>
+		<id tipo="C">dRelRelProyectoDemanda</id>
+		<tabla>REL_PROYECTO_DEMANDA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>		
+		</parametros>
 	</acceso>	
 </accesoBD>

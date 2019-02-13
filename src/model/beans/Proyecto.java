@@ -17,6 +17,9 @@ public class Proyecto implements Cargable{
 	public int id = 0;
 	public String nombre = "";
 	
+	public Presupuesto presupuestoActual = null;
+	public Presupuesto presupuestoMaxVersion = null;
+	
 	public ArrayList<MetaParamProyecto> listadoParametros = null;
 	public static HashMap<Integer, Proyecto> listaProyecto = null;
 	public ArrayList<EstadoProyecto> estadosProyecto = null; 
@@ -116,6 +119,27 @@ public class Proyecto implements Cargable{
 		}
 		
         return salida;
+	}
+	
+	public ArrayList<Proyecto> getDemandasAsociadas() throws Exception{
+		if (this.listadoParametros!=null || this.listadoParametros.size()>0)
+			this.cargaProyecto();
+		
+		int tpProyecto = new Integer((String) this.getValorParametro(MetaParamProyecto.TIPO_PROYECTO));
+		
+		if (tpProyecto == TipoProyecto.ID_EVOLUTIVO || tpProyecto == TipoProyecto.ID_PROYECTO) {
+			RelProyectoDemanda rpd = new RelProyectoDemanda();
+			rpd.proyecto = this;
+			rpd.pres = this.presupuestoActual;
+			
+			ArrayList<RelProyectoDemanda> listado =  rpd.buscaRelacion();
+			
+			if (listado!=null && listado.size()>0) {
+				return listado.get(0).listaDemandas;
+			}
+		}
+		
+		return new ArrayList<Proyecto>();
 	}
 	
 	public void cargaProyecto() throws Exception{			

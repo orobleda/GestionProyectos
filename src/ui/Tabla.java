@@ -110,6 +110,8 @@ public class Tabla {
 	public void formateaTabla() {
 		HashMap<String,Integer> anchoColumnas = primitiva.getAnchoColumnas();
 		
+		if (this.listaDatosFiltrada.size() == 0) componenteTabla.setPrefHeight(70);
+		
 		ObservableList<TableColumn<Tableable,?>> columnas = this.componenteTabla.getColumns(); 
 		Iterator<TableColumn<Tableable,?>> itCol = columnas.iterator();
 		Tabla elementoThis = this;
@@ -149,6 +151,6 @@ public class Tabla {
 			contadorAnchoTabla += anchoCol;
 		}
 		
-		componenteTabla.setPrefWidth(contadorAnchoTabla);
+		componenteTabla.setPrefWidth(contadorAnchoTabla+20);
 	}
 }

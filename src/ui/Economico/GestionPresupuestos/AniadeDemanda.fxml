@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.AniadeDemanda">
+   <children>
+      <HBox>
+         <children>
+            <Label prefWidth="150.0" text="Estimación">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="cbEstimacion" prefWidth="300.0" />
+         </children>
+      </HBox>
+      <HBox>
+         <children>
+            <Label prefWidth="150.0" text="Versión Presupuesto">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="cbVersionPres" prefWidth="300.0" />
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="TOP_CENTER">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+         <children>
+            <TableView fx:id="tTablaConceptos" prefHeight="200.0" prefWidth="200.0" />
+         </children>
+      </HBox>
+      <VBox alignment="TOP_CENTER">
+         <children>
+            <HBox>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <children>
+                  <Label prefWidth="150.0" text="Concepto" />
+                  <ComboBox fx:id="cbConcepto" prefWidth="200.0" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Tarifa" />
+                  <ComboBox fx:id="cbTarifa" prefWidth="200.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Horas" />
+                  <TextField fx:id="tHoras" prefWidth="75.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Importe" />
+                  <TextField fx:id="tImporte" prefWidth="75.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="TOP_RIGHT">
+               <children>
+                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets top="35.0" />
+         </VBox.margin>
+         <padding>
+            <Insets left="35.0" />
+         </padding>
+      </VBox>
+      <HBox alignment="TOP_RIGHT">
+         <children>
+            <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets top="40.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</VBox>

@@ -54,6 +54,26 @@ public class Presupuesto implements Cargable {
 		}
 	}
 	
+	public float calculaTotal() {
+		if (costes==null || costes.size()==0)
+			this.cargaCostes();
+		
+		float total = 0;
+		Iterator<Coste> itCoste = this.costes.values().iterator();
+		
+		while (itCoste.hasNext()) {
+			Coste cost = itCoste.next();
+			
+			Iterator<Concepto> itConceptos = cost.conceptosCoste.values().iterator();
+			while (itConceptos.hasNext()) {
+				Concepto conc = itConceptos.next();
+				total += conc.valorEstimado;
+			}
+		}
+		
+		return total;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")
