@@ -12,6 +12,7 @@ public class Constantes {
 	public static final String COLOR_ROJO = "Red";
 	public static final String COLOR_AMARILLO = "Yellow";
 	public static final String COLOR_VERDE = "Green";
+	public static final String COLOR_GRIS = "Silver";
 	
 	public static Date init() {
 		Calendar c = Calendar.getInstance();

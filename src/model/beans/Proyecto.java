@@ -23,6 +23,8 @@ public class Proyecto implements Cargable{
 	public ArrayList<MetaParamProyecto> listadoParametros = null;
 	public static HashMap<Integer, Proyecto> listaProyecto = null;
 	public ArrayList<EstadoProyecto> estadosProyecto = null; 
+	
+	public boolean apunteContable = false;
 
 	@Override
 	public Cargable cargar(Object o) {

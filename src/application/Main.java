@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -19,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
@@ -52,12 +55,14 @@ public class Main extends Application {
 			BorderPane panelBase = new BorderPane();
 			
 	        ScrollPane root = new ScrollPane();
+	        
+	        root.setFitToHeight(true);
+	        root.setFitToWidth(true);
+	        root.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 	        panelBase.setCenter(root);
-	        root.setPrefHeight(650);
-	        //root.setPrefWidth(900);
 
-	        Scene scene = new Scene(panelBase, 900, 650);
-	        scene.getStylesheets().add("application.css");
+	        Scene scene = new Scene(panelBase);
+	        scene.getStylesheets().add("application.css");	        
 	        
 	        GestionPresupuestos c = new GestionPresupuestos();
 	        
@@ -70,10 +75,10 @@ public class Main extends Application {
 	        pane.setContent(loader.load());
 	        mostrarMenu (pane);
 	        
-	        panelBase.setLeft(pane);
+	        panelBase.setCenter(pane);
 	        
-	        primaryStage.setTitle("Gestión Proyectos");
-			
+	        primaryStage.setMaximized(true);	        
+	        primaryStage.setTitle("Gestión Proyectos");			
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			

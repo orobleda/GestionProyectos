@@ -28,7 +28,10 @@ public class DesgloseDemandasAsocidasTabla extends ParamTable implements Tableab
     public DesgloseDemandasAsocidasTabla(Proyecto p) {
     	this.p = p;
     	
-    	this.demanda = p.nombre;
+    	if (p.apunteContable) 
+    		this.demanda = "Apunte Contable";
+    	else 
+    		this.demanda = p.nombre;
     	this.version = p.presupuestoActual.toString();
     	this.estimado = p.presupuestoActual.calculaTotal();
     	

@@ -217,4 +217,41 @@ public class Coste implements Cargable{
 		
 	}
 	
+	public Coste operarCostes(Coste costeOperar, int operacion) {
+		if (this.conceptosCoste == null) {
+			this.conceptosCoste = new HashMap<String, Concepto>();
+		}
+		
+		HashMap<String, String> conceptosProcesados = new HashMap<String, String>();
+		
+		Iterator<Concepto> itConcepto = this.conceptosCoste.values().iterator(); 
+		while (itConcepto.hasNext()) {
+			Concepto c = itConcepto.next();
+			
+			Iterator<Concepto> itConceptoOperar = costeOperar.conceptosCoste.values().iterator();
+			while (itConceptoOperar.hasNext()) {
+				Concepto cAux = itConceptoOperar.next();
+				
+				if (cAux.tipoConcepto.codigo.equals(c.tipoConcepto.codigo)) {
+					conceptosProcesados.put(c.tipoConcepto.codigo,c.tipoConcepto.codigo);
+					
+					c.valor = c.valor + operacion*cAux.valor;
+					c.valorEstimado = c.valorEstimado + operacion*cAux.valorEstimado;
+				}
+			}
+		}
+		
+		itConcepto = costeOperar.conceptosCoste.values().iterator();
+		while (itConcepto.hasNext()) {
+			Concepto c = itConcepto.next();
+			
+			if (!conceptosProcesados.containsKey(c.tipoConcepto.codigo)) {
+				if (operacion == Presupuesto.SUMAR)
+					this.conceptosCoste.put(c.tipoConcepto.codigo, c);
+			}
+		}
+		
+		return this;
+	}
+	
 }

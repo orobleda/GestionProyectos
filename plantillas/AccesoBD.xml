@@ -261,12 +261,13 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select id presId, version vsPresupuesto, idProyecto presProy, descripcion presDesc, fxAlta presFxAlta, idTipoPresupuesto presTipoP from PRESUPUESTO where 1=1 $B$and id = ||1||$E$ $B$and idProyecto = ||2||$E$</query>
+		<query>select id presId, version vsPresupuesto, idProyecto presProy, descripcion presDesc, fxAlta presFxAlta, idTipoPresupuesto presTipoP, idApunteContable presApCont from PRESUPUESTO where 1=1 $B$and id = ||1||$E$ $B$and idProyecto = ||2||$E$ $B$and idApunteContable = ||3||$E$</query>
 		<id tipo="C">cConsultaPresupuesto</id>
 		<tabla>PRESUPUESTO</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
 			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
@@ -278,7 +279,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>Insert into PRESUPUESTO (id, version, fxAlta, idProyecto, idTipoPresupuesto, descripcion) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$)</query>
+		<query>Insert into PRESUPUESTO (id, version, fxAlta, idProyecto, idTipoPresupuesto, descripcion,idApunteContable) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
 		<id tipo="I">iAltaPresupuesto</id>
 		<tabla>PRESUPUESTO</tabla>
 		<parametros>
@@ -288,6 +289,7 @@
 			<parametro id="4" tipo="int"></parametro>
 			<parametro id="5" tipo="int"></parametro>
 			<parametro id="6" tipo="str"></parametro>
+			<parametro id="7" tipo="str"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
@@ -821,7 +823,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select id rpdId,idProyecto rpdIdProy,idvsPresupuesto rpdIdvsPres,idDemanda rpdIdDem,idPresupuesto rpdIdPres,idvsPresupuesto rpdIdvsPres,idvsPresupuestoDem rpdIdvsPresDem from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$  $B$and idvsPresupuesto=||2||$E$</query>
+		<query>select id rpdId,idProyecto rpdIdProy,idvsPresupuesto rpdIdvsPres,idDemanda rpdIdDem,idPresupuesto rpdIdPres,idvsPresupuesto rpdIdvsPres,idvsPresupuestoDem rpdIdvsPresDem,idApunteCont rpdIdApCont from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$  $B$and idvsPresupuesto=||2||$E$</query>
 		<id tipo="C">cRelProyDem</id>
 		<tabla>REL_PROYECTO_DEMANDA</tabla>
 		<parametros>
@@ -830,7 +832,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>INSERT INTO REL_PROYECTO_DEMANDA (id,idProyecto,idvsPresupuesto,idDemanda,idPresupuesto,idvsPresupuestoDem) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$, $B$||6||$E$)</query>
+		<query>INSERT INTO REL_PROYECTO_DEMANDA (id,idProyecto,idvsPresupuesto,idDemanda,idPresupuesto,idvsPresupuestoDem,idApunteCont) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
 		<id tipo="I">iInsertaRelProyectoDemanda</id>
 		<tabla>REL_PROYECTO_DEMANDA</tabla>
 		<parametros>
@@ -839,7 +841,8 @@
 			<parametro id="3" tipo="int"></parametro>
 			<parametro id="4" tipo="int"></parametro>
 			<parametro id="5" tipo="int"></parametro>
-			<parametro id="6" tipo="int"></parametro>			
+			<parametro id="6" tipo="int"></parametro>	
+			<parametro id="7" tipo="int"></parametro>			
 		</parametros>
 	</acceso>
 	<acceso>
@@ -852,4 +855,28 @@
 			<parametro id="3" tipo="int"></parametro>		
 		</parametros>
 	</acceso>	
+	<acceso>
+		<query>select id apConId from APUNTE_CONTABLE where 1=1 $B$and id=||1||$E$</query>
+		<id tipo="C">cListaApuntesContables</id>
+		<tabla>APUNTE_CONTABLE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from APUNTE_CONTABLE where 1=1 $B$and id=||1||$E$</query>
+		<id tipo="D">dBorraApunteContable</id>
+		<tabla>APUNTE_CONTABLE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>INSERT INTO APUNTE_CONTABLE (id) values ($B$||1||$E$)</query>
+		<id tipo="I">iInsertaApunteContable</id>
+		<tabla>APUNTE_CONTABLE</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>			
+		</parametros>
+	</acceso>
 </accesoBD>

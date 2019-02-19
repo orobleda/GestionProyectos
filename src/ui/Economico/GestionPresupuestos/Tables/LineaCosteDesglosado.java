@@ -9,13 +9,17 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
 import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
+import model.beans.Coste;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Tabla;
 import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
+import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 
 public class LineaCosteDesglosado extends ParamTable implements Tableable  {
 	
@@ -105,6 +109,25 @@ public class LineaCosteDesglosado extends ParamTable implements Tableable  {
 	
 	@Override
 	public AnchorPane getFilaEmbebida(TableRowDataFeatures<Tableable> expander) {
+		return null;
+	}
+	
+	@Override
+	public String resaltar(int fila, String columna, Tabla tabla) {
+		LineaCosteDesglosado ldm = (LineaCosteDesglosado) tabla.listaDatosFiltrada.get(fila);
+		try {
+			Concepto c = ldm.listaConceptos.get("SISTEMA");
+			Coste cost = c.coste;
+			if (Sistema.getInstanceTotal().codigo.equals(cost.sistema.codigo)) {
+				return "-fx-background-color: " + Constantes.COLOR_GRIS + "; -fx-font-weight: bold;";
+			}
+			else
+				return null;
+		} catch (Exception e) {
+			
+		}
+		
+		
 		return null;
 	}
 	  	

@@ -20,6 +20,7 @@ public class RelProyectoDemanda implements Cargable{
 	public int idPresupuesto = 0;
 	public int idVsPresupuesto = 0;
 	public int idVsPresupuestoDem = 0;
+	public int idApunteContable = 0;
 
 	public RelProyectoDemanda() {
 		listaDemandas = new ArrayList<Proyecto>();
@@ -44,6 +45,7 @@ public class RelProyectoDemanda implements Cargable{
 		while (itCargable.hasNext()) {
 			RelProyectoDemanda rec = (RelProyectoDemanda) itCargable.next();
 			RelProyectoDemanda recAux = null;
+			Proyecto recAux2 = null;
 			
 			try {
 				if (listaProyectos.containsKey(rec.proyecto.id)) {
@@ -53,7 +55,33 @@ public class RelProyectoDemanda implements Cargable{
 					recAux = rec;
 				}
 				
-				recAux.listaDemandas.add(rec.demandaLinea);
+				Presupuesto p = new Presupuesto();
+				ArrayList<Presupuesto> listaPres = null;
+				
+				if (rec.demandaLinea!=null) {
+					recAux2 = rec.demandaLinea;
+					listaPres = p.buscaPresupuestos(recAux2.id);
+				}
+				else {
+				    ApunteContable ap = new ApunteContable();
+				    ap.id = rec.idApunteContable;
+				    recAux2 = ap.buscaApunteContable();
+				    p.idApunteContable = recAux2.id;
+					listaPres = p.buscaPresupuestosAPunteContable();
+				}
+				
+				recAux.listaDemandas.add(recAux2);
+				
+				Iterator<Presupuesto> itPres = listaPres.iterator();
+				while (itPres.hasNext()) {
+					Presupuesto pres = itPres.next();
+					if (pres.version == rec.idVsPresupuestoDem)
+					{
+						recAux2.presupuestoActual = pres;
+						recAux2.presupuestoActual.cargaCostes();
+					}	
+				}
+				
 				
 			} catch (Exception e) {
 				
@@ -111,7 +139,7 @@ public class RelProyectoDemanda implements Cargable{
 		HashMap<String, Object> salida = (HashMap<String, Object>) o;
 		
 		try {
-				if (salida.get("rpdId")==null) this.id = 0; else this.id = (Integer) salida.get("reltrId");
+				if (salida.get("rpdId")==null) this.id = 0; else this.id = (Integer) salida.get("rpdId");
 				
 				if (salida.get("rpdIdProy")==null) this.proyecto = null; else { 
 					int id = (Integer) salida.get("rpdIdProy");	
@@ -136,6 +164,11 @@ public class RelProyectoDemanda implements Cargable{
 				if (salida.get("rpdIdvsPresDem")==null) this.idVsPresupuestoDem = -1; else { 
 					int id = (Integer) salida.get("rpdIdvsPresDem");	
 					this.idVsPresupuestoDem = id;
+				}
+				
+				if (salida.get("rpdIdApCont")==null) this.idApunteContable = -1; else { 
+					int id = (Integer) salida.get("rpdIdApCont");	
+					this.idApunteContable = id;
 				}
 		} catch (Exception e) {
 			

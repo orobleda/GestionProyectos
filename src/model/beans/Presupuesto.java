@@ -19,6 +19,7 @@ public class Presupuesto implements Cargable {
 	public int id = 0;
 	public int version =0;
 	public int idProyecto = 0;
+	public int idApunteContable = 0;
 	public Date fxAlta = null;
 	public Proyecto p = null;
 	public TipoPresupuesto tipo = null;
@@ -28,6 +29,9 @@ public class Presupuesto implements Cargable {
 	public boolean actualiza = false;
 	
 	public boolean calculado = false;
+	
+	public static final int SUMAR = 1;
+	public static final int RESTAR = -1;
 	
 	public void calculaTotales() {
 		Coste costeTotal = (Coste) costesTotal.values().toArray()[0];
@@ -86,6 +90,7 @@ public class Presupuesto implements Cargable {
 			if (salida.get("presDesc")==null) {      this.descripcion = "";} else this.descripcion = (String) salida.get("presDesc");
 			if (salida.get("presFxAlta")==null) {    this.fxAlta = null;   } else this.fxAlta =  (Date) FormateadorDatos.parseaDato((String) salida.get("presFxAlta"),FormateadorDatos.FORMATO_FECHA);
 			if (salida.get("presTipoP")==null) {     this.tipo = null;     } else this.tipo = TipoPresupuesto.listado.get((Integer) salida.get("presTipoP"));
+			if (salida.get("presApCont")==null) {     this.idApunteContable = -1;     } else this.idApunteContable = (Integer) salida.get("presApCont");
 		} catch (Exception e) {
 			
 		}
@@ -176,7 +181,15 @@ public class Presupuesto implements Cargable {
 				listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
 				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.version));
 				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,FormateadorDatos.formateaDato(this.fxAlta,FormateadorDatos.FORMATO_FECHA)));
-				listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.p.id));
+				
+				if (this.p.apunteContable) {
+					listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_INT,this.p.id));
+					listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,-1));
+				} else {
+					listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.p.id));
+					listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_INT,-1));
+				}
+				
 				listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_INT,this.tipo.id));
 				listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_STR,this.descripcion));
 				
@@ -203,7 +216,15 @@ public class Presupuesto implements Cargable {
 	
 	public Presupuesto dameUltimaVersionPresupuesto(Proyecto p) {
 		Presupuesto prep = new Presupuesto();
-        ArrayList<Presupuesto> presupuestos = prep.buscaPresupuestos(p.id);
+        ArrayList<Presupuesto> presupuestos = null;
+        
+        if (p.apunteContable) {
+        	prep.idApunteContable = p.id;
+        	presupuestos = prep.buscaPresupuestosAPunteContable();
+        }
+        	
+        else 
+        	presupuestos = prep.buscaPresupuestos(p.id);
         
         Presupuesto salida = null;
         
@@ -223,11 +244,32 @@ public class Presupuesto implements Cargable {
         return salida;
 	}
 	
-	public ArrayList<Presupuesto> buscaPresupuestos(int idProyecto) { 			
+	public ArrayList<Presupuesto> buscaPresupuestosAPunteContable() {
+		ConsultaBD consulta = new ConsultaBD();
+		
+		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.idApunteContable));
+			
+		
+		ArrayList<Cargable> presupuestos = consulta.ejecutaSQL("cConsultaPresupuesto", listaParms, this);
+		
+		Iterator<Cargable> itCargable = presupuestos.iterator();
+		ArrayList<Presupuesto> salida = new ArrayList<Presupuesto> ();
+		
+		while (itCargable.hasNext()) {
+			Presupuesto prep = (Presupuesto) itCargable.next();
+			salida.add(prep);
+		}
+		
+		return salida;
+}
+	
+	public ArrayList<Presupuesto> buscaPresupuestos(int idProyecto) {
 			ConsultaBD consulta = new ConsultaBD();
 			
 			List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idProyecto));
+				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idProyecto));
+				
 			
 			ArrayList<Cargable> presupuestos = consulta.ejecutaSQL("cConsultaPresupuesto", listaParms, this);
 			
@@ -240,6 +282,41 @@ public class Presupuesto implements Cargable {
 			}
 			
 			return salida;
+	}
+	
+	public Presupuesto operarPresupuestos(Presupuesto presOperar, int operacion) {
+		if (this.costes == null) {
+			this.costes = new HashMap<Integer, Coste>();
+		}
+		
+		HashMap<String, String> sistemasProcesados = new HashMap<String, String>();
+		
+		Iterator<Coste> itCostes = this.costes.values().iterator(); 
+		while (itCostes.hasNext()) {
+			Coste c = itCostes.next();
+			
+			Iterator<Coste> itCosteOperar = presOperar.costes.values().iterator();
+			while (itCosteOperar.hasNext()) {
+				Coste cAux = itCosteOperar.next();
+				
+				if (cAux.sistema.codigo.equals(c.sistema.codigo)) {
+					sistemasProcesados.put(c.sistema.codigo,c.sistema.codigo);
+					c = c.operarCostes(cAux, operacion);
+				}
+			}
+		}
+		
+		itCostes = presOperar.costes.values().iterator();
+		while (itCostes.hasNext()) {
+			Coste c = itCostes.next();
+			
+			if (!sistemasProcesados.containsKey(c.sistema.codigo)) {
+				if (operacion == Presupuesto.SUMAR)
+					this.costes.put(c.id, c);
+			}
+		}
+		
+		return this;
 	}
 	
 	public Presupuesto clone() {

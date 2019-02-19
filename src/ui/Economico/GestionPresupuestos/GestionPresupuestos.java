@@ -1,17 +1,22 @@
 package ui.Economico.GestionPresupuestos;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.controlsfx.control.PopOver;
+
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
@@ -21,6 +26,7 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.ControladorPantalla;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Tabla;
 import ui.Tableable;
 import ui.Economico.GestionPresupuestos.Tables.DesgloseDemandasAsocidasTabla;
@@ -43,7 +49,7 @@ public class GestionPresupuestos implements ControladorPantalla {
     public Tabla tablaDemandas;
 
     @FXML
-    private ComboBox<Proyecto> cbProyecto;
+    public ComboBox<Proyecto> cbProyecto;
 
     @FXML
     private ImageView imGuardarNuevaVersion;
@@ -57,19 +63,19 @@ public class GestionPresupuestos implements ControladorPantalla {
 
     @FXML
     private ImageView imAniadirDemanda;
-
-    @FXML
-    private ImageView imBuscarVersion;
-    private GestionBotones gbBuscarVersion;
+    private GestionBotones gbAniadirDemanda;
 
     @FXML
     private ImageView imGuardar;
 
     @FXML
-    private ComboBox<Presupuesto> cbVersion;
+    public ComboBox<Presupuesto> cbVersion;
 	
 	@FXML
 	private AnchorPane anchor;
+	
+	ArrayList<Proyecto> listaDemAsociadas = null;
+	Presupuesto presOperado = null;
 	
 	
 	public void initialize(){
@@ -85,6 +91,18 @@ public class GestionPresupuestos implements ControladorPantalla {
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada ();  	}   );
 		
+		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "Mas3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					aniadirEstimacion();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Añadir Demanda");
+		gbAniadirDemanda.desActivarBoton();
+		
 		gbNuevoProyecto = new GestionBotones(imNuevoProyecto, "Nuevo3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
@@ -95,17 +113,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 				}
             } }, "Nuevo Proyecto");
 		gbNuevoProyecto.activarBoton();
-		
-		gbBuscarVersion = new GestionBotones(imBuscarVersion, "Buscar3", false, new EventHandler<MouseEvent>() {        
-			@Override
-            public void handle(MouseEvent t)
-            {
-				try {						        
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            } }, "Buscar Versión Presupuesto");
-		gbBuscarVersion.desActivarBoton();
 		
 		tablaCoste.pintaTabla(new ArrayList<Object>());
 		tablaDemandas.pintaTabla(new ArrayList<Object>());
@@ -124,12 +131,21 @@ public class GestionPresupuestos implements ControladorPantalla {
 			rpD.pres = p;
 			rpD.proyecto = proy;
 			
-			ArrayList<Proyecto> listaDemRel = proy.getDemandasAsociadas();
+			this.listaDemAsociadas = proy.getDemandasAsociadas();
 			
-			listaDemRel.add(proy);
+			this.presOperado = new Presupuesto();
+			Iterator<Proyecto> itDemandas = this.listaDemAsociadas.iterator();
 			
+			while (itDemandas.hasNext()) {
+				Proyecto pDemanda = itDemandas.next();
+				
+				this.presOperado = this.presOperado.operarPresupuestos(pDemanda.presupuestoActual, Presupuesto.SUMAR);
+				
+			}
+			
+						
 			ArrayList<Object> listaPintable = new ArrayList<Object>();
-			listaPintable.addAll(listaDemRel);
+			listaPintable.addAll(listaDemAsociadas);
 			
 			tablaDemandas.pintaTabla(listaPintable);
 			
@@ -137,7 +153,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 			HashMap<String,Concepto> listaConceptosDesglosado = null;
 			ArrayList<Object> listaConceptosDesglosada = new ArrayList<Object>();
 			
-			Iterator<Coste> itCoste = p.costes.values().iterator();
+			Iterator<Coste> itCoste = this.presOperado.costes.values().iterator();
 			float acumulado = 0;
 			float acumuladoSistema = 0;
 			Concepto caux = null;
@@ -202,6 +218,8 @@ public class GestionPresupuestos implements ControladorPantalla {
 			tablaCoste.pintaTabla(listaPintableConce);
 			tablaCoste.formateaTabla();
 			
+			gbAniadirDemanda.activarBoton();
+			
 		} catch (Exception es) {
 			es.printStackTrace();
 		}
@@ -218,6 +236,44 @@ public class GestionPresupuestos implements ControladorPantalla {
 		if (listado.size()>0) {
 			
 		}
+	}
+	
+	public void aniadirEstimacion() {
+		try {
+			
+			
+			FXMLLoader loader = new FXMLLoader();
+			
+			HashMap<String, Object> parametrosPaso = new HashMap<String, Object>();
+			
+			parametrosPaso.put("filaDatos", null);							        	
+			parametrosPaso.put("columna", null);
+			parametrosPaso.put("evento", null);
+			parametrosPaso.put("controladorPantalla", this);
+			
+			AniadeDemanda controlPantalla = new AniadeDemanda();
+	    	
+	    	if (ParamTable.po!=null){
+	    		ParamTable.po.hide();
+	    		ParamTable.po = null;
+	    	}
+	    	
+	    	parametrosPaso.put("demandasAsignadas", this.listaDemAsociadas);
+	    	parametrosPaso.put("gestionPresupuestos", this);
+	    	
+	    	loader.setLocation(new URL(controlPantalla.getFXML()));
+		    Pane pane = loader.load();
+		    controlPantalla = (AniadeDemanda) loader.getController();
+		    controlPantalla.setParametrosPaso(parametrosPaso);
+		    ParamTable.po = new PopOver(pane);
+		    parametrosPaso.put("PopOver", ParamTable.po);
+		    ParamTable.po.setTitle("");
+		    ParamTable.po.show(this.tDemandas);
+		    ParamTable.po.setAnimated(true);
+		    ParamTable.po.setAutoHide(true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} 
 	}
 	
 	@Override

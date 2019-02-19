@@ -1,3 +1,4 @@
+/ui/
 /Analizar3_DES.png
 /Analizar3_ON.png
 /Analizar3_PAS.png
@@ -13,8 +14,6 @@
 /DesAprobar_DES.png
 /DesAprobar_ON.png
 /DesAprobar_PAS.png
-/proyectosDemanda.png
-/ui/
 /DesAprobar_PRES.png
 /Editar3_DES.png
 /Editar3_ON.png
@@ -34,6 +33,7 @@
 /Fraccionar3_PRES.png
 /Guardar3_DES.png
 /Guardar3_ON.png
+/proyectosDemanda.png
 /Guardar3_PAS.png
 /Guardar3_PRES.png
 /GuardarAniadir3_DES.png
@@ -72,11 +72,11 @@
 /botones.psd
 /botonesx200.psd
 /botonesx25.psd
-/botonesx50.psd
-/buscar.png
 /AccesoBD.xml
 /application.css
 /application/
+/botonesx50.psd
+/buscar.png
 /controller/
 /edit.png
 /eliminar.png
