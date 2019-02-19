@@ -89,9 +89,9 @@ public class GestionPresupuestos implements ControladorPantalla {
 		cbProyecto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { buscaPresupuestos (newValue);  	}   );
 		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
-		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada ();  	}   );
+		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada (true);  	}   );
 		
-		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "Mas3", false, new EventHandler<MouseEvent>() {        
+		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "Editar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -118,35 +118,77 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tablaDemandas.pintaTabla(new ArrayList<Object>());
 	}
 	
-	public void versionSeleccionada() {
+	public void guardarCambiosPresupuesto() {
+		// actualizar modo a neutro!!!!!
+	}
+	
+	public void tratarModificacionesPresupuesto(Proyecto p) {
+		Proyecto pEncontrado = null;
+		
+		Iterator<Proyecto> itAsociados = listaDemAsociadas.iterator();
+		while (itAsociados.hasNext()) {
+			Proyecto asoc = itAsociados.next();
+			if (asoc.apunteContable == p.apunteContable && asoc.id == p.id) {
+				asoc.modo = p.modo;
+				pEncontrado = asoc;
+			}
+		}
+		
+		int operacion = 0;
+		
+		if (p.modo == Proyecto.ANIADIR) {
+			operacion = Presupuesto.SUMAR;
+		}
+		if (p.modo == Proyecto.ELIMINAR) {
+			operacion = Presupuesto.RESTAR;
+		}
+		if (p.modo == Proyecto.MODIFICAR) {
+			this.presOperado = this.presOperado.operarPresupuestos(pEncontrado.presupuestoActual, Presupuesto.RESTAR);
+			operacion = Presupuesto.SUMAR;
+		}
+
+		this.presOperado = this.presOperado.operarPresupuestos(p.presupuestoActual, operacion);
+		
+		versionSeleccionada(false);
+		
+		ParamTable.po.hide();
+	}
+	
+	public void versionSeleccionada(boolean recargar) {
 		try {
 			Presupuesto p = cbVersion.getValue();
 			Proyecto proy = cbProyecto.getValue();
 			proy.presupuestoActual = p;
 			
-			this.tNomProyecto.setText(proy.nombre);
-			this.tVsProyecto.setText(p.toString());
-			
-			RelProyectoDemanda rpD = new RelProyectoDemanda();
-			rpD.pres = p;
-			rpD.proyecto = proy;
-			
-			this.listaDemAsociadas = proy.getDemandasAsociadas();
-			
-			this.presOperado = new Presupuesto();
-			Iterator<Proyecto> itDemandas = this.listaDemAsociadas.iterator();
-			
-			while (itDemandas.hasNext()) {
-				Proyecto pDemanda = itDemandas.next();
+			if (recargar) {
+				this.tNomProyecto.setText(proy.nombre);
+				this.tVsProyecto.setText(p.toString());
 				
-				this.presOperado = this.presOperado.operarPresupuestos(pDemanda.presupuestoActual, Presupuesto.SUMAR);
+				RelProyectoDemanda rpD = new RelProyectoDemanda();
+				rpD.pres = p;
+				rpD.proyecto = proy;
 				
+				this.listaDemAsociadas = proy.getDemandasAsociadas();
+				
+				this.presOperado = new Presupuesto();
+				Iterator<Proyecto> itDemandas = this.listaDemAsociadas.iterator();
+				
+				while (itDemandas.hasNext()) {
+					Proyecto pDemanda = itDemandas.next();
+					
+					this.presOperado = this.presOperado.operarPresupuestos(pDemanda.presupuestoActual, Presupuesto.SUMAR);
+				}
 			}
 			
-						
 			ArrayList<Object> listaPintable = new ArrayList<Object>();
-			listaPintable.addAll(listaDemAsociadas);
 			
+			Iterator<Proyecto> itListaDemandasAsociadas = listaDemAsociadas.iterator();
+			while (itListaDemandasAsociadas.hasNext()) {
+				Proyecto demanda = itListaDemandasAsociadas.next();
+				if (demanda.modo!=Proyecto.ELIMINAR)
+					listaPintable.add(demanda);
+			}
+									
 			tablaDemandas.pintaTabla(listaPintable);
 			
 			HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();

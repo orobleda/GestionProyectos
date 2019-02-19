@@ -17,7 +17,6 @@ import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
-import model.beans.RelProyectoDemanda;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.ControladorPantalla;
@@ -107,11 +106,11 @@ public class AniadeDemanda implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-				
+					aniadePresupuesto();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "GuardarConcepto");
+            } }, "Añade demanda");
 		gbGuardarAniadir.desActivarBoton();
 		
 		gbGuardarEliminar = new GestionBotones(this.imGuardarEliminar, "GuardarBorrar3", false, new EventHandler<MouseEvent>() {        
@@ -119,11 +118,11 @@ public class AniadeDemanda implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-				
+					eliminaPresupuesto();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "GuardarConcepto");
+            } }, "Elimina Demanda");
 		gbGuardarEliminar.desActivarBoton();
 		
 		gbGuardarEditar = new GestionBotones(this.imGuardarEditar, "GuardarEditar3", false, new EventHandler<MouseEvent>() {        
@@ -131,12 +130,41 @@ public class AniadeDemanda implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-				
+					modificaPresupuesto();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "GuardarConcepto");
+            } }, "Guarda Modificación Presupuesto");
 		gbGuardarEditar.desActivarBoton();
+	}
+	
+	private void aniadePresupuesto() {
+		Proyecto p = this.cbEstimacion.getValue();
+		p.presupuestoActual = this.cbVersionPres.getValue();
+		
+		p.modo = Proyecto.ANIADIR;
+		
+		this.gp.tratarModificacionesPresupuesto(p);				
+	}
+	
+	private void eliminaPresupuesto() {
+		Proyecto p = this.cbEstimacion.getValue();
+		p.presupuestoActual = this.cbVersionPres.getValue();
+		
+		p.modo = Proyecto.ELIMINAR;
+		
+		this.gp.tratarModificacionesPresupuesto(p);	
+		
+		
+	}
+	
+	private void modificaPresupuesto() {
+		Proyecto p = this.cbEstimacion.getValue();
+		p.presupuestoActual = this.cbVersionPres.getValue();
+		
+		p.modo = Proyecto.MODIFICAR;
+		
+		this.gp.tratarModificacionesPresupuesto(p);				
 	}
 	
 	private void buscaPresupuestos(Proyecto p) {
@@ -188,6 +216,50 @@ public class AniadeDemanda implements ControladorPantalla {
 		pintaPresupuesto(proy, p);
 	}
 	
+	public void estudiaAccionPresupuesto() {
+		Iterator<Proyecto> itDemandasAsociadas = this.listaDemandasAsociadas.iterator();
+		boolean encontrado = false;
+		
+		Proyecto pSeleccionado = this.cbEstimacion.getValue();
+		Proyecto pEncontrado = null;
+		
+		while (itDemandasAsociadas.hasNext()) {
+			Proyecto p = itDemandasAsociadas.next();
+			
+			if (pSeleccionado.id == p.id && pSeleccionado.apunteContable == p.apunteContable) {
+				encontrado = true;
+				pEncontrado = p; 
+				break;
+			}
+		}
+		
+		if (pSeleccionado.apunteContable) {
+			this.vbDesgloseConceptos.setDisable(false);
+			gbGuardarConcepto.activarBoton();
+		} else {
+			this.vbDesgloseConceptos.setDisable(true);
+			gbGuardarConcepto.desActivarBoton();
+		}
+		
+		this.gbGuardarEditar.desActivarBoton();
+		this.gbGuardarAniadir.desActivarBoton();
+		this.gbGuardarEliminar.desActivarBoton();
+		
+		if (encontrado) {
+			if (pEncontrado.apunteContable) {
+				this.gbGuardarEditar.activarBoton();
+			} else {
+				if (pEncontrado.modo == Proyecto.NEUTRO || pEncontrado.modo == Proyecto.ANIADIR) {
+					this.gbGuardarEliminar.activarBoton();					
+				} else {
+					this.gbGuardarAniadir.activarBoton();
+				}
+			}
+		} else {
+			this.gbGuardarAniadir.activarBoton();
+		}		
+	}
+	
 	public void pintaPresupuesto(Proyecto proyecto, Presupuesto pres) {
 		try { 
 			if (pres==null) {
@@ -200,19 +272,7 @@ public class AniadeDemanda implements ControladorPantalla {
 			Proyecto proy = proyecto;
 			proy.presupuestoActual = p;
 			
-			if (proyecto.apunteContable) {
-				this.vbDesgloseConceptos.setDisable(false);
-				gbGuardarConcepto.activarBoton();
-				this.gbGuardarEditar.activarBoton();
-				this.gbGuardarAniadir.desActivarBoton();
-				this.gbGuardarEliminar.desActivarBoton();
-			} else {
-				this.vbDesgloseConceptos.setDisable(true);
-				gbGuardarConcepto.desActivarBoton();
-				
-				
-				
-			}
+			estudiaAccionPresupuesto();
 			
 			p.cargaCostes();
 			

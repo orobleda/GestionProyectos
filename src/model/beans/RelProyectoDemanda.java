@@ -70,6 +70,7 @@ public class RelProyectoDemanda implements Cargable{
 					listaPres = p.buscaPresupuestosAPunteContable();
 				}
 				
+				recAux2.modo = Proyecto.NEUTRO;
 				recAux.listaDemandas.add(recAux2);
 				
 				Iterator<Presupuesto> itPres = listaPres.iterator();
