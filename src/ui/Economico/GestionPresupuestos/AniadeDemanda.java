@@ -12,17 +12,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import model.beans.BaseCalculoConcepto;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.beans.Tarifa;
+import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.ControladorPantalla;
 import ui.GestionBotones;
 import ui.Tabla;
 import ui.Tableable;
+import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
 
 public class AniadeDemanda implements ControladorPantalla {
@@ -36,24 +41,12 @@ public class AniadeDemanda implements ControladorPantalla {
 	private AnchorPane anchor;
 	
     @FXML
-    private TextField tImporte;
-
-    @FXML
     private TableView<Tableable> tTablaConceptos;
     public Tabla tablaCoste;
 
     @FXML
-    private ComboBox<?> cbTarifa;
-
-    @FXML
     private ImageView imGuardarConcepto;
     private GestionBotones gbGuardarConcepto;
-
-    @FXML
-    private ComboBox<?> cbConcepto;
-
-    @FXML
-    private TextField tHoras;
 
     @FXML
     private ImageView imGuardarEliminar;
@@ -72,6 +65,42 @@ public class AniadeDemanda implements ControladorPantalla {
 
     @FXML
     private ComboBox<Presupuesto> cbVersionPres;
+    
+    @FXML
+    private HBox hbCantidad;
+
+    @FXML
+    private ComboBox<BaseCalculoConcepto> cbBaseCalculo;
+
+    @FXML
+    private ComboBox<Tarifa> cbTarifa;
+
+    @FXML
+    private TextField teCantidad;    
+
+    @FXML
+    private ComboBox<Sistema> cbSistema;
+
+    @FXML
+    private ComboBox<MetaConcepto> cbPorcentaje;
+
+    @FXML
+    private ComboBox<MetaConcepto> cbConcepto;
+
+    @FXML
+    private TextField tePorcentaje;
+
+    @FXML
+    private HBox hbPorcentaje;
+
+    @FXML
+    private TextField teHoras;
+
+    @FXML
+    private TextField teCantidadEst;    
+
+    @FXML
+    private HBox hbTarifa;
     
     @FXML
     private VBox vbDesgloseConceptos;
@@ -136,6 +165,191 @@ public class AniadeDemanda implements ControladorPantalla {
 				}
             } }, "Guarda Modificación Presupuesto");
 		gbGuardarEditar.desActivarBoton();
+		
+		this.cbSistema.getItems().addAll(Sistema.listado.values());
+		this.cbConcepto.getItems().addAll(MetaConcepto.listado.values());
+		
+		this.cbBaseCalculo.getItems().addAll(BaseCalculoConcepto.listado());
+		cbBaseCalculo.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { seleccionaBaseCalculo (newValue);	}  );
+		
+		HashMap<String, Object> filtros = new HashMap<String, Object>();
+		filtros.put(Tarifa.filtro_VIGENTES, new Boolean(true));
+		
+		cbTarifa.getItems().addAll(new Tarifa().listado(filtros));
+		
+		teCantidad.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { calculaBaseCoste();  }  });
+		teHoras.focusedProperty().addListener((ov, oldV, newV) -> {    if (!newV) { calculaBaseHoras();  }  });
+		cbTarifa.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { calculaBaseHoras();   	});
+		tePorcentaje.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { calculaBasePorcentaje(); } });
+		cbPorcentaje.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { calculaBasePorcentaje(); 	}   );
+	}
+	
+	public void calculaBaseCoste() {
+		try {
+			Presupuesto pres = this.cbVersionPres.getValue();
+			Concepto c = null;
+			Coste coste = null;
+			
+			Iterator<Coste> itCoste = pres.costes.values().iterator();
+			while (itCoste.hasNext()) {
+				coste = itCoste.next();
+				Sistema sAux = coste.sistema;
+				
+				if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+					c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
+					break;
+				}
+			}
+			
+			if (c==null) {
+				c = new Concepto();
+			}
+			
+			c = c.clone();
+			c.tipoConcepto = this.cbConcepto.getValue();
+			c.valor = (Float) FormateadorDatos.parseaDato(teCantidad.getText(), FormateadorDatos.FORMATO_MONEDA);
+			c.baseCalculo = cbBaseCalculo.getValue();	
+			
+			if (coste==null) {
+				c.calculaCantidadEstimada(new HashMap<String,Concepto>());
+			} else {
+				c.calculaCantidadEstimada(coste.conceptosCoste);
+			}			
+			
+		    teCantidadEst.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA)); 
+		    teCantidad.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
+            
+		} catch (Exception e)  {}
+	}
+	
+	public void calculaBasePorcentaje() {
+		try {
+			MetaConcepto mcc = cbPorcentaje.getValue();
+			
+			if (mcc!=null) {
+				Presupuesto pres = this.cbVersionPres.getValue();
+				Concepto c = null;
+				Coste coste = null;
+				
+				Iterator<Coste> itCoste = pres.costes.values().iterator();
+				while (itCoste.hasNext()) {
+					coste = itCoste.next();
+					Sistema sAux = coste.sistema;
+					
+					if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+						c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
+						break;
+					}
+				}
+				
+				if (c==null) {
+					c = new Concepto();
+				}
+				
+				c = c.clone();
+				c.tipoConcepto = this.cbConcepto.getValue();
+				c.respectoPorcentaje = mcc;
+				c.porcentaje = (Integer) FormateadorDatos.parseaDato(tePorcentaje.getText(), FormateadorDatos.FORMATO_INT);
+				c.baseCalculo = cbBaseCalculo.getValue();
+				
+				if (coste==null) {
+					c.calculaCantidadEstimada(new HashMap<String,Concepto>());
+				} else {
+					c.calculaCantidadEstimada(coste.conceptosCoste);
+				}
+				
+				teCantidadEst.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
+			} else {
+				String valor = FormateadorDatos.formateaDato("0", FormateadorDatos.FORMATO_MONEDA);
+				teCantidadEst.setText(valor);
+			}
+		} catch (Exception e){
+			teCantidadEst.setText("0 €");
+		}
+	}
+	
+	public void calculaBaseHoras() {
+		try {
+			Tarifa tf = cbTarifa.getValue();
+			
+			if (tf!=null) {
+				Presupuesto pres = this.cbVersionPres.getValue();
+				Concepto c = null;
+				Coste coste = null;
+				
+				Iterator<Coste> itCoste = pres.costes.values().iterator();
+				while (itCoste.hasNext()) {
+					coste = itCoste.next();
+					Sistema sAux = coste.sistema;
+					
+					if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+						c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
+						break;
+					}
+				}
+				
+				if (c==null) {
+					c = new Concepto();
+				}
+				
+				c = c.clone();
+				
+				c.tarifa = tf;
+				c.horas = (Float) FormateadorDatos.parseaDato(teHoras.getText(), FormateadorDatos.FORMATO_MONEDA);
+				c.baseCalculo = cbBaseCalculo.getValue();
+				
+				if (coste==null) {
+					c.calculaCantidadEstimada(new HashMap<String,Concepto>());
+				} else {
+					c.calculaCantidadEstimada(coste.conceptosCoste);
+				}	
+				
+				teCantidadEst.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
+				teHoras.setText(FormateadorDatos.formateaDato(teHoras.getText(), FormateadorDatos.FORMATO_REAL));
+			} else {
+				String valor = FormateadorDatos.formateaDato("0", FormateadorDatos.FORMATO_MONEDA);
+				teCantidadEst.setText(valor);
+			}
+		} catch (Exception e){
+			
+		}
+	}
+	
+	public void seleccionaBaseCalculo(BaseCalculoConcepto bcc){
+		try {
+			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_COSTE  ) {
+				hbTarifa.setVisible(false);
+				hbCantidad.setVisible(true);
+				hbPorcentaje.setVisible(false);
+				teCantidad.setText("");
+			}
+			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_HORAS  ) {
+				hbTarifa.setVisible(true);
+				hbCantidad.setVisible(false);
+				hbPorcentaje.setVisible(false);	
+				cbTarifa.getItems().removeAll(cbTarifa.getItems());
+				cbTarifa.getItems().addAll(new Tarifa().vigentes());
+			}
+			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
+				hbTarifa.setVisible(false);
+				hbCantidad.setVisible(false);
+				hbPorcentaje.setVisible(true);	
+								
+				Iterator<MetaConcepto> itMcConcepto = new MetaConcepto().aPorcentaje().iterator();
+				while (itMcConcepto.hasNext()) {
+					MetaConcepto mc = itMcConcepto.next();
+					if (!mc.codigo.equals(this.cbConcepto.getValue().codigo)) {
+						this.cbPorcentaje.getItems().add(mc);
+					}
+				}
+			}
+			
+			gbGuardarConcepto.desActivarBoton();
+			teCantidadEst.setText("");
+						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void aniadePresupuesto() {
@@ -154,8 +368,6 @@ public class AniadeDemanda implements ControladorPantalla {
 		p.modo = Proyecto.ELIMINAR;
 		
 		this.gp.tratarModificacionesPresupuesto(p);	
-		
-		
 	}
 	
 	private void modificaPresupuesto() {
@@ -180,7 +392,6 @@ public class AniadeDemanda implements ControladorPantalla {
 			listado = pres.buscaPresupuestos(p.id);
 		
 		cbVersionPres.getItems().addAll(listado);
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -235,9 +446,12 @@ public class AniadeDemanda implements ControladorPantalla {
 		
 		if (pSeleccionado.apunteContable) {
 			this.vbDesgloseConceptos.setDisable(false);
+			this.hbPorcentaje.setVisible(false);
+			this.hbCantidad.setVisible(false);
+			this.hbTarifa.setVisible(false);
 			gbGuardarConcepto.activarBoton();
 		} else {
-			this.vbDesgloseConceptos.setDisable(true);
+			this.vbDesgloseConceptos.setDisable(true);			
 			gbGuardarConcepto.desActivarBoton();
 		}
 		
