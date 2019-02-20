@@ -27,7 +27,6 @@ import ui.ControladorPantalla;
 import ui.GestionBotones;
 import ui.Tabla;
 import ui.Tableable;
-import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
 
 public class AniadeDemanda implements ControladorPantalla {
@@ -123,7 +122,7 @@ public class AniadeDemanda implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-				
+					aniadeConcepto();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -220,6 +219,10 @@ public class AniadeDemanda implements ControladorPantalla {
 		    teCantidad.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
             
 		} catch (Exception e)  {}
+		
+		if (!"".equals(teCantidadEst.getText())) {
+			this.gbGuardarConcepto.activarBoton();
+		}
 	}
 	
 	public void calculaBasePorcentaje() {
@@ -249,7 +252,7 @@ public class AniadeDemanda implements ControladorPantalla {
 				c = c.clone();
 				c.tipoConcepto = this.cbConcepto.getValue();
 				c.respectoPorcentaje = mcc;
-				c.porcentaje = (Integer) FormateadorDatos.parseaDato(tePorcentaje.getText(), FormateadorDatos.FORMATO_INT);
+				c.porcentaje = ((Float) FormateadorDatos.parseaDato(tePorcentaje.getText(), FormateadorDatos.FORMATO_PORC)).intValue();
 				c.baseCalculo = cbBaseCalculo.getValue();
 				
 				if (coste==null) {
@@ -259,12 +262,17 @@ public class AniadeDemanda implements ControladorPantalla {
 				}
 				
 				teCantidadEst.setText(FormateadorDatos.formateaDato(c.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
+				tePorcentaje.setText(FormateadorDatos.formateaDato(tePorcentaje.getText(), FormateadorDatos.FORMATO_PORC));
 			} else {
 				String valor = FormateadorDatos.formateaDato("0", FormateadorDatos.FORMATO_MONEDA);
 				teCantidadEst.setText(valor);
 			}
 		} catch (Exception e){
 			teCantidadEst.setText("0 €");
+		}
+		
+		if (!"".equals(teCantidadEst.getText())) {
+			this.gbGuardarConcepto.activarBoton();
 		}
 	}
 	
@@ -313,33 +321,44 @@ public class AniadeDemanda implements ControladorPantalla {
 		} catch (Exception e){
 			
 		}
+		
+		if (!"".equals(teCantidadEst.getText())) {
+			this.gbGuardarConcepto.activarBoton();
+		}
 	}
 	
 	public void seleccionaBaseCalculo(BaseCalculoConcepto bcc){
 		try {
-			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_COSTE  ) {
+			if (bcc==null) {
 				hbTarifa.setVisible(false);
-				hbCantidad.setVisible(true);
+				hbCantidad.setVisible(false);
 				hbPorcentaje.setVisible(false);
 				teCantidad.setText("");
-			}
-			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_HORAS  ) {
-				hbTarifa.setVisible(true);
-				hbCantidad.setVisible(false);
-				hbPorcentaje.setVisible(false);	
-				cbTarifa.getItems().removeAll(cbTarifa.getItems());
-				cbTarifa.getItems().addAll(new Tarifa().vigentes());
-			}
-			if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
-				hbTarifa.setVisible(false);
-				hbCantidad.setVisible(false);
-				hbPorcentaje.setVisible(true);	
-								
-				Iterator<MetaConcepto> itMcConcepto = new MetaConcepto().aPorcentaje().iterator();
-				while (itMcConcepto.hasNext()) {
-					MetaConcepto mc = itMcConcepto.next();
-					if (!mc.codigo.equals(this.cbConcepto.getValue().codigo)) {
-						this.cbPorcentaje.getItems().add(mc);
+			} else {
+				if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_COSTE  ) {
+					hbTarifa.setVisible(false);
+					hbCantidad.setVisible(true);
+					hbPorcentaje.setVisible(false);
+					teCantidad.setText("");
+				}
+				if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_HORAS  ) {
+					hbTarifa.setVisible(true);
+					hbCantidad.setVisible(false);
+					hbPorcentaje.setVisible(false);	
+					cbTarifa.getItems().removeAll(cbTarifa.getItems());
+					cbTarifa.getItems().addAll(new Tarifa().vigentes());
+				}
+				if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
+					hbTarifa.setVisible(false);
+					hbCantidad.setVisible(false);
+					hbPorcentaje.setVisible(true);	
+									
+					Iterator<MetaConcepto> itMcConcepto = new MetaConcepto().aPorcentaje().iterator();
+					while (itMcConcepto.hasNext()) {
+						MetaConcepto mc = itMcConcepto.next();
+						if (!mc.codigo.equals(this.cbConcepto.getValue().codigo)) {
+							this.cbPorcentaje.getItems().add(mc);
+						}
 					}
 				}
 			}
@@ -350,6 +369,68 @@ public class AniadeDemanda implements ControladorPantalla {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private Concepto aniadeConcepto() throws Exception {
+		Presupuesto pres = this.cbVersionPres.getValue();
+		Concepto c = null;
+		Coste coste = null;
+				
+		Iterator<Coste> itCoste = pres.costes.values().iterator();
+		while (itCoste.hasNext()) {
+			coste = itCoste.next();
+			Sistema sAux = coste.sistema;
+			
+			if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+				c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
+				break;
+			}
+		}
+		
+		if (coste == null) {
+			coste = new Coste();
+			coste.conceptosCoste = new HashMap<String,Concepto>();
+			coste.idPresupuesto = pres.id;
+			coste.sistema = cbSistema.getValue();
+			coste.version = 1;
+			
+			int id = cbSistema.getValue().hashCode() + this.cbConcepto.getValue().hashCode();
+			
+			pres.costes.put(id, coste);
+		}
+		
+		if (c==null) {
+			c = new Concepto();
+			coste.conceptosCoste.put(cbConcepto.getValue().codigo, c);
+			c.idCoste = coste.id;
+			c.s = coste.sistema;
+			c.tipoConcepto = this.cbConcepto.getValue();
+		}
+		
+		c.baseCalculo = this.cbBaseCalculo.getValue();
+		c.coste = coste;
+		
+		if (c.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_COSTE) {
+			c.valorEstimado = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+		}
+		
+		if (c.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_HORAS) {
+			c.valorEstimado = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+			c.valor = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+			c.horas = (Float) FormateadorDatos.parseaDato(this.teHoras.getText(),FormateadorDatos.FORMATO_REAL);
+			c.horasEstimado = (Float) FormateadorDatos.parseaDato(this.teHoras.getText(),FormateadorDatos.FORMATO_REAL);
+		}
+		
+		if (c.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_PORC) {
+			c.valorEstimado = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+			c.valor = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+			c.porcentaje = ((Float) FormateadorDatos.parseaDato(this.tePorcentaje.getText(),FormateadorDatos.FORMATO_PORC)).intValue();
+			c.respectoPorcentaje = this.cbPorcentaje.getValue();
+		}
+		
+		pintaPresupuesto(this.cbEstimacion.getValue(), pres,false);
+		
+		return c;
 	}
 	
 	private void aniadePresupuesto() {
@@ -424,7 +505,7 @@ public class AniadeDemanda implements ControladorPantalla {
 	public void versionSeleccionada() {
 		Presupuesto p = this.cbVersionPres.getValue();
 		Proyecto proy = this.cbEstimacion.getValue();
-		pintaPresupuesto(proy, p);
+		pintaPresupuesto(proy, p,true);
 	}
 	
 	public void estudiaAccionPresupuesto() {
@@ -450,6 +531,7 @@ public class AniadeDemanda implements ControladorPantalla {
 			this.hbCantidad.setVisible(false);
 			this.hbTarifa.setVisible(false);
 			gbGuardarConcepto.activarBoton();
+			seleccionaBaseCalculo(null);
 		} else {
 			this.vbDesgloseConceptos.setDisable(true);			
 			gbGuardarConcepto.desActivarBoton();
@@ -474,7 +556,7 @@ public class AniadeDemanda implements ControladorPantalla {
 		}		
 	}
 	
-	public void pintaPresupuesto(Proyecto proyecto, Presupuesto pres) {
+	public void pintaPresupuesto(Proyecto proyecto, Presupuesto pres, boolean actualiza) {
 		try { 
 			if (pres==null) {
 				ArrayList<Object> listaPintableConce = new ArrayList<Object>();
@@ -488,7 +570,8 @@ public class AniadeDemanda implements ControladorPantalla {
 			
 			estudiaAccionPresupuesto();
 			
-			p.cargaCostes();
+			if (actualiza)
+				p.cargaCostes();
 			
 			HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();
 			HashMap<String,Concepto> listaConceptosDesglosado = null;

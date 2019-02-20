@@ -149,7 +149,7 @@
             </HBox>
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
                      </image>
