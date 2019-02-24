@@ -242,6 +242,8 @@ public class AniadeDemanda implements ControladorPantalla {
 					if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
 						c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
 						break;
+					} else {
+						coste = null;
 					}
 				}
 				
@@ -329,6 +331,12 @@ public class AniadeDemanda implements ControladorPantalla {
 	
 	public void seleccionaBaseCalculo(BaseCalculoConcepto bcc){
 		try {
+			this.cbTarifa.setValue(new Tarifa());
+			this.tePorcentaje.setText("");
+			this.teCantidad.setText("");
+			this.teHoras.setText("");
+			this.cbPorcentaje.setValue(MetaConcepto.porId(MetaConcepto.ID_NINGUNO));
+			
 			if (bcc==null) {
 				hbTarifa.setVisible(false);
 				hbCantidad.setVisible(false);
@@ -365,9 +373,55 @@ public class AniadeDemanda implements ControladorPantalla {
 			
 			gbGuardarConcepto.desActivarBoton();
 			teCantidadEst.setText("");
+			
+			Presupuesto pres = this.cbVersionPres.getValue();
+			Coste coste;
+			
+			if (cbSistema.getValue()!=null) {
+				
+				Iterator<Coste> itCoste = pres.costes.values().iterator();
+				while (itCoste.hasNext()) {
+					coste = itCoste.next();
+					Sistema sAux = coste.sistema;
+					
+					if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+						Iterator<Concepto> itConcepto = coste.conceptosCoste.values().iterator();
+						while (itConcepto.hasNext()) {
+							Concepto cAux = itConcepto.next();
+							
+							if (cAux.tipoConcepto.id == this.cbConcepto.getValue().id) {
+								
+								if (this.cbBaseCalculo.getValue().id == BaseCalculoConcepto.CALCULO_BASE_COSTE  ) {
+									this.teCantidad.setText(FormateadorDatos.formateaDato(cAux.valorEstimado, FormateadorDatos.FORMATO_MONEDA));
+								}
+								if (this.cbBaseCalculo.getValue().id == BaseCalculoConcepto.CALCULO_BASE_HORAS  ) {
+									this.teHoras.setText(FormateadorDatos.formateaDato(cAux.horasEstimado, FormateadorDatos.FORMATO_REAL));
+									fijaTarifa(cAux.tarifa);
+								}
+								if (this.cbBaseCalculo.getValue().id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
+									this.cbPorcentaje.setValue(cAux.respectoPorcentaje);
+									this.teCantidad.setText(FormateadorDatos.formateaDato(new Float(cAux.porcentaje), FormateadorDatos.FORMATO_PORC));
+								}
+							}
+						}
+					} 
+				}
+			}
 						
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void fijaTarifa(Tarifa t) {
+		Iterator<Tarifa> itTarifa = this.cbTarifa.getItems().iterator();
+		
+		while (itTarifa.hasNext()) {
+			Tarifa tAux = itTarifa.next();
+			if (tAux.idTarifa == t.idTarifa) {
+				this.cbTarifa.setValue(tAux);
+				break;
+			}
 		}
 	}
 	
@@ -384,13 +438,15 @@ public class AniadeDemanda implements ControladorPantalla {
 			if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
 				c = coste.conceptosCoste.get(cbConcepto.getValue().codigo);
 				break;
+			} else {
+				coste = null;
 			}
 		}
 		
 		if (coste == null) {
 			coste = new Coste();
 			coste.conceptosCoste = new HashMap<String,Concepto>();
-			coste.idPresupuesto = pres.id;
+			coste.idPresupuesto = pres.id;	
 			coste.sistema = cbSistema.getValue();
 			coste.version = 1;
 			
@@ -412,9 +468,11 @@ public class AniadeDemanda implements ControladorPantalla {
 		
 		if (c.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_COSTE) {
 			c.valorEstimado = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
+			c.valor = c.valorEstimado;
 		}
 		
 		if (c.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_HORAS) {
+			c.tarifa = this.cbTarifa.getValue();
 			c.valorEstimado = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
 			c.valor = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
 			c.horas = (Float) FormateadorDatos.parseaDato(this.teHoras.getText(),FormateadorDatos.FORMATO_REAL);
@@ -426,6 +484,25 @@ public class AniadeDemanda implements ControladorPantalla {
 			c.valor = (Float) FormateadorDatos.parseaDato(this.teCantidadEst.getText(),FormateadorDatos.FORMATO_MONEDA);
 			c.porcentaje = ((Float) FormateadorDatos.parseaDato(this.tePorcentaje.getText(),FormateadorDatos.FORMATO_PORC)).intValue();
 			c.respectoPorcentaje = this.cbPorcentaje.getValue();
+		}
+		
+		itCoste = pres.costes.values().iterator();
+		while (itCoste.hasNext()) {
+			coste = itCoste.next();
+			Sistema sAux = coste.sistema;
+			
+			if (sAux.codigo.equals(cbSistema.getValue().codigo)) {
+				Iterator<Concepto> itConceptos  = coste.conceptosCoste.values().iterator();
+				
+				while (itConceptos.hasNext()) {
+					Concepto cAux = itConceptos.next();
+					if (cAux!=c) {
+						if (cAux.baseCalculo.id == BaseCalculoConcepto.CALCULO_BASE_PORC) {
+							cAux.calculaCantidadEstimada(coste.conceptosCoste);
+						}
+					}
+				}
+			}
 		}
 		
 		pintaPresupuesto(this.cbEstimacion.getValue(), pres,false);
@@ -466,8 +543,24 @@ public class AniadeDemanda implements ControladorPantalla {
 		Presupuesto pres = new Presupuesto();
 		ArrayList<Presupuesto> listado = null;
 		if (p.apunteContable) {
+			
+			Iterator<Proyecto> itProyectos = this.listaDemandasAsociadas.iterator();
+			while (itProyectos.hasNext()) {
+				Proyecto paux = itProyectos.next();
+				if (paux.apunteContable) {
+					listado = new ArrayList<Presupuesto>();
+					
+					if (paux.modo == Proyecto.MODIFICAR) {
+						listado.add(paux.presupuestoActual);
+						paux.presupuestoActual.enCurso = true;
+					}
+				}
+			}
+			
+			if (listado==null)
+				listado = new ArrayList<Presupuesto>();
 			pres.idApunteContable = p.id;
-			listado = pres.buscaPresupuestosAPunteContable();
+			listado.addAll(pres.buscaPresupuestosAPunteContable());
 		}
 		else 
 			listado = pres.buscaPresupuestos(p.id);
@@ -570,7 +663,7 @@ public class AniadeDemanda implements ControladorPantalla {
 			
 			estudiaAccionPresupuesto();
 			
-			if (actualiza)
+			if (actualiza && pres.enCurso == false)
 				p.cargaCostes();
 			
 			HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();

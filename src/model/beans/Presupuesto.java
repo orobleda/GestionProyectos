@@ -27,6 +27,7 @@ public class Presupuesto implements Cargable {
 	public HashMap<Integer, Coste> costes = new HashMap<Integer, Coste>();
 	public HashMap<Integer, Coste> costesTotal = new HashMap<Integer, Coste>();
 	public boolean actualiza = false;
+	public boolean enCurso = false;
 	
 	public boolean calculado = false;
 	
@@ -312,7 +313,7 @@ public class Presupuesto implements Cargable {
 			
 			if (!sistemasProcesados.containsKey(c.sistema.codigo)) {
 				if (operacion == Presupuesto.SUMAR)
-					this.costes.put(c.id, c);
+					this.costes.put(c.id, c.clone());
 			}
 		}
 		
@@ -343,8 +344,12 @@ public class Presupuesto implements Cargable {
 	}
 		
 	public String toString() {
-		if (!calculado)
-			return this.descripcion + " - Versión " + this.version;
+		if (!calculado) {
+			if (enCurso)
+				return this.descripcion + " - Versión en curso";
+			else
+				return this.descripcion + " - Versión " + this.version;
+		}
 		else 
 			return this.descripcion;
 	}

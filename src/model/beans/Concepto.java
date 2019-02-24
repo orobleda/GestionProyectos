@@ -208,6 +208,9 @@ public class Concepto implements Cargable {
 		c.respectoPorcentaje = this.respectoPorcentaje;
 		c.tipoConcepto = this.tipoConcepto;
 		c.coste = this.coste;
+		c.tarifa = this.tarifa;
+		c.baseCalculo = this.baseCalculo;
+		
 		
 		return c;
 	}

@@ -15,6 +15,18 @@ public class ApunteContable extends Proyecto {
 		this.apunteContable = true;
 	}
 	
+	public ApunteContable clone() {
+		ApunteContable p = new ApunteContable();
+		p.id = this.id;
+		p.modo = this.modo;
+		p.nombre = this.nombre;
+		if (this.presupuestoActual!=null)
+			p.presupuestoActual = this.presupuestoActual.clone();;
+		p.apunteContable = this.apunteContable;
+		
+		return p;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")

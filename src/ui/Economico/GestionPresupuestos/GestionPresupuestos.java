@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import model.beans.ApunteContable;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
@@ -129,7 +130,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 		while (itAsociados.hasNext()) {
 			Proyecto asoc = itAsociados.next();
 			if (asoc.apunteContable == p.apunteContable && asoc.id == p.id) {
-				asoc.modo = p.modo;
 				pEncontrado = asoc;
 			}
 		}
@@ -138,12 +138,22 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		if (p.modo == Proyecto.ANIADIR) {
 			operacion = Presupuesto.SUMAR;
+			if (pEncontrado!=null && pEncontrado.modo == Proyecto.ELIMINAR)
+				pEncontrado.modo = Proyecto.NEUTRO;
+			else
+				listaDemAsociadas.add(p);
 		}
 		if (p.modo == Proyecto.ELIMINAR) {
 			operacion = Presupuesto.RESTAR;
+			if (pEncontrado!=null && pEncontrado.modo == Proyecto.ANIADIR)
+				listaDemAsociadas.remove(pEncontrado);
+			else
+				pEncontrado.modo = Proyecto.ELIMINAR;
 		}
 		if (p.modo == Proyecto.MODIFICAR) {
 			this.presOperado = this.presOperado.operarPresupuestos(pEncontrado.presupuestoActual, Presupuesto.RESTAR);
+			listaDemAsociadas.remove(pEncontrado);
+			listaDemAsociadas.add(p);
 			operacion = Presupuesto.SUMAR;
 		}
 
@@ -300,7 +310,21 @@ public class GestionPresupuestos implements ControladorPantalla {
 	    		ParamTable.po = null;
 	    	}
 	    	
-	    	parametrosPaso.put("demandasAsignadas", this.listaDemAsociadas);
+	    	ArrayList<Proyecto> listaDemandas = new ArrayList<Proyecto>();
+	    	Iterator<Proyecto> itDemandas =  this.listaDemAsociadas.iterator();
+	    	while (itDemandas.hasNext()) {
+	    		Proyecto p = itDemandas.next();
+	    		Proyecto pAux = null;
+	    		if (p.apunteContable) {
+	    			pAux = ((ApunteContable)p).clone();
+	    		} else {
+	    			pAux = p.clone();
+	    		}
+	    		
+	    		listaDemandas.add(pAux);
+	    	}
+	    	
+	    	parametrosPaso.put("demandasAsignadas", listaDemandas);
 	    	parametrosPaso.put("gestionPresupuestos", this);
 	    	
 	    	loader.setLocation(new URL(controlPantalla.getFXML()));

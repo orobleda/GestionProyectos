@@ -32,6 +32,18 @@ public class Proyecto implements Cargable{
 	public int modo = 0;
 	
 	public boolean apunteContable = false;
+	
+	public Proyecto clone() {
+		Proyecto p = new Proyecto();
+		p.id = this.id;
+		p.modo = this.modo;
+		p.nombre = this.nombre;
+		if (this.presupuestoActual!=null)
+			p.presupuestoActual = this.presupuestoActual.clone();;
+		p.apunteContable = this.apunteContable;
+		
+		return p;
+	}
 
 	@Override
 	public Cargable cargar(Object o) {

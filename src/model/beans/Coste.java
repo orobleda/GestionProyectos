@@ -39,7 +39,7 @@ public class Coste implements Cargable{
 		while (itConcepto.hasNext()) {
 			Concepto cAux = itConcepto.next();
 			Concepto cClonado = cAux.clone();
-			conceptosCoste.put(cClonado.tipoConcepto.codigo, cClonado);
+			c.conceptosCoste.put(cClonado.tipoConcepto.codigo, cClonado);
 		}
 				
 		return c;		
@@ -247,7 +247,7 @@ public class Coste implements Cargable{
 			
 			if (!conceptosProcesados.containsKey(c.tipoConcepto.codigo)) {
 				if (operacion == Presupuesto.SUMAR)
-					this.conceptosCoste.put(c.tipoConcepto.codigo, c);
+					this.conceptosCoste.put(c.tipoConcepto.codigo, c.clone());
 			}
 		}
 		
