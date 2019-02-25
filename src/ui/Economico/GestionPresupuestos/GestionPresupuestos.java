@@ -2,6 +2,7 @@ package ui.Economico.GestionPresupuestos;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -24,8 +25,12 @@ import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.RelProyectoDemanda;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParamProyecto;
 import model.metadatos.Sistema;
+import model.metadatos.TipoProyecto;
+import model.utils.db.ConsultaBD;
 import ui.ControladorPantalla;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
@@ -54,6 +59,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 
     @FXML
     private ImageView imGuardarNuevaVersion;
+    private GestionBotones gbGuardarNuevaVersion;
 
     @FXML
     private TextField tVsProyecto;
@@ -68,12 +74,16 @@ public class GestionPresupuestos implements ControladorPantalla {
 
     @FXML
     private ImageView imGuardar;
+    private GestionBotones gbActualizarVersion;
 
     @FXML
     public ComboBox<Presupuesto> cbVersion;
 	
 	@FXML
 	private AnchorPane anchor;
+	
+    @FXML
+    private ComboBox<TipoProyecto> cbTipoProy;
 	
 	ArrayList<Proyecto> listaDemAsociadas = null;
 	Presupuesto presOperado = null;
@@ -91,6 +101,32 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada (true);  	}   );
+		
+		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
+		
+		gbActualizarVersion = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardarCambiosPresupuesto(false, true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Actualizar presupuesto");
+		gbActualizarVersion.desActivarBoton();
+		
+		gbGuardarNuevaVersion = new GestionBotones(imGuardarNuevaVersion, "GuardarAniadir3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardarCambiosPresupuesto(false, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Guardar como nueva versión del presupuesto");
+		gbGuardarNuevaVersion.desActivarBoton();
 		
 		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "Editar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -119,8 +155,55 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tablaDemandas.pintaTabla(new ArrayList<Object>());
 	}
 	
-	public void guardarCambiosPresupuesto() {
-		// actualizar modo a neutro!!!!!
+	public void guardarCambiosPresupuesto(boolean nuevoForzado, boolean editar) throws Exception{
+		if (this.listaDemAsociadas==null || this.listaDemAsociadas.size()==0) {
+			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos una demanda asociada");
+			return;
+		}
+		
+		if (this.presOperado.calculaTotal() == 0) {
+			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos un coste mayor que 0 asociado");
+			return;
+		}
+		
+		String idTransaccion = "guardarPresupuestoProyecto" + new Date().getTime();
+		
+		RelProyectoDemanda rpd = null;
+		Iterator<Proyecto> itDemandasAsociadas = this.listaDemAsociadas.iterator();
+		rpd = new RelProyectoDemanda();
+		while (itDemandasAsociadas.hasNext()) {
+			Proyecto p = itDemandasAsociadas.next();
+			
+			if (p.modo == Proyecto.ANIADIR || p.modo == Proyecto.MODIFICAR || p.modo == Proyecto.NEUTRO) {
+				rpd.listaDemandas.add(p);
+			}
+		}
+		
+		rpd.actualizaRelaciones(idTransaccion);
+		
+		ConsultaBD cbd = new ConsultaBD(); 
+		cbd.ejecutaTransaccion(idTransaccion);
+		
+		this.presOperado.descripcion = this.tVsProyecto.getText();
+		this.presOperado.guardarPresupuesto(editar);	
+		
+		cbProyecto.getItems().removeAll(cbProyecto.getItems());
+		cbVersion.getItems().removeAll(cbVersion.getItems());
+		
+		this.tNomProyecto.setText("");
+		this.tVsProyecto.setText("");
+		this.cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
+		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
+		
+		Proyecto p = new Proyecto();
+		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
+		
+		cbProyecto.getItems().addAll(listaProyectos);
+		
+		tablaCoste.limpiaTabla();
+		tablaDemandas.limpiaTabla();
+		
+		Dialogo.error("Guardado correcto", "Se actualizó el presupuesto", "El guardado se realizó correctamente");
 	}
 	
 	public void tratarModificacionesPresupuesto(Proyecto p) {
@@ -166,13 +249,25 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	public void versionSeleccionada(boolean recargar) {
 		try {
+			gbActualizarVersion.activarBoton();
+			gbGuardarNuevaVersion.activarBoton();
+			
 			Presupuesto p = cbVersion.getValue();
 			Proyecto proy = cbProyecto.getValue();
+			
+			if (proy ==null) return;
+			
 			proy.presupuestoActual = p;
 			
 			if (recargar) {
 				this.tNomProyecto.setText(proy.nombre);
 				this.tVsProyecto.setText(p.toString());
+				
+				proy.cargaProyecto();
+				this.cbTipoProy.setValue(TipoProyecto.listado.get(new Integer((String)proy.getValorParametro(MetaParamProyecto.TIPO_PROYECTO))));
+				
+				this.cbTipoProy.setDisable(true);
+				this.tNomProyecto.setDisable(true);
 				
 				RelProyectoDemanda rpD = new RelProyectoDemanda();
 				rpD.pres = p;
@@ -180,7 +275,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 				
 				this.listaDemAsociadas = proy.getDemandasAsociadas();
 				
-				this.presOperado = new Presupuesto();
+				this.presOperado = p.cloneSinCostes();
 				Iterator<Proyecto> itDemandas = this.listaDemAsociadas.iterator();
 				
 				while (itDemandas.hasNext()) {
@@ -278,6 +373,9 @@ public class GestionPresupuestos implements ControladorPantalla {
 	}
 	
 	private void buscaPresupuestos(Proyecto p) {
+		
+		if (p==null) return;
+		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		
 		Presupuesto pres = new Presupuesto();		

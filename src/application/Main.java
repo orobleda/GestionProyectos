@@ -176,7 +176,7 @@ public class Main extends Application {
 		        if ("Gestión horas trabajadas".equals(name))
 		        	controlPantalla = new GestionVacaciones();
 		        
-		        if ("Estimaciones & Valoraciones".equals(name))
+		        if ("Gestión Estimaciones".equals(name))
 		        	controlPantalla = new EstimacionesValoraciones();
 		        
 		        if ("Gestión Tarifas".equals(name))

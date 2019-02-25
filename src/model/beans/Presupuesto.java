@@ -342,6 +342,20 @@ public class Presupuesto implements Cargable {
 		
 		return pres;
 	}
+	
+	public Presupuesto cloneSinCostes() {
+		Presupuesto pres = new Presupuesto();
+		pres.costes = new HashMap<Integer, Coste>();
+		pres.descripcion = this.descripcion;
+		pres.fxAlta = this.fxAlta;
+		pres.id = this.id;
+		pres.idProyecto = this.idProyecto;
+		pres.p = this.p;
+		pres.tipo = this.tipo;
+		pres.version = this.version;
+		
+		return pres;
+	}
 		
 	public String toString() {
 		if (!calculado) {

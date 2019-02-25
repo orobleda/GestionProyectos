@@ -359,7 +359,9 @@ public class AniadeDemanda implements ControladorPantalla {
 				if (bcc.id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
 					hbTarifa.setVisible(false);
 					hbCantidad.setVisible(false);
-					hbPorcentaje.setVisible(true);	
+					hbPorcentaje.setVisible(true);
+					
+					this.cbPorcentaje.getItems().removeAll(this.cbPorcentaje.getItems());
 									
 					Iterator<MetaConcepto> itMcConcepto = new MetaConcepto().aPorcentaje().iterator();
 					while (itMcConcepto.hasNext()) {

@@ -62,6 +62,10 @@ public class Tabla {
 		this.primitiva = primitiva;
 	}
 	
+	public void limpiaTabla() { 
+		pintaTabla(new ArrayList<Object>());
+	}
+	
 	public void pintaTabla(ArrayList<Object> lista) {
 		if (componenteTabla== null) return;
 		
