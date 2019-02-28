@@ -175,18 +175,19 @@ public class Concepto implements Cargable {
 				Concepto c = this.buscaConcepto(this.id);
 				
 				if (c==null) {
-					this.id = this.maxIdConcepto();
 					listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));							
 					consulta.ejecutaSQL("iAltaConcepto", listaParms, this, idTransaccion);
+					this.id = ParametroBD.ultimoId;
 				} else {
 					listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));							
 					consulta.ejecutaSQL("uActualizaConcepto", listaParms, this, idTransaccion);
 				}
 						
 			} else {
-				this.id = this.maxIdConcepto();
+				
 				listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));							
 				consulta.ejecutaSQL("iAltaConcepto", listaParms, this, idTransaccion);
+				this.id = ParametroBD.ultimoId;
 			}
 			
 		} catch (Exception e){

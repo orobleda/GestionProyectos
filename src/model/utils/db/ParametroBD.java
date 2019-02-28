@@ -21,6 +21,8 @@ public class ParametroBD{
 	public ArrayList<Object> valorInsReal = null;
 	public String tabla = null;
 	
+	public static int ultimoId = 0; 
+	
 	public String toQuery(){
 		if (ConstantesBD.PARAMBD_ID.equals(tipo)){
 			
@@ -166,7 +168,7 @@ public class ParametroBD{
 		} else{
 			i = (Integer) id.get("id");
 		}
-				
+		
 		return i;
 	}
 	
@@ -177,6 +179,7 @@ public class ParametroBD{
 				HashMap<String,Integer> ids = new HashMap<String,Integer>();
 				ConsultaBD.idsAcumulados.put(idTransaccion, ids);
 				id = calculaMaxId()+1;
+				ultimoId = id;
 				ids.put(this.tabla, id);
 				return new Integer(id).toString();
 			} else {
@@ -184,10 +187,12 @@ public class ParametroBD{
 				if (!ids.containsKey(this.tabla)){
 					id = calculaMaxId()+1;
 					ids.put(this.tabla, id);
+					ultimoId = id;
 					return new Integer(id).toString();
 				} else {
 					id = ids.get(this.tabla)+1;
 					ids.put(this.tabla, id);
+					ultimoId = id;
 					return new Integer(id).toString();
 				}
 			}

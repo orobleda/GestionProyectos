@@ -253,6 +253,31 @@ public class Proyecto implements Cargable{
 		return null;
 	}
 	
+	public void nuevoProyecto(String idTransaccion) {
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		ParametroBD pBD = new ParametroBD();
+		pBD.id = 1;
+		pBD.tipo = ConstantesBD.PARAMBD_ID;
+		pBD.valorInt = 1;
+		listaParms.add(pBD);
+		pBD = new ParametroBD();
+		pBD.id = 2;
+		pBD.tipo = ConstantesBD.PARAMBD_STR;
+		pBD.valorStr = this.nombre;
+		listaParms.add(pBD);
+		
+		ConsultaBD consulta = new ConsultaBD();
+		
+		if (idTransaccion == null)
+			consulta.ejecutaSQL("iAltaProy", listaParms, this);
+		else 
+			consulta.ejecutaSQL("iAltaProy", listaParms, this,idTransaccion);
+		
+		this.id = ParametroBD.ultimoId;
+			
+	}
+	
+	
 	public boolean altaProyecto(Proyecto p) {
 		boolean modificacion = true;
 		int maxId = this.maxIdProyecto();
@@ -279,14 +304,18 @@ public class Proyecto implements Cargable{
 		return modificacion;
 	}
 	
-	public void bajaProyecto() {			
+	public void bajaProyecto(String idTransaccion) {			
 		ParametroProyecto pp = new ParametroProyecto();
 		pp.bajaProyecto(this);
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
 		ConsultaBD consulta = new ConsultaBD();
-		consulta.ejecutaSQL("dDelProyecto", listaParms, this);
+		
+		if (idTransaccion==null)
+			consulta.ejecutaSQL("dDelProyecto", listaParms, this);
+		else
+			consulta.ejecutaSQL("dDelProyecto", listaParms, this,idTransaccion);
 	}
 	
 	

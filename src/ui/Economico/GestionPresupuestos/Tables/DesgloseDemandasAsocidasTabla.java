@@ -37,8 +37,14 @@ public class DesgloseDemandasAsocidasTabla extends ParamTable implements Tableab
     	
     	Presupuesto pMax = p.presupuestoActual.dameUltimaVersionPresupuesto(p);
     	p.presupuestoMaxVersion = pMax;
-    	this.maxVersion = pMax.toString();
-    	this.estimadoMaxVersion = pMax.calculaTotal();
+    	if (pMax !=null) {
+    		this.maxVersion = pMax.toString();
+        	this.estimadoMaxVersion = pMax.calculaTotal();
+    	} else {
+    		this.maxVersion = "";
+        	this.estimadoMaxVersion = 0;
+    	}
+    	
     	
         setConfig();
     }

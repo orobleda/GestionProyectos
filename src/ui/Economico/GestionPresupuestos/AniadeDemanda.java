@@ -401,8 +401,18 @@ public class AniadeDemanda implements ControladorPantalla {
 									fijaTarifa(cAux.tarifa);
 								}
 								if (this.cbBaseCalculo.getValue().id == BaseCalculoConcepto.CALCULO_BASE_PORC  ) {
-									this.cbPorcentaje.setValue(cAux.respectoPorcentaje);
-									this.teCantidad.setText(FormateadorDatos.formateaDato(new Float(cAux.porcentaje), FormateadorDatos.FORMATO_PORC));
+									if (cAux.respectoPorcentaje==null) {
+										if (cAux.porcentaje!=0) {
+											Iterator<MetaConcepto> itMc = this.cbPorcentaje.getItems().iterator();
+											MetaConcepto mc = null;
+											while (itMc.hasNext()) {
+												mc = itMc.next();
+												if (mc.id == MetaConcepto.getTotal().id ) break;
+											}
+											this.cbPorcentaje.setValue(mc);
+										}
+									} else this.cbPorcentaje.setValue(cAux.respectoPorcentaje);
+									this.tePorcentaje.setText(FormateadorDatos.formateaDato(new Float(cAux.porcentaje), FormateadorDatos.FORMATO_PORC));
 								}
 							}
 						}

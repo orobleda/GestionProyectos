@@ -846,7 +846,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>delete from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$ $B$and idvsPresupuesto=||2||$E$ $B$and id=||2||$E$</query>
+		<query>delete from REL_PROYECTO_DEMANDA where 1=1 $B$and idProyecto=||1||$E$ $B$and idvsPresupuesto=||2||$E$ $B$and id=||3||$E$</query>
 		<id tipo="C">dRelRelProyectoDemanda</id>
 		<tabla>REL_PROYECTO_DEMANDA</tabla>
 		<parametros>

@@ -196,7 +196,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	public void borrarPresupuesto(){
 		try {
-			EstimacionesValoraciones.presupuesto.borrarPresupuesto();
+			EstimacionesValoraciones.presupuesto.borrarPresupuesto(null);
 			
 			fotoInicial();
 			
@@ -551,7 +551,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			
 			if (EstimacionesValoraciones.presupuesto.actualiza) actualiza = false;
 			
-			EstimacionesValoraciones.presupuesto.guardarPresupuesto(actualiza);
+			EstimacionesValoraciones.presupuesto.guardarPresupuesto(actualiza,null);
 			
 			EstimacionesValoraciones.presupuesto.actualiza = false;
 			

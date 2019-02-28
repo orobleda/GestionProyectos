@@ -138,7 +138,7 @@ public class AltaModProyecto implements ControladorPantalla {
 						
 						contador++;
 						
-						bParamProyecto.insertaParametro(p.id);
+						bParamProyecto.insertaParametro(p.id,null);
 					}
 				}
 				
@@ -177,7 +177,7 @@ public class AltaModProyecto implements ControladorPantalla {
 			
 			Proyecto p = cbListaProy.getValue();
 			
-			p.bajaProyecto();
+			p.bajaProyecto(null);
 			
 			this.tID.setText("");
 			this.tNombreProy.setText("");

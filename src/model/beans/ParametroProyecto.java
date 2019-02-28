@@ -92,13 +92,9 @@ public class ParametroProyecto implements Cargable{
 		}
 	}
 	
-	public void insertaParametro(int idProyecto){
+	public void insertaParametro(int idProyecto, String idTransaccion){
 			ConsultaBD consulta = new ConsultaBD();
-			ArrayList<Cargable> parametros = consulta.ejecutaSQL("cMaxIdParamProyecto", null, this);
-			
-			ParametroProyecto p = (ParametroProyecto) parametros.get(0);
-	        this.id = p.id+1;
-		
+
 			Date d = new Date();
 			ArrayList<Object> listaInts = new ArrayList<Object>();
 			listaInts.add(this.mpProy.id);
@@ -109,10 +105,13 @@ public class ParametroProyecto implements Cargable{
 			listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_LISTA_INT,listaInts));
 			
 			consulta = new ConsultaBD();
-			consulta.ejecutaSQL("uVenceParametros", listaParms, null);
+			if (idTransaccion==null)
+				consulta.ejecutaSQL("uVenceParametros", listaParms, null);
+			else
+				consulta.ejecutaSQL("uVenceParametros", listaParms, null,idTransaccion);
 			
 			listaParms = new ArrayList<ParametroBD>();
-			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,id));
+			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,1));
 			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idProyecto));
 			listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.mpProy.id));
 			
@@ -126,8 +125,11 @@ public class ParametroProyecto implements Cargable{
 			if (FormateadorDatos.FORMATO_TIPO_PROYECTO==this.mpProy.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_INT,this.valorEntero));
 			
 			consulta = new ConsultaBD();
-			consulta.ejecutaSQL("iAltaParamProy", listaParms, null);
-	}
+			if (idTransaccion==null)
+				consulta.ejecutaSQL("iAltaParamProy", listaParms, null);
+			else
+				consulta.ejecutaSQL("iAltaParamProy", listaParms, null, idTransaccion);
+	}	
 
 	@Override
 	public Cargable cargar(Object o) {

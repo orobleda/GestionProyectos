@@ -120,9 +120,14 @@ public class Presupuesto implements Cargable {
 		this.costes = c.recuperaCostes(this);
 	}
 	
-	public void borrarPresupuesto() throws Exception {
+	public void borrarPresupuesto(String idTransaccion) throws Exception {
 		
-		String idTransaccion = "borrarPresupuesto" + new Date().getTime();
+		boolean cierraTransaccion = false;
+		
+		if (idTransaccion == null) {
+			idTransaccion = "borrarPresupuesto" + new Date().getTime();
+			cierraTransaccion = true;
+		}
 		
 		Iterator<Coste> itCoste = this.costes.values().iterator();
 		
@@ -137,7 +142,8 @@ public class Presupuesto implements Cargable {
 		ConsultaBD consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dDelPresupuesto", listaParms, this, idTransaccion);	
 		
-		consulta.ejecutaTransaccion(idTransaccion);
+		if (cierraTransaccion)
+			consulta.ejecutaTransaccion(idTransaccion);
 	}
 	
 	public Concepto getCosteConcepto(Sistema s, MetaConcepto mc){
@@ -156,11 +162,15 @@ public class Presupuesto implements Cargable {
 		return conSal;
 	}
 	
-	public void guardarPresupuesto(boolean actualiza) throws Exception{
+	public void guardarPresupuesto(boolean actualiza, String idTransaccion) throws Exception{
 		try {
+			boolean ejecutaTransaccion = false;
 			
-			String idTransaccion = "guardarPresupuesto" + new Date().getTime();
-			
+			if (idTransaccion == null) {
+				idTransaccion = "guardarPresupuesto" + new Date().getTime();
+				ejecutaTransaccion = true;
+			};
+							
 			ConsultaBD consulta = new ConsultaBD();
 			
 			if (actualiza) {							
@@ -174,12 +184,11 @@ public class Presupuesto implements Cargable {
 				consulta.ejecutaSQL("uActualizaPresupuesto", listaParms, this, idTransaccion);			
 			} else {
 				this.fxAlta = new Date();
-				this.version = this.maxIdPresupuesto();
-				this.id = this.maxIdPresupuesto();
+				this.version = this.version + 1;
 				
 				consulta = new ConsultaBD();
 				List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-				listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
+				listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,1));
 				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.version));
 				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,FormateadorDatos.formateaDato(this.fxAlta,FormateadorDatos.FORMATO_FECHA)));
 				
@@ -195,6 +204,8 @@ public class Presupuesto implements Cargable {
 				listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_STR,this.descripcion));
 				
 				consulta.ejecutaSQL("iAltaPresupuesto", listaParms, this, idTransaccion);
+				
+				this.id = ParametroBD.ultimoId;
 			}
 			
 			Iterator<Coste> itCoste = this.costes.values().iterator();
@@ -205,8 +216,8 @@ public class Presupuesto implements Cargable {
 				c.guardarCoste(actualiza, idTransaccion);
 			}
 			
-
-			consulta.ejecutaTransaccion(idTransaccion);
+			if (ejecutaTransaccion)
+				consulta.ejecutaTransaccion(idTransaccion);
 			
 		} catch (Exception e){
 			e.printStackTrace();
@@ -284,6 +295,29 @@ public class Presupuesto implements Cargable {
 			
 			return salida;
 	}
+	
+	public Presupuesto buscaPresupuestos(int idProyecto, int version) {
+		ConsultaBD consulta = new ConsultaBD();
+		
+		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idProyecto));
+		
+		ArrayList<Cargable> presupuestos = consulta.ejecutaSQL("cConsultaPresupuesto", listaParms, this);
+		
+		Iterator<Cargable> itCargable = presupuestos.iterator();
+		
+		while (itCargable.hasNext()) {
+			Presupuesto prep = (Presupuesto) itCargable.next();
+			
+			if (prep.version == version) {
+				prep.cargaCostes();
+				return prep;
+			}
+			
+		}
+		
+		return null;
+}
 	
 	public Presupuesto operarPresupuestos(Presupuesto presOperar, int operacion) {
 		if (this.costes == null) {

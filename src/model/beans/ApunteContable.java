@@ -45,9 +45,11 @@ public class ApunteContable extends Proyecto {
 	
 	public ApunteContable buscaApunteContable() {			
 		ConsultaBD consulta = new ConsultaBD();
-		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaApuntesContables", null, this);
+		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));
+		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
+		
+		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaApuntesContables", listaParms, this);
 		
 		Iterator<Cargable> itProyecto = proyectos.iterator();
 		ArrayList<Proyecto> salida = new ArrayList<Proyecto>();
@@ -75,23 +77,24 @@ public class ApunteContable extends Proyecto {
         return salida;
 	}
 	
-	public void altaApunteContable(Proyecto p) {
+	public int altaApunteContable(Proyecto p, String idTransaccion) {
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));
 		
 		ConsultaBD consulta = new ConsultaBD();
-		consulta.ejecutaSQL("iInsertaApunteContable", listaParms, this);
-			
+		consulta.ejecutaSQL("iInsertaApunteContable", listaParms, this, idTransaccion);
+		
+		return ParametroBD.ultimoId;	
 	}
 	
-	public void bajaApunteContable() {			
+	public void bajaApunteContable(String idTransaccion) {			
 		ParametroProyecto pp = new ParametroProyecto();
 		pp.bajaProyecto(this);
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
 		ConsultaBD consulta = new ConsultaBD();
-		consulta.ejecutaSQL("dBorraApunteContable", listaParms, this);
+		consulta.ejecutaSQL("dBorraApunteContable", listaParms, this,idTransaccion);
 	}
 	
 	public String toString() {

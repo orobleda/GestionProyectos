@@ -22,6 +22,19 @@ public class TipoProyecto implements Cargable, Loadable {
 	public static HashMap<Integer, TipoProyecto> listado = null;
 	
 	public ArrayList<EstadoProyecto> estados = null;
+
+	public static ArrayList<TipoProyecto> tiposNoDemanda() {
+		ArrayList<TipoProyecto> salida = new ArrayList<TipoProyecto>();
+		Iterator<TipoProyecto> itTipoProyectos = listado.values().iterator();
+		
+		while (itTipoProyectos.hasNext()) {
+			TipoProyecto tp = itTipoProyectos.next();
+			if (tp.id == TipoProyecto.ID_EVOLUTIVO || tp.id == TipoProyecto.ID_PROYECTO)
+				salida.add(tp);
+		}
+		
+		return salida;
+	} 
 	
 	public static ArrayList<Object> objetosNoDemanda() {
 		ArrayList<Object> salida = new ArrayList<Object>();
@@ -29,7 +42,7 @@ public class TipoProyecto implements Cargable, Loadable {
 		
 		while (itTipoProyectos.hasNext()) {
 			TipoProyecto tp = itTipoProyectos.next();
-			if (tp.id == TipoProyecto.ID_EVOLUTIVO || tp.id == TipoProyecto.ID_PRO_BONO || tp.id == TipoProyecto.ID_PROYECTO)
+			if (tp.id == TipoProyecto.ID_EVOLUTIVO || tp.id == TipoProyecto.ID_PROYECTO)
 				salida.add(tp);
 		}
 		

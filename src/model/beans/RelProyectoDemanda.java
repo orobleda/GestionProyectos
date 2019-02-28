@@ -98,6 +98,7 @@ public class RelProyectoDemanda implements Cargable{
 	public void deleteRelacion(String idTransaccion) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.proyecto.id));
+		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.pres.id));
 				
 		ConsultaBD consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dRelRelProyectoDemanda", listaParms, this, idTransaccion);
@@ -117,9 +118,18 @@ public class RelProyectoDemanda implements Cargable{
 			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,1));
 			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.proyecto.id));
 			listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.pres.id));
-			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,p.id));
+			
 			listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_INT,p.presupuestoActual.id));
 			listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,p.presupuestoActual.version));
+			
+			if (p.apunteContable) {
+				listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_INT,p.id));
+				listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,-1));
+			} else {
+				listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,p.id));
+				listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_INT,-1));
+			}
+			
 			
 			consulta.ejecutaSQL("iInsertaRelProyectoDemanda", listaParms, this, idTransaccion);
 		}
@@ -145,6 +155,9 @@ public class RelProyectoDemanda implements Cargable{
 				if (salida.get("rpdIdProy")==null) this.proyecto = null; else { 
 					int id = (Integer) salida.get("rpdIdProy");	
 					this.proyecto = Proyecto.getProyectoEstatico(id);
+					if (this.proyecto==null) {
+						
+					}
 				} 
 				
 				if (salida.get("rpdIdDem")==null) this.demandaLinea = null; else { 

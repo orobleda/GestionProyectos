@@ -191,7 +191,7 @@ public class Coste implements Cargable{
 			} 
 			
 			if (inserta) {
-				this.id = this.maxIdCoste();
+				//this.id = this.maxIdCoste();
 				
 				consulta = new ConsultaBD();
 				List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
@@ -200,6 +200,8 @@ public class Coste implements Cargable{
 				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.presupuesto.id));
 				
 				consulta.ejecutaSQL("iAltaCoste", listaParms, this, idTransaccion);
+				
+				this.id = ParametroBD.ultimoId;
 			}
 			
 			Iterator<Concepto> itConcepto = this.conceptosCoste.values().iterator();

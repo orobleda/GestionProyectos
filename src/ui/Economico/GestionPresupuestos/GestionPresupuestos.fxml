@@ -48,7 +48,7 @@
                   </HBox>
                </children>
             </VBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
+            <ScrollPane fx:id="scrDatos" fitToHeight="true" fitToWidth="true">
                <content>
                   <VBox>
                      <children>
@@ -131,6 +131,14 @@
                         <ImageView fx:id="imGuardarNuevaVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../imgs/iconos/GuardarAniadir3_PAS.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imBorrar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../imgs/iconos/Eliminar3_PAS.png" />
                            </image>
                            <HBox.margin>
                               <Insets left="10.0" />

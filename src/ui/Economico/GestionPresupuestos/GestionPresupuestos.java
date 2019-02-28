@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -19,14 +20,18 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import model.beans.ApunteContable;
+import model.beans.BaseCalculoConcepto;
 import model.beans.Concepto;
 import model.beans.Coste;
+import model.beans.ParametroProyecto;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.RelProyectoDemanda;
+import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParamProyecto;
 import model.metadatos.Sistema;
+import model.metadatos.TipoPresupuesto;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import ui.ControladorPantalla;
@@ -75,9 +80,16 @@ public class GestionPresupuestos implements ControladorPantalla {
     @FXML
     private ImageView imGuardar;
     private GestionBotones gbActualizarVersion;
+    
+    @FXML
+    private ImageView imBorrar;
+    private GestionBotones gbBorrarVersion;
 
     @FXML
     public ComboBox<Presupuesto> cbVersion;
+    
+    @FXML
+    private ScrollPane scrDatos;
 	
 	@FXML
 	private AnchorPane anchor;
@@ -87,11 +99,16 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	ArrayList<Proyecto> listaDemAsociadas = null;
 	Presupuesto presOperado = null;
+	Proyecto proyOperado = null;
+	
+	boolean nuevaVersion = false;
 	
 	
 	public void initialize(){
 		tablaDemandas = new Tabla(tDemandas,new DesgloseDemandasAsocidasTabla());
 		tablaCoste = new Tabla(tCoste,new LineaCosteDesglosado());
+		
+		scrDatos.setDisable(true);
 		
 		Proyecto p = new Proyecto();
 		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
@@ -101,8 +118,9 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada (true);  	}   );
+		cbVersion.setDisable(true);
 		
-		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
+		cbTipoProy.getItems().addAll(TipoProyecto.tiposNoDemanda());
 		
 		gbActualizarVersion = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -116,12 +134,26 @@ public class GestionPresupuestos implements ControladorPantalla {
             } }, "Actualizar presupuesto");
 		gbActualizarVersion.desActivarBoton();
 		
+		gbBorrarVersion = new GestionBotones(imBorrar, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					borrarVersion();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Guardar como nueva versión del presupuesto");
+		gbBorrarVersion.desActivarBoton();
+		
 		gbGuardarNuevaVersion = new GestionBotones(imGuardarNuevaVersion, "GuardarAniadir3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {	
+					nuevaVersion = true;
 					guardarCambiosPresupuesto(false, false);
+					nuevaVersion = false;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -144,7 +176,8 @@ public class GestionPresupuestos implements ControladorPantalla {
 			@Override
             public void handle(MouseEvent t)
             {
-				try {						        
+				try {	
+					nuevoProyecto();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -155,37 +188,102 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tablaDemandas.pintaTabla(new ArrayList<Object>());
 	}
 	
-	public void guardarCambiosPresupuesto(boolean nuevoForzado, boolean editar) throws Exception{
-		if (this.listaDemAsociadas==null || this.listaDemAsociadas.size()==0) {
-			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos una demanda asociada");
+	public void nuevoProyecto() {
+		cbProyecto.getItems().removeAll(cbProyecto.getItems());
+		cbVersion.getItems().removeAll(cbVersion.getItems());
+		cbVersion.setDisable(true);
+		
+		this.tNomProyecto.setText("");
+		this.tVsProyecto.setText("");
+		this.cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
+		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
+		
+		Proyecto p = new Proyecto();
+		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
+		
+		cbProyecto.getItems().addAll(listaProyectos);
+		
+		cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
+		cbTipoProy.getItems().addAll(TipoProyecto.tiposNoDemanda());
+		cbTipoProy.setDisable(false);
+		scrDatos.setDisable(false);
+		
+		this.tNomProyecto.setText("");
+		tNomProyecto.setDisable(false);
+		this.tVsProyecto.setText("");
+		
+		ApunteContable pApunteContable = new ApunteContable();
+		pApunteContable.id = 0;
+		pApunteContable.modo = Proyecto.MODIFICAR;
+		pApunteContable.nombre = "Apunte Contable";
+		pApunteContable.apunteContable = true;
+		pApunteContable.presupuestoActual = new Presupuesto();
+		pApunteContable.presupuestoActual.costes = new HashMap<Integer, Coste>();
+		pApunteContable.presupuestoActual.descripcion = "Apunte Contable";
+		pApunteContable.presupuestoActual.fxAlta = Constantes.fechaActual();
+		pApunteContable.presupuestoActual.p = pApunteContable;
+		pApunteContable.presupuestoActual.tipo = TipoPresupuesto.listado.get(1);
+		pApunteContable.presupuestoActual.version = 0;
+		
+		proyOperado = new Proyecto();
+		proyOperado.modo = Proyecto.ANIADIR;
+		
+		this.listaDemAsociadas = new ArrayList<Proyecto>();
+		listaDemAsociadas.add(pApunteContable);
+		
+		this.presOperado = pApunteContable.presupuestoActual.cloneSinCostes();
+		proyOperado.presupuestoActual = this.presOperado;
+		presOperado.p = proyOperado;
+		
+		ArrayList<Object> listaPintable = new ArrayList<Object>();
+		
+		listaPintable.add(pApunteContable);
+								
+		tablaDemandas.pintaTabla(listaPintable);
+		
+		this.tablaCoste.limpiaTabla();
+		
+		this.gbAniadirDemanda.activarBoton();
+		this.gbGuardarNuevaVersion.activarBoton();
+		this.gbActualizarVersion.desActivarBoton();
+	}
+	
+	public void borrarVersion() throws Exception{
+		ArrayList<Presupuesto> listaPresupuestos = this.presOperado.buscaPresupuestos(this.proyOperado.id);
+		
+		if (listaPresupuestos.size()<2) {
+			Dialogo.error("No se pudo eliminar", "No se pudo eliminar el presupuesto", "Es el último presupuesto del proyecto y por tanto no se puede eliminar");
 			return;
 		}
 		
-		if (this.presOperado.calculaTotal() == 0) {
-			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos un coste mayor que 0 asociado");
-			return;
-		}
+		setIdsPresOperado();
 		
-		String idTransaccion = "guardarPresupuestoProyecto" + new Date().getTime();
+		String idTransaccion = "eliminarPresupuestoProyecto" + new Date().getTime();
 		
-		RelProyectoDemanda rpd = null;
 		Iterator<Proyecto> itDemandasAsociadas = this.listaDemAsociadas.iterator();
-		rpd = new RelProyectoDemanda();
+		Proyecto pApunte = null;
+
 		while (itDemandasAsociadas.hasNext()) {
-			Proyecto p = itDemandasAsociadas.next();
+			Proyecto pApunteAux = itDemandasAsociadas.next();
 			
-			if (p.modo == Proyecto.ANIADIR || p.modo == Proyecto.MODIFICAR || p.modo == Proyecto.NEUTRO) {
-				rpd.listaDemandas.add(p);
-			}
+			if (pApunteAux.apunteContable) {
+				pApunte = pApunteAux;
+				break;
+			}			
 		}
 		
-		rpd.actualizaRelaciones(idTransaccion);
+		pApunte.presupuestoActual.borrarPresupuesto(idTransaccion);
+		((ApunteContable) pApunte).bajaApunteContable(idTransaccion);
+		
+		RelProyectoDemanda rpd = new RelProyectoDemanda();
+		rpd.proyecto = this.proyOperado;
+		rpd.pres = this.presOperado;
+		rpd.deleteRelacion(idTransaccion);
+		
+		this.presOperado.borrarPresupuesto(idTransaccion);
 		
 		ConsultaBD cbd = new ConsultaBD(); 
 		cbd.ejecutaTransaccion(idTransaccion);
-		
-		this.presOperado.descripcion = this.tVsProyecto.getText();
-		this.presOperado.guardarPresupuesto(editar);	
 		
 		cbProyecto.getItems().removeAll(cbProyecto.getItems());
 		cbVersion.getItems().removeAll(cbVersion.getItems());
@@ -203,7 +301,210 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tablaCoste.limpiaTabla();
 		tablaDemandas.limpiaTabla();
 		
-		Dialogo.error("Guardado correcto", "Se actualizó el presupuesto", "El guardado se realizó correctamente");
+		scrDatos.setDisable(true);
+		cbVersion.setDisable(true);
+		gbBorrarVersion.desActivarBoton();
+		gbGuardarNuevaVersion.desActivarBoton();
+		gbActualizarVersion.desActivarBoton();
+		
+		Dialogo.alert("Borrado correcto", "Se eliminó el presupuesto", "El borrado se realizó correctamente");
+		
+	}
+	
+	
+	public void guardarCambiosPresupuesto(boolean nuevoForzado, boolean editar) throws Exception{
+		if ("".equals(this.tNomProyecto.getText()) || "".equals(this.tVsProyecto.getText()) || null == this.cbTipoProy.getValue()) {
+			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Alguno de los campos obligatorios no están informados.");
+			return;
+		}
+		
+		if (this.listaDemAsociadas==null || this.listaDemAsociadas.size()==0) {
+			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos una demanda asociada");
+			return;
+		}
+		
+		if (this.presOperado.calculaTotal() == 0) {
+			Dialogo.error("No se pudo guardar", "No se pudo guardar el presupuesto", "Un proyecto debe tener al menos un coste mayor que 0 asociado");
+			return;
+		}
+		
+		String idTransaccion = "guardarPresupuestoProyecto" + new Date().getTime();
+		
+		if (this.proyOperado.modo == Proyecto.ANIADIR) {
+			this.proyOperado.nombre = this.tNomProyecto.getText();
+			this.presOperado.descripcion = this.tVsProyecto.getText();
+			this.presOperado.tipo = TipoPresupuesto.listado.get(1);
+			this.presOperado.version = 1;
+			this.proyOperado.presupuestoActual = this.presOperado;
+			
+			this.proyOperado.nuevoProyecto(idTransaccion);
+			
+			ParametroProyecto pp = new ParametroProyecto();
+			pp.idProyecto = this.proyOperado.id;
+			pp.mpProy = MetaParamProyecto.listado.get(MetaParamProyecto.TIPO_PROYECTO);
+			pp.valorEntero = this.cbTipoProy.getValue().id;
+			
+			pp.insertaParametro(this.proyOperado.id, idTransaccion);
+		}
+		
+		setIdsPresOperado();
+		
+		Presupuesto pApunteContable = null;
+		
+		RelProyectoDemanda rpd = null;
+		Iterator<Proyecto> itDemandasAsociadas = this.listaDemAsociadas.iterator();
+		rpd = new RelProyectoDemanda();
+		while (itDemandasAsociadas.hasNext()) {
+			Proyecto p = itDemandasAsociadas.next();
+			
+			if (p.apunteContable && (p.modo == Proyecto.ANIADIR || p.modo == Proyecto.MODIFICAR)) {
+				pApunteContable = p.presupuestoActual;
+				p.presupuestoActual.p = p;
+			}
+			
+			if (p.modo == Proyecto.ANIADIR || p.modo == Proyecto.MODIFICAR || p.modo == Proyecto.NEUTRO) {
+				rpd.listaDemandas.add(p);
+			}
+		}
+		
+		if (pApunteContable!=null) {
+			boolean actualiza = true;
+			
+			if (this.proyOperado.modo == Proyecto.ANIADIR || nuevaVersion == true) {
+				pApunteContable.idApunteContable = ((ApunteContable) pApunteContable.p).altaApunteContable((ApunteContable) pApunteContable.p,idTransaccion);
+				pApunteContable.p.id = pApunteContable.idApunteContable;
+				actualiza = false;
+			}
+			
+			pApunteContable.guardarPresupuesto(actualiza, idTransaccion);
+		}
+		
+		this.presOperado.descripcion = this.tVsProyecto.getText();
+		this.presOperado.guardarPresupuesto(editar,idTransaccion);
+		
+		rpd.proyecto = this.proyOperado;
+		rpd.pres = this.presOperado;
+		rpd.actualizaRelaciones(idTransaccion);	
+		
+		ConsultaBD cbd = new ConsultaBD(); 
+		cbd.ejecutaTransaccion(idTransaccion);
+		
+		Proyecto.listaProyecto = null;
+		
+		Proyecto.getProyectoEstatico(1);
+		
+		cbProyecto.getItems().removeAll(cbProyecto.getItems());
+		cbVersion.getItems().removeAll(cbVersion.getItems());
+		
+		this.tNomProyecto.setText("");
+		this.tVsProyecto.setText("");
+		this.cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
+		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
+		
+		Proyecto p = new Proyecto();
+		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
+		
+		cbProyecto.getItems().addAll(listaProyectos);
+		
+		tablaCoste.limpiaTabla();
+		tablaDemandas.limpiaTabla();
+		scrDatos.setDisable(true);
+		cbVersion.setDisable(true);
+		gbBorrarVersion.desActivarBoton();
+		gbGuardarNuevaVersion.desActivarBoton();
+		gbActualizarVersion.desActivarBoton();
+		
+		Dialogo.alert("Guardado correcto", "Se actualizó el presupuesto", "El guardado se realizó correctamente");
+	}
+	
+	private void setIdsPresOperado() {
+		Proyecto proy = this.proyOperado;
+		
+		Iterator<Coste> itCostes = this.presOperado.costes.values().iterator();
+		while (itCostes.hasNext()) {
+			Coste c = itCostes.next();
+			c.id = -1;
+			
+			Iterator<Concepto> itConcepto = c.conceptosCoste.values().iterator();
+			while (itConcepto.hasNext()) {
+				Concepto conc = itConcepto.next();
+				conc.id = -1;
+			}
+		}
+		
+		if (this.proyOperado.modo == Proyecto.ANIADIR || this.nuevaVersion == true) {
+			return;
+		}
+		
+		Presupuesto pOriginal = new Presupuesto();
+		pOriginal = pOriginal.buscaPresupuestos(proy.id, this.presOperado.version);
+		
+		itCostes = pOriginal.costes.values().iterator();
+		while (itCostes.hasNext()) {
+			Coste c = itCostes.next();
+			
+			Coste cOperado = null;
+			
+			Iterator<Coste> itCostesOperados = this.presOperado.costes.values().iterator();
+			while (itCostesOperados.hasNext()) {
+				Coste cAux = itCostesOperados.next();
+				if (cAux.sistema.codigo.equals(c.sistema.codigo)) {
+					cOperado = cAux;
+					break;
+				}
+			}
+
+			if (cOperado!=null) {
+				cOperado.id = c.id;
+				
+				Iterator<Concepto> itConcepto = c.conceptosCoste.values().iterator();
+				while (itConcepto.hasNext()) {
+					Concepto conc = itConcepto.next();
+					
+					Concepto concOperado = cOperado.conceptosCoste.get(conc.tipoConcepto.codigo);
+					
+					if (concOperado !=null) {
+						concOperado.id = conc.id;
+						concOperado.baseCalculo = new BaseCalculoConcepto(BaseCalculoConcepto.CALCULO_BASE_COSTE);
+						concOperado.respectoPorcentaje = null;
+						concOperado.porcentaje = 0;
+					}
+				}
+			}
+		}
+		
+		itCostes = this.presOperado.costes.values().iterator();
+		while (itCostes.hasNext()) {
+			Coste cOperado = itCostes.next();
+			
+			Coste c = null;
+			
+			Iterator<Coste> itCostesOperados = pOriginal.costes.values().iterator();
+			while (itCostesOperados.hasNext()) {
+				Coste cAux = itCostesOperados.next();
+				if (cAux.sistema.codigo.equals(cOperado.sistema.codigo))
+					c = cAux;
+					break;
+			}
+
+			if (c!=null) {
+				cOperado.id = c.id;
+				
+				Iterator<Concepto> itConcepto = cOperado.conceptosCoste.values().iterator();
+				while (itConcepto.hasNext()) {
+					Concepto conc = itConcepto.next();
+					
+					Concepto concOperado = c.conceptosCoste.get(conc.tipoConcepto.codigo);
+					
+					if (concOperado !=null) {
+						conc.id = concOperado.id;
+						concOperado.baseCalculo = new BaseCalculoConcepto(BaseCalculoConcepto.CALCULO_BASE_COSTE);
+						concOperado.respectoPorcentaje = null;
+						concOperado.porcentaje = 0;
+					}
+				}
+			}
+		}
 	}
 	
 	public void tratarModificacionesPresupuesto(Proyecto p) {
@@ -239,29 +540,40 @@ public class GestionPresupuestos implements ControladorPantalla {
 			listaDemAsociadas.add(p);
 			operacion = Presupuesto.SUMAR;
 		}
-
+	
 		this.presOperado = this.presOperado.operarPresupuestos(p.presupuestoActual, operacion);
 		
 		versionSeleccionada(false);
 		
+		if (Proyecto.ANIADIR == this.proyOperado.modo) {
+			this.gbActualizarVersion.desActivarBoton();
+		}
+		
 		ParamTable.po.hide();
 	}
-	
+
 	public void versionSeleccionada(boolean recargar) {
 		try {
 			gbActualizarVersion.activarBoton();
 			gbGuardarNuevaVersion.activarBoton();
+			gbBorrarVersion.activarBoton();
+			scrDatos.setDisable(false);
 			
 			Presupuesto p = cbVersion.getValue();
-			Proyecto proy = cbProyecto.getValue();
 			
-			if (proy ==null) return;
+			if (p == null) {
+				p = this.presOperado;
+			}
+			
+			Proyecto proy = this.proyOperado;
+			
+			if (proy ==null || p==null) return;
 			
 			proy.presupuestoActual = p;
 			
 			if (recargar) {
 				this.tNomProyecto.setText(proy.nombre);
-				this.tVsProyecto.setText(p.toString());
+				this.tVsProyecto.setText(p.descripcion);
 				
 				proy.cargaProyecto();
 				this.cbTipoProy.setValue(TipoProyecto.listado.get(new Integer((String)proy.getValorParametro(MetaParamProyecto.TIPO_PROYECTO))));
@@ -276,6 +588,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 				this.listaDemAsociadas = proy.getDemandasAsociadas();
 				
 				this.presOperado = p.cloneSinCostes();
+				this.presOperado.p = this.proyOperado;
 				Iterator<Proyecto> itDemandas = this.listaDemAsociadas.iterator();
 				
 				while (itDemandas.hasNext()) {
@@ -383,9 +696,12 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		cbVersion.getItems().addAll(listado);
 		
-		if (listado.size()>0) {
-			
-		}
+		this.proyOperado = this.cbProyecto.getValue();
+		this.proyOperado.modo = Proyecto.MODIFICAR;
+		
+		this.presOperado = null;
+		cbVersion.setDisable(false);
+		scrDatos.setDisable(true);
 	}
 	
 	public void aniadirEstimacion() {

@@ -52,6 +52,10 @@ public class Constantes {
 	public Constantes() {
 		cargaMeses();
 	}
+
+	public static Date fechaActual() {
+		return new Date();
+	}
 	
 	public static int numMes(String valor) {
 		cargaMeses();
