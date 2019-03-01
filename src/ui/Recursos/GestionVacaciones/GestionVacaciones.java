@@ -19,8 +19,8 @@ import model.beans.ParametroRecurso;
 import model.beans.Recurso;
 import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
-import ui.ControladorPantalla;
 import ui.Dialogo;
+import ui.interfaces.ControladorPantalla;
 
 public class GestionVacaciones implements ControladorPantalla {
 									   

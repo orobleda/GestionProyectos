@@ -9,11 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import model.constantes.Constantes;
-import ui.ControladorPantalla;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleMes;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class EstimacionesInternasMes implements ControladorPantalla {
 

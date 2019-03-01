@@ -7,7 +7,7 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 import javafx.scene.layout.AnchorPane;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class Cabeceras extends ParamTable implements Tableable  {
 	

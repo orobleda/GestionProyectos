@@ -18,10 +18,10 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.Recurso;
 import model.beans.RelRecursoTarifa;
 import model.utils.db.ConsultaBD;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Recursos.GestionTarifas.Tables.AsignacionRecursoTarifa;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class AsignacionTarifas implements ControladorPantalla {
 									   

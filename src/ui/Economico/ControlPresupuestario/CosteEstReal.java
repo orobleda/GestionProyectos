@@ -15,9 +15,9 @@ import model.beans.EstimacionMes;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteEstReal;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class CosteEstReal implements ControladorPantalla {
 

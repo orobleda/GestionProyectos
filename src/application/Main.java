@@ -23,7 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
-import ui.ControladorPantalla;
 import ui.Administracion.Festivos.GestionFestivos;
 import ui.Administracion.Parametricas.AdministracionParametros;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
@@ -35,6 +34,7 @@ import ui.GestionProyectos.ConsultaProyectos;
 import ui.Recursos.GestionRecursos.AltaModRecurso;
 import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
+import ui.interfaces.ControladorPantalla;
 
 
 public class Main extends Application {

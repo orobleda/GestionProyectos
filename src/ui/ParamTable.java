@@ -25,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import model.interfaces.Loadable;
+import ui.interfaces.Tableable;
 import ui.popUps.PopUp;
 
 public class ParamTable implements Tableable {

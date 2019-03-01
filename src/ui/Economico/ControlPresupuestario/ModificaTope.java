@@ -22,11 +22,11 @@ import model.beans.TopeImputacion;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.GestionBotones;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.Tables.LineaTopeImputacion;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 import ui.popUps.PopUp;
 
 public class ModificaTope implements ControladorPantalla, PopUp {

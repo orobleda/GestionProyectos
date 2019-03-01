@@ -8,7 +8,7 @@ import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class DesgloseDemandasAsocidasTabla extends ParamTable implements Tableable  {
 	public Proyecto p = null;

@@ -13,9 +13,9 @@ import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.EditarEstimacion;
 import ui.Economico.EstimacionesInternas.EstimacionesInternas;
+import ui.interfaces.Tableable;
 
 public class LineaDetalleMes extends ParamTable implements Tableable  {
 	

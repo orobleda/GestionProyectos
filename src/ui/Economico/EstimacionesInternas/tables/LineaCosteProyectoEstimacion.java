@@ -15,7 +15,7 @@ import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class LineaCosteProyectoEstimacion extends ParamTable implements Tableable  {
 	

@@ -10,8 +10,8 @@ import model.beans.TopeImputacion;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.ModificaTope;
+import ui.interfaces.Tableable;
 
 public class LineaTopeImputacion extends ParamTable implements Tableable  {
 	

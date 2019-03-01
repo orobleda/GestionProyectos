@@ -16,8 +16,8 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.ModificaTope;
+import ui.interfaces.Tableable;
 
 public class LineaTopePresupuesto extends ParamTable implements Tableable  {
 	 

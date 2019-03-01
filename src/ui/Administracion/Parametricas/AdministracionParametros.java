@@ -13,10 +13,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.beans.Parametro;
 import model.utils.db.ConsultaBD;
-import ui.ControladorPantalla;
 import ui.GestionBotones;
-import ui.Propiediable;
 import ui.TablaPropiedades;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Propiediable;
 
 public class AdministracionParametros implements ControladorPantalla {
 	Parametro par = new Parametro();

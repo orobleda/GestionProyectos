@@ -19,10 +19,10 @@ import model.beans.Proyecto;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParamProyecto;
 import model.metadatos.TipoProyecto;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.GestionProyectos.Tables.ParamProyecto;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 import ui.popUps.SeleccionElemento;
 
 public class AltaModProyecto implements ControladorPantalla {

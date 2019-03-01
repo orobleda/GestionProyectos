@@ -18,9 +18,9 @@ import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.Economico.EstimacionesValoraciones.InformaConcepto;
+import ui.interfaces.Tableable;
 
 public class LineaCostePresupuesto extends ParamTable implements Tableable  {
 	 

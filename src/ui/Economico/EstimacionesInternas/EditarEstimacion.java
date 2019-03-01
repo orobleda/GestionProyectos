@@ -19,13 +19,13 @@ import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleMes;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 import ui.popUps.PopUp;
 
 public class EditarEstimacion implements ControladorPantalla, PopUp {

@@ -18,9 +18,9 @@ import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
-import ui.ControladorPantalla;
-import ui.Tableable;
 import ui.Recursos.GestionTarifas.Tables.AsignacionRecursoTarifa;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class InformaAsignacion implements ControladorPantalla {
 

@@ -18,10 +18,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.beans.Proveedor;
 import model.beans.Tarifa;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class GestionTarifas  implements ControladorPantalla {
 	public static final String fxml = "file:src/ui/Economico/Tarifas/GestionTarifas.fxml";

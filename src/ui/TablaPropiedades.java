@@ -13,6 +13,7 @@ import javafx.util.Callback;
 import model.constantes.Constantes;
 import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.TipoDato;
+import ui.interfaces.Propiediable;
 
 public class TablaPropiedades extends PropertySheet{
 	

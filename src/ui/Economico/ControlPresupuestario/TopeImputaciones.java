@@ -28,13 +28,13 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import ui.ConfigTabla;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 import ui.Economico.ControlPresupuestario.Tables.LineaTopeImputacion;
 import ui.Economico.ControlPresupuestario.Tables.LineaTopePresupuesto;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class TopeImputaciones implements ControladorPantalla {
 

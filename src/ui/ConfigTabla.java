@@ -3,6 +3,7 @@ package ui;
 import java.util.HashMap;
 
 import javafx.scene.control.TableView;
+import ui.interfaces.Tableable;
 
 public class ConfigTabla implements Comparable<ConfigTabla> {
 	public String idColumna = null;

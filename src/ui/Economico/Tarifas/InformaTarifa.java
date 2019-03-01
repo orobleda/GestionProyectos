@@ -18,10 +18,10 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.Proveedor;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class InformaTarifa  implements ControladorPantalla  {
 	

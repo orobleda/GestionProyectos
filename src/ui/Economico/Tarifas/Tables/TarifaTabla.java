@@ -13,8 +13,8 @@ import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.Tarifas.InformaTarifa;
+import ui.interfaces.Tableable;
 
 public class TarifaTabla extends ParamTable implements Tableable  {
 	

@@ -10,7 +10,7 @@ import model.beans.JornadasMes;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class HorasJornada extends ParamTable implements Tableable  {
 	

@@ -10,10 +10,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
 import ui.ConfigTabla;
-import ui.ControladorPantalla;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteResumenConcepto;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class DetalleRecurso implements ControladorPantalla {
 

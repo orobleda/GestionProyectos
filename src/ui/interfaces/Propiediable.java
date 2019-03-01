@@ -1,6 +1,7 @@
-package ui;
+package ui.interfaces;
 
 import model.beans.Parametro;
+import ui.Propiedad;
 
 public interface Propiediable {
 	public static final String[] SUBCLASES = {Parametro.class.getSimpleName()};

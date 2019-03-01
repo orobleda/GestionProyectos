@@ -18,10 +18,10 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.ParametroRecurso;
 import model.beans.Recurso;
 import model.metadatos.MetaParamRecurso;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Recursos.GestionRecursos.Tables.ParamRecurso;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class AltaModRecurso implements ControladorPantalla {
 

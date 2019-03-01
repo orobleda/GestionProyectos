@@ -11,7 +11,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class LineaCosteEvolucion extends ParamTable implements Tableable  {
 	

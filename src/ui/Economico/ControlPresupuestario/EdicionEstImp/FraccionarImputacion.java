@@ -29,14 +29,14 @@ import model.beans.Imputacion;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteEvolucion;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class FraccionarImputacion implements ControladorPantalla {
 	

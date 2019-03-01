@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.interfaces.Loadable;
-import ui.ControladorPantalla;
+import ui.interfaces.ControladorPantalla;
 
 public class SeleccionElemento implements ControladorPantalla, PopUp {
 	

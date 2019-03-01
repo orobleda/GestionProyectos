@@ -21,10 +21,10 @@ import model.beans.JornadasMes;
 import model.beans.Recurso;
 import model.beans.VacacionesAusencias;
 import model.constantes.FormateadorDatos;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Recursos.GestionVacaciones.Tables.HorasJornada;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class DetalleRecurso implements ControladorPantalla {
 									   

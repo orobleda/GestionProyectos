@@ -19,10 +19,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.metadatos.Festivo;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Administracion.Festivos.Tables.LineaFestivo;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class GestionFestivos  implements ControladorPantalla {
 	public static final String fxml = "file:src/ui/Administracion/Festivos/GestionFestivos.fxml";

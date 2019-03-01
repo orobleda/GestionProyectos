@@ -44,14 +44,14 @@ import model.metadatos.MetaParamRecurso;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class EstimacionesInternas implements ControladorPantalla {
 

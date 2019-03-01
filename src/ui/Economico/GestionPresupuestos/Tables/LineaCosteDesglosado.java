@@ -17,9 +17,9 @@ import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
+import ui.interfaces.Tableable;
 
 public class LineaCosteDesglosado extends ParamTable implements Tableable  {
 	

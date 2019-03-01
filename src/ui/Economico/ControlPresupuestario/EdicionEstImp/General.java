@@ -14,12 +14,12 @@ import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.Estimacion;
 import model.beans.Imputacion;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteUsuario;
+import ui.interfaces.ControladorPantalla;
 import ui.popUps.PopUp;
 
 public class General implements ControladorPantalla, PopUp {

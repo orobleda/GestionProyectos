@@ -12,7 +12,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.Festivo;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class LineaFestivo extends ParamTable implements Tableable  {
 	 

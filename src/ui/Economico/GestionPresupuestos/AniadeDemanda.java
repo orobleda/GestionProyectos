@@ -23,11 +23,11 @@ import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.GestionBotones;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class AniadeDemanda implements ControladorPantalla {
 	

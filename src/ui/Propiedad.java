@@ -6,6 +6,7 @@ import org.controlsfx.control.PropertySheet;
 
 import javafx.beans.value.ObservableValue;
 import model.metadatos.TipoDato;
+import ui.interfaces.Propiediable;
 
 public class Propiedad implements PropertySheet.Item {
 	

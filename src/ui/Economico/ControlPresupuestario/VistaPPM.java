@@ -20,10 +20,10 @@ import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.Tables.Cabeceras;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteEstReal;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class VistaPPM implements ControladorPantalla {
 

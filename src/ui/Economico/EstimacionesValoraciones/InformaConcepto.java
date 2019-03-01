@@ -16,9 +16,9 @@ import model.beans.Coste;
 import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
-import ui.ControladorPantalla;
-import ui.Tableable;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class InformaConcepto implements ControladorPantalla {
 	

@@ -9,7 +9,7 @@ import model.beans.Concepto;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class LineaCosteSumario extends ParamTable implements Tableable  {
 	

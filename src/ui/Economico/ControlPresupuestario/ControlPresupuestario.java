@@ -27,13 +27,13 @@ import model.beans.Proyecto;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParamProyecto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.GestionBotones;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.Tables.LineaCoste;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosado;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosadoSumario;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteSumario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class ControlPresupuestario implements ControladorPantalla {
 

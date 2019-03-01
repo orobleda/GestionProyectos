@@ -5,7 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import model.metadatos.EstadoProyecto;
 import model.metadatos.TipoProyecto;
-import ui.ControladorPantalla;
+import ui.interfaces.ControladorPantalla;
 
 public class ConsultaProyectos implements ControladorPantalla {
 	

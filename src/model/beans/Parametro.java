@@ -16,7 +16,7 @@ import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 import ui.Propiedad;
-import ui.Propiediable;
+import ui.interfaces.Propiediable;
 
 public class Parametro implements Propiediable, Cargable {
 	public static int SIN_ID_ELEMENTO = -1;

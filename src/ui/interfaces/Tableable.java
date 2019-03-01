@@ -1,4 +1,4 @@
-package ui;
+package ui.interfaces;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import ui.ConfigTabla;
+import ui.Tabla;
 
 public interface Tableable {
 	public void fijaColumnas(TableView<Tableable> tParametros);

@@ -10,7 +10,7 @@ import model.metadatos.MetaParamProyecto;
 import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 import ui.popUps.SeleccionElemento;
 
 public class ParamProyecto extends ParamTable implements Tableable  {

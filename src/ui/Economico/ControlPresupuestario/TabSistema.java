@@ -20,7 +20,7 @@ import model.beans.Imputacion;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
+import ui.interfaces.ControladorPantalla;
 
 public class TabSistema implements ControladorPantalla {
 

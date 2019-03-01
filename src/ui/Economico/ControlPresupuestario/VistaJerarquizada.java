@@ -21,8 +21,8 @@ import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
 import model.constantes.Constantes;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.GestionBotones;
+import ui.interfaces.ControladorPantalla;
 
 public class VistaJerarquizada implements ControladorPantalla {
 

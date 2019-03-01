@@ -35,14 +35,14 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParamRecurso;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteEvolucion;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteUsuario;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class NuevaEstimacion implements ControladorPantalla {
 	

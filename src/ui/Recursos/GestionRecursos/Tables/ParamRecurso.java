@@ -9,7 +9,7 @@ import model.metadatos.MetaParamRecurso;
 import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class ParamRecurso extends ParamTable implements Tableable  {
 	 

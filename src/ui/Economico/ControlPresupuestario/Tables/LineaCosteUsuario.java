@@ -13,8 +13,8 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParamRecurso;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.General;
+import ui.interfaces.Tableable;
 
 public class LineaCosteUsuario extends ParamTable implements Tableable  {
 	

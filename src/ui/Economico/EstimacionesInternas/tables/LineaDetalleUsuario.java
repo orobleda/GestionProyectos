@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
+import ui.interfaces.Tableable;
 
 public class LineaDetalleUsuario extends ParamTable implements Tableable  {
 	

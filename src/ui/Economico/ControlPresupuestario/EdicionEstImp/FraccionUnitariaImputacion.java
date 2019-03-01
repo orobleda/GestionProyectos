@@ -12,9 +12,9 @@ import model.beans.FraccionImputacion;
 import model.beans.Imputacion;
 import model.constantes.FormateadorDatos;
 import model.metadatos.Sistema;
-import ui.ControladorPantalla;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.Tables.LineaCosteUsuario;
+import ui.interfaces.ControladorPantalla;
 
 public class FraccionUnitariaImputacion implements ControladorPantalla {
 	

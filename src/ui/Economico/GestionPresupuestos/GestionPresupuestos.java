@@ -34,14 +34,14 @@ import model.metadatos.Sistema;
 import model.metadatos.TipoPresupuesto;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
-import ui.ControladorPantalla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
-import ui.Tableable;
 import ui.Economico.GestionPresupuestos.Tables.DesgloseDemandasAsocidasTabla;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class GestionPresupuestos implements ControladorPantalla {
 	

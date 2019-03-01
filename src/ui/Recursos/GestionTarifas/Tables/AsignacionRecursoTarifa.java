@@ -12,8 +12,8 @@ import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
-import ui.Tableable;
 import ui.Recursos.GestionTarifas.InformaAsignacion;
+import ui.interfaces.Tableable;
 
 public class AsignacionRecursoTarifa extends ParamTable implements Tableable  {
 	

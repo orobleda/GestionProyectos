@@ -35,10 +35,10 @@ import model.metadatos.MetaParamProyecto;
 import model.metadatos.Sistema;
 import model.metadatos.TipoPresupuesto;
 import ui.ConfigTabla;
-import ui.ControladorPantalla;
 import ui.Dialogo;
-import ui.Tableable;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
+import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 import ui.popUps.SeleccionElemento;
 
 public class EstimacionesValoraciones implements ControladorPantalla {
