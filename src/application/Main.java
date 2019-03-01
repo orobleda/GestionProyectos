@@ -20,13 +20,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
 import ui.ControladorPantalla;
 import ui.Administracion.Festivos.GestionFestivos;
+import ui.Administracion.Parametricas.AdministracionParametros;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.EstimacionesInternas.EstimacionesInternas;
 import ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones;
@@ -64,7 +63,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase);
 	        scene.getStylesheets().add("application.css");	        
 	        
-	        GestionPresupuestos c = new GestionPresupuestos();
+	        AdministracionParametros c = new AdministracionParametros();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();

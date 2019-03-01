@@ -7,6 +7,12 @@ import java.util.Date;
 public class Constantes {
 	public static final Date fechaFinal = init();
 	
+	public static Boolean TRUE = new Boolean(true);
+	public static Boolean FALSE = new Boolean(false);
+	
+	public static int NUM_TRUE = 1;
+	public static int NUM_FALSE = 0;
+	
 	public static final int USUARIORESPONSABLE = 3;
 	
 	public static final String COLOR_ROJO = "Red";
@@ -51,6 +57,23 @@ public class Constantes {
 	
 	public Constantes() {
 		cargaMeses();
+	}
+	
+	public static ArrayList<Boolean> opcionesYesNo() {
+		ArrayList<Boolean> salida = new ArrayList<Boolean>();
+		salida.add(Constantes.TRUE);
+		salida.add(Constantes.FALSE);
+		return salida;
+	}
+	
+	public static int toNumBoolean(Boolean estado) {
+		if (estado) return Constantes.NUM_TRUE;
+		else return Constantes.NUM_FALSE;
+	}
+	
+	public static Boolean toNumBoolean(int estado) {
+		if (estado==Constantes.NUM_TRUE) return Constantes.TRUE;
+		else return Constantes.FALSE;
 	}
 
 	public static Date fechaActual() {

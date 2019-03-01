@@ -10,4 +10,12 @@ public class TipoDato {
 	public static final int FORMATO_FORMATO_PROYECTO = 7;
 	public static final int FORMATO_PORC = 9;
 	public static final int FORMATO_TIPO_PROYECTO = 8;
+	public static final int FORMATO_BOOLEAN = 10;
+	
+	public static Class<?> getClassTipo(int tipo) {
+		if (tipo == FORMATO_INT) return Integer.class;
+		if (tipo == FORMATO_FORMATO_PROYECTO) return MetaFormatoProyecto.class;
+		if (tipo == FORMATO_BOOLEAN) return Boolean.class;
+		return null;
+	}
 }

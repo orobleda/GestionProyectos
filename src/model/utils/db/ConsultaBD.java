@@ -47,6 +47,11 @@ public class ConsultaBD {
 	 }
 	 
 	 public void ejecutaSQL( String codQuery, List<ParametroBD> filtros, Cargable objSalida, String idTransaccion ){
+		 if (idTransaccion==null) {
+			 ejecutaSQL( codQuery, filtros, objSalida );
+			 return;
+		 }
+		 
 		 ArrayList<String> querys = null;
 		 
 		 if ( ConsultaBD.transacciones.containsKey(idTransaccion)) {
