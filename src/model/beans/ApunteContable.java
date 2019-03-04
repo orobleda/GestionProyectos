@@ -88,9 +88,6 @@ public class ApunteContable extends Proyecto {
 	}
 	
 	public void bajaApunteContable(String idTransaccion) {			
-		ParametroProyecto pp = new ParametroProyecto();
-		pp.bajaProyecto(this);
-		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
 		ConsultaBD consulta = new ConsultaBD();

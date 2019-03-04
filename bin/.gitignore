@@ -1,4 +1,3 @@
-/proyectosDemanda.png
 /ui/
 /Analizar3_DES.png
 /Analizar3_ON.png
@@ -27,6 +26,8 @@
 /Enlazar3_DES.png
 /Enlazar3_ON.png
 /Enlazar3_PAS.png
+/proyectosDemanda.png
+/AccesoBD.xml
 /Enlazar3_PRES.png
 /Fraccionar3_DES.png
 /Fraccionar3_ON.png
@@ -69,16 +70,15 @@
 /antPagina_ON.png
 /antPagina_PAS.png
 /antPagina_PRES.png
+/application.css
+/application/
 /botones.psd
 /botonesx200.psd
 /botonesx25.psd
 /botonesx50.psd
 /buscar.png
-/edit.png
-/AccesoBD.xml
-/application.css
-/application/
 /controller/
+/edit.png
 /eliminar.png
 /guardar.jpg
 /jerarquia_ON.png
@@ -92,3 +92,4 @@
 /sigPagina_ON.png
 /sigPagina_PAS.png
 /sigPagina_PRES.png
+/GestionParametros.fxml

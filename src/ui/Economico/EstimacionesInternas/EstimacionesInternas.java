@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 
@@ -36,14 +34,12 @@ import model.beans.Recurso;
 import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
-import model.constantes.ConstantesBD;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
-import model.metadatos.MetaParamProyecto;
 import model.metadatos.MetaParamRecurso;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
-import model.utils.db.ParametroBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
@@ -578,8 +574,8 @@ public class EstimacionesInternas implements ControladorPantalla {
 				p.cargaProyecto();
 				
 				if (!p.isCerrado()) {
-					Date fechaFin = (Date) p.getValorParametro(MetaParamProyecto.FX_FIN);
-					Date fechaInicio = (Date) p.getValorParametro(MetaParamProyecto.FX_INICIO);
+					Date fechaFin = (Date) p.getValorParametro(MetaParametro.PROYECTO_FX_INICIO).getValor();
+					Date fechaInicio = (Date) p.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
 					
 					Calendar cFechaInicio = Calendar.getInstance();
 					cFechaInicio.setTime(fechaInicio);

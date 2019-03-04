@@ -1,5 +1,7 @@
 package model.beans;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,9 +12,10 @@ import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 import ui.Propiedad;
@@ -20,6 +23,10 @@ import ui.interfaces.Propiediable;
 
 public class Parametro implements Propiediable, Cargable {
 	public static int SIN_ID_ELEMENTO = -1;
+	
+	public String QUERY_INSERTA_PARAMETRO = "iInsertaParametro";
+	public String QUERY_CONSULTA_PARAMETRO = "cConsultaParametro";
+	public String QUERY_BORRA_PARAMETRO = "dBorraParametro";
 	
 	public MetaParametro metaParam = null;
 	public int idEntidadAsociada = 0;
@@ -33,6 +40,18 @@ public class Parametro implements Propiediable, Cargable {
 	public Date valorfecha = null;
 	
 	public boolean modificado = false;
+	
+	public String getQueryInsercion() {
+		return QUERY_INSERTA_PARAMETRO;
+	}
+	
+	public String getQueryConsulta() {
+		return QUERY_CONSULTA_PARAMETRO;
+	}
+	
+	public String getQueryBorrado() {
+		return QUERY_BORRA_PARAMETRO;
+	}
 	
 	public Object getValor() {
 		if (metaParam== null) return null;
@@ -65,7 +84,9 @@ public class Parametro implements Propiediable, Cargable {
 							metaParam.tipoDato == TipoDato.FORMATO_PORC ) valorReal =  (Float) valor;
 			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
 					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) valorObjeto = valor;
-			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) valorfecha = (Date) valor;
+			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) {
+				valorfecha = Date.from(((LocalDate) valor).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());;
+			}
 			if (metaParam.tipoDato == TipoDato.FORMATO_BOOLEAN) 
 				if ((Boolean)valor==Constantes.TRUE) valorEntero=Constantes.NUM_TRUE;
 				else 								 valorEntero=Constantes.NUM_FALSE;
@@ -101,10 +122,21 @@ public class Parametro implements Propiediable, Cargable {
 			
 			this.idEntidadAsociada = (Integer) salida.get("parIdElemento");
 			this.codParametro = (String) salida.get("parVlCodParm");
+			
+			MetaParametro mpp = MetaParametro.listado.get(this.codParametro);
+			
 			try { this.valorTexto = (String) salida.get("parVlTexto"); } catch (Exception e) {}
 			try { this.valorEntero = (Integer) salida.get("parVlEntero");} catch (Exception e) {}
 			try { this.valorReal = ((Double) salida.get("parVlReal")).floatValue();} catch (Exception e) {}
 			try { this.valorfecha = (Date) FormateadorDatos.parseaDato(salida.get("parVlFx").toString(),FormateadorDatos.FORMATO_FECHA);} catch (Exception e) {}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO) {
+				this.valorObjeto = TipoProyecto.listado.get(this.valorEntero);				
+			}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO) {
+				this.valorObjeto = MetaFormatoProyecto.listado.get(this.valorEntero);				
+			}
 			
 		} catch (Exception e) {
 			
@@ -122,16 +154,19 @@ public class Parametro implements Propiediable, Cargable {
 		if (idElemento!=-1)
 			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,idElemento));
 		
-		ArrayList<Cargable> parametros = consulta.ejecutaSQL("cConsultaParametro", listaParms, this);
+		ArrayList<Cargable> parametros = consulta.ejecutaSQL(this.getQueryConsulta(), listaParms, this);
 		
 		Iterator<Cargable> itCargable = parametros.iterator();
 		HashMap<String, Parametro> salida = new HashMap<String, Parametro> ();
 		
 		Iterator<MetaParametro> itMetaParam = MetaParametro.listado.values().iterator();
 		while (itMetaParam.hasNext()) {
-			Parametro par = new Parametro();
+			Parametro par = Propiediable.beanControlador(entidad);
 			par.metaParam = itMetaParam.next();
-			salida.put(par.metaParam.codParametro, par);
+			par.idEntidadAsociada = idElemento;
+			par.codParametro = par.metaParam.codParametro;
+			if (par.metaParam.entidad.equals(entidad)) 
+				salida.put(par.metaParam.codParametro, par);
 		}		
 		
 		while (itCargable.hasNext()) {
@@ -156,14 +191,14 @@ public class Parametro implements Propiediable, Cargable {
 		modificado = false;
 	}
 	
-	private void bajaParametro(String idTransaccion) {
+	public void bajaParametro(String idTransaccion) {
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_STR, this.codParametro));
 		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.idEntidadAsociada));
 		
 		ConsultaBD consulta = new ConsultaBD();
-		consulta.ejecutaSQL("dBorraParametro", listaParms, this, idTransaccion);
+		consulta.ejecutaSQL(this.getQueryBorrado(), listaParms, this, idTransaccion);
 	}
 	
 	private void insertaParametro(String idTransaccion){
@@ -173,10 +208,19 @@ public class Parametro implements Propiediable, Cargable {
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,id));
 		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.idEntidadAsociada));
 		
+		if (this.valorTexto == null) this.valorTexto="";
+		
 		if (TipoDato.FORMATO_TXT==this.metaParam.tipoDato) listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
 		if (TipoDato.FORMATO_URL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
 		if (TipoDato.FORMATO_INT==this.metaParam.tipoDato) listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
-		if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+		if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) {
+			this.valorEntero = ((MetaFormatoProyecto) this.valorObjeto).id;
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+		}
+		if (TipoDato.FORMATO_TIPO_PROYECTO==this.metaParam.tipoDato) {
+			this.valorEntero = ((TipoProyecto) this.valorObjeto).id;
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+		}
 		if (TipoDato.FORMATO_REAL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_MONEDA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_FECHA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_FECHA,this.valorfecha));
@@ -185,8 +229,7 @@ public class Parametro implements Propiediable, Cargable {
 		listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_STR,this.codParametro));
 		
 		consulta = new ConsultaBD();
-		consulta.ejecutaSQL("iInsertaParametro", listaParms, null,idTransaccion);
+		consulta.ejecutaSQL(this.getQueryInsercion(), listaParms, null,idTransaccion);
 	}
-	
-	
+
 }

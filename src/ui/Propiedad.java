@@ -1,5 +1,8 @@
 package ui;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 
 import org.controlsfx.control.PropertySheet;
@@ -54,6 +57,9 @@ public class Propiedad implements PropertySheet.Item {
 
 	@Override
 	public Object getValue() {
+		if (this.tipo == TipoDato.FORMATO_FECHA) {
+			return Instant.ofEpochMilli(((Date)this.valor).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		}
 		return this.valor;
 	}
 

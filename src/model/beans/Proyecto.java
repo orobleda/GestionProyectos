@@ -1,14 +1,13 @@
 package model.beans;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.metadatos.EstadoProyecto;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -20,7 +19,7 @@ public class Proyecto implements Cargable{
 	public Presupuesto presupuestoActual = null;
 	public Presupuesto presupuestoMaxVersion = null;
 	
-	public ArrayList<MetaParamProyecto> listadoParametros = null;
+	public HashMap<String, ? extends Parametro> listadoParametros = null;
 	public static HashMap<Integer, Proyecto> listaProyecto = null;
 	public ArrayList<EstadoProyecto> estadosProyecto = null;
 	
@@ -105,8 +104,9 @@ public class Proyecto implements Cargable{
 			Proyecto p = (Proyecto) itProyecto.next();
 			try {
 				p.cargaProyecto();
-				int tpProyecto = new Integer((String) p.getValorParametro(MetaParamProyecto.TIPO_PROYECTO));
-				if (tpProyecto == TipoProyecto.ID_EVOLUTIVO || tpProyecto == TipoProyecto.ID_PROYECTO)
+				ParametroProyecto pp = p.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+				TipoProyecto tp = (TipoProyecto) pp.getValor();
+				if (tp.codigo == TipoProyecto.ID_EVOLUTIVO || tp.codigo == TipoProyecto.ID_PROYECTO)
 					salida.add(p);
 				
 			} catch (Exception  ex) {
@@ -129,8 +129,9 @@ public class Proyecto implements Cargable{
 			Proyecto p = (Proyecto) itProyecto.next();
 			try {
 				p.cargaProyecto();
-				int tpProyecto = new Integer((String) p.getValorParametro(MetaParamProyecto.TIPO_PROYECTO));
-				if (tpProyecto == TipoProyecto.ID_DEMANDA)
+				ParametroProyecto pp = p.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+				TipoProyecto tp = (TipoProyecto) pp.getValor();
+				if (tp.codigo == TipoProyecto.ID_DEMANDA)
 					salida.add(p);
 				
 			} catch (Exception  ex) {
@@ -146,9 +147,10 @@ public class Proyecto implements Cargable{
 		if (this.listadoParametros!=null || this.listadoParametros.size()>0)
 			this.cargaProyecto();
 		
-		int tpProyecto = new Integer((String) this.getValorParametro(MetaParamProyecto.TIPO_PROYECTO));
+		ParametroProyecto pp = this.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+		TipoProyecto tp = (TipoProyecto) pp.getValor();
 		
-		if (tpProyecto == TipoProyecto.ID_EVOLUTIVO || tpProyecto == TipoProyecto.ID_PROYECTO) {
+		if (tp.codigo == TipoProyecto.ID_EVOLUTIVO || tp.codigo == TipoProyecto.ID_PROYECTO) {
 			RelProyectoDemanda rpd = new RelProyectoDemanda();
 			rpd.proyecto = this;
 			rpd.pres = this.presupuestoActual;
@@ -164,50 +166,10 @@ public class Proyecto implements Cargable{
 	}
 	
 	public void cargaProyecto() throws Exception{			
+		this.listadoParametros = new HashMap<String, ParametroProyecto> ();
+		
 		ParametroProyecto pp = new ParametroProyecto();
-		pp.idProyecto = this.id;
-		
-		ArrayList<ParametroProyecto> listado = pp.listadoParamProy();
-		Iterator<ParametroProyecto> itParam = listado.iterator();
-		
-		this.listadoParametros = new ArrayList<MetaParamProyecto> ();
-		
-		while (itParam.hasNext()) {
-			ParametroProyecto ppaux = (ParametroProyecto) itParam.next();
-			MetaParamProyecto mppaux = (MetaParamProyecto) ppaux.mpProy.clone();
-			Object valor = ppaux.getValor();
-			if (valor!=null)
-				if ("Date".equals(valor.getClass().getSimpleName())){
-					mppaux.valorDate = (Date) valor;
-					mppaux.valor =  valor.toString();
-				} else 
-					mppaux.valor = valor.toString();
-			else
-				mppaux.valor = "";
-			this.listadoParametros.add(mppaux);
-		}
-		
-		if (this.listadoParametros.size()!=MetaParamProyecto.listado.size()){
-			Iterator<MetaParamProyecto> itmtp = MetaParamProyecto.listado.values().iterator();
-			while (itmtp.hasNext()){
-				MetaParamProyecto mtp =  itmtp.next();
-				
-				boolean encontrado = false;
-				for (int i=0; i<this.listadoParametros.size();i++){
-					if (mtp.id == this.listadoParametros.get(i).id) {
-						encontrado = true;
-						break;
-					}
-				}
-				
-				if (!encontrado) {
-					mtp = (MetaParamProyecto) mtp.clone();
-					mtp.valor = "";
-					this.listadoParametros.add(mtp);	
-				}
-				
-			}
-		}
+		this.listadoParametros = pp.dameParametros(this.getClass().getSimpleName(), this.id);
 		
 		this.estadosProyecto = EstadoAsignadoProyecto.dameEstados(this); 		
 	}
@@ -238,19 +200,9 @@ public class Proyecto implements Cargable{
         return p.id+1;
 	}
 	
-	public Object getValorParametro(int idParm) {
-		if (this.listadoParametros!=null) {
-			Iterator<MetaParamProyecto> itParm = this.listadoParametros.iterator();
-			
-			while (itParm.hasNext()) {
-				MetaParamProyecto pp = itParm.next();
-				if (pp.id==idParm) {
-					if (pp.valorDate!=null) return pp.valorDate;
-					else return pp.valor;
-				}
-			}
-		}
-		return null;
+	public ParametroProyecto getValorParametro(String keyParam) {
+		if (this.listadoParametros==null) return null;
+		else return (ParametroProyecto) this.listadoParametros.get(keyParam);
 	}
 	
 	public void nuevoProyecto(String idTransaccion) {
@@ -304,9 +256,19 @@ public class Proyecto implements Cargable{
 		return modificacion;
 	}
 	
-	public void bajaProyecto(String idTransaccion) {			
-		ParametroProyecto pp = new ParametroProyecto();
-		pp.bajaProyecto(this);
+	public void bajaProyecto(String idTransaccion) throws Exception {
+		if (this.listadoParametros==null) {
+			this.cargaProyecto();
+		}
+		
+		ParametroProyecto pp = null;
+		
+		Iterator<? extends Parametro> itParametros = this.listadoParametros.values().iterator();
+		
+		while (itParametros.hasNext()) {
+			pp = (ParametroProyecto) itParametros.next();
+			pp.bajaParametro(idTransaccion);
+		}
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));

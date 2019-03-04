@@ -10,7 +10,7 @@ import model.interfaces.Loadable;
 import model.metadatos.EstadoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
-import ui.GestionProyectos.Tables.ParamProyecto;
+import ui.GestionProyectos.Tables.ParamProyectoLinea;
 
 public class EstadoAsignadoProyecto implements Cargable {
 	

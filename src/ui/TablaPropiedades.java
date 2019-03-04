@@ -13,6 +13,7 @@ import javafx.util.Callback;
 import model.constantes.Constantes;
 import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoProyecto;
 import ui.interfaces.Propiediable;
 
 public class TablaPropiedades extends PropertySheet{
@@ -29,9 +30,11 @@ public class TablaPropiedades extends PropertySheet{
 		return list;
 	}
 	
-	public TablaPropiedades(ObservableList<PropertySheet.Item> list) {	
+	public TablaPropiedades(ObservableList<PropertySheet.Item> list, double ancho, double alto) {	
 		super(list);
 		
+		this.setPrefHeight(alto);
+		this.setPrefWidth(ancho);
 		
 		this.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {
 		    @Override
@@ -42,12 +45,28 @@ public class TablaPropiedades extends PropertySheet{
 		    		return Editors.createNumericEditor(param);
 		    	}
 		    	
+		    	if (prop.tipo == TipoDato.FORMATO_REAL) {
+		    		return Editors.createNumericEditor(param);
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_FECHA) {
+		    		return Editors.createDateEditor(param);
+		    	}
+		    	
 		    	if (prop.tipo == TipoDato.FORMATO_FORMATO_PROYECTO) {
 		    		return Editors.createChoiceEditor(param, MetaFormatoProyecto.listado.values());
 		    	}
 		    	
+		    	if (prop.tipo == TipoDato.FORMATO_TIPO_PROYECTO) {
+		    		return Editors.createChoiceEditor(param, TipoProyecto.listado.values());
+		    	}
+		    	
 		    	if (prop.tipo == TipoDato.FORMATO_BOOLEAN) {
 		    		return Editors.createChoiceEditor(param, Constantes.opcionesYesNo());
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_TXT || prop.tipo == TipoDato.FORMATO_URL) {
+		    		return Editors.createTextEditor(param);
 		    	}
 		    	
 		    	return null;

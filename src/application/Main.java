@@ -30,7 +30,6 @@ import ui.Economico.EstimacionesInternas.EstimacionesInternas;
 import ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones;
 import ui.Economico.GestionPresupuestos.GestionPresupuestos;
 import ui.GestionProyectos.AltaModProyecto;
-import ui.GestionProyectos.ConsultaProyectos;
 import ui.Recursos.GestionRecursos.AltaModRecurso;
 import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
@@ -103,9 +102,7 @@ public class Main extends Application {
 		
 		TreeItem<String> model1 = new TreeItem<String>("", rootIcon);
 		
-		//TreeItem<String> model11 = new TreeItem<String>("Consulta");
-	    TreeItem<String> model12 = new TreeItem<String>("Alta & Modificación");
-	    //model1.getChildren().add(model11);
+		TreeItem<String> model12 = new TreeItem<String>("Gestión solicitudes");
 	    model1.getChildren().add(model12);
 		
 	    TreeItem<String> model2 = new TreeItem<String>("Recursos");
@@ -126,13 +123,14 @@ public class Main extends Application {
 	    model3.getChildren().add(model34);
 	    TreeItem<String> model33 = new TreeItem<String>("Gestión Tarifas");
 	    model3.getChildren().add(model33);
-	    
-	    
 
 	    TreeItem<String> model4 = new TreeItem<String>("Administración");
 		
 		TreeItem<String> model41 = new TreeItem<String>("Gestión Festivos");
 	    model4.getChildren().add(model41);
+	    
+		TreeItem<String> model42 = new TreeItem<String>("Gestión paramétricas");
+	    model4.getChildren().add(model42);
 	    
 	    dummyRoot.getChildren().addAll(model1, model2, model3, model4);
 	    
@@ -160,10 +158,7 @@ public class Main extends Application {
 		        ControladorPantalla controlPantalla = null;
 		        Main.sesion.put(Main.PANTALLA_ACTIVA, controlPantalla);
 		        
-		        if ("Consulta".equals(name))
-		        	controlPantalla = new ConsultaProyectos();		        	
-		        
-		        if ("Alta & Modificación".equals(name))
+		        if ("Gestión solicitudes".equals(name))
 		        	controlPantalla = new AltaModProyecto();
 		        
 		        if ("Gestión Recursos".equals(name))
@@ -192,6 +187,9 @@ public class Main extends Application {
 		        
 		        if ("Gestión Festivos".equals(name))
 		        	controlPantalla = new GestionFestivos();
+		        
+		        if ("Gestión paramétricas".equals(name))
+		        	controlPantalla = new AdministracionParametros();
 		        
 		        if (controlPantalla!=null){
 		        	loader.setLocation(new URL(controlPantalla.getFXML()));

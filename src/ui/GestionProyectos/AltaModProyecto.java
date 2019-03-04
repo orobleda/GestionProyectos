@@ -14,13 +14,13 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import model.beans.ParametroProyecto;
+import model.beans.ParamProyecto;
 import model.beans.Proyecto;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParamProyecto;
 import model.metadatos.TipoProyecto;
 import ui.Dialogo;
-import ui.GestionProyectos.Tables.ParamProyecto;
+import ui.GestionProyectos.Tables.ParamProyectoLinea;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 import ui.popUps.SeleccionElemento;
@@ -94,13 +94,13 @@ public class AltaModProyecto implements ControladorPantalla {
 		tpFiltros.setExpanded(false);
 		tpValores.setExpanded(true);
 		
-		ParamProyecto pProy = new ParamProyecto();
+		ParamProyectoLinea pProy = new ParamProyectoLinea();
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(MetaParamProyecto.listado.values());
 		ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
 		tParametros.setItems(dataTable);
 		
-		ParamProyecto pProyecto = new ParamProyecto();
+		ParamProyectoLinea pProyecto = new ParamProyectoLinea();
 		pProyecto.fijaColumnas(tParametros);		
 	}
 	
@@ -123,17 +123,17 @@ public class AltaModProyecto implements ControladorPantalla {
 				Iterator<Tableable> it = dataTable.iterator();
 				
 				while (it.hasNext()){
-					ParamProyecto pProyecto = (ParamProyecto) it.next();
+					ParamProyectoLinea pProyecto = (ParamProyectoLinea) it.next();
 					if (pProyecto.modificado) {
-						ParametroProyecto bParamProyecto = new ParametroProyecto();
+						ParamProyecto bParamProyecto = new ParamProyecto();
 						bParamProyecto.mpProy = new MetaParamProyecto(pProyecto);
 						bParamProyecto.cod_parm = bParamProyecto.mpProy.id;
 						bParamProyecto.idProyecto = p.id;
 						if (MetaParamProyecto.TIPO_PROYECTO == bParamProyecto.cod_parm) {
-							TipoProyecto tp = (TipoProyecto) FormateadorDatos.parseaDato(pProyecto.get(ParamProyecto.VALORREAL), FormateadorDatos.FORMATO_TIPO_PROYECTO);
+							TipoProyecto tp = (TipoProyecto) FormateadorDatos.parseaDato(pProyecto.get(ParamProyectoLinea.VALORREAL), FormateadorDatos.FORMATO_TIPO_PROYECTO);
 							bParamProyecto.setValor(new Integer(tp.id));
 						} else {
-							bParamProyecto.setValor(pProyecto.get(ParamProyecto.VALORREAL));
+							bParamProyecto.setValor(pProyecto.get(ParamProyectoLinea.VALORREAL));
 						}
 						
 						contador++;
@@ -182,12 +182,12 @@ public class AltaModProyecto implements ControladorPantalla {
 			this.tID.setText("");
 			this.tNombreProy.setText("");
 			
-			ParamProyecto pProy = new ParamProyecto();
+			ParamProyectoLinea pProy = new ParamProyectoLinea();
 			ArrayList<Object> lista = new ArrayList<Object>();
 			ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
 			tParametros.setItems(dataTable);	
 			
-			ParamProyecto pProyecto = new ParamProyecto();
+			ParamProyectoLinea pProyecto = new ParamProyectoLinea();
 			pProyecto.fijaColumnas(tParametros);	
 			
 			tpFiltros.setExpanded(true);
@@ -223,13 +223,13 @@ public class AltaModProyecto implements ControladorPantalla {
 			this.tID.setText(new Integer(p.id).toString());
 			this.tNombreProy.setText(p.nombre);
 			
-			ParamProyecto pProy = new ParamProyecto();
+			ParamProyectoLinea pProy = new ParamProyectoLinea();
 			ArrayList<Object> lista = new ArrayList<Object>();
 			lista.addAll(p.listadoParametros);
 			ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
 			tParametros.setItems(dataTable);	
 			
-			ParamProyecto pProyecto = new ParamProyecto();
+			ParamProyectoLinea pProyecto = new ParamProyectoLinea();
 			pProyecto.fijaColumnas(tParametros);	
 			
 			tpFiltros.setExpanded(false);

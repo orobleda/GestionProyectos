@@ -25,7 +25,7 @@ import model.beans.Coste;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.metadatos.MetaConcepto;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import ui.GestionBotones;
 import ui.Economico.ControlPresupuestario.Tables.LineaCoste;
@@ -329,8 +329,8 @@ public class ControlPresupuestario implements ControladorPantalla {
 		try {
 			p.cargaProyecto();
 		
-			Date fInicio = (Date) p.getValorParametro(MetaParamProyecto.FX_INICIO);
-			Date fFin = (Date) p.getValorParametro(MetaParamProyecto.FX_FIN);
+			Date fInicio = (Date) p.getValorParametro(MetaParametro.PROYECTO_FX_INICIO).getValor();
+			Date fFin = (Date) p.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
 			
 			Calendar cInicio = Calendar.getInstance();
 			cInicio.setTime(fInicio);

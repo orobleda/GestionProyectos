@@ -25,13 +25,14 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.BaseCalculoConcepto;
 import model.beans.Concepto;
 import model.beans.Coste;
+import model.beans.ParametroProyecto;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Loadable;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoPresupuesto;
 import ui.ConfigTabla;
@@ -213,7 +214,9 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		MetaFormatoProyecto mfp = null;
 		
 		try {
-			perfilEconomico = new Integer((EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParamProyecto.PERFIL_ECONOMICO)).toString());
+			ParametroProyecto pp = EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParametro.PROYECTO_PERFIL_ECONOMICO);
+			mfp = (MetaFormatoProyecto) pp.getValor();
+			perfilEconomico = mfp.id;
 			mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
 			if (mfp==null) throw new Exception();
 			
@@ -277,10 +280,11 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		MetaFormatoProyecto mfp = null;
 		
 		try {
-			perfilEconomico = new Integer((EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParamProyecto.PERFIL_ECONOMICO)).toString());
+			ParametroProyecto pp = EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParametro.PROYECTO_PERFIL_ECONOMICO);
+			mfp = (MetaFormatoProyecto) pp.getValor();
+			perfilEconomico = mfp.id;
 			mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
-			if (mfp==null) throw new Exception();
-			
+			if (mfp==null) throw new Exception();			
 		} catch (Exception e) {
 			Dialogo.error("Alta de Sistema", "Falta perfil económico", "Es necesario administrar un perfil económico entre los parámetros del proyecto para continuar.");
 			return;
@@ -459,10 +463,12 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			
 			int perfilEconomico = 0;
 			MetaFormatoProyecto mfp = null;
-			perfilEconomico = new Integer((EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParamProyecto.PERFIL_ECONOMICO)).toString());
+			ParametroProyecto pp = EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParametro.PROYECTO_PERFIL_ECONOMICO);
+			mfp = (MetaFormatoProyecto) pp.getValor();
+			perfilEconomico = mfp.id;
 			mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
-			
 			if (mfp==null) throw new Exception();
+			
 			
 			while (itCostes.hasNext()) {
 				cst = itCostes.next();

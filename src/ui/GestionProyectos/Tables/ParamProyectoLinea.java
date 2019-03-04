@@ -3,17 +3,17 @@ package ui.GestionProyectos.Tables;
 import java.util.HashMap;
 
 import javafx.beans.property.SimpleStringProperty;
+import model.beans.ParametroProyecto;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Loadable;
 import model.metadatos.MetaFormatoProyecto;
-import model.metadatos.MetaParamProyecto;
 import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.interfaces.Tableable;
 import ui.popUps.SeleccionElemento;
 
-public class ParamProyecto extends ParamTable implements Tableable  {
+public class ParamProyectoLinea extends ParamTable implements Tableable  {
 	 
     private final SimpleStringProperty id;
     private final SimpleStringProperty tipo;
@@ -27,7 +27,7 @@ public class ParamProyecto extends ParamTable implements Tableable  {
 	public static final String VALOR = "cValor";
 	public static final String VALORREAL = "valorreal";
     
-    public ParamProyecto(String id, String tipo, String descripcion, String valor, int tipoDato) {
+    public ParamProyectoLinea(String id, String tipo, String descripcion, String valor, int tipoDato) {
         this.id = new SimpleStringProperty(id);
         this.tipo = new SimpleStringProperty(tipo);
         this.descripcion = new SimpleStringProperty(descripcion);
@@ -47,7 +47,7 @@ public class ParamProyecto extends ParamTable implements Tableable  {
         setConfig();
     }
     
-    public ParamProyecto() {
+    public ParamProyectoLinea() {
         this.id = new SimpleStringProperty("");
         this.tipo = new SimpleStringProperty("");
         this.descripcion = new SimpleStringProperty("");
@@ -77,17 +77,17 @@ public class ParamProyecto extends ParamTable implements Tableable  {
     
     @Override
 	public Tableable toTableable(Object o) {
-    	MetaParamProyecto mtp = (MetaParamProyecto) o;
-		return new ParamProyecto(new Integer(mtp.id).toString(), mtp.tipo, mtp.descripcion, mtp.valor,mtp.tipoDato);
+    	ParametroProyecto mtp = (ParametroProyecto) o;
+		return null; //new ParamProyectoLinea(new Integer(mtp.id).toString(), mtp.tipo, mtp.descripcion, mtp.valor,mtp.tipoDato);
 	}
     
 
 	public void set(String campo, String valor){
 		try {
-			if (ParamProyecto.ID.equals(campo)) id.set(valor);
-			if (ParamProyecto.TIPO.equals(campo)) tipo.set(valor);
-			if (ParamProyecto.DESCRIPCION.equals(campo)) descripcion.set(valor);
-			if (ParamProyecto.VALOR.equals(campo)) {
+			if (ParamProyectoLinea.ID.equals(campo)) id.set(valor);
+			if (ParamProyectoLinea.TIPO.equals(campo)) tipo.set(valor);
+			if (ParamProyectoLinea.DESCRIPCION.equals(campo)) descripcion.set(valor);
+			if (ParamProyectoLinea.VALOR.equals(campo)) {
 				
 				if (FormateadorDatos.FORMATO_FORMATO_PROYECTO == this.tipoDato){
 		        	valorReal.set(new Integer(MetaFormatoProyecto.listado.get(new Integer(valor)).id).toString());
@@ -101,18 +101,18 @@ public class ParamProyecto extends ParamTable implements Tableable  {
 					valorReal.set(FormateadorDatos.parseaDato(valor, this.tipoDato).toString());
 				}
 			}
-			if (ParamProyecto.VALORREAL.equals(campo)) FormateadorDatos.formateaDato(valorReal.get(), this.tipoDato);
+			if (ParamProyectoLinea.VALORREAL.equals(campo)) FormateadorDatos.formateaDato(valorReal.get(), this.tipoDato);
 		} catch ( Exception e) {}
 			
 	}
     
 	public String get(String campo) {
 		try {
-			if (ParamProyecto.ID.equals(campo)) return id.get();
-			if (ParamProyecto.TIPO.equals(campo)) return tipo.get();
-			if (ParamProyecto.DESCRIPCION.equals(campo)) return descripcion.get();
-			if (ParamProyecto.VALOR.equals(campo)) return  FormateadorDatos.formateaDato(valor.get(), this.tipoDato);
-			if (ParamProyecto.VALORREAL.equals(campo)) return FormateadorDatos.formateaDato(valorReal.get(), this.tipoDato);
+			if (ParamProyectoLinea.ID.equals(campo)) return id.get();
+			if (ParamProyectoLinea.TIPO.equals(campo)) return tipo.get();
+			if (ParamProyectoLinea.DESCRIPCION.equals(campo)) return descripcion.get();
+			if (ParamProyectoLinea.VALOR.equals(campo)) return  FormateadorDatos.formateaDato(valor.get(), this.tipoDato);
+			if (ParamProyectoLinea.VALORREAL.equals(campo)) return FormateadorDatos.formateaDato(valorReal.get(), this.tipoDato);
 		} catch ( Exception e) {}
 			
 		return null;

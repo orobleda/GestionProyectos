@@ -29,7 +29,7 @@ import model.beans.Proyecto;
 import model.beans.RelProyectoDemanda;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoPresupuesto;
 import model.metadatos.TipoProyecto;
@@ -340,11 +340,12 @@ public class GestionPresupuestos implements ControladorPantalla {
 			this.proyOperado.nuevoProyecto(idTransaccion);
 			
 			ParametroProyecto pp = new ParametroProyecto();
-			pp.idProyecto = this.proyOperado.id;
-			pp.mpProy = MetaParamProyecto.listado.get(MetaParamProyecto.TIPO_PROYECTO);
-			pp.valorEntero = this.cbTipoProy.getValue().id;
+			pp.idEntidadAsociada = this.proyOperado.id;
+			pp.metaParam = MetaParametro.listado.get(MetaParametro.PROYECTO_TIPO_PROYECTO);
+			pp.valorObjeto = this.cbTipoProy.getValue();
+			pp.codParametro = pp.metaParam.codParametro;
 			
-			pp.insertaParametro(this.proyOperado.id, idTransaccion);
+			pp.actualizaParametro(idTransaccion);
 		}
 		
 		setIdsPresOperado();
@@ -576,7 +577,9 @@ public class GestionPresupuestos implements ControladorPantalla {
 				this.tVsProyecto.setText(p.descripcion);
 				
 				proy.cargaProyecto();
-				this.cbTipoProy.setValue(TipoProyecto.listado.get(new Integer((String)proy.getValorParametro(MetaParamProyecto.TIPO_PROYECTO))));
+				ParametroProyecto pp = proy.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+				TipoProyecto tp = (TipoProyecto)pp.getValor();
+				this.cbTipoProy.setValue(TipoProyecto.listado.get(tp.id));
 				
 				this.cbTipoProy.setDisable(true);
 				this.tNomProyecto.setDisable(true);

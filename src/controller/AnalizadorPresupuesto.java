@@ -17,7 +17,7 @@ import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
 import model.metadatos.MetaConcepto;
-import model.metadatos.MetaParamProyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
@@ -485,8 +485,8 @@ public class AnalizadorPresupuesto {
 		proyecto.id = idProyecto;		
 		proyecto.cargaProyecto();
 		
-		Date fInicio = (Date) proyecto.getValorParametro(MetaParamProyecto.FX_INICIO);
-		Date fFin = (Date) proyecto.getValorParametro(MetaParamProyecto.FX_FIN);
+		Date fInicio = (Date) proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
+		Date fFin = (Date) proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
 		
 		Calendar cInicio = Calendar.getInstance();
 		cInicio.setTime(fInicio);
