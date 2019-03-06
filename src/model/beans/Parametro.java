@@ -23,6 +23,7 @@ import ui.interfaces.Propiediable;
 
 public class Parametro implements Propiediable, Cargable {
 	public static int SIN_ID_ELEMENTO = -1;
+	public static int SOLO_METAPARAMETROS = -2;
 	
 	public String QUERY_INSERTA_PARAMETRO = "iInsertaParametro";
 	public String QUERY_CONSULTA_PARAMETRO = "cConsultaParametro";
@@ -35,7 +36,7 @@ public class Parametro implements Propiediable, Cargable {
 		
 	public int valorEntero = 0;
 	public float valorReal = 0;
-	public Object valorObjeto = 0;
+	public Object valorObjeto = null;
 	public String valorTexto = null;
 	public Date valorfecha = null;
 	
@@ -51,6 +52,10 @@ public class Parametro implements Propiediable, Cargable {
 	
 	public String getQueryBorrado() {
 		return QUERY_BORRA_PARAMETRO;
+	}
+	
+	public String getCodigo() {
+		return codParametro;
 	}
 	
 	public Object getValor() {

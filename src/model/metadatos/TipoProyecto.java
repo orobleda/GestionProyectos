@@ -34,6 +34,19 @@ public class TipoProyecto implements Cargable, Loadable {
 		}
 		
 		return salida;
+	}
+	
+	public static ArrayList<TipoProyecto> tiposDemanda() {
+		ArrayList<TipoProyecto> salida = new ArrayList<TipoProyecto>();
+		Iterator<TipoProyecto> itTipoProyectos = listado.values().iterator();
+		
+		while (itTipoProyectos.hasNext()) {
+			TipoProyecto tp = itTipoProyectos.next();
+			if (tp.id != TipoProyecto.ID_EVOLUTIVO && tp.id != TipoProyecto.ID_PROYECTO)
+				salida.add(tp);
+		}
+		
+		return salida;
 	} 
 	
 	public static ArrayList<Object> objetosNoDemanda() {

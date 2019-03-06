@@ -34,6 +34,7 @@ import ui.Recursos.GestionRecursos.AltaModRecurso;
 import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
 import ui.interfaces.ControladorPantalla;
+import ui.planificacion.Faseado.GestionFases;
 
 
 public class Main extends Application {
@@ -62,7 +63,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase);
 	        scene.getStylesheets().add("application.css");	        
 	        
-	        AdministracionParametros c = new AdministracionParametros();
+	        GestionFases c = new GestionFases();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();
@@ -110,6 +111,11 @@ public class Main extends Application {
 	    TreeItem<String> model22 = new TreeItem<String>("Asignación Tarifas");
 	    TreeItem<String> model23 = new TreeItem<String>("Gestión horas trabajadas");
 	    model2.getChildren().addAll(model21,model22,model23);
+	    
+	    TreeItem<String> model3b = new TreeItem<String>("Planificación");
+		
+		TreeItem<String> model3b1 = new TreeItem<String>("Faseado Proyectos");
+	    model3b.getChildren().add(model3b1);
 
 	    TreeItem<String> model3 = new TreeItem<String>("Económico");
 		
@@ -132,7 +138,7 @@ public class Main extends Application {
 		TreeItem<String> model42 = new TreeItem<String>("Gestión paramétricas");
 	    model4.getChildren().add(model42);
 	    
-	    dummyRoot.getChildren().addAll(model1, model2, model3, model4);
+	    dummyRoot.getChildren().addAll(model1, model2, model3b, model3, model4);
 	    
 	    TreeView<String> tree = new TreeView<>(dummyRoot);
 	    tree.setShowRoot(false);
@@ -169,18 +175,18 @@ public class Main extends Application {
 
 		        if ("Gestión horas trabajadas".equals(name))
 		        	controlPantalla = new GestionVacaciones();
-		        
+
 		        if ("Gestión Estimaciones".equals(name))
 		        	controlPantalla = new EstimacionesValoraciones();
+		        
+		        if ("Faseado Proyectos".equals(name))
+		        	controlPantalla = new GestionFases();
 		        
 		        if ("Gestión Tarifas".equals(name))
 		        	controlPantalla = new ui.Economico.Tarifas.GestionTarifas();
 		        
 		        if ("Gestión Presupuestos".equals(name))
 		        	controlPantalla = new GestionPresupuestos();
-		        
-		        if ("Control Presupuestario".equals(name))
-		        	controlPantalla = new ControlPresupuestario();
 		        
 		        if ("Estimaciones Por Horas".equals(name))
 		        	controlPantalla = new EstimacionesInternas();

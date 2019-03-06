@@ -6,11 +6,9 @@ import java.util.Iterator;
 
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
-import model.interfaces.Loadable;
 import model.metadatos.EstadoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
-import ui.GestionProyectos.Tables.ParamProyectoLinea;
 
 public class EstadoAsignadoProyecto implements Cargable {
 	

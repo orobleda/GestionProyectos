@@ -119,7 +119,7 @@ public class AdministracionParametros implements ControladorPantalla {
 			
 			int contador = 0;
 			
-			String idTransaccion = "eliminarPresupuestoProyecto" + new Date().getTime();
+			String idTransaccion = "actualizaParametros" + new Date().getTime();
 			
 			Iterator<Parametro> itParametro = gestPar.getParametros().values().iterator();
 			while (itParametro.hasNext()) {

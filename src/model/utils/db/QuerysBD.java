@@ -21,17 +21,25 @@ public class QuerysBD implements Loadable, Cargable{
 	public static HashMap<String, QuerysBD> querys = null;
 	
 	public void load() {
-		QuerysBD qbd = null;
+		
 		querys = new HashMap<String, QuerysBD>();
 		
+		cargaFichero("AccesoBD.xml"); 
+		querys.get("cConsultaEstados");
+		cargaFichero("AccesoBDParametricas.xml");	
+		querys.get("cConsultaEstados");
+		
+	}
+	
+	private void cargaFichero(String fichero) {
+		QuerysBD qbd = null;
 		LectorXML lxml = new LectorXML();
-		List<Cargable> list = lxml.cargarXml("plantillas/AccesoBD.xml", "accesoBD", this);
+		List<Cargable> list = lxml.cargarXml("plantillas/" + fichero, "accesoBD", new QuerysBD());
 		
 		for ( int i = 0; i < list.size(); i++ )
         {
 			qbd = (QuerysBD) list.get(i);
 			querys.put(qbd.codigo, qbd);
-			
          }
 	}
 

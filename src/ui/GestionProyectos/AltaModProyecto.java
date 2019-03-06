@@ -1,158 +1,217 @@
 package ui.GestionProyectos;
 
-import java.util.ArrayList;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import model.beans.ParamProyecto;
+import javafx.scene.layout.HBox;
+import model.beans.Parametro;
 import model.beans.Proyecto;
-import model.constantes.FormateadorDatos;
-import model.metadatos.MetaParamProyecto;
+import model.constantes.Constantes;
+import model.metadatos.MetaParametro;
+import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
+import model.utils.db.ConsultaBD;
 import ui.Dialogo;
-import ui.GestionProyectos.Tables.ParamProyectoLinea;
+import ui.GestionBotones;
+import ui.Administracion.Parametricas.GestionParametros;
 import ui.interfaces.ControladorPantalla;
-import ui.interfaces.Tableable;
-import ui.popUps.SeleccionElemento;
 
 public class AltaModProyecto implements ControladorPantalla {
 
 	public static final String fxml = "file:src/ui/GestionProyectos/AltaModProyecto.fxml"; 
 	
-	@FXML
+	GestionParametros gestPar = null;
+	
 	private AnchorPane anchor;
 	
-	@FXML
-	private TitledPane tpFiltros;
-	@FXML
-	private ComboBox<Proyecto> cbListaProy;
-	@FXML
-	private ImageView imAniadir;
-	@FXML
-	private ImageView imBuscar;
+    @FXML
+    private ImageView imBuscar;
+    private GestionBotones gbBuscar;
 
-	@FXML
-	private TitledPane tpValores;
-	@FXML
-	private TextField tID;
-	@FXML
-	private TextField tNombreProy;
-	@FXML
-	private ImageView imGuardar;
-	@FXML
-	private ImageView imEliminar;
-	@FXML
-	private TableView<Tableable> tParametros;
+    @FXML
+    private HBox hbPropiedades;
+
+    @FXML
+    private ImageView imAniadir;
+    private GestionBotones gbAniadir;
+
+    @FXML
+    private ComboBox<Proyecto> cbListaProy;
+
+    @FXML
+    private TextField tNombreProy;
+
+    @FXML
+    private ImageView imEliminar;
+    private GestionBotones gbEliminar;
+
+    @FXML
+    private ImageView imGuardar;
+    private GestionBotones gbGuardar;
+
+    @FXML
+    private TextField tID;
 	
 	public AltaModProyecto(){
 	}
 	
 	public void initialize(){
-			tpFiltros.setExpanded(true);
-			
-			imAniadir.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 nuevoProyecto(); }	});
-			imBuscar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 cargaProyecto(); }	});
-			
-			imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardarProyecto(); }	});
-			imEliminar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) { eliminaProyecto(); }	});
-			
-			imGuardar.setMouseTransparent(true);
-			imEliminar.setMouseTransparent(true);
-			
-			Proyecto p = new Proyecto();
-			cbListaProy.getItems().addAll(p.listadoProyectos());
-		
+		gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					nuevoProyecto();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Nueva Demanda");
+		gbAniadir.activarBoton();
+	
+		gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					cargaProyecto();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Busca Solicitud");
+		gbBuscar.activarBoton();
+		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardarProyecto(); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Guardar Cambios");
+		gbGuardar.desActivarBoton();
+	
+		gbEliminar = new GestionBotones(imEliminar, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					eliminaProyecto();
+					limpiarFormulario();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Busca Solicitud");
+		gbEliminar.desActivarBoton();
+									
+		Proyecto p = new Proyecto();
+		cbListaProy.getItems().addAll(p.listadoProyectos());		
     }
 	
-	private void nuevoProyecto(){
-		SeleccionElemento.filtro = TipoProyecto.objetosNoDemanda();
+	private void nuevoProyecto() throws Exception{		
+		gbGuardar.activarBoton();
+		gbEliminar.desActivarBoton();
 		
-		imGuardar.getStyleClass().remove("iconoDisabled");
-		imGuardar.getStyleClass().add("iconoEnabled");
-		
-		imGuardar.setMouseTransparent(false);
-		
-		imEliminar.getStyleClass().remove("iconoDisabled");
-		imEliminar.getStyleClass().add("iconoEnabled");
-		
-		imEliminar.setMouseTransparent(false);
-		
-		Proyecto p = new Proyecto();
-		this.tID.setText(new Integer(p.maxIdProyecto()).toString());
+		this.tID.setText("");
 		this.tNombreProy.setText("");
 		
-		tpFiltros.setExpanded(false);
-		tpValores.setExpanded(true);
+		HashMap<Integer, Object> filtros = new HashMap<Integer, Object>();
+		filtros.put(TipoDato.FORMATO_TIPO_PROYECTO, TipoProyecto.tiposDemanda());
 		
-		ParamProyectoLinea pProy = new ParamProyectoLinea();
-		ArrayList<Object> lista = new ArrayList<Object>();
-		lista.addAll(MetaParamProyecto.listado.values());
-		ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
-		tParametros.setItems(dataTable);
-		
-		ParamProyectoLinea pProyecto = new ParamProyectoLinea();
-		pProyecto.fijaColumnas(tParametros);		
+		cargaPropiedades(Parametro.SOLO_METAPARAMETROS,filtros,null);
 	}
 	
-	private void guardarProyecto(){
-		boolean modificacion = false;
+	private void cargaPropiedades(int idProyecto, HashMap<Integer,Object> filtro, HashMap<String,Boolean> readOnlyProps ) throws Exception {
+		hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
 		
+		GestionParametros c = new GestionParametros();
+		
+		FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(new URL(c.getFXML()));
+        	        
+        hbPropiedades.getChildren().add(loader.load());
+        gestPar = loader.getController();
+        
+        HashMap<String, Object> variablesPaso = new HashMap<String, Object>();
+        variablesPaso.put("entidadBuscar", Proyecto.class.getSimpleName());
+        variablesPaso.put("subventana", new Boolean(true));
+        variablesPaso.put("idEntidadBuscar", idProyecto);
+        variablesPaso.put("ancho", new Double(800));
+        variablesPaso.put("alto", new Double(400));
+        variablesPaso.put("readOnlyProps",readOnlyProps);
+		variablesPaso.put("filtro",filtro);
+        gestPar.setParametrosPaso(variablesPaso);
+	}
+	
+	private void limpiarFormulario() {
+		this.tID.setText("");
+		this.tNombreProy.setText("");
+		
+		gbGuardar.desActivarBoton();
+		gbEliminar.desActivarBoton();		
+
+		hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
+		
+		cbListaProy.getItems().clear();
+		Proyecto.getProyectoEstaticoCargaForzada(1);
+		cbListaProy.getItems().addAll(Proyecto.listaProyecto.values());
+	}
+	
+	private void guardarProyecto(){		
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el proyecto?", "Se almacenará tanto el proyecto como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
+			if (!gestPar.validaObligatoriedades()) {
+				Dialogo.error("Error al guardar", "No se ha podido guardar", "Alguno de los parámetros obligatorios no está informado.");
+				return;
+			}			
+			
 			Proyecto p = new Proyecto();
-			p.id = new Integer(this.tID.getText());
+			
 			p.nombre = this.tNombreProy.getText();
 			
 			try {
-				modificacion = p.altaProyecto(p);
+				String idTransaccion = "guardarCambiosProyecto" + new Date().getTime();
+				
+				if ("".equals(this.tID.getText())) {
+					p.id = -1;
+					p.altaProyecto(p,idTransaccion);
+				}
+				else {
+					p.id = this.cbListaProy.getValue().id;
+					p.actualizaProyecto(idTransaccion);
+				}
 				
 				int contador = 0;
 			
-				ObservableList<Tableable> dataTable = tParametros.getItems();
-				Iterator<Tableable> it = dataTable.iterator();
-				
-				while (it.hasNext()){
-					ParamProyectoLinea pProyecto = (ParamProyectoLinea) it.next();
-					if (pProyecto.modificado) {
-						ParamProyecto bParamProyecto = new ParamProyecto();
-						bParamProyecto.mpProy = new MetaParamProyecto(pProyecto);
-						bParamProyecto.cod_parm = bParamProyecto.mpProy.id;
-						bParamProyecto.idProyecto = p.id;
-						if (MetaParamProyecto.TIPO_PROYECTO == bParamProyecto.cod_parm) {
-							TipoProyecto tp = (TipoProyecto) FormateadorDatos.parseaDato(pProyecto.get(ParamProyectoLinea.VALORREAL), FormateadorDatos.FORMATO_TIPO_PROYECTO);
-							bParamProyecto.setValor(new Integer(tp.id));
-						} else {
-							bParamProyecto.setValor(pProyecto.get(ParamProyectoLinea.VALORREAL));
-						}
-						
-						contador++;
-						
-						bParamProyecto.insertaParametro(p.id,null);
-					}
+				Iterator<Parametro> itParametro = gestPar.getParametros().values().iterator();
+				while (itParametro.hasNext()) {
+					Parametro par = itParametro.next();
+					par.idEntidadAsociada = p.id;
+					
+					if (par.modificado) {
+						par.actualizaParametro(idTransaccion);
+					} 
 				}
 				
-				String accion = "Alta";
+				ConsultaBD cbd = new ConsultaBD(); 
+				cbd.ejecutaTransaccion(idTransaccion);
 				
-				if (modificacion) {
-					accion = "Modificación";
-				}
+				Dialogo.alert("Proceso Finalizado", "Guardado de proyecto completado", "Se ha guardado el proyecto y sus parámetros modificados.");
 				
-				Dialogo.alert("Proceso Finalizado", accion + " de proyecto completada", "Se ha guardado el proyecto y sus " + contador + " asociados.");
-				
-				p = new Proyecto();
-				cbListaProy.getItems().clear();
-				cbListaProy.getItems().addAll(p.listadoProyectos());
+				limpiarFormulario();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}				
@@ -160,38 +219,27 @@ public class AltaModProyecto implements ControladorPantalla {
 		}
 	}
 	
-	private void eliminaProyecto(){
+	private void eliminaProyecto() throws Exception{
 		
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
-			imGuardar.getStyleClass().remove("iconoEnabled");
-			imGuardar.getStyleClass().add("iconoDisabled");
+			String idTransaccion = "eliminaProyecto" + new Date().getTime();
 			
-			imGuardar.setMouseTransparent(true);
-			
-			imEliminar.getStyleClass().remove("iconoEnabled");
-			imEliminar.getStyleClass().add("iconoDisabled");
-			
-			imEliminar.setMouseTransparent(true);
+			gbGuardar.desActivarBoton();
+			gbEliminar.desActivarBoton();
 			
 			Proyecto p = cbListaProy.getValue();
 			
-			p.bajaProyecto(null);
+			p.bajaProyecto(idTransaccion);
+			
+			ConsultaBD cbd = new ConsultaBD(); 
+			cbd.ejecutaTransaccion(idTransaccion);
 			
 			this.tID.setText("");
 			this.tNombreProy.setText("");
 			
-			ParamProyectoLinea pProy = new ParamProyectoLinea();
-			ArrayList<Object> lista = new ArrayList<Object>();
-			ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
-			tParametros.setItems(dataTable);	
-			
-			ParamProyectoLinea pProyecto = new ParamProyectoLinea();
-			pProyecto.fijaColumnas(tParametros);	
-			
-			tpFiltros.setExpanded(true);
-			tpValores.setExpanded(false);
+			hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
 				
 			Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
 			
@@ -203,40 +251,21 @@ public class AltaModProyecto implements ControladorPantalla {
 		}
 	}
 	
-	private void cargaProyecto(){
-		try {
-			SeleccionElemento.filtro = TipoProyecto.objetosNoDemanda();
-			imGuardar.getStyleClass().remove("iconoDisabled");
-			imGuardar.getStyleClass().add("iconoEnabled");
-			
-			imGuardar.setMouseTransparent(false);
-			
-			imEliminar.getStyleClass().remove("iconoDisabled");
-			imEliminar.getStyleClass().add("iconoEnabled");
-			
-			imEliminar.setMouseTransparent(false);
-			
-			Proyecto p = cbListaProy.getValue();
-			
-			p.cargaProyecto();
-			
-			this.tID.setText(new Integer(p.id).toString());
-			this.tNombreProy.setText(p.nombre);
-			
-			ParamProyectoLinea pProy = new ParamProyectoLinea();
-			ArrayList<Object> lista = new ArrayList<Object>();
-			lista.addAll(p.listadoParametros);
-			ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
-			tParametros.setItems(dataTable);	
-			
-			ParamProyectoLinea pProyecto = new ParamProyectoLinea();
-			pProyecto.fijaColumnas(tParametros);	
-			
-			tpFiltros.setExpanded(false);
-			tpValores.setExpanded(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private void cargaProyecto() throws Exception{
+	    gbGuardar.activarBoton();
+		gbEliminar.activarBoton();
+		
+		Proyecto p = cbListaProy.getValue();
+		
+		p.cargaProyecto();
+		
+		this.tID.setText(new Integer(p.id).toString());
+		this.tNombreProy.setText(p.nombre);
+		
+		HashMap<String,Boolean> readOnlyProps = new HashMap<String,Boolean>();
+		readOnlyProps.put(MetaParametro.PROYECTO_TIPO_PROYECTO, Constantes.FALSE);
+		
+		cargaPropiedades(p.id,null,readOnlyProps);
 	}
 	
 	@Override

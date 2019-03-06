@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.controlsfx.control.PropertySheet;
 
 import javafx.beans.value.ObservableValue;
+import model.constantes.Constantes;
 import model.metadatos.TipoDato;
 import ui.interfaces.Propiediable;
 
@@ -19,6 +20,7 @@ public class Propiedad implements PropertySheet.Item {
 	public int tipo;
 	public String descripcion;
 	public Propiediable oOrigenDato;
+	public boolean editable = true;
 	
 	
 	public Propiedad(String categoria, String descripcion, String nombre, Object valor, int tipo, Propiediable oOrigenDato) {
@@ -28,6 +30,11 @@ public class Propiedad implements PropertySheet.Item {
 		this.tipo = tipo;
 		this.descripcion = descripcion;
 		this.oOrigenDato = oOrigenDato;
+	}
+	
+	@Override
+	public boolean isEditable() {
+		return editable;
 	}
 	
 	@Override
@@ -58,6 +65,7 @@ public class Propiedad implements PropertySheet.Item {
 	@Override
 	public Object getValue() {
 		if (this.tipo == TipoDato.FORMATO_FECHA) {
+			if (this.valor == null) return  Instant.ofEpochMilli((Constantes.fechaActual()).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 			return Instant.ofEpochMilli(((Date)this.valor).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 		return this.valor;

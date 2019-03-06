@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox>
+         <children>
+            <Label text="Nombre" />
+            <TextField prefWidth="250.0">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox fx:id="hbPropiedades">
+         <VBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <VBox>
+               <children>
+                  <TableView fx:id="TSistemas" prefHeight="200.0" prefWidth="200.0" />
+                  <HBox fx:id="hbPropiedadesSistema" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <TableView fx:id="TSDemandaistemas" prefHeight="200.0" prefWidth="200.0" />
+                  <HBox fx:id="hbPropiedadesSistemaDemanda" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="TOP_RIGHT">
+         <children>
+            <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Menos3_PAS.png" />
+               </image>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <Line endX="100.0" scaleX="1.5" startX="-100.0">
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </Line>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</VBox>

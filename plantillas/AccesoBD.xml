@@ -82,6 +82,15 @@
 	</parametros>
 	</acceso>
 	<acceso>
+		<query>UPDATE PROYECTO SET Nombre = $B$||2||$E$ where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaProyecto</id>
+		<tabla>PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
 		<query>insert into RECURSO (id,Nombre) values ($B$||1||$E$,$B$||2||$E$)</query>
 		<id tipo="I">iAltaRec</id>
 		<tabla>RECURSO</tabla>
@@ -880,77 +889,82 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select id tipPId, entidad tipPEntidad, cod_parm tipPCodParm, categoria tipPCategoria, obligatorio tipPObligatorio, tipoDato tipPTipoDato, nom_parm tipPNomParm from META_PARAMETRO where 1=1 $B$and entidad=||1||$E$</query>
-		<id tipo="C">cConsultaTipoParametro</id>
-		<tabla>META_PARAMETRO</tabla>
-		<parametros>
-			<parametro id="1" tipo="str"></parametro>
-		</parametros>
-	</acceso>
-	<acceso>
-		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
-		<id tipo="C">cConsultaParametro</id>
-		<tabla>PARAMETRO</tabla>
+		<query>select id fpId, Nombre fpNombre, idProyecto fpProyecto from FASE_PROYECTO where 1=1 $B$and idProyecto = ||1||$E$</query>
+		<id tipo="C">cConsultaFasesProyecto</id>
+		<tabla>FASE_PROYECTO</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
-			<parametro id="2" tipo="str"></parametro>
-			<parametro id="3" tipo="str"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>delete from PARAMETRO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
-		<id tipo="D">dBorraParametro</id>
-		<tabla>PARAMETRO</tabla>
+		<query>delete from FASE_PROYECTO where 1=1 $B$and idProyecto = ||1||$E$</query>
+		<id tipo="D">dBorraFasesProyecto</id>
+		<tabla>FASE_PROYECTO</tabla>
 		<parametros>
-			<parametro id="1" tipo="str"></parametro>
-			<parametro id="2" tipo="int"></parametro>		
+			<parametro id="1" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>Insert into PARAMETRO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
-		<id tipo="I">iInsertaParametro</id>
-		<tabla>PARAMETRO</tabla>
+		<query>Insert into PARAMETRO_PROYECTO (id, Nombre, idProyecto) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$)</query>
+		<id tipo="I">iInsertaFasesProyecto</id>
+		<tabla>FASE_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id fpsId, idFase fpsFase, idSistema fpsSistema from FASE_PROYECTO_SISTEMA where 1=1 $B$and idFase = ||1||$E$</query>
+		<id tipo="C">cConsultaSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from FASE_PROYECTO_SISTEMA where 1=1 $B$and idFase = ||1||$E$</query>
+		<id tipo="D">dBorraSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into FASE_PROYECTO_SISTEMA (id, idFase, idSistema) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$)</query>
+		<id tipo="I">iInsertaSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA</tabla>
 		<parametros>
 			<parametro id="1" tipo="id"></parametro>	
 			<parametro id="2" tipo="int"></parametro>
-			<parametro id="3" tipo="str"></parametro>
-			<parametro id="4" tipo="int"></parametro>
-			<parametro id="5" tipo="rea"></parametro>
-			<parametro id="6" tipo="dat"></parametro>
-			<parametro id="7" tipo="str"></parametro>		
+			<parametro id="3" tipo="int"></parametro>		
 		</parametros>
-	</acceso>	
-	<acceso>
-		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_PROYECTO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
-		<id tipo="C">cConsultaParametroProyecto</id>
-		<tabla>PARAMETRO_PROYECTO</tabla>
+	</acceso>
+		<acceso>
+		<query>select id fpsdId, idFaseSistema fpsdFaseSistema, idDemanda fpsdDemanda, apunteContable fpsdApContable from FASE_PROYECTO_SISTEMA_DEMANDA where 1=1 $B$and idFaseSistema = ||1||$E$</query>
+		<id tipo="C">cConsultaDemandaSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA_DEMANDA</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
-			<parametro id="2" tipo="str"></parametro>
-			<parametro id="3" tipo="str"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>delete from PARAMETRO_PROYECTO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
-		<id tipo="D">dBorraParametroProyecto</id>
-		<tabla>PARAMETRO_PROYECTO</tabla>
+		<query>delete from FASE_PROYECTO_SISTEMA_DEMANDA where 1=1 $B$and idFaseSistema = ||1||$E$</query>
+		<id tipo="D">dBorraDemandaSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA_DEMANDA</tabla>
 		<parametros>
-			<parametro id="1" tipo="str"></parametro>
-			<parametro id="2" tipo="int"></parametro>		
+			<parametro id="1" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>Insert into PARAMETRO_PROYECTO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
-		<id tipo="I">iInsertaParametroProyecto</id>
-		<tabla>PARAMETRO_PROYECTO</tabla>
+		<query>Insert into FASE_PROYECTO_SISTEMA_DEMANDA (id, idFaseSistema, idDemanda, apunteContable) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$)</query>
+		<id tipo="I">iInsertaDemandaSistemasFasesProyecto</id>
+		<tabla>FASE_PROYECTO_SISTEMA_DEMANDA</tabla>
 		<parametros>
 			<parametro id="1" tipo="id"></parametro>	
 			<parametro id="2" tipo="int"></parametro>
-			<parametro id="3" tipo="str"></parametro>
-			<parametro id="4" tipo="int"></parametro>
-			<parametro id="5" tipo="rea"></parametro>
-			<parametro id="6" tipo="dat"></parametro>
-			<parametro id="7" tipo="str"></parametro>		
+			<parametro id="3" tipo="int"></parametro>	
+			<parametro id="4" tipo="int"></parametro>		
 		</parametros>
-	</acceso>	
+	</acceso>
 </accesoBD>

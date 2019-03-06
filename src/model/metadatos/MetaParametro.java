@@ -16,6 +16,8 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PROYECTO_FX_INICIO = "PROY.fxInicio";
 	public static final String PROYECTO_FX_FIN = "PROY.fxFin";
 	
+	public static final String FASES_COBERTURA_DEMANDA = "F.PR.SIS.DEM.cobertura";
+	
 	public int id =0;
 	public String entidad = "";
 	public String codParametro = "";

@@ -8,6 +8,7 @@ import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.metadatos.EstadoProyecto;
 import model.metadatos.MetaParametro;
+import model.metadatos.Sistema;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -22,6 +23,8 @@ public class Proyecto implements Cargable{
 	public HashMap<String, ? extends Parametro> listadoParametros = null;
 	public static HashMap<Integer, Proyecto> listaProyecto = null;
 	public ArrayList<EstadoProyecto> estadosProyecto = null;
+
+	public ArrayList<FaseProyecto> fasesProyecto = null;
 	
 	public static final int NEUTRO = 0;
 	public static final int ANIADIR = 1;
@@ -59,6 +62,18 @@ public class Proyecto implements Cargable{
 		}
 		
 		return this;
+	}
+	
+	public static Proyecto getProyectoEstaticoCargaForzada(int idProyecto) {
+			listaProyecto = new HashMap<Integer, Proyecto>();
+			
+			Iterator<Proyecto> itProy = new Proyecto().listadoProyectos().iterator();
+			while (itProy.hasNext()) {
+				Proyecto p = itProy.next();
+				listaProyecto.put(p.id, p);
+			}
+			
+			return listaProyecto.get(idProyecto);
 	}
 	
 	public static Proyecto getProyectoEstatico(int idProyecto) {
@@ -205,6 +220,23 @@ public class Proyecto implements Cargable{
 		else return (ParametroProyecto) this.listadoParametros.get(keyParam);
 	}
 	
+	public void cargaFasesProyecto() {
+		FaseProyecto fp = new FaseProyecto();
+		this.fasesProyecto = fp.listado();
+	}
+	
+	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable, Sistema s) {
+		float porcAcumulado = 0;
+		
+		Iterator<FaseProyecto> itFP = this.fasesProyecto.iterator();
+		while (itFP.hasNext()) {
+			FaseProyecto fp = itFP.next();
+			porcAcumulado = fp.coberturaDemandaFases(pDemanda, apunteContable, s);
+		}
+		
+		return porcAcumulado;
+	} 
+	
 	public void nuevoProyecto(String idTransaccion) {
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		ParametroBD pBD = new ParametroBD();
@@ -229,31 +261,44 @@ public class Proyecto implements Cargable{
 			
 	}
 	
+	public void actualizaProyecto(String idTransaccion) {
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		ParametroBD pBD = new ParametroBD();
+		pBD.id = 1;
+		pBD.tipo = ConstantesBD.PARAMBD_INT;
+		pBD.valorInt = this.id;
+		listaParms.add(pBD);
+		pBD = new ParametroBD();
+		pBD.id = 2;
+		pBD.tipo = ConstantesBD.PARAMBD_STR;
+		pBD.valorStr = this.nombre;
+		listaParms.add(pBD);
+		
+		ConsultaBD consulta = new ConsultaBD();		
+		consulta.ejecutaSQL("uActualizaProyecto", listaParms, this,idTransaccion);
+	}
 	
-	public boolean altaProyecto(Proyecto p) {
-		boolean modificacion = true;
-		int maxId = this.maxIdProyecto();
+	
+	public boolean altaProyecto(Proyecto p, String idTransaccion) {
+
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		ParametroBD pBD = new ParametroBD();
+		pBD.id = 1;
+		pBD.tipo = ConstantesBD.PARAMBD_ID;
+		pBD.valorInt = p.id;
+		listaParms.add(pBD);
+		pBD = new ParametroBD();
+		pBD.id = 2;
+		pBD.tipo = ConstantesBD.PARAMBD_STR;
+		pBD.valorStr = p.nombre;
+		listaParms.add(pBD);
 		
-		if (maxId == p.id) {
-			ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-			ParametroBD pBD = new ParametroBD();
-			pBD.id = 1;
-			pBD.tipo = ConstantesBD.PARAMBD_INT;
-			pBD.valorInt = p.id;
-			listaParms.add(pBD);
-			pBD = new ParametroBD();
-			pBD.id = 2;
-			pBD.tipo = ConstantesBD.PARAMBD_STR;
-			pBD.valorStr = p.nombre;
-			listaParms.add(pBD);
-			
-			ConsultaBD consulta = new ConsultaBD();
-			consulta.ejecutaSQL("iAltaProy", listaParms, this);
-			
-			modificacion = false;
-		}
+		ConsultaBD consulta = new ConsultaBD();
+		consulta.ejecutaSQL("iAltaProy", listaParms, this, idTransaccion);
 		
-		return modificacion;
+		p.id = ParametroBD.ultimoId;
+		
+		return true;
 	}
 	
 	public void bajaProyecto(String idTransaccion) throws Exception {

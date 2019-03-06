@@ -77,7 +77,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
             public void handle(MouseEvent t)
             {
 				try {	
-					String idTransaccion = "eliminarPresupuestoProyecto" + new Date().getTime();
+					String idTransaccion = "guardarParametros" + new Date().getTime();
 					
 					Iterator<Parametro> itParametro = listaParametros.values().iterator();
 					while (itParametro.hasNext()) {
@@ -94,6 +94,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 					e.printStackTrace();
 				}
             } }, "Guardar Cambios");
+		gbGuardar.activarBoton();
 	}
 	
 	public boolean validaObligatoriedades() {
@@ -144,6 +145,10 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 		String entidad = (String) variablesPaso.get("entidadBuscar");
 		Double ancho = (Double) variablesPaso.get("ancho");
 		Double alto = (Double) variablesPaso.get("alto");
+		@SuppressWarnings("unchecked")
+		HashMap<String,Boolean> readOnlyProps  = (HashMap<String,Boolean>) variablesPaso.get("readOnlyProps");
+		@SuppressWarnings("unchecked")
+		HashMap<Integer,Object> filtro  = (HashMap<Integer,Object>) variablesPaso.get("filtro");
 		int idEntidad = variablesPaso.get("idEntidadBuscar") == null? -1: (Integer) variablesPaso.get("idEntidadBuscar");
 		
 		Parametro par = Propiediable.beanControlador(entidad);
@@ -153,7 +158,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 		listaParams.addAll(listaParametros.values());
 		ArrayList<? extends Propiediable> listado = listaParams;
 		 
-		TablaPropiedades tp = new TablaPropiedades(TablaPropiedades.toList(listado), ancho, alto);
+		tp = new TablaPropiedades(TablaPropiedades.toList(listado,readOnlyProps), ancho, alto,filtro);
 		this.hbContenedor.getChildren().add(tp);
 		
 	}

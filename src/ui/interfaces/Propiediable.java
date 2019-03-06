@@ -14,6 +14,8 @@ public interface Propiediable {
 
 	public void setValor(Object o);
 	
+	public String getCodigo();
+	
 	public static ArrayList<Object> listaSubValores(String entidad){
 		if (Parametro.class.getSimpleName().equals(entidad))
 			return null;
