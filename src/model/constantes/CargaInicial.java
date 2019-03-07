@@ -16,10 +16,12 @@ import model.metadatos.TipoProyecto;
 import model.metadatos.TransicionEstados;
 import model.utils.db.ConsultaBD;
 import model.utils.db.QuerysBD;
+import model.utils.xls.ConsultaXLS;
+import model.utils.xls.PlantillasXLS;
 
 public class CargaInicial {
 	
-	public final Loadable[] listaInicial = {new QuerysBD(), new TipoProyecto(), new EstadoProyecto(), 
+	public final Loadable[] listaInicial = {new QuerysBD(), new PlantillasXLS(), new TipoProyecto(), new EstadoProyecto(), 
 											new TransicionEstados(), new MetaParamRecurso(),
 											new TipoPresupuesto(),new Sistema(), new MetaConcepto(), 
 											new MetaFormatoProyecto(), new TipoParamProyecto(), new Festivo(), 
@@ -35,5 +37,7 @@ public class CargaInicial {
 		for (int i=0; i<listaInicial.length; i++){
 			listaInicial[i].load();			
 		}
+		
+		ConsultaXLS.leeFichero();
 	}
 }

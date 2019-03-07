@@ -34,7 +34,16 @@ public class ConsultaBD {
 		         ////System.out.println("Conectado");
 		     }
 		 }catch (SQLException ex) {
-		     System.err.println("No se ha podido conectar a la base de datos\n"+ex.getMessage());
+			 try {
+			     connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\EN31714\\Downloads\\eclipse-java-neon-2-win32\\workspace\\Repositorio\\GestionProyectos\\gProyectos.s3db");
+			     if (connect!=null) {
+			         ////System.out.println("Conectado");
+			     }
+			 }catch (SQLException ex2) {
+				 ex.printStackTrace();
+			     System.err.println("No se ha podido conectar a la base de datos\n"+ex2.getMessage());
+			 }
+		     //System.err.println("No se ha podido conectar a la base de datos\n"+ex.getMessage());
 		 }
 		}
 	

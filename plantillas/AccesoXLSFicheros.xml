@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accesoXLS>
+	<plantilla>
+		<id>cargaImputaciones</id>
+		<cabecera>3</cabecera>
+		<inicioDatos>4</inicioDatos>
+		<columnas>
+			<columna id="Usuario" columna="0"></columna>
+			<columna id="Periodo" columna="4"></columna>
+			<columna id="Horas" columna="5"></columna>
+			<columna id="Tarifa" columna="6"></columna>
+			<columna id="Importe" columna="7"></columna>
+			<columna id="Proyecto" columna="8"></columna>
+			<columna id="OT" columna="9"></columna>
+			<columna id="Estado" columna="11"></columna>
+			<columna id="Proveedor" columna="13"></columna>
+		</columnas>
+	</plantilla>
+</accesoXLS>
