@@ -26,23 +26,14 @@
    <center>
       <VBox alignment="TOP_CENTER">
          <children>
-            <ScrollPane prefHeight="400.0" prefWidth="800.0">
-               <content>
-                  <HBox alignment="TOP_CENTER">
-                     <children>
-                        <TableView fx:id="tDemandas" />
-                        <TableView fx:id="tDetalleDemandas">
-                           <HBox.margin>
-                              <Insets left="50.0" />
-                           </HBox.margin>
-                        </TableView>
-                     </children>
-                  </HBox>
-               </content>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <TableView fx:id="tDemandas" prefHeight="70.0" />
+               </children>
                <VBox.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </VBox.margin>
-            </ScrollPane>
+            </HBox>
             <ScrollPane prefHeight="400.0" prefWidth="800.0">
                <BorderPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -50,15 +41,6 @@
                <content>
                   <VBox alignment="TOP_CENTER">
                      <children>
-                        <HBox alignment="TOP_RIGHT" prefWidth="750.0">
-                           <children>
-                              <ImageView fx:id="imNuevaFase" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../imgs/iconos/Nuevo3_PAS.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </HBox>
                         <HBox fx:id="hbContenedorFases" />
                      </children>
                   </VBox>

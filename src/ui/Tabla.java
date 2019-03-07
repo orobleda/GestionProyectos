@@ -25,6 +25,8 @@ public class Tabla {
 	public Tableable primitiva  = null;
 	public ControladorPantalla ctrlPantalla = null;
 	
+	public HashMap<String,Object> pasoPrimitiva = null;
+	
 	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva, TextField filtro, ControladorPantalla ctrlPantalla) {
 		this.componenteTabla = componenteTabla;
 		this.tefiltro = filtro;
@@ -64,6 +66,18 @@ public class Tabla {
 		this.primitiva = primitiva;
 	}
 	
+	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva, ControladorPantalla ctrlPantalla) {
+		this.componenteTabla = componenteTabla;
+		this.primitiva = primitiva;
+		this.componenteTabla.getProperties().put("controlador", ctrlPantalla);
+	}
+	
+	public void setPasoPrimitiva(HashMap<String,Object> pasoPrimitiva) {
+		this.pasoPrimitiva = pasoPrimitiva;
+		this.primitiva.fijaMetaDatos(this.pasoPrimitiva);
+		this.primitiva.setConfig();
+	}
+	
 	public void limpiaTabla() { 
 		pintaTabla(new ArrayList<Object>());
 	}
@@ -84,6 +98,7 @@ public class Tabla {
 		
 		componenteTabla.setItems(listaDatosFiltrada);
 		
+		primitiva.limpiarColumnas(componenteTabla);
 		primitiva.fijaColumnas(componenteTabla);
 		ConfigTabla.configuraAlto(componenteTabla,lista.size());
 		
@@ -106,6 +121,7 @@ public class Tabla {
 		
 		componenteTabla.setItems(listaDatosFiltrada);
 		
+		primitiva.limpiarColumnas(componenteTabla);
 		primitiva.fijaColumnas(componenteTabla);
 		ConfigTabla.configuraAlto(componenteTabla,listaDatos.size());
 		
@@ -150,7 +166,7 @@ public class Tabla {
 			if (anchoColumnas!=null && anchoColumnas.containsKey(columna.getId())) {
 				anchoCol = anchoColumnas.get(columna.getId());
 			} else {
-				anchoCol = columna.getText().length()*10; 
+				anchoCol = columna.getText().length()*15; 
 			}
 			
 			columna.setPrefWidth(anchoCol);

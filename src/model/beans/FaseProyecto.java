@@ -16,8 +16,8 @@ public class FaseProyecto implements Cargable{
 	public int idProyecto = 0;
 	public Proyecto p;
 	
-	HashMap<String,? extends Parametro> parametrosFase = null;
-	HashMap<String, FaseProyectoSistema> fasesProyecto = null;
+	public HashMap<String,? extends Parametro> parametrosFase = null;
+	public HashMap<String, FaseProyectoSistema> fasesProyecto = null;
 	
 	@Override
 	public Cargable cargar(Object o) {

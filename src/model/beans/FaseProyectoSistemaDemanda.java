@@ -7,7 +7,6 @@ import java.util.Iterator;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
-import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -48,6 +47,22 @@ public class FaseProyectoSistemaDemanda implements Cargable{
 		} catch (Exception e){System.out.println();}
 		
 		return this;
+	}
+	
+	public ParametroFases getParametro(String codParametro) {
+		if (this.parametrosFaseSistemaDemanda == null) {
+			ParametroFases pf = new ParametroFases();
+			
+			int id = Parametro.SOLO_METAPARAMETROS;
+			
+			if (this.id>0) {
+				id = this.id;
+			}
+			
+			this.parametrosFaseSistemaDemanda = pf.dameParametros(FaseProyectoSistemaDemanda.class.getSimpleName(), id);
+		}
+		
+		return (ParametroFases) this.parametrosFaseSistemaDemanda.get(codParametro);
 	}
 	
 	

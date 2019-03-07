@@ -23,4 +23,7 @@ public interface Tableable {
 	public ObservableList<Tableable> filtrar(Object valorFiltro, ObservableList<Tableable> listaOriginal);
 	public String resaltar(int fila, String columna, Tabla tabla);
 	public HashMap<String,Integer> getAnchoColumnas();
+	public void limpiarColumnas(TableView<Tableable> tParametros);
+	public void fijaMetaDatos(HashMap<String,Object> variablesPaso);
+	public void setConfig();
 }

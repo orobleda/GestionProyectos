@@ -21,6 +21,7 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 	public static int TREI = 1;
 	public static int SATAD = 2;
 	public static int CC = 3;
+	public static int DESARROLLO = 5;
 	
 	public static int GESTION_HORAS = 1;
 	public static int GESTION_CERTIFICACION = 2;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.AsignacionFase">
+   <top>
+      <VBox>
+         <children>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefWidth="150.0" text="Demanda" />
+                  <TextField fx:id="tDemanda" disable="true" prefWidth="350.0" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Sistema" />
+                  <TextField fx:id="tSistema" disable="true" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Coste Asignado" />
+                  <TextField fx:id="tCosteAsignado" disable="true" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <VBox fx:id="vbFases" />
+   </center>
+   <bottom>
+      <HBox alignment="TOP_RIGHT" BorderPane.alignment="TOP_RIGHT">
+         <children>
+            <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </bottom>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</BorderPane>

@@ -3,6 +3,7 @@ package ui;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +26,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import model.interfaces.Loadable;
+import model.metadatos.Sistema;
 import ui.interfaces.Tableable;
+import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
 import ui.popUps.PopUp;
 
 public class ParamTable implements Tableable {
@@ -36,8 +39,11 @@ public class ParamTable implements Tableable {
     public int tipoDato;
     public PopUp controlPantalla = null;
     
+    public HashMap<String,Object> variablesMetaDatos = null;
+    
     public static PopOver po = null;
     
+    @Override
     public void limpiarColumnas(TableView<Tableable> tParametros){
     	if (tParametros.getColumns().size()!=0)
     		if (tParametros.getItems().get(0)==null) {
@@ -223,6 +229,10 @@ public class ParamTable implements Tableable {
 			
 		}
 	}
+	
+	public void fijaMetaDatos(HashMap<String,Object> variablesPaso) {
+		variablesMetaDatos = variablesPaso;
+	}
 
 	@Override
 	public Tableable toTableable(Object o) {
@@ -237,7 +247,14 @@ public class ParamTable implements Tableable {
 		
 		while (it.hasNext()) {
 			Object o = it.next();
-			dataTable.add(this.toTableable(o));
+			Tableable t = this.toTableable(o);
+			
+			if (this.variablesMetaDatos!=null) {
+				t.fijaMetaDatos(this.variablesMetaDatos);
+				t.setConfig();
+			}
+			
+			dataTable.add(t);
 		}
 		return dataTable;
 	}
@@ -283,6 +300,10 @@ public class ParamTable implements Tableable {
 	public HashMap<String, Integer> getAnchoColumnas() {
 		return this.anchoColumnas;
 	}
+	
+	@Override
+	public void setConfig() {    	    	
+    }
 
 
 }

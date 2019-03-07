@@ -161,6 +161,10 @@ public class Proyecto implements Cargable{
 	public ArrayList<Proyecto> getDemandasAsociadas() throws Exception{
 		if (this.listadoParametros!=null || this.listadoParametros.size()>0)
 			this.cargaProyecto();
+		if (this.presupuestoActual==null) {
+			Presupuesto pres = new Presupuesto();
+			this.presupuestoActual = pres.dameUltimaVersionPresupuesto(this);
+		}
 		
 		ParametroProyecto pp = this.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
 		TipoProyecto tp = (TipoProyecto) pp.getValor();
