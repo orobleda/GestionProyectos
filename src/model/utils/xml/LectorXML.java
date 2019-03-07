@@ -27,7 +27,7 @@ public class LectorXML {
 	    	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 	    	Document doc = dBuilder.parse(xmlFile);
 
-	        NodeList list = doc.getElementsByTagName("acceso");
+	        NodeList list = doc.getElementsByTagName(nodoPrincipal);
 	        
 	        for (int i = 0;i<list.getLength();i++){
 	        	c.cargar(list.item(i));

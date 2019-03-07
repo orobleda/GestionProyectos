@@ -34,7 +34,7 @@ public class QuerysBD implements Loadable, Cargable{
 	private void cargaFichero(String fichero) {
 		QuerysBD qbd = null;
 		LectorXML lxml = new LectorXML();
-		List<Cargable> list = lxml.cargarXml("plantillas/" + fichero, "accesoBD", new QuerysBD());
+		List<Cargable> list = lxml.cargarXml("plantillas/" + fichero, "acceso", new QuerysBD());
 		
 		for ( int i = 0; i < list.size(); i++ )
         {
