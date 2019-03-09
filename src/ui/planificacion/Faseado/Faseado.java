@@ -10,21 +10,19 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
-import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
+import ui.PanelResumible;
 import ui.Tabla;
-import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
 
-public class GestionFases implements ControladorPantalla {
+public class Faseado implements ControladorPantalla {
 	
-	public static final String fxml = "file:src/ui/planificacion/Faseado/GestionFases.fxml";
+	public static final String fxml = "file:src/ui/planificacion/Faseado/Faseado.fxml";
 	
 	Proyecto pActual = null;
 	
@@ -47,6 +45,15 @@ public class GestionFases implements ControladorPantalla {
 	@FXML
 	private AnchorPane anchor;
 	
+	   @FXML
+	    private HBox circulo;
+	   
+  
+
+	    @FXML
+	    private ImageView boton;
+	    
+	
 	
 	public void initialize(){
 		tablaDemandas = new Tabla(tDemandas,new DemandasAsociadasTabla(),this);
@@ -61,6 +68,8 @@ public class GestionFases implements ControladorPantalla {
 				e.printStackTrace();
 			}
 		} );
+		
+		new PanelResumible ("Mostrar3R","Ocultar3R", boton, hbContenedorFases, circulo, PanelResumible.MODO_ALTERNADO);
 		
 		/*
 		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        

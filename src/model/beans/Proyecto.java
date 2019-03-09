@@ -44,6 +44,15 @@ public class Proyecto implements Cargable{
 			p.presupuestoActual = this.presupuestoActual.clone();;
 		p.apunteContable = this.apunteContable;
 		
+		if (this.fasesProyecto!=null) {
+			p.fasesProyecto = new ArrayList<FaseProyecto>();
+			Iterator<FaseProyecto> itFp = this.fasesProyecto.iterator();
+			while (itFp.hasNext()) {
+				FaseProyecto fp = itFp.next();
+				p.fasesProyecto.add(fp.clone());
+			}
+		}
+		
 		return p;
 	}
 
@@ -220,8 +229,12 @@ public class Proyecto implements Cargable{
 	}
 	
 	public ParametroProyecto getValorParametro(String keyParam) {
-		if (this.listadoParametros==null) return null;
-		else return (ParametroProyecto) this.listadoParametros.get(keyParam);
+		if (this.listadoParametros==null) {
+			ParametroProyecto pp = new ParametroProyecto();
+			this.listadoParametros = pp.dameParametros(this.getClass().getSimpleName(), this.id);
+		} 
+		
+		return (ParametroProyecto) this.listadoParametros.get(keyParam);
 	}
 	
 	public void cargaFasesProyecto() {

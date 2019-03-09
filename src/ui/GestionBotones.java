@@ -1,14 +1,23 @@
 package ui;
 
+import java.util.HashMap;
+
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import model.constantes.Constantes;
 
 public class GestionBotones {
+	public static int MODO_SWITCH = 1;
+	
 	ImageView boton = null;
 	public Object objetoPadre = null;
+	
+	public HashMap<Boolean, String> switchBotones;
+	boolean valor = false; 
+	int modoFuncionamiento = 0;
 	
 	String nombreBoton = null;
 	
@@ -24,11 +33,19 @@ public class GestionBotones {
 		getInstancia(boton, nombreBoton, dejarPresionado,manejador, textoContextual);
 	}
 	
+	public GestionBotones(ImageView boton, String nombreBoton, boolean dejarPresionado,EventHandler<MouseEvent> manejador, String textoContextual, int modo) {
+		this.modoFuncionamiento = modo;
+		switchBotones = new HashMap<Boolean, String>();
+		getInstancia(boton, nombreBoton, dejarPresionado,manejador, textoContextual);		
+	}
+	
 	public void getInstancia(ImageView boton, String nombreBoton, boolean dejarPresionado,EventHandler<MouseEvent> manejador, String textoContextual) {
 		
 		this.boton = boton;
 		this.nombreBoton = nombreBoton;
-		this.manejador = manejador;
+		this.manejador = manejador;	
+
+		boton.setImage(new Image(nombreBoton + "_PAS.png"));
 		
 		Tooltip t = new Tooltip(textoContextual);
         Tooltip.install(this.boton, t);
@@ -38,7 +55,10 @@ public class GestionBotones {
             @Override
             public void handle(MouseEvent t)
             {
-            	boton.setImage(new Image(nombreBoton + "_PRES.png"));
+            	if (modoFuncionamiento == GestionBotones.MODO_SWITCH) {
+        			valor = !valor;
+        		}
+            	boton.setImage(new Image(nomBoton() + "_PRES.png"));
             	presionado = !presionado;
             	manejador.handle(t);
             }
@@ -49,7 +69,8 @@ public class GestionBotones {
             @Override
             public void handle(MouseEvent t)
             {
-            	if (!presionado) boton.setImage(new Image(nombreBoton + "_ON.png"));
+            	if (!presionado) 
+            		boton.setImage(new Image(nomBoton() + "_ON.png"));
             }
         });
 		
@@ -57,19 +78,30 @@ public class GestionBotones {
 	        {
 	            @Override
 	            public void handle(MouseEvent t)
-	            {
+	            {	
 	            	if (!dejarPresionado) {
-	            		boton.setImage(new Image(nombreBoton + "_PAS.png"));
+	            		boton.setImage(new Image(nomBoton() + "_PAS.png"));
 	            	} else {
-	            		if (!presionado) boton.setImage(new Image(nombreBoton + "_PAS.png"));
+	            		if (!presionado) boton.setImage(new Image(nomBoton() + "_PAS.png"));
 	            	}
 	            }
 	     });
 	}
 	
+	public String nomBoton() {
+		if (modoFuncionamiento == GestionBotones.MODO_SWITCH) {
+			return switchBotones.get(valor);
+		} else return nombreBoton;
+	}
+	
+	public void configuraSwitch(String imagenFalso, String imagenVerdadero) {
+		this.switchBotones.put(Constantes.TRUE, imagenVerdadero);
+		this.switchBotones.put(Constantes.FALSE, imagenFalso);
+	}
+	
 	public void liberarBoton() {
 		try {
-			boton.setImage(new Image(nombreBoton + "_PAS.png"));
+			boton.setImage(new Image(nomBoton() + "_PAS.png"));
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso " + nombreBoton + "_PAS.png" + "\n\r" + e.getMessage());
 		}
@@ -78,7 +110,7 @@ public class GestionBotones {
 	
 	public void desActivarBoton() {
 		try {
-			boton.setImage(new Image(nombreBoton + "_DES.png"));
+			boton.setImage(new Image(nomBoton() + "_DES.png"));
 			
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso " + nombreBoton + "_DES.png" + "\n\r" + e.getMessage());
@@ -89,7 +121,7 @@ public class GestionBotones {
 	
 	public void activarBoton() {
 		try {
-			boton.setImage(new Image(nombreBoton + "_PAS.png"));
+			boton.setImage(new Image(nomBoton() + "_PAS.png"));
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso " +nombreBoton + "_PAS.png" + "\n\r" + e.getMessage());
 		}		
@@ -99,7 +131,7 @@ public class GestionBotones {
 	
 	public void pulsarBoton() {
 		try {
-			boton.setImage(new Image(nombreBoton + "_PRES.png"));
+			boton.setImage(new Image(nomBoton() + "_PRES.png"));
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso " +nombreBoton + "_PRES.png" + "\n\r" + e.getMessage());
 		}

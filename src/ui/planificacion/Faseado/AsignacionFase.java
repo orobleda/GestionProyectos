@@ -2,25 +2,34 @@ package ui.planificacion.Faseado;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
+import model.beans.Parametro;
+import model.beans.ParametroFases;
 import model.beans.Proyecto;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
+import ui.Dialogo;
+import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
 import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
 import ui.popUps.PopUp;
@@ -36,11 +45,12 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 	public static HashMap<String, Object> variablesPaso = null;
 	
 	DemandasAsociadasTabla filaDatos;
+	Proyecto proyectoOrigen = null;
 	Proyecto proyectoPadre = null;
 	Proyecto demanda = null;
 	Sistema sistema = null;
-	
-	public GestionFases gf = null;	
+		
+	public Faseado gf = null;	
 	
 	public boolean esPopUp = false;	
 
@@ -58,8 +68,7 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 
     @FXML
     private ImageView imGuardar;
-	
-    /*private GestionBotones gbNuevo;*/
+	private GestionBotones gbGuardar;
 	
     @Override
 	public AnchorPane getAnchor() {
@@ -72,24 +81,17 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 	}
 	
 	public void initialize(){
-		/*
-		gbFraccionar = new GestionBotones(imFraccionar, "Fraccionar3", false, new EventHandler<MouseEvent>() {        
+		gbGuardar = new GestionBotones(imGuardar, "Fraccionar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {
-					FraccionarImputacion fraImputacion = new FraccionarImputacion();
-			        FXMLLoader loader = new FXMLLoader();
-			        loader.setLocation(new URL(fraImputacion.getFXML()));
-			        vDetalle.getChildren().removeAll(vDetalle.getChildren());
-			        vDetalle.getChildren().add(loader.load());
-			        fraImputacion = loader.getController();
-			        fraImputacion.variablesPaso = AsignacionFase.variablesPaso;
-			        fraImputacion.prefijaValores();			        
+					guardaAsignacion();		        
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Fraccionar Imputación");	*/
+            } }, "Guardar Asignación");
+		gbGuardar.activarBoton();
 		
 	}	
 
@@ -103,11 +105,14 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		if (this.tDemanda==null) return;
 		
 		filaDatos = (DemandasAsociadasTabla) variablesPaso.get("filaDatos");
-		this.gf = (GestionFases) variablesPaso.get("controladorPantalla");
+		this.gf = (Faseado) variablesPaso.get("controladorPantalla");
 		String codSistema = (String) variablesPaso.get("columna");
 		
 		demanda = filaDatos.p;
-		proyectoPadre = gf.pActual;
+		proyectoOrigen = gf.pActual;
+		
+		proyectoPadre = proyectoOrigen.clone();
+		
 		sistema = Sistema.get(codSistema);
 		
 		Concepto concepto = demanda.presupuestoActual.getCosteConcepto(Sistema.get(codSistema), MetaConcepto.listado.get(MetaConcepto.DESARROLLO));
@@ -123,16 +128,40 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		
 		if (proyectoPadre.fasesProyecto==null) {
 			proyectoPadre.fasesProyecto = new ArrayList<FaseProyecto>();
+		} else {
+			FaseProyecto fp = new FaseProyecto();
+			proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
 		}
 		
 		if (proyectoPadre.fasesProyecto.size()==0) {
-			nuevaFase();
+			nuevaFase(null);
 		}
 		
 		pintaFases();
 	}
 	
-	public void nuevaFase() {
+	public void borraFase(FaseProyecto fasePadre) {
+		FaseProyectoSistema fps = fasePadre.fasesProyecto.get(this.sistema.codigo);
+		ArrayList<FaseProyectoSistemaDemanda> lFpsd = new ArrayList<FaseProyectoSistemaDemanda>();
+		Iterator<FaseProyectoSistemaDemanda> itDemandas = fps.demandasSistema.iterator();
+		while (itDemandas.hasNext()) {
+			FaseProyectoSistemaDemanda fpsd = itDemandas.next();
+			if (fpsd.p.id != this.demanda.id || fpsd.p.apunteContable != this.demanda.apunteContable) {
+				lFpsd.add(fpsd);
+			}
+		}		
+		
+		FaseProyecto fp = new FaseProyecto();
+		proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
+		
+		if (proyectoPadre.fasesProyecto.size()==0) {
+			nuevaFase(null);
+		}
+		
+		pintaFases();
+	}
+	
+	public void nuevaFase(FaseProyecto fasePadre) {
 		FaseProyecto fase = new FaseProyecto();
 		proyectoPadre.fasesProyecto.add(fase);
 		
@@ -141,6 +170,18 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		fase.p = proyectoPadre;
 		fase.nombre = "";
 		fase.fasesProyecto = new HashMap<String, FaseProyectoSistema>();
+		ParametroFases pf = new ParametroFases();
+		fase.parametrosFase = pf.dameParametros(fase.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+		Parametro parametro = fase.parametrosFase.get(MetaParametro.FASE_PROYECTO_FX_IMPLANTACION);
+		if (fasePadre == null) {
+			parametro.setValor(fase.getFechaImplantacion());
+		} else {
+			Calendar diaSiguiente = Calendar.getInstance();
+			diaSiguiente.setTime(fasePadre.getFechaImplantacion());
+			diaSiguiente.add(Calendar.DAY_OF_MONTH,1);
+			parametro.setValor(fase.getFechaImplantacion());
+		}
+		
 		
 		FaseProyectoSistema fps = new FaseProyectoSistema();
 		fps.id = Constantes.fechaActual().hashCode();
@@ -160,6 +201,8 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 	}
 	
 	public void pintaFases() {
+		Collections.sort(proyectoPadre.fasesProyecto);
+		
 		this.vbFases.getChildren().removeAll(this.vbFases.getChildren());
 		
 		Iterator<FaseProyecto> itFases = proyectoPadre.fasesProyecto.iterator();
@@ -174,7 +217,7 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 				varPaso.put("padre", this);
 				
 				try {
-					AsignacionFaseSistema asigFaseS = new AsignacionFaseSistema();
+					AsigFaseSistema asigFaseS = new AsigFaseSistema();
 			        FXMLLoader loader = new FXMLLoader();
 			        loader.setLocation(new URL(asigFaseS.getFXML()));
 			        this.vbFases.getChildren().add(loader.load());
@@ -185,6 +228,19 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 				}
 			}
 		}
+	}
+	
+	public void guardaAsignacion() {
+		FaseProyecto fp = new FaseProyecto();
+		proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
+		
+		float porcAsig = proyectoPadre.coberturaDemandaFases(this.demanda, this.demanda.apunteContable, this.sistema);
+		
+		if (porcAsig!=100) {
+			Dialogo.error("No se puede actualizar la asignación", "La asignación no está completa", "La demanda para ese sistema está asignada al "+porcAsig);
+		}
+		
+		this.proyectoOrigen.fasesProyecto = proyectoPadre.fasesProyecto;
 	}
 
 	@Override

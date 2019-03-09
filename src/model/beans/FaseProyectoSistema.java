@@ -20,6 +20,38 @@ public class FaseProyectoSistema implements Cargable{
 	public HashMap<String,? extends Parametro> parametrosFaseSistema = null;
 	public ArrayList<FaseProyectoSistemaDemanda> demandasSistema = null;
 	
+	
+	public FaseProyectoSistema clone() {
+		FaseProyectoSistema fps = new FaseProyectoSistema();
+		fps.id = this.id;
+		fps.idFase = this.idFase;
+		fps.idSistema = this.idSistema;
+		fps.s = this.s;
+		
+		if (this.demandasSistema!=null) {
+			fps.demandasSistema = new ArrayList<FaseProyectoSistemaDemanda>();
+			
+			Iterator<FaseProyectoSistemaDemanda> itDemandas = this.demandasSistema.iterator();
+			while (itDemandas.hasNext()) {
+				FaseProyectoSistemaDemanda fpsd = itDemandas.next();
+				fps.demandasSistema.add(fpsd.clone());
+			}
+		}
+		
+		if (parametrosFaseSistema!=null) {
+			HashMap<String,Parametro> mapAux = new HashMap<String,Parametro>();
+			Iterator<? extends Parametro> itParFas = this.parametrosFaseSistema.values().iterator();
+			while (itParFas.hasNext()) {
+				ParametroFases parFase = (ParametroFases) itParFas.next();
+				mapAux.put(parFase.codParametro, parFase.clone());
+			}
+			
+			fps.parametrosFaseSistema = mapAux;
+		}
+		
+		return fps;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")
@@ -138,6 +170,16 @@ public class FaseProyectoSistema implements Cargable{
 			FaseProyectoSistema fp = itFProyecto.next();
 			fp.insertFaseProyectoSistema(idTransaccion);
 		}		
+	}
+	
+	public FaseProyectoSistemaDemanda getDemanda(int idDemanda, boolean apunteContable) {
+		Iterator<FaseProyectoSistemaDemanda> itDemandas = this.demandasSistema.iterator();
+		while (itDemandas.hasNext()) {
+			FaseProyectoSistemaDemanda demanda = itDemandas.next();
+			if (demanda.apunteContable == apunteContable && this.id == idDemanda) 
+				return demanda;
+		}
+		return null;
 	}
 	
 	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable) {

@@ -19,6 +19,28 @@ public class FaseProyectoSistemaDemanda implements Cargable{
 	
 	HashMap<String,? extends Parametro> parametrosFaseSistemaDemanda = null;
 	
+	public FaseProyectoSistemaDemanda clone() {
+		FaseProyectoSistemaDemanda fpsd = new FaseProyectoSistemaDemanda();
+		fpsd.apunteContable = this.apunteContable;
+		fpsd.id = this.id;
+		fpsd.idDemanda = this.id;
+		fpsd.idSistema = this.idSistema;
+		fpsd.p = this.p;
+		
+		if (parametrosFaseSistemaDemanda!=null) {
+			HashMap<String,Parametro> mapAux = new HashMap<String,Parametro>();
+			Iterator<? extends Parametro> itParFas = this.parametrosFaseSistemaDemanda.values().iterator();
+			while (itParFas.hasNext()) {
+				ParametroFases parFase = (ParametroFases) itParFas.next();
+				mapAux.put(parFase.codParametro, parFase.clone());
+			}
+			
+			fpsd.parametrosFaseSistemaDemanda = mapAux;
+		}
+		
+		return fpsd;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")

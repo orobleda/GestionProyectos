@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.AsigFaseSistema">
+   <children>
+      <VBox>
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label prefWidth="100.0" text="Fase" />
+                  <TextField id="tFase" fx:id="tFase" editable="false" prefWidth="75.0">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label prefWidth="100.0" text="Fecha Producción" />
+                  <TextField id="tFase" fx:id="tFxProd" disable="true" editable="false" prefWidth="75.0">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+      <Label text="Asignación">
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin>
+      </Label>
+      <TextField id="tPorcentaje" fx:id="tPorcentaje" prefWidth="75.0">
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin></TextField>
+      <Label text="Estimado">
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin></Label>
+      <TextField id="tEstimado" fx:id="tEstimado" disable="true" prefWidth="75.0">
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin>
+      </TextField>
+      <ImageView id="imNuevaFila" fx:id="imNuevaFila" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
+         </image>
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin>
+      </ImageView>
+      <ImageView id="imBorraFila" fx:id="imBorraFila" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../imgs/iconos/BorraFila3_PAS.png" />
+         </image>
+         <HBox.margin>
+            <Insets left="15.0" />
+         </HBox.margin>
+      </ImageView>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</HBox>

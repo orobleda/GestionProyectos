@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<HBox alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="imMostrarOcultarFase" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+         </image>
+      </ImageView>
+      <VBox>
+         <children>
+            <HBox fx:id="hbCabecera" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+               <children>
+                  <Label prefWidth="100.0" text="Nombre Fase" />
+                  <TextField fx:id="tNomFaseCabecera" disable="true" />
+                  <Label prefWidth="150.0" text="Fecha Implantación">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="tNomFaseCabecera1" disable="true" />
+               </children>
+            </HBox>
+            <HBox fx:id="hbDetalle" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label prefWidth="100.0" text="Nombre Fase" />
+                  <TextField fx:id="tNomFaseDetalle" />
+               </children>
+            </HBox>
+         </children>
+         <HBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
+</HBox>

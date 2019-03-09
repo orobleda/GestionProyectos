@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.GestionFases">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.Faseado">
    <top>
       <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
@@ -39,11 +40,29 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </BorderPane.margin>
                <content>
-                  <VBox alignment="TOP_CENTER">
+                  <HBox alignment="CENTER">
                      <children>
-                        <HBox fx:id="hbContenedorFases" />
+                        <ImageView fx:id="boton" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+                           </image>
+                        </ImageView>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <HBox fx:id="hbContenedorFases">
+                                 <children>
+                                    <Arc fill="DODGERBLUE" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+                                 </children>
+                              </HBox>
+                              <HBox fx:id="circulo" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Circle fill="DODGERBLUE" radius="100.0" stroke="BLACK" strokeType="INSIDE" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
-                  </VBox>
+                  </HBox>
                </content>
             </ScrollPane>
          </children>

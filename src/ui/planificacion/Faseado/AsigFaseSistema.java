@@ -14,6 +14,8 @@ import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.ParametroFases;
 import model.beans.Proyecto;
+import model.beans.RelRecursoTarifa;
+import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
@@ -22,10 +24,13 @@ import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
 import ui.popUps.PopUp;
 
-public class AsignacionFaseSistema implements ControladorPantalla, PopUp {
+public class AsigFaseSistema implements ControladorPantalla, PopUp {
 
     @FXML
     private TextField tFase;
+    
+    @FXML
+    private TextField tFxProd;
 
     @FXML
     private ImageView imNuevaFila;
@@ -46,11 +51,11 @@ public class AsignacionFaseSistema implements ControladorPantalla, PopUp {
     Proyecto demanda = null;
     AsignacionFase af = null;
 	
-	public AsignacionFaseSistema() {
+	public AsigFaseSistema() {
 		super();
 	}
 
-	public static final String fxml = "file:src/ui/planificacion/Faseado/AsignacionFaseSistema.fxml"; 
+	public static final String fxml = "file:src/ui/planificacion/Faseado/AsigFaseSistema.fxml"; 
 	
 	public HashMap<String, Object> variablesPaso = null;
 	
@@ -76,7 +81,36 @@ public class AsignacionFaseSistema implements ControladorPantalla, PopUp {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Insertar Nueva Fase");		
+            } }, "Insertar Nueva Fase");	
+		gbBorraFila = new GestionBotones(imBorraFila, "BorraFila3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {
+					quitaFase();		        
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Borra asignación a fase");
+		
+		this.tFase.focusedProperty().addListener((ov, oldV, newV) -> { 
+			if (!newV) {
+				this.fase.nombre = this.tFase.getText();
+			}
+		});
+		this.tPorcentaje.focusedProperty().addListener((ov, oldV, newV) -> { 
+			if (!newV) {
+				try {
+					float porc = (Float) FormateadorDatos.parseaDato(this.tPorcentaje.getText(), TipoDato.FORMATO_PORC);
+					FaseProyectoSistemaDemanda fpsd = this.fase.fasesProyecto.get(sistema.codigo).getDemanda(this.demanda.id, this.demanda.apunteContable);
+					ParametroFases par = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+					par.setValor(porc);
+					this.tPorcentaje.setText(FormateadorDatos.formateaDato(porc, TipoDato.FORMATO_PORC));
+				} catch (Exception ex){
+					this.tPorcentaje.setText("0 %");
+				}			
+			}
+		});
 	}	
 
 	@Override
@@ -95,6 +129,7 @@ public class AsignacionFaseSistema implements ControladorPantalla, PopUp {
 			af = (AsignacionFase) variablesPaso.get("padre");
 			
 			this.tFase.setText(fase.nombre);
+			this.tFxProd.setText(FormateadorDatos.formateaDato(fase.getFechaImplantacion(), TipoDato.FORMATO_FECHA));
 			
 			Iterator<FaseProyectoSistema> itFps = fase.fasesProyecto.values().iterator();
 			while (itFps.hasNext()) {
@@ -124,8 +159,12 @@ public class AsignacionFaseSistema implements ControladorPantalla, PopUp {
 	}
 	
 	public void aniadirFase() {
-		af.nuevaFase();
+		af.nuevaFase(this.fase);
 		af.pintaFases();
+	}
+	
+	public void quitaFase() {
+		af.borraFase(this.fase);
 	}
 
 	@Override

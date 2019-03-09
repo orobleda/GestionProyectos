@@ -1,16 +1,19 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
-public class FaseProyecto implements Cargable{
+public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 	public int id = 0;
 	public String nombre = "";
 	public int idProyecto = 0;
@@ -18,6 +21,66 @@ public class FaseProyecto implements Cargable{
 	
 	public HashMap<String,? extends Parametro> parametrosFase = null;
 	public HashMap<String, FaseProyectoSistema> fasesProyecto = null;
+	
+	
+	public FaseProyecto clone() {
+		FaseProyecto fp = new FaseProyecto();
+		fp.id = this.id;
+		fp.idProyecto = this.idProyecto;
+		fp.nombre = this.nombre;
+		fp.p = this.p;
+		
+		if (this.fasesProyecto!=null ) {
+			fp.fasesProyecto = new HashMap<String,FaseProyectoSistema>();
+			Iterator<FaseProyectoSistema> itFps = this.fasesProyecto.values().iterator();
+			while (itFps.hasNext()) {
+				FaseProyectoSistema fps = itFps.next();
+				fp.fasesProyecto.put(fps.s.codigo, fps.clone());
+				
+			}
+		}
+		
+		if (parametrosFase!=null) {
+			HashMap<String,Parametro> mapAux = new HashMap<String,Parametro>();
+			Iterator<? extends Parametro> itParFas = this.parametrosFase.values().iterator();
+			while (itParFas.hasNext()) {
+				ParametroFases parFase = (ParametroFases) itParFas.next();
+				mapAux.put(parFase.codParametro, parFase.clone());
+			}
+			
+			fp.parametrosFase = mapAux;
+		}
+		
+		return fp;
+	}
+	
+	public int compareTo(FaseProyecto o) {
+		ParametroFases pf = new ParametroFases();
+		if (this.parametrosFase==null || this.parametrosFase.size()==0) {
+			this.parametrosFase = pf.dameParametros(this.getClass().getSimpleName(), this.id);
+		}
+		if (o.parametrosFase==null || o.parametrosFase.size()==0) {
+			o.parametrosFase = pf.dameParametros(this.getClass().getSimpleName(), o.id);
+		}
+		
+		Date fxImpThis = this.getFechaImplantacion();
+		Date fxImpO = this.getFechaImplantacion();
+
+		return fxImpThis.compareTo(fxImpO);
+	}
+	
+	public Date getFechaImplantacion () {
+		Parametro par = this.parametrosFase.get(MetaParametro.FASE_PROYECTO_FX_IMPLANTACION);
+		Date fxImpThis = null;
+		
+		if (par.getValor()==null) 
+			if (p==null || p.getValorParametro(MetaParametro.PROYECTO_FX_FIN)==null) fxImpThis = Constantes.fechaActual();
+			else 														             fxImpThis = (Date) (p.getValorParametro(MetaParametro.PROYECTO_FX_FIN)).getValor();		
+		else 
+			fxImpThis = (Date) par.getValor();
+		
+		return fxImpThis;
+	}
 	
 	@Override
 	public Cargable cargar(Object o) {
@@ -148,5 +211,26 @@ public class FaseProyecto implements Cargable{
 		return "Fase: " + this.nombre;
 	}
 	
+	public ArrayList<FaseProyecto> purgarFases(ArrayList<FaseProyecto> listadoFases) {
+		ArrayList<FaseProyecto> salida = new ArrayList<FaseProyecto>();
+		
+		Iterator<FaseProyecto> itFases = listadoFases.iterator();
+		while (itFases.hasNext()) {
+			FaseProyecto fp = itFases.next();
+			
+			if (fp.fasesProyecto!=null && fp.fasesProyecto.size()!=0) {
+				Iterator<FaseProyectoSistema> itSistemas = fp.fasesProyecto.values().iterator();
+				while (itSistemas.hasNext()) {
+					FaseProyectoSistema fps = itSistemas.next();
+					
+					if (fps.demandasSistema!=null && fps.demandasSistema.size()!=0) {
+						salida.add(fp);
+					}					
+				}
+			} 
+		}
+		
+		return salida;
+	}
 	
 }

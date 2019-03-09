@@ -34,7 +34,7 @@ import ui.Recursos.GestionRecursos.AltaModRecurso;
 import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
 import ui.interfaces.ControladorPantalla;
-import ui.planificacion.Faseado.GestionFases;
+import ui.planificacion.Faseado.Faseado;
 
 
 public class Main extends Application {
@@ -63,7 +63,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase);
 	        scene.getStylesheets().add("application.css");	        
 	        
-	        GestionFases c = new GestionFases();
+	        Faseado c = new Faseado();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();
@@ -180,7 +180,7 @@ public class Main extends Application {
 		        	controlPantalla = new EstimacionesValoraciones();
 		        
 		        if ("Faseado Proyectos".equals(name))
-		        	controlPantalla = new GestionFases();
+		        	controlPantalla = new Faseado();
 		        
 		        if ("Gestión Tarifas".equals(name))
 		        	controlPantalla = new ui.Economico.Tarifas.GestionTarifas();

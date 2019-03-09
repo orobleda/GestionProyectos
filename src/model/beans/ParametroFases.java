@@ -20,4 +20,20 @@ public class ParametroFases extends Parametro {
 		QUERY_BORRA_PARAMETRO = "dBorraParametroFase";
 	}
 	
+	public ParametroFases clone() {
+		ParametroFases pf = new ParametroFases();
+		pf.codParametro = this.codParametro;
+		pf.id = this.id;
+		pf.idEntidadAsociada = this.idEntidadAsociada;
+		pf.metaParam = this.metaParam;
+		pf.modificado = this.modificado;
+		pf.valorEntero = this.valorEntero;
+		pf.valorfecha = this.valorfecha;
+		pf.valorObjeto = this.valorObjeto;
+		pf.valorReal = this.valorReal;
+		pf.valorTexto = this.valorTexto;
+		
+		return pf;
+	}
+	
 }

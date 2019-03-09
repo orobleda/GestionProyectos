@@ -13,7 +13,7 @@ import ui.ParamTable;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.General;
 import ui.interfaces.Tableable;
 import ui.planificacion.Faseado.AsignacionFase;
-import ui.planificacion.Faseado.GestionFases;
+import ui.planificacion.Faseado.Faseado;
 
 public class DemandasAsociadasTabla extends ParamTable implements Tableable  {
 	public Proyecto p = null;
