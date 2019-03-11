@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import model.beans.Coste;
+import model.beans.FaseProyecto;
 import model.beans.Proyecto;
 import model.beans.Tarifa;
+import model.constantes.Constantes;
 import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Tabla;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.General;
+import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.interfaces.Tableable;
 import ui.planificacion.Faseado.AsignacionFase;
 import ui.planificacion.Faseado.Faseado;
@@ -61,14 +65,30 @@ public class DemandasAsociadasTabla extends ParamTable implements Tableable  {
 		return new DemandasAsociadasTabla(p);
 	}
     
-
-	public void set(String campo, String valor){			
+	@Override
+	public String resaltar(int fila, String columna, Tabla tabla) {
+		DemandasAsociadasTabla dat = (DemandasAsociadasTabla) tabla.listaDatosFiltrada.get(fila);
+		
+		Faseado f = (Faseado) tabla.componenteTabla.getProperties().get("controlador");
+		Proyecto pActual = f.pActual;
+		
+		Sistema s = Sistema.get(columna);
+		
+		if (s!=null) {
+			if (!"X".equals(dat.get(columna))) return null;
+			
+			float cob = pActual.coberturaDemandaFases(dat.p, dat.p.apunteContable, s);
+			
+			if (cob!=100)
+				return "-fx-background-color: " + Constantes.COLOR_AMARILLO;
+			else
+				return "-fx-background-color: " + Constantes.COLOR_VERDE;
+		}
+		
+		return null;
 	}
-	
-	public void set(Tarifa t) {
-    	
-    }
-	
+    
+
 	@Override
 	public Object muestraSelector() {
 		return this;
@@ -83,7 +103,6 @@ public class DemandasAsociadasTabla extends ParamTable implements Tableable  {
 					Coste c = itCoste.next();
 					if (campo.equals(c.sistema.codigo)) return "X";
 				}
-				
 			}
 		} catch ( Exception e) {}
 			

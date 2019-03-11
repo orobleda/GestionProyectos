@@ -30,6 +30,7 @@ import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.interfaces.ControladorPantalla;
 import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
 import ui.popUps.PopUp;
@@ -81,7 +82,7 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 	}
 	
 	public void initialize(){
-		gbGuardar = new GestionBotones(imGuardar, "Fraccionar3", false, new EventHandler<MouseEvent>() {        
+		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -179,10 +180,9 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 			Calendar diaSiguiente = Calendar.getInstance();
 			diaSiguiente.setTime(fasePadre.getFechaImplantacion());
 			diaSiguiente.add(Calendar.DAY_OF_MONTH,1);
-			parametro.setValor(fase.getFechaImplantacion());
+			parametro.setValor(diaSiguiente.getTime());
 		}
-		
-		
+				
 		FaseProyectoSistema fps = new FaseProyectoSistema();
 		fps.id = Constantes.fechaActual().hashCode();
 		fase.fasesProyecto.put(sistema.codigo, fps);
@@ -190,6 +190,8 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		fps.s = sistema;
 		fps.idFase = -1;
 		fps.demandasSistema = new ArrayList<FaseProyectoSistemaDemanda>();
+		Parametro p = new Parametro();
+		fps.parametrosFaseSistema = p.dameParametros(fps.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);	
 		
 		FaseProyectoSistemaDemanda fpsd = new FaseProyectoSistemaDemanda();
 		fpsd.apunteContable = demanda.apunteContable;
@@ -197,6 +199,30 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		fpsd.idDemanda = demanda.id;
 		fpsd.idSistema = -1;
 		fpsd.p = demanda;
+		p = new Parametro();
+		fpsd.parametrosFaseSistemaDemanda = p.dameParametros(fpsd.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);	
+		fps.demandasSistema.add(fpsd);
+	}
+	
+	public void nuevoSistemaDemanda(FaseProyecto fase) {
+		FaseProyectoSistema fps = new FaseProyectoSistema();
+		fps.id = Constantes.fechaActual().hashCode();
+		fase.fasesProyecto.put(sistema.codigo, fps);
+		fps.idSistema = sistema.id;
+		fps.s = sistema;
+		fps.idFase = -1;
+		fps.demandasSistema = new ArrayList<FaseProyectoSistemaDemanda>();
+		Parametro p = new Parametro();
+		fps.parametrosFaseSistema = p.dameParametros(fps.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);	
+		
+		FaseProyectoSistemaDemanda fpsd = new FaseProyectoSistemaDemanda();
+		fpsd.apunteContable = demanda.apunteContable;
+		fpsd.id = Constantes.fechaActual().hashCode();
+		fpsd.idDemanda = demanda.id;
+		fpsd.idSistema = -1;
+		fpsd.p = demanda;
+		p = new Parametro();
+		fpsd.parametrosFaseSistemaDemanda = p.dameParametros(fpsd.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);	
 		fps.demandasSistema.add(fpsd);
 	}
 	
@@ -209,24 +235,27 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		while (itFases.hasNext()) {
 			FaseProyecto fp = itFases.next();
 			
-			if (fp.fasesProyecto.containsKey(this.sistema.codigo)) {
-				HashMap<String, Object> varPaso = new HashMap<String, Object>();
-				varPaso.put("fase", fp);
-				varPaso.put("sistema", sistema);
-				varPaso.put("demanda", demanda);
-				varPaso.put("padre", this);
-				
-				try {
-					AsigFaseSistema asigFaseS = new AsigFaseSistema();
-			        FXMLLoader loader = new FXMLLoader();
-			        loader.setLocation(new URL(asigFaseS.getFXML()));
-			        this.vbFases.getChildren().add(loader.load());
-			        asigFaseS = loader.getController();
-			        asigFaseS.setParametrosPaso(varPaso);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+			if (!fp.fasesProyecto.containsKey(sistema.codigo)) {
+				nuevoSistemaDemanda(fp);
 			}
+			
+			HashMap<String, Object> varPaso = new HashMap<String, Object>();
+			varPaso.put("fase", fp);
+			varPaso.put("sistema", sistema);
+			varPaso.put("demanda", demanda);
+			varPaso.put("padre", this);
+			
+			try {
+				AsigFaseSistema asigFaseS = new AsigFaseSistema();
+		        FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(new URL(asigFaseS.getFXML()));
+		        this.vbFases.getChildren().add(loader.load());
+		        asigFaseS = loader.getController();
+		        asigFaseS.setParametrosPaso(varPaso);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
 		}
 	}
 	
@@ -238,9 +267,12 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		
 		if (porcAsig!=100) {
 			Dialogo.error("No se puede actualizar la asignación", "La asignación no está completa", "La demanda para ese sistema está asignada al "+porcAsig);
+			return;
 		}
 		
 		this.proyectoOrigen.fasesProyecto = proyectoPadre.fasesProyecto;
+		this.gf.pintaFases();
+		ParamTable.po.hide();
 	}
 
 	@Override

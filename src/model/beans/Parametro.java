@@ -7,7 +7,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
 
+import javafx.beans.value.ObservableFloatValue;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableStringValue;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
@@ -21,7 +25,7 @@ import model.utils.db.ParametroBD;
 import ui.Propiedad;
 import ui.interfaces.Propiediable;
 
-public class Parametro implements Propiediable, Cargable {
+public class Parametro extends Observable implements Propiediable, Cargable {
 	public static int SIN_ID_ELEMENTO = -1;
 	public static int SOLO_METAPARAMETROS = -2;
 	
@@ -39,6 +43,11 @@ public class Parametro implements Propiediable, Cargable {
 	public Object valorObjeto = null;
 	public String valorTexto = null;
 	public Date valorfecha = null;
+	
+	public ObservableFloatValue valorOReal = null;
+	public ObservableObjectValue<?> valorOObjeto = null;
+	public ObservableStringValue valorOTexto = null;
+	public ObservableObjectValue<Date> valorOfecha = null;
 	
 	public boolean modificado = false;
 	
@@ -82,7 +91,10 @@ public class Parametro implements Propiediable, Cargable {
 		modificado = true;
 		
 		if (metaParam.tipoDato == TipoDato.FORMATO_TXT|| 
-				metaParam.tipoDato == TipoDato.FORMATO_URL) valorTexto =  (String) valor;
+				metaParam.tipoDato == TipoDato.FORMATO_URL) {
+			valorTexto =  (String) valor;
+	
+		}
 			if (metaParam.tipoDato == TipoDato.FORMATO_INT) valorEntero =  (Integer) valor;
 			if (metaParam.tipoDato == TipoDato.FORMATO_REAL || 
 					metaParam.tipoDato == TipoDato.FORMATO_MONEDA ||
@@ -90,11 +102,20 @@ public class Parametro implements Propiediable, Cargable {
 			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
 					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) valorObjeto = valor;
 			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) {
-				valorfecha = Date.from(((LocalDate) valor).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());;
+				try {
+					valorfecha = (Date) valor;
+				} catch (Exception e) {
+					valorfecha = Date.from(((LocalDate) valor).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());;
+				}
+				
 			}
 			if (metaParam.tipoDato == TipoDato.FORMATO_BOOLEAN) 
 				if ((Boolean)valor==Constantes.TRUE) valorEntero=Constantes.NUM_TRUE;
 				else 								 valorEntero=Constantes.NUM_FALSE;
+		
+        setChanged();
+            
+        notifyObservers();
 	}
 
 	@Override

@@ -245,10 +245,12 @@ public class Proyecto implements Cargable{
 	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable, Sistema s) {
 		float porcAcumulado = 0;
 		
+		if (this.fasesProyecto==null) return 0;
+		
 		Iterator<FaseProyecto> itFP = this.fasesProyecto.iterator();
 		while (itFP.hasNext()) {
 			FaseProyecto fp = itFP.next();
-			porcAcumulado = fp.coberturaDemandaFases(pDemanda, apunteContable, s);
+			porcAcumulado += fp.coberturaDemandaFases(pDemanda, apunteContable, s);
 		}
 		
 		return porcAcumulado;

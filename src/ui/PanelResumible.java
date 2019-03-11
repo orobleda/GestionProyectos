@@ -54,4 +54,9 @@ public class PanelResumible {
 			
 		}
 	}
+	
+	public void compactar () {
+		expandido = true;
+		aplicaCambios();
+	}
 }

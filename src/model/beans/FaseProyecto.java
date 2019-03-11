@@ -203,8 +203,13 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 	}
 	
 	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable, Sistema s) {
+		if (this.fasesProyecto==null) return 0;
+		
 		FaseProyectoSistema fp = this.fasesProyecto.get(s.codigo);
-		return fp.coberturaDemandaFases(pDemanda, apunteContable);		
+		if (fp!=null)
+			return fp.coberturaDemandaFases(pDemanda, apunteContable);
+		else
+			return 0;
 	} 
 	
 	public String toString() {
@@ -220,12 +225,49 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 			
 			if (fp.fasesProyecto!=null && fp.fasesProyecto.size()!=0) {
 				Iterator<FaseProyectoSistema> itSistemas = fp.fasesProyecto.values().iterator();
+				
+				fp.fasesProyecto = new HashMap<String,FaseProyectoSistema>();
+				
 				while (itSistemas.hasNext()) {
 					FaseProyectoSistema fps = itSistemas.next();
 					
 					if (fps.demandasSistema!=null && fps.demandasSistema.size()!=0) {
-						salida.add(fp);
+						Iterator<FaseProyectoSistemaDemanda> itDemandas = fps.demandasSistema.iterator();
+						fps.demandasSistema = new ArrayList<FaseProyectoSistemaDemanda>();
+						while (itDemandas.hasNext()) {
+							FaseProyectoSistemaDemanda fpsd = itDemandas.next();
+							Parametro paramCobertura = fpsd.parametrosFaseSistemaDemanda.get(MetaParametro.FASES_COBERTURA_DEMANDA);
+							if ( (Float) paramCobertura.getValor() !=  0) fps.demandasSistema.add(fpsd);
+						}
+					}
+					
+					if (fps.demandasSistema.size()>0) {
+						fp.fasesProyecto.put(fps.s.codigo,fps);
+					}
+				}				
+			} 
+		}
+		
+		
+		salida = new ArrayList<FaseProyecto>();
+		
+		itFases = listadoFases.iterator();
+		while (itFases.hasNext()) {
+			FaseProyecto fp = itFases.next();
+			
+			boolean insertar = false;
+			
+			if (fp.fasesProyecto!=null && fp.fasesProyecto.size()!=0) {
+				Iterator<FaseProyectoSistema> itSistemas = fp.fasesProyecto.values().iterator();
+				while (itSistemas.hasNext()) {
+					FaseProyectoSistema fps = itSistemas.next();
+					
+					if (fps.demandasSistema!=null && fps.demandasSistema.size()!=0) {
+						insertar=true;
 					}					
+				}				
+				if (insertar) {
+					salida.add(fp);
 				}
 			} 
 		}

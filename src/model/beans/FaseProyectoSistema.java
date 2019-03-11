@@ -17,7 +17,7 @@ public class FaseProyectoSistema implements Cargable{
 	public int idSistema = 0;
 	public Sistema s;
 	
-	public HashMap<String,? extends Parametro> parametrosFaseSistema = null;
+	public HashMap<String,? extends Parametro> parametrosFaseSistema = new HashMap<String,Parametro> ();
 	public ArrayList<FaseProyectoSistemaDemanda> demandasSistema = null;
 	
 	
@@ -47,6 +47,9 @@ public class FaseProyectoSistema implements Cargable{
 			}
 			
 			fps.parametrosFaseSistema = mapAux;
+		} else {
+			Parametro p = new Parametro();
+			parametrosFaseSistema = p.dameParametros(this.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);	
 		}
 		
 		return fps;
@@ -176,7 +179,7 @@ public class FaseProyectoSistema implements Cargable{
 		Iterator<FaseProyectoSistemaDemanda> itDemandas = this.demandasSistema.iterator();
 		while (itDemandas.hasNext()) {
 			FaseProyectoSistemaDemanda demanda = itDemandas.next();
-			if (demanda.apunteContable == apunteContable && this.id == idDemanda) 
+			if (demanda.apunteContable == apunteContable && demanda.p.id == idDemanda) 
 				return demanda;
 		}
 		return null;
@@ -187,7 +190,7 @@ public class FaseProyectoSistema implements Cargable{
 		while (itF.hasNext()) {
 			FaseProyectoSistemaDemanda fpsd = itF.next();
 			
-			if (apunteContable == fpsd.apunteContable && pDemanda.id == fpsd.id) {
+			if (apunteContable == fpsd.apunteContable && pDemanda.id == fpsd.p.id) {
 				ParametroFases pf = (ParametroFases) fpsd.parametrosFaseSistemaDemanda.get(MetaParametro.FASES_COBERTURA_DEMANDA);
 				return (Float) pf.getValor();
 			}

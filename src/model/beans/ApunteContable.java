@@ -13,6 +13,7 @@ public class ApunteContable extends Proyecto {
 	
 	public ApunteContable() {
 		this.apunteContable = true;
+		this.nombre = "Apunte Contable";
 	}
 	
 	public ApunteContable clone() {

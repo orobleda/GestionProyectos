@@ -38,10 +38,6 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 
     @FXML
     private TextField tPorcentaje;    
-
-    @FXML
-    private ImageView imBorraFila;
-    private GestionBotones gbBorraFila;
     
     @FXML
     private TextField tEstimado;
@@ -82,17 +78,7 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 					e.printStackTrace();
 				}
             } }, "Insertar Nueva Fase");	
-		gbBorraFila = new GestionBotones(imBorraFila, "BorraFila3", false, new EventHandler<MouseEvent>() {        
-			@Override
-            public void handle(MouseEvent t)
-            {
-				try {
-					quitaFase();		        
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            } }, "Borra asignación a fase");
-		
+				
 		this.tFase.focusedProperty().addListener((ov, oldV, newV) -> { 
 			if (!newV) {
 				this.fase.nombre = this.tFase.getText();
@@ -106,6 +92,8 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 					ParametroFases par = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
 					par.setValor(porc);
 					this.tPorcentaje.setText(FormateadorDatos.formateaDato(porc, TipoDato.FORMATO_PORC));
+					float coste = (Float) FormateadorDatos.parseaDato(af.tCosteAsignado.getText(), TipoDato.FORMATO_MONEDA);
+					this.tEstimado.setText(FormateadorDatos.formateaDato(coste*porc/100, TipoDato.FORMATO_MONEDA));
 				} catch (Exception ex){
 					this.tPorcentaje.setText("0 %");
 				}			
@@ -131,6 +119,9 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 			this.tFase.setText(fase.nombre);
 			this.tFxProd.setText(FormateadorDatos.formateaDato(fase.getFechaImplantacion(), TipoDato.FORMATO_FECHA));
 			
+			this.tPorcentaje.setText("0 %");
+			this.tEstimado.setText("0 €");
+			
 			Iterator<FaseProyectoSistema> itFps = fase.fasesProyecto.values().iterator();
 			while (itFps.hasNext()) {
 				FaseProyectoSistema fps = itFps.next();
@@ -138,12 +129,12 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 					Iterator<FaseProyectoSistemaDemanda> itFpsd = fps.demandasSistema.iterator();
 					while (itFpsd.hasNext()) {
 						FaseProyectoSistemaDemanda fpsd = itFpsd.next();
-						if (fpsd.idDemanda == demanda.id && fpsd.apunteContable == demanda.apunteContable) {
+						if (fpsd.p.id == demanda.id && fpsd.p.apunteContable == demanda.apunteContable) {
 							ParametroFases pf = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
 							if (pf!= null) {
 								this.tPorcentaje.setText(FormateadorDatos.formateaDato(pf.getValor(), TipoDato.FORMATO_PORC));
 								float estimado =  (Float)pf.getValor()* (Float) FormateadorDatos.parseaDato(af.tCosteAsignado.getText(), TipoDato.FORMATO_MONEDA);
-								this.tEstimado.setText(FormateadorDatos.formateaDato(new Float(estimado), TipoDato.FORMATO_MONEDA));
+								this.tEstimado.setText(FormateadorDatos.formateaDato(new Float(estimado)/100, TipoDato.FORMATO_MONEDA));
 							} else {
 								this.tPorcentaje.setText(FormateadorDatos.formateaDato(new Float(0), TipoDato.FORMATO_PORC));
 							}
@@ -161,10 +152,6 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 	public void aniadirFase() {
 		af.nuevaFase(this.fase);
 		af.pintaFases();
-	}
-	
-	public void quitaFase() {
-		af.borraFase(this.fase);
 	}
 
 	@Override

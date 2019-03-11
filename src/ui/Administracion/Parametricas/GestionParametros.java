@@ -27,11 +27,15 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 	public GestionParametros() {
 		super();
 	}
+	
+	public static String PARAMETROS_DIRECTOS = "listadoDirectamente";
+	public static String LISTA_PARAMETROS = "listadoParametros";
+	public static String NO_FILTROS = "Sinfiltros";
 
 	public static final String fxml = "file:src/ui/Administracion/Parametricas/GestionParametros.fxml"; 
 	
-	public static HashMap<String, Object> variablesPaso = null;
-	public static VentanaPadre ventanaPadre = null;
+	public HashMap<String, Object> variablesPaso = null;
+	public VentanaPadre ventanaPadre = null;
 	
 	public static GestionParametros objetoThis = null;
 	
@@ -137,7 +141,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 		boolean noEsVentanaTop = (boolean) variablesPaso.get("subventana");
 		
 		if (noEsVentanaTop) {
-			this.hbGuardado.setVisible(false);
+			this.hbGuardado.getChildren().removeAll(this.hbGuardado.getChildren());
 		} else {
 			this.hbGuardado.setVisible(true);
 		}
@@ -149,16 +153,27 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 		HashMap<String,Boolean> readOnlyProps  = (HashMap<String,Boolean>) variablesPaso.get("readOnlyProps");
 		@SuppressWarnings("unchecked")
 		HashMap<Integer,Object> filtro  = (HashMap<Integer,Object>) variablesPaso.get("filtro");
-		int idEntidad = variablesPaso.get("idEntidadBuscar") == null? -1: (Integer) variablesPaso.get("idEntidadBuscar");
 		
-		Parametro par = Propiediable.beanControlador(entidad);
-		listaParametros = par.dameParametros(entidad, idEntidad); 
-		 
+		int idEntidad = -1;
+		if (variablesPaso.get(GestionParametros.PARAMETROS_DIRECTOS)!=null) {
+			listaParametros = (HashMap<String,Parametro>) variablesPaso.get(GestionParametros.LISTA_PARAMETROS);
+		} else {
+			idEntidad = variablesPaso.get("idEntidadBuscar") == null? -1: (Integer) variablesPaso.get("idEntidadBuscar");
+			Parametro par = Propiediable.beanControlador(entidad);
+			listaParametros = par.dameParametros(entidad, idEntidad); 
+		}
+		
 		ArrayList<Parametro> listaParams = new ArrayList<Parametro>();
 		listaParams.addAll(listaParametros.values());
 		ArrayList<? extends Propiediable> listado = listaParams;
 		 
 		tp = new TablaPropiedades(TablaPropiedades.toList(listado,readOnlyProps), ancho, alto,filtro);
+		
+		if (variablesPaso.get(GestionParametros.NO_FILTROS)!=null) {
+			tp.setSearchBoxVisible(false);
+			tp.setModeSwitcherVisible(false);
+		}
+		
 		this.hbContenedor.getChildren().add(tp);
 		
 	}

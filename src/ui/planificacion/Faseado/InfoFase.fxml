@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -8,37 +9,149 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<HBox alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.InfoFase">
    <children>
-      <ImageView fx:id="imMostrarOcultarFase" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
-         </image>
-      </ImageView>
-      <VBox>
+      <HBox alignment="CENTER_LEFT">
          <children>
-            <HBox fx:id="hbCabecera" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+            <ImageView fx:id="imMostrarOcultarFase" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+               </image>
+            </ImageView>
+            <VBox>
                <children>
-                  <Label prefWidth="100.0" text="Nombre Fase" />
-                  <TextField fx:id="tNomFaseCabecera" disable="true" />
-                  <Label prefWidth="150.0" text="Fecha Implantación">
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="tNomFaseCabecera1" disable="true" />
+                  <HBox fx:id="hbCabecera" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+                     <children>
+                        <Label prefWidth="100.0" text="Nombre Fase" />
+                        <TextField fx:id="tNomFaseCabecera" disable="true" />
+                        <Label prefWidth="150.0" text="Fecha Implantación">
+                           <HBox.margin>
+                              <Insets left="25.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="tFxImplCabecera" disable="true" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hbDetalle">
+                     <children>
+                        <VBox>
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label prefWidth="100.0" text="Nombre Fase" />
+                                    <TextField fx:id="tNomFaseDetalle" />
+                                    <HBox>
+                                       <children>
+                                          <ImageView fx:id="imPropsFases" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox>
+                                             <children>
+                                                <HBox fx:id="hbCabPropsFases">
+                                                   <children>
+                                                      <Label text="Propiedades de la Fase" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox fx:id="hbDetPropsFases" />
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                       </children>
+                                       <HBox.margin>
+                                          <Insets left="25.0" />
+                                       </HBox.margin>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <TableView fx:id="tSistemasFase" prefHeight="200.0" prefWidth="200.0" />
+                                          <HBox fx:id="hBPropSist" alignment="CENTER">
+                                             <children>
+                                                <ImageView fx:id="imPropsSist" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <VBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <HBox fx:id="hbCabPropsSist">
+                                                         <children>
+                                                            <Label text="Propiedades del sistema" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="hbDetPropsSist" />
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets left="15.0" />
+                                                   </HBox.margin>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="15.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="vbDemanda">
+                                       <children>
+                                          <TableView fx:id="tDemandasSistema" prefHeight="200.0" prefWidth="200.0" />
+                                          <HBox fx:id="hBPropDem" alignment="CENTER">
+                                             <children>
+                                                <ImageView fx:id="imPropsDem" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../../../imgs/iconos/Mostrar3R_PAS.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <VBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <HBox fx:id="hbCabPropsDem">
+                                                         <children>
+                                                            <Label text="Propiedades de la demanda" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="hbDetPropsDem" />
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets left="15.0" />
+                                                   </HBox.margin>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="15.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                       <HBox.margin>
+                                          <Insets left="25.0" />
+                                       </HBox.margin>
+                                    </VBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="15.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-            <HBox fx:id="hbDetalle" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label prefWidth="100.0" text="Nombre Fase" />
-                  <TextField fx:id="tNomFaseDetalle" />
-               </children>
-            </HBox>
+               <HBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+            </VBox>
          </children>
-         <HBox.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </HBox.margin>
-      </VBox>
+      </HBox>
+      <Line endX="100.0" startX="-100.0">
+         <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </VBox.margin>
+      </Line>
    </children>
-</HBox>
+</VBox>

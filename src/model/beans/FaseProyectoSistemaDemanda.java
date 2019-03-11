@@ -17,7 +17,7 @@ public class FaseProyectoSistemaDemanda implements Cargable{
 	public boolean apunteContable = false;
 	public Proyecto p;
 	
-	HashMap<String,? extends Parametro> parametrosFaseSistemaDemanda = null;
+	public HashMap<String,? extends Parametro> parametrosFaseSistemaDemanda = null;
 	
 	public FaseProyectoSistemaDemanda clone() {
 		FaseProyectoSistemaDemanda fpsd = new FaseProyectoSistemaDemanda();

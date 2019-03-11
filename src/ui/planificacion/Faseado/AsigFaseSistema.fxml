@@ -14,7 +14,7 @@
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label prefWidth="100.0" text="Fase" />
-                  <TextField id="tFase" fx:id="tFase" editable="false" prefWidth="75.0">
+                  <TextField id="tFase" fx:id="tFase" prefWidth="75.0">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
@@ -57,14 +57,6 @@
       <ImageView id="imNuevaFila" fx:id="imNuevaFila" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
-         </image>
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin>
-      </ImageView>
-      <ImageView id="imBorraFila" fx:id="imBorraFila" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../imgs/iconos/BorraFila3_PAS.png" />
          </image>
          <HBox.margin>
             <Insets left="15.0" />
