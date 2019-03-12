@@ -87,7 +87,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 					while (itParametro.hasNext()) {
 						Parametro p = itParametro.next();
 						if (p.modificado) {
-							p.actualizaParametro(idTransaccion);
+							p.actualizaParametro(idTransaccion,true);
 						}
 					}
 					

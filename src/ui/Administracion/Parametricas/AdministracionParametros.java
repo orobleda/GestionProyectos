@@ -126,7 +126,7 @@ public class AdministracionParametros implements ControladorPantalla {
 				Parametro p = itParametro.next();
 				
 				if (p.modificado) {
-					p.actualizaParametro(idTransaccion);
+					p.actualizaParametro(idTransaccion,true);
 					contador ++;
 				} 
 			}

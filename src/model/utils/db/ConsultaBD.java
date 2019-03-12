@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -255,6 +256,17 @@ public class ConsultaBD {
 		 
 		 return salida;
 		 
+	 }
+	 
+	 public static String getTicket() {
+		 String sMethodName = new String (Thread.currentThread().getStackTrace()[2].getMethodName());
+		 String sClassName  = new String (Thread.currentThread().getStackTrace()[2].getClassName());
+		 return sClassName+":"+sMethodName + new Date().getTime();
+	 }
+	 
+	 public static void ejecutaTicket(String idTransaccion) throws Exception{
+		ConsultaBD cbd = new ConsultaBD(); 
+		cbd.ejecutaTransaccion(idTransaccion);
 	 }
 	
 }

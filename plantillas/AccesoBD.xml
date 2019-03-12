@@ -905,7 +905,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>Insert into PARAMETRO_PROYECTO (id, Nombre, idProyecto) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$)</query>
+		<query>Insert into FASE_PROYECTO (id, Nombre, idProyecto) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$)</query>
 		<id tipo="I">iInsertaFasesProyecto</id>
 		<tabla>FASE_PROYECTO</tabla>
 		<parametros>

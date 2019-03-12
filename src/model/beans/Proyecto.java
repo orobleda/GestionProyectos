@@ -239,6 +239,7 @@ public class Proyecto implements Cargable{
 	
 	public void cargaFasesProyecto() {
 		FaseProyecto fp = new FaseProyecto();
+		fp.idProyecto = this.id;
 		this.fasesProyecto = fp.listado();
 	}
 	

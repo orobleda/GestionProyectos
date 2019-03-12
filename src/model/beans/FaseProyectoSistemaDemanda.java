@@ -136,11 +136,11 @@ public class FaseProyectoSistemaDemanda implements Cargable{
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_ID, this.id));
 		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.idSistema));
-		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.idDemanda));
-		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, Constantes.toNumBoolean(this.apunteContable)));
+		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.p.id));
+		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, Constantes.toNumBoolean(this.p.apunteContable)));
 		
 		consulta = new ConsultaBD();
-		consulta.ejecutaSQL("iInsertaSistemasFasesProyecto", listaParms, this, idTransaccion);
+		consulta.ejecutaSQL("iInsertaDemandaSistemasFasesProyecto", listaParms, this, idTransaccion);
 		
 		this.id = ParametroBD.ultimoId;
 		
@@ -149,7 +149,7 @@ public class FaseProyectoSistemaDemanda implements Cargable{
 			while (itpf.hasNext()) {
 				Parametro par = itpf.next();
 				par.idEntidadAsociada = this.id;
-				par.actualizaParametro(idTransaccion);
+				par.actualizaParametro(idTransaccion,false);
 			}
 		}
 		

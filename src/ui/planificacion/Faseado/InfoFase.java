@@ -22,6 +22,7 @@ import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.Parametro;
+import model.beans.ParametroFases;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
@@ -135,6 +136,15 @@ public class InfoFase implements ControladorPantalla, PopUp {
 			pintaSistemas();
 			
 			PanelResumible pr = new PanelResumible("Mostrar3R","Ocultar3R",imMostrarOcultarFase,hbCabecera,hbDetalle,PanelResumible.MODO_ALTERNADO);
+			
+			this.tNomFaseDetalle.focusedProperty().addListener((ov, oldV, newV) -> { 
+				if (!newV) {
+					try {
+						fase.nombre = this.tNomFaseDetalle.getText();
+					} catch (Exception ex){
+					}			
+				}
+			});
 	}
 	
 	private void pintaSistemas() throws Exception {

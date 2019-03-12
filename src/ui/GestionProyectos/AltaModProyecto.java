@@ -201,7 +201,7 @@ public class AltaModProyecto implements ControladorPantalla {
 					par.idEntidadAsociada = p.id;
 					
 					if (par.modificado) {
-						par.actualizaParametro(idTransaccion);
+						par.actualizaParametro(idTransaccion,true);
 					} 
 				}
 				

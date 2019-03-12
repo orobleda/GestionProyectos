@@ -205,14 +205,15 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		return salida;
 	}
 	
-	public void actualizaParametro(String idTransaccion) throws Exception {
+	public void actualizaParametro(String idTransaccion, boolean autoejecuta) throws Exception {
 		ConsultaBD consulta = new ConsultaBD();
 		
 		bajaParametro(idTransaccion);
 		insertaParametro(idTransaccion);
 		
-		if (idTransaccion!=null)
-			consulta.ejecutaTransaccion(idTransaccion);
+		if (autoejecuta)
+			if (idTransaccion!=null)
+				consulta.ejecutaTransaccion(idTransaccion);
 		
 		modificado = false;
 	}
@@ -256,6 +257,40 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL(this.getQueryInsercion(), listaParms, null,idTransaccion);
+	}
+	
+	public boolean validaParametros(HashMap<String, ? extends Parametro> parametros) {
+		if (parametros!=null && parametros.size()!=0) {
+			boolean validacion = true;
+			Iterator<? extends Parametro> itParametro = parametros.values().iterator();
+			while (itParametro.hasNext()) {
+				Parametro pAux = itParametro.next();
+				validacion = validacion && pAux.validaParametro();
+				if (!validacion) return validacion; 
+			}
+			
+			return validacion;
+			
+		} else return true;
+	}
+	
+	public boolean validaParametro () {
+		if (this.metaParam.obligatorio) {
+			if (metaParam.tipoDato == TipoDato.FORMATO_TXT|| 
+					metaParam.tipoDato == TipoDato.FORMATO_URL) 
+					if ("".equals(valorTexto) || valorTexto==null) return false;
+					else return true;
+			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
+					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) {
+				if (this.valorObjeto==null) return false;
+				else return true;
+			}
+			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) {
+				if (this.valorfecha==null) return false;
+				else return true;
+			} 
+			return true;
+		} else return true;
 	}
 
 }

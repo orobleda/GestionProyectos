@@ -345,7 +345,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 			pp.valorObjeto = this.cbTipoProy.getValue();
 			pp.codParametro = pp.metaParam.codParametro;
 			
-			pp.actualizaParametro(idTransaccion);
+			pp.actualizaParametro(idTransaccion,true);
 		}
 		
 		setIdsPresOperado();

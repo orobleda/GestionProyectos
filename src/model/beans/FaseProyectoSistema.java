@@ -109,7 +109,6 @@ public class FaseProyectoSistema implements Cargable{
 		while (itFps.hasNext()) {
 			FaseProyectoSistemaDemanda fps = itFps.next();
 			fps.borraFasesProyectoSistemaDemanda(idTransaccion);
-			break;
 		}
 		
 		if (this.parametrosFaseSistema!=null) {
@@ -148,7 +147,7 @@ public class FaseProyectoSistema implements Cargable{
 			while (itpf.hasNext()) {
 				Parametro par = itpf.next();
 				par.idEntidadAsociada = this.id;
-				par.actualizaParametro(idTransaccion);
+				par.actualizaParametro(idTransaccion,false);
 			}
 		}
 		
@@ -157,7 +156,6 @@ public class FaseProyectoSistema implements Cargable{
 			FaseProyectoSistemaDemanda fps = itFps.next();
 			fps.idSistema = this.id;
 			fps.insertFaseProyectoSistemaDemanda(idTransaccion);
-			break;
 		}
 	}
 		

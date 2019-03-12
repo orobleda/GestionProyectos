@@ -64,7 +64,7 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 		}
 		
 		Date fxImpThis = this.getFechaImplantacion();
-		Date fxImpO = this.getFechaImplantacion();
+		Date fxImpO = o.getFechaImplantacion();
 
 		return fxImpThis.compareTo(fxImpO);
 	}
@@ -136,7 +136,6 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 		while (itFps.hasNext()) {
 			FaseProyectoSistema fps = itFps.next();
 			fps.borraFasesProyectoSistema(idTransaccion);
-			break;
 		}
 		
 		if (this.parametrosFase!=null) {
@@ -175,7 +174,7 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 			while (itpf.hasNext()) {
 				Parametro par = itpf.next();
 				par.idEntidadAsociada = this.id;
-				par.actualizaParametro(idTransaccion);
+				par.actualizaParametro(idTransaccion, false);
 			}
 		}
 		
@@ -184,18 +183,19 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 			FaseProyectoSistema fps = itFps.next();
 			fps.idFase = this.id;
 			fps.insertFaseProyectoSistema(idTransaccion);
-			break;
+
 		}
 	}
 		
 	public void updateFasesProyecto(ArrayList<FaseProyecto> listadoFases, String idTransaccion)  throws Exception{
 
-		if (listadoFases!=null && listadoFases.size()>0) {
-			FaseProyecto fp = listadoFases.get(0);
+		Iterator<FaseProyecto> itFProyecto = listadoFases.iterator();
+		while (itFProyecto.hasNext()) {
+			FaseProyecto fp = itFProyecto.next();
 			fp.borraFasesProyecto(idTransaccion);
 		}
 		
-		Iterator<FaseProyecto> itFProyecto = listadoFases.iterator();
+		itFProyecto = listadoFases.iterator();
 		while (itFProyecto.hasNext()) {
 			FaseProyecto fp = itFProyecto.next();
 			fp.insertFaseProyecto(idTransaccion);

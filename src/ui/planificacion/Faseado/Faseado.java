@@ -2,6 +2,7 @@ package ui.planificacion.Faseado;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -16,9 +17,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.beans.Coste;
 import model.beans.FaseProyecto;
+import model.beans.FaseProyectoSistema;
+import model.beans.FaseProyectoSistemaDemanda;
+import model.beans.Parametro;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.metadatos.Sistema;
+import model.utils.db.ConsultaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Tabla;
 import ui.interfaces.ControladorPantalla;
@@ -69,7 +75,7 @@ public class Faseado implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-					
+					guardaDatos();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -116,6 +122,7 @@ public class Faseado implements ControladorPantalla {
 		
 		tablaDemandas.pintaTabla(listaPintable);
 		
+		pActual.cargaFasesProyecto();
 		pintaFases() ;		
 
 		this.gbGuardar.activarBoton();
@@ -127,6 +134,7 @@ public class Faseado implements ControladorPantalla {
 		HashMap<String, Object> variablesPaso = null;
 		
 		if (this.pActual.fasesProyecto!=null)  {
+			Collections.sort(this.pActual.fasesProyecto);
 			Iterator<FaseProyecto> itFases = this.pActual.fasesProyecto.iterator();
 			
 			while (itFases.hasNext()) {
@@ -152,6 +160,94 @@ public class Faseado implements ControladorPantalla {
 			this.tablaDemandas.refrescaTabla();			
 		}
 		
+	}
+	
+	public void guardaDatos() throws Exception{
+		if (!validaDatos()) return;
+		
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		FaseProyecto fp = new FaseProyecto();
+		fp.updateFasesProyecto(pActual.fasesProyecto, idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+		
+		Dialogo.alert("Guardado Correcto", "Faseado Almacenado", "El mapa de fases del proyecto y su faseado se guardó correctamente.");
+	}
+	
+	public boolean validaDatos() throws Exception {
+		ArrayList<Proyecto> demandas = pActual.getDemandasAsociadas();
+		Iterator<Proyecto> itDemanda = demandas.iterator();
+		while (itDemanda.hasNext()) {
+			Proyecto demanda = itDemanda.next();
+			Presupuesto pres = new Presupuesto();
+			
+			if (demanda.apunteContable) {
+				pres.idApunteContable = demanda.id;
+				demanda.presupuestoActual = pres.buscaPresupuestosAPunteContable().get(0);
+				
+			} else {
+				demanda.presupuestoActual = pres.dameUltimaVersionPresupuesto(demanda);
+			}
+			
+			demanda.presupuestoActual.cargaCostes();
+			
+			float porc = 0;
+			
+			Iterator<Coste> itCoste = demanda.presupuestoActual.costes.values().iterator();
+			while (itCoste.hasNext()) {
+				Coste c = itCoste.next();
+				porc += pActual.coberturaDemandaFases(demanda, demanda.apunteContable, c.sistema);
+			}
+			
+			if (porc!=100) {
+				Dialogo.alert("No se puede guardar", "Demandas imcompletas", "La demanda " + demanda.nombre + " no está totalmente asignada.");
+				return false;
+			}
+		}
+		
+		Iterator<FaseProyecto> itFases = pActual.fasesProyecto.iterator();
+		Parametro p = new Parametro();
+		
+		while (itFases.hasNext()) {
+			FaseProyecto fp = itFases.next();
+			
+			boolean val = p.validaParametros(fp.parametrosFase);
+			
+			if (!val) {
+				Dialogo.alert("No se puede guardar", "Parámetros obligatorios no informados", "Los parámetros obligatorios de la fase " + fp.nombre + " no están todos informados.");
+				return false;
+			}
+			
+			Iterator<FaseProyectoSistema> itFPS = fp.fasesProyecto.values().iterator();
+			while (itFPS.hasNext()) {
+				FaseProyectoSistema fps = itFPS.next();
+				
+				val = p.validaParametros(fps.parametrosFaseSistema);
+				
+				if (!val) {
+					Dialogo.alert("No se puede guardar", "Parámetros obligatorios no informados", "Los parámetros obligatorios de la fase " + fp.nombre + ", sistema " + fps.s.codigo + " no están todos informados.");
+					return false;
+				}
+				
+				Iterator<FaseProyectoSistemaDemanda> itFPSd = fps.demandasSistema.iterator();
+				while (itFPSd.hasNext()) {
+					FaseProyectoSistemaDemanda fpsd = itFPSd.next();
+					
+					val = p.validaParametros(fpsd.parametrosFaseSistemaDemanda);
+					
+					if (!val) {
+						Dialogo.alert("No se puede guardar", "Parámetros obligatorios no informados", "Los parámetros obligatorios de la fase " + fp.nombre + ", sistema " + fps.s.codigo + ", demanda "+ fpsd.p.nombre + ", no están todos informados.");
+						return false;
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return true;
 	}
 	
 		
