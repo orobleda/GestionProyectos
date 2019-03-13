@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import model.beans.Parametro;
+import model.beans.Recurso;
+import model.metadatos.MetaParametro;
+
 public class Constantes {
 	public static final Date fechaFinal = init();
 	
@@ -19,6 +23,11 @@ public class Constantes {
 	public static final String COLOR_AMARILLO = "Yellow";
 	public static final String COLOR_VERDE = "Green";
 	public static final String COLOR_GRIS = "Silver";
+	
+	public static Recurso getAdministradorSistema() {
+		Parametro p = new Parametro();
+		return (Recurso) p.getParametro(MetaParametro.PARAMETRO_ADMIN).getValor();
+	}
 	
 	public static Date init() {
 		Calendar c = Calendar.getInstance();

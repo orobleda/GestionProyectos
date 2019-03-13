@@ -20,6 +20,14 @@ public class MetaParametro implements Cargable, Loadable {
 	
 	public static final String FASES_COBERTURA_DEMANDA = "F.PR.SIS.DEM.cobertura";
 	
+	public static final String RECURSO_JORNADA = "REC.jornada";
+	public static final String RECURSO_NAT_COSTE = "REC.natCoste";
+	public static final String RECURSO_COD_USUARIO = "REC.codUsuario";
+	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
+	
+	public static final String PARAMETRO_ADMIN = "admin";
+	
+	
 	public int id =0;
 	public String entidad = "";
 	public String codParametro = "";

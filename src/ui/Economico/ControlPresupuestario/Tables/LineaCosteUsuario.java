@@ -10,7 +10,7 @@ import model.beans.Concepto;
 import model.beans.Estimacion;
 import model.beans.Recurso;
 import model.constantes.FormateadorDatos;
-import model.metadatos.MetaParamRecurso;
+import model.metadatos.MetaParametro;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.General;
@@ -63,7 +63,7 @@ public class LineaCosteUsuario extends ParamTable implements Tableable  {
    		try {
    			if (LineaCosteUsuario.ID.equals(campo)) {
    				if (concepto.r==null) return "";
-   				return (String) Recurso.listadoRecursosEstatico().get(concepto.r.id).getValorParametro(MetaParamRecurso.IDRecurso);
+   				return (String) Recurso.listadoRecursosEstatico().get(concepto.r.id).getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
    			}
    			if (LineaCosteUsuario.USUARIO.equals(campo)) {
    				if (concepto.r==null) return "";

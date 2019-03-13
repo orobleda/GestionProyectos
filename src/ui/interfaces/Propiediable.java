@@ -8,11 +8,16 @@ import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.Parametro;
 import model.beans.ParametroFases;
 import model.beans.ParametroProyecto;
+import model.beans.ParametroRecurso;
+import model.beans.Proveedor;
 import model.beans.Proyecto;
+import model.beans.Recurso;
+import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
 import ui.Propiedad;
 
 public interface Propiediable {
-	public static final String[] SUBCLASES = {Parametro.class.getSimpleName()};
+	public static final String[] SUBCLASES = {Parametro.class.getSimpleName(),Proveedor.class.getSimpleName(),Sistema.class.getSimpleName()};
 	
 	public Propiedad toPropiedad();
 
@@ -23,11 +28,21 @@ public interface Propiediable {
 	public static ArrayList<Object> listaSubValores(String entidad){
 		if (Parametro.class.getSimpleName().equals(entidad))
 			return null;
+		if (Recurso.class.getSimpleName().equals(entidad))
+				return TipoDato.toListaObjetos(Recurso.listaRecursos.values());
+		if (Proveedor.class.getSimpleName().equals(entidad))
+			return TipoDato.toListaObjetos(Proveedor.listado.values());
+		if (Sistema.class.getSimpleName().equals(entidad))
+			return TipoDato.toListaObjetos(Sistema.listado.values());
 		return null;
 	}
 	
 	public static Parametro beanControlador(String entidad){
 		if (Parametro.class.getSimpleName().equals(entidad))
+			return new Parametro();
+		if (Proveedor.class.getSimpleName().equals(entidad))
+			return new Parametro();
+		if (Sistema.class.getSimpleName().equals(entidad))
 			return new Parametro();
 		if (Proyecto.class.getSimpleName().equals(entidad))
 			return new ParametroProyecto();
@@ -37,12 +52,22 @@ public interface Propiediable {
 			return new ParametroFases();
 		if (FaseProyecto.class.getSimpleName().equals(entidad))
 			return new ParametroFases();
+		if (Recurso.class.getSimpleName().equals(entidad))
+			return new ParametroRecurso();
 		return null;
 	}
 	
 	public static int getIdEntidad(String entidad, Object elemento){
 		if (Parametro.class.getSimpleName().equals(entidad))
 			return -1;
+		if (Sistema.class.getSimpleName().equals(entidad)) {
+			Sistema s = (Sistema) elemento;
+			return s.id;
+		}
+		if (Proveedor.class.getSimpleName().equals(entidad)) {
+			Proveedor s = (Proveedor) elemento;
+			return s.id;
+		}		
 		if (Proyecto.class.getSimpleName().equals(entidad)) {
 			Proyecto p = (Proyecto) elemento;
 			return p.id;
@@ -58,7 +83,11 @@ public interface Propiediable {
 		if (FaseProyecto.class.getSimpleName().equals(entidad)) {
 			FaseProyecto p = (FaseProyecto) elemento;
 			return p.id;
-		}		
+		}	
+		if (Recurso.class.getSimpleName().equals(entidad)) {
+			Recurso r = (Recurso) elemento;
+			return r.id;
+		}
 		return -1;
 	}
 }

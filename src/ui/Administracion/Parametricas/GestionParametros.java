@@ -54,7 +54,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
     
     private TablaPropiedades tp;
     
-    HashMap<String,Parametro> listaParametros;
+    public HashMap<String,Parametro> listaParametros;
 
     @FXML
     private ImageView imGuardar;
@@ -174,6 +174,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 			tp.setModeSwitcherVisible(false);
 		}
 		
+		this.hbContenedor.getChildren().removeAll(this.hbContenedor.getChildren());
 		this.hbContenedor.getChildren().add(tp);
 		
 	}

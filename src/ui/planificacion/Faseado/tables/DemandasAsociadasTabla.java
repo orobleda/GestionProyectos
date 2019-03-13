@@ -56,7 +56,7 @@ public class DemandasAsociadasTabla extends ParamTable implements Tableable  {
     	}
     	
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put(DemandasAsociadasTabla.DEMANDA, new Integer(270));  
+    	anchoColumnas.put(DemandasAsociadasTabla.DEMANDA, new Integer(470));  
     }
     
     @Override

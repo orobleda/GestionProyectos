@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import model.beans.ParametroRecurso;
 import model.beans.Recurso;
 import model.constantes.Constantes;
+import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.interfaces.ControladorPantalla;
@@ -92,9 +93,9 @@ public class GestionVacaciones implements ControladorPantalla {
 				r = itRecurso.next();
 				r.cargaRecurso();
 				
-				String gestorRecurso = (String) r.getValorParametro(ParametroRecurso.PARAM_GESTOR);
+				Recurso gestorRecurso = ((Recurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR));
 				
-				if (gestorRecurso.equals("EN31713")) {
+				if (gestorRecurso.id == Constantes.getAdministradorSistema().id) {
 					contenedorRecurso = new HBox();
 					contenedorRecursos.getChildren().add(contenedorRecurso);
 					
@@ -130,9 +131,9 @@ public class GestionVacaciones implements ControladorPantalla {
 				r = itRecurso.next();
 				r.cargaRecurso();
 				
-				String gestorRecurso = (String) r.getValorParametro(ParametroRecurso.PARAM_GESTOR);
+				Recurso gestorRecurso = ((Recurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR));
 				
-				if (gestorRecurso.equals("EN31713")) {
+				if (gestorRecurso.id == Constantes.getAdministradorSistema().id) {
 					contenedorRecurso = new HBox();
 					contenedorRecursos.getChildren().add(contenedorRecurso);
 					

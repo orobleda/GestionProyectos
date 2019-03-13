@@ -33,7 +33,7 @@ import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
-import model.metadatos.MetaParamRecurso;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import ui.Dialogo;
 import ui.GestionBotones;
@@ -293,7 +293,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 				Concepto conc = ((LineaCosteUsuario)this.variablesPaso.get("filaDatos")).concepto;
 				int aBuscar = conc.tipoConcepto.id;
 				
-				if (new Integer((String) r.getValorParametro(MetaParamRecurso.INTERNO))==MetaConcepto.TREI) {
+				if (MetaConcepto.listado.get(MetaConcepto.TREI) == (MetaConcepto)r.getValorParametro(MetaParametro.RECURSO_NAT_COSTE)) {
 					aBuscar = 1;					
 				}
 				Iterator<MetaConcepto> itMGerencia = this.cbNatCoste.getItems().iterator();

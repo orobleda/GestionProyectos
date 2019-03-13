@@ -11,8 +11,12 @@ import org.controlsfx.property.editor.PropertyEditor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Callback;
+import model.beans.Proveedor;
+import model.beans.Recurso;
 import model.constantes.Constantes;
+import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
+import model.metadatos.MetaJornada;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
 import ui.interfaces.Propiediable;
@@ -89,11 +93,29 @@ public class TablaPropiedades extends PropertySheet{
 		    		return Editors.createChoiceEditor(param, MetaFormatoProyecto.listado.values());
 		    	}
 		    	
+		    	if (prop.tipo == TipoDato.FORMATO_PROVEEDOR) {
+		    		return Editors.createChoiceEditor(param, Proveedor.listado.values());
+		    	}
+		    	
 		    	if (prop.tipo == TipoDato.FORMATO_TIPO_PROYECTO) {
 		    		if (filtro!=null && filtro.containsKey(prop.tipo)) {
 		    			ArrayList<TipoProyecto> elementosFiltrados =  (ArrayList<TipoProyecto>) filtro.get(prop.tipo);
 		    			return Editors.createChoiceEditor(param, elementosFiltrados);
 		    		} else return Editors.createChoiceEditor(param, TipoProyecto.listado.values());
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_METAJORNADA) {
+		    		return Editors.createChoiceEditor(param, MetaJornada.getlistaMetaJornadasEstatico().values());
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_NAT_COSTE) {
+		    		return Editors.createChoiceEditor(param, MetaConcepto.listado.values());
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_RECURSO) {
+		    		if (filtro!=null && filtro.containsKey(prop.tipo)) {
+		    			
+		    		} else return Editors.createChoiceEditor(param, Recurso.listadoRecursosEstatico().values());
 		    	}
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_BOOLEAN) {

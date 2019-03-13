@@ -15,6 +15,7 @@ public class Proveedor implements Cargable, Loadable {
 	public String nomCorto = "";
 		
 	public static HashMap<String, Proveedor> listado = null;
+	public static HashMap<Integer, Proveedor> listadoId = null;
 	
 	@Override
 	public Cargable cargar(Object o) {
@@ -31,6 +32,7 @@ public class Proveedor implements Cargable, Loadable {
 	@Override
 	public void load() {
 		listado = new HashMap<String, Proveedor>();	
+		listadoId = new HashMap<Integer, Proveedor>();	
 			
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Cargable> proveedores = consulta.ejecutaSQL("cConsultaProveedores", null, this);
@@ -39,6 +41,7 @@ public class Proveedor implements Cargable, Loadable {
 		while (it.hasNext()){
 			Proveedor est = (Proveedor) it.next();
 			listado.put(est.nomCorto, est);
+			listadoId.put(est.id, est);
 		}
 	}
 	

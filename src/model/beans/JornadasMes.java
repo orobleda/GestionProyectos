@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import model.metadatos.Festivo;
 import model.metadatos.MetaJornada;
+import model.metadatos.MetaParametro;
 
 public class JornadasMes {
 
@@ -246,18 +247,15 @@ public class JornadasMes {
 	}
 	
 	private void cargaJornadas(int tipo, Recurso recurso, int mes, int anio) {
-		int codJornada = 0;
+		MetaJornada mj = new MetaJornada();
+		mj.listado();
+		
 		try {
-			codJornada = new Integer((String) recurso.getValorParametro(ParametroRecurso.PARAM_JORNADA));
+			mj = (MetaJornada) recurso.getValorParametro(MetaParametro.RECURSO_JORNADA);
 		} catch (Exception e) {
 		}
 		
 		horasAcumuladas = 0;
-		
-		MetaJornada mj = new MetaJornada();
-		mj.listado();
-		
-		mj = MetaJornada.listaMetaJornadas.get(codJornada);
 		
 		Calendar cal = Calendar.getInstance();
 		cal.set(anio, mes-1, 1);

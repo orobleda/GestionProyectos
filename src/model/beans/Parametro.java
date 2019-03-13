@@ -9,14 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
-import javafx.beans.value.ObservableFloatValue;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.ObservableStringValue;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
+import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
+import model.metadatos.MetaJornada;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
@@ -44,12 +43,28 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 	public String valorTexto = null;
 	public Date valorfecha = null;
 	
-	public ObservableFloatValue valorOReal = null;
-	public ObservableObjectValue<?> valorOObjeto = null;
-	public ObservableStringValue valorOTexto = null;
-	public ObservableObjectValue<Date> valorOfecha = null;
+	public static HashMap<String,Parametro> listadoParametros = null;
+	public static HashMap<Integer,Integer> listadoTipoDatosObjetos = null;
 	
 	public boolean modificado = false;
+	
+	private static void cargaListadoTipoDatosObjetos() {
+		listadoTipoDatosObjetos = new HashMap<Integer,Integer>();
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_FORMATO_PROYECTO, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_PROYECTO, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_PROVEEDOR, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_METAJORNADA, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_FORMATO_PROYECTO);
+	}
+	
+	public static boolean isObjeto(int tipo) {
+		if (Parametro.listadoTipoDatosObjetos == null) {
+			Parametro.cargaListadoTipoDatosObjetos();
+		}
+		
+		return Parametro.listadoTipoDatosObjetos.containsKey(tipo);
+	}
 	
 	public String getQueryInsercion() {
 		return QUERY_INSERTA_PARAMETRO;
@@ -76,8 +91,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		if (metaParam.tipoDato == TipoDato.FORMATO_REAL || 
 				metaParam.tipoDato == TipoDato.FORMATO_MONEDA ||
 						metaParam.tipoDato == TipoDato.FORMATO_PORC ) return valorReal;
-		if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
-				metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) return valorObjeto;
+		if (isObjeto(metaParam.tipoDato)) return valorObjeto;
 		if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) return valorfecha;
 		if (metaParam.tipoDato == TipoDato.FORMATO_BOOLEAN) return (valorEntero==Constantes.NUM_TRUE)?Constantes.TRUE:Constantes.FALSE;
 		
@@ -99,8 +113,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (metaParam.tipoDato == TipoDato.FORMATO_REAL || 
 					metaParam.tipoDato == TipoDato.FORMATO_MONEDA ||
 							metaParam.tipoDato == TipoDato.FORMATO_PORC ) valorReal =  (Float) valor;
-			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
-					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) valorObjeto = valor;
+			if (isObjeto(metaParam.tipoDato) ) valorObjeto = valor;
 			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) {
 				try {
 					valorfecha = (Date) valor;
@@ -128,8 +141,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (metaParam.tipoDato == TipoDato.FORMATO_REAL || 
 					metaParam.tipoDato == TipoDato.FORMATO_MONEDA ||
 							metaParam.tipoDato == TipoDato.FORMATO_PORC ) valor = valorReal;
-			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
-					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) valor = valorObjeto;
+			if (isObjeto(metaParam.tipoDato) ) valor = valorObjeto;
 			if (metaParam.tipoDato == TipoDato.FORMATO_FECHA) valor = valorfecha;
 			if (metaParam.tipoDato == TipoDato.FORMATO_BOOLEAN) valor = (valorEntero==Constantes.NUM_TRUE)?Constantes.TRUE:Constantes.FALSE;
 		
@@ -164,11 +176,35 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 				this.valorObjeto = MetaFormatoProyecto.listado.get(this.valorEntero);				
 			}
 			
+			if (mpp.tipoDato == TipoDato.FORMATO_PROVEEDOR) {
+				this.valorObjeto = Proveedor.listadoId.get(this.valorEntero);				
+			}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_METAJORNADA) {
+				this.valorObjeto = MetaJornada.listaMetaJornadas.get(this.valorEntero);				
+			}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_NAT_COSTE) {
+				this.valorObjeto = MetaConcepto.listado.get(this.valorEntero);				
+			}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_RECURSO) {
+				this.valorObjeto = Recurso.listaRecursos.get(this.valorEntero);				
+			}
+			
 		} catch (Exception e) {
 			
 		}
 		
 		return this;
+	}
+	
+	public Parametro getParametro(String codParametro) {
+		if (Parametro.listadoParametros==null) {
+			Parametro.listadoParametros = this.dameParametros(this.getClass().getSimpleName(), Parametro.SIN_ID_ELEMENTO);
+		}
+		
+		return Parametro.listadoParametros.get(MetaParametro.PARAMETRO_ADMIN);
 	}
 	
 	public HashMap<String,Parametro> dameParametros(String entidad, int idElemento) {
@@ -240,14 +276,16 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		if (TipoDato.FORMATO_TXT==this.metaParam.tipoDato) listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
 		if (TipoDato.FORMATO_URL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
 		if (TipoDato.FORMATO_INT==this.metaParam.tipoDato) listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
-		if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) {
-			this.valorEntero = ((MetaFormatoProyecto) this.valorObjeto).id;
+		if (isObjeto(metaParam.tipoDato) ) {
+			if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((MetaFormatoProyecto) this.valorObjeto).id;
+			if (TipoDato.FORMATO_TIPO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((TipoProyecto) this.valorObjeto).id;
+			if (TipoDato.FORMATO_PROVEEDOR==this.metaParam.tipoDato)	this.valorEntero = ((Proveedor) this.valorObjeto).id;
+			if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
+			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
+			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
 			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
 		}
-		if (TipoDato.FORMATO_TIPO_PROYECTO==this.metaParam.tipoDato) {
-			this.valorEntero = ((TipoProyecto) this.valorObjeto).id;
-			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
-		}
+
 		if (TipoDato.FORMATO_REAL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_MONEDA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_FECHA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_FECHA,this.valorfecha));
@@ -280,8 +318,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 					metaParam.tipoDato == TipoDato.FORMATO_URL) 
 					if ("".equals(valorTexto) || valorTexto==null) return false;
 					else return true;
-			if (metaParam.tipoDato == TipoDato.FORMATO_FORMATO_PROYECTO || 
-					metaParam.tipoDato == TipoDato.FORMATO_TIPO_PROYECTO ) {
+			if (isObjeto(metaParam.tipoDato) ) {
 				if (this.valorObjeto==null) return false;
 				else return true;
 			}

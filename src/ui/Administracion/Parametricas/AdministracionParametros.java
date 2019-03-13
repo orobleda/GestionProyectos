@@ -70,7 +70,7 @@ public class AdministracionParametros implements ControladorPantalla {
 				
 				if (listaValores == null) {
 					this.cbidElemento.setDisable(true);
-			        pintaTabla(Parametro.class.getSimpleName(), null);
+			        pintaTabla(cbElemento.getValue(), null);
 				} else {
 					this.cbidElemento.setDisable(false);
 					this.cbidElemento.getItems().removeAll(this.cbidElemento.getItems());
@@ -80,7 +80,7 @@ public class AdministracionParametros implements ControladorPantalla {
 		    );
 			
 			cbidElemento.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-		        pintaTabla(Parametro.class.getSimpleName(), newValue);
+				pintaTabla(cbElemento.getValue(), newValue);
 			}
 		    );
 			

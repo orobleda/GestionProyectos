@@ -47,6 +47,15 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 		return this;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		try {
+			return this.id == ((MetaConcepto) o).id;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public static MetaConcepto porId(int id) {
 		Iterator<MetaConcepto> itMC = listado.values().iterator();
 		

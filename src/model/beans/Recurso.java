@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
-import model.metadatos.MetaParamRecurso;
+import model.metadatos.MetaConcepto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -16,8 +16,17 @@ public class Recurso implements Cargable{
 	
 	public static HashMap<Integer, Recurso> listaRecursos = null;
 	
-	public ArrayList<MetaParamRecurso> listadoParametros = null;
+	public HashMap<String,? extends Parametro> listadoParametros = null;
 
+	@Override
+	public boolean equals(Object o) {
+		try {
+			return this.id == ((Recurso) o).id;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")
@@ -50,6 +59,23 @@ public class Recurso implements Cargable{
         return salida;
 	}
 	
+	public static HashMap<Integer, Recurso> listadoRecursosEstatico(boolean recargar) {
+		
+		Recurso.listaRecursos = new HashMap<Integer, Recurso>();
+		
+			ConsultaBD consulta = new ConsultaBD();
+			ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaRecursos", null, new Recurso());
+			
+			Iterator<Cargable> itProyecto = proyectos.iterator();
+			
+			while (itProyecto.hasNext()) {
+				Recurso p = (Recurso) itProyecto.next();
+				Recurso.listaRecursos.put(new Integer(p.id),p);
+			}
+		
+        return Recurso.listaRecursos;
+	}
+	
 	public static HashMap<Integer, Recurso> listadoRecursosEstatico() {
 		
 		if (Recurso.listaRecursos == null){
@@ -71,47 +97,8 @@ public class Recurso implements Cargable{
 	
 	public void cargaRecurso() throws Exception{			
 		ParametroRecurso pp = new ParametroRecurso();
-		pp.idRecurso = this.id;
-		
-		ArrayList<ParametroRecurso> listado = pp.listadoParamRecurso();
-		Iterator<ParametroRecurso> itParam = listado.iterator();
-		
-		this.listadoParametros = new ArrayList<MetaParamRecurso> ();
-		
-		while (itParam.hasNext()) {
-			ParametroRecurso ppaux = (ParametroRecurso) itParam.next();
-			MetaParamRecurso mppaux = (MetaParamRecurso) ppaux.mpRecurso.clone();
-			Object valor = ppaux.getValor();
-			if (valor!=null)
-				mppaux.valor = valor.toString();
-			else
-				mppaux.valor = "";
-			this.listadoParametros.add(mppaux);
-		}
-		
-		if (this.listadoParametros.size()!=MetaParamRecurso.listado.size()){
-			Iterator<MetaParamRecurso> itmtp = MetaParamRecurso.listado.values().iterator();
-			while (itmtp.hasNext()){
-				MetaParamRecurso mtp =  itmtp.next();
 				
-				boolean encontrado = false;
-				for (int i=0; i<this.listadoParametros.size();i++){
-					if (mtp.id == this.listadoParametros.get(i).id) {
-						encontrado = true;
-						break;
-					}
-				}
-				
-				if (!encontrado) {
-					mtp = (MetaParamRecurso) mtp.clone();
-					mtp.valor = "";
-					this.listadoParametros.add(mtp);	
-				}
-				
-			}
-		}
-		
-		
+		this.listadoParametros = pp.dameParametros(this.getClass().getSimpleName(), this.id);
 	}
 	
 	public int maxIdRecurso() {			
@@ -122,56 +109,57 @@ public class Recurso implements Cargable{
         return p.id+1;
 	}
 	
-	public Object getValorParametro(int idParm) throws Exception{
+	public Object getValorParametro(String codParm) throws Exception{
 		if (this.listadoParametros==null) {
 			this.cargaRecurso();
 		}
-		Iterator<MetaParamRecurso> itParm = this.listadoParametros.iterator();
 		
-		while (itParm.hasNext()) {
-			MetaParamRecurso pp = itParm.next();
-			if (pp.id==idParm) {
-				return pp.valor;
-			}
-		}
-		
-		return null;
+		return this.listadoParametros.get(codParm);
 	}
 	
-	public boolean altaRecurso(Recurso p) {
+	public boolean guardaRecurso(String idTransaccion) {
 		boolean modificacion = true;
-		int maxId = this.maxIdRecurso();
 		
-		if (maxId == p.id) {
-			ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-			ParametroBD pBD = new ParametroBD();
-			pBD.id = 1;
-			pBD.tipo = ConstantesBD.PARAMBD_INT;
-			pBD.valorInt = p.id;
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		String cadConexion = "";
+		
+		if (this.id == -1) { // Recurso Nuevo
+			ParametroBD pBD = new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id);
 			listaParms.add(pBD);
-			pBD = new ParametroBD();
-			pBD.id = 2;
-			pBD.tipo = ConstantesBD.PARAMBD_STR;
-			pBD.valorStr = p.nombre;
-			listaParms.add(pBD);
-			
-			ConsultaBD consulta = new ConsultaBD();
-			consulta.ejecutaSQL("iAltaRec", listaParms, this);
-			
+			cadConexion = "iAltaRec";
 			modificacion = false;
+		} else {
+			ParametroBD pBD = new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id);
+			listaParms.add(pBD);
+			cadConexion = "iUpdateRec";
 		}
 		
+		ParametroBD pBD = new ParametroBD(2,ConstantesBD.PARAMBD_STR,this.nombre);
+		listaParms.add(pBD);
+		
+		ConsultaBD consulta = new ConsultaBD();
+		consulta.ejecutaSQL(cadConexion, listaParms, this, idTransaccion);
+		
+		if (!modificacion) {
+			this.id = ParametroBD.ultimoId;
+		}
+			
 		return modificacion;
 	}
 	
-	public void bajaRecurso() {			
-		ParametroRecurso pp = new ParametroRecurso();
-		pp.bajaRecurso(this);
+	public void bajaRecurso(String idTransaccion) throws Exception{		
+		cargaRecurso(); 
+		
+		Iterator<? extends Parametro> itParm = this.listadoParametros.values().iterator();
+		while (itParm.hasNext()) {
+			ParametroRecurso pr = (ParametroRecurso) itParm.next();
+			pr.bajaParametro(idTransaccion);
+		}
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
 		ConsultaBD consulta = new ConsultaBD();
-		consulta.ejecutaSQL("dDelRecurso", listaParms, this);
+		consulta.ejecutaSQL("dDelRecurso", listaParms, this, idTransaccion);
 	}
 	
 	@Override

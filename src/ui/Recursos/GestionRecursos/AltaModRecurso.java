@@ -1,5 +1,6 @@
 package ui.Recursos.GestionRecursos;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,18 +8,24 @@ import java.util.Iterator;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import model.beans.Parametro;
 import model.beans.ParametroRecurso;
+import model.beans.Proyecto;
 import model.beans.Recurso;
 import model.metadatos.MetaParamRecurso;
+import model.utils.db.ConsultaBD;
 import ui.Dialogo;
+import ui.GestionBotones;
+import ui.Administracion.Parametricas.GestionParametros;
+import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 import ui.Recursos.GestionRecursos.Tables.ParamRecurso;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -30,74 +37,125 @@ public class AltaModRecurso implements ControladorPantalla {
 	@FXML
 	private AnchorPane anchor;
 	
-	@FXML
-	private TitledPane tpFiltros;
-	@FXML
-	private ComboBox<Recurso> cbListaRec;
-	@FXML
-	private ImageView imAniadir;
-	@FXML
-	private ImageView imBuscar;
+    @FXML
+    private ImageView imBuscar;
+    private GestionBotones gbBuscar;
 
-	@FXML
-	private TitledPane tpValores;
-	@FXML
-	private TextField tID;
-	@FXML
-	private TextField tNombreProy;
-	@FXML
-	private ImageView imGuardar;
-	@FXML
-	private ImageView imEliminar;
-	@FXML
-	private TableView<Tableable> tParametros;
-	
+    @FXML
+    private ComboBox<Recurso> cbListaRec;
+
+    @FXML
+    private VBox vbDetalle;
+
+    @FXML
+    private VBox tParametros;
+
+    @FXML
+    private ImageView imAniadir;
+    private GestionBotones gbAniadir;
+
+    @FXML
+    private TextField tNombre;
+    
+    @FXML
+    private TextField tID;
+
+    @FXML
+    private ImageView imEliminar;
+    private GestionBotones gbEliminar;
+
+    @FXML
+    private ImageView imGuardar;
+    private GestionBotones gbGuardar;
+    
+    Recurso rActual = null;
+
+    
 	public AltaModRecurso(){
 	}
 	
 	public void initialize(){
-			tpFiltros.setExpanded(true);
+			vbDetalle.setDisable(true);
 			
-			imAniadir.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 nuevoRecurso(); }	});
-			imBuscar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 cargaRecurso(); }	});
+			gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					cargaRecurso();
+	            } }, "Buscar Recurso", this);	
+			gbBuscar.activarBoton();
 			
-			imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardarRecurso(); }	});
-			imEliminar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) { eliminaRecurso(); }	});
+			gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					try {
+						nuevoRecurso();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	            } }, "Añadir Recurso", this);	
+			gbAniadir.activarBoton();
 			
-			imGuardar.setMouseTransparent(true);
-			imEliminar.setMouseTransparent(true);
+			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					guardarRecurso();
+	            } }, "Guardar Recurso", this);	
+			gbGuardar.desActivarBoton();
+			
+			gbEliminar = new GestionBotones(imEliminar, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					try {
+						eliminaRecurso();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	            } }, "Guardar Recurso", this);	
+			gbEliminar.desActivarBoton();
 			
 			Recurso p = new Recurso();
 			cbListaRec.getItems().addAll(p.listadoRecursos());
-		
     }
 	
-	private void nuevoRecurso(){
-		imGuardar.getStyleClass().remove("iconoDisabled");
-		imGuardar.getStyleClass().add("iconoEnabled");
+	private void nuevoRecurso() throws Exception{
+		gbGuardar.activarBoton();
+		gbEliminar.activarBoton();
+		vbDetalle.setDisable(false);
 		
-		imGuardar.setMouseTransparent(false);
+		rActual = new Recurso();
+		rActual.id = -1;
 		
-		imEliminar.getStyleClass().remove("iconoDisabled");
-		imEliminar.getStyleClass().add("iconoEnabled");
+		this.tID.setText("");
+		this.tNombre.setText("");
+		this.tID.setDisable(true);
 		
-		imEliminar.setMouseTransparent(false);
+		cargaPropiedades(Parametro.SOLO_METAPARAMETROS);				
+	}
+	
+	private void cargaPropiedades(int idRecurso) throws Exception {
+		tParametros.getChildren().removeAll(tParametros.getChildren());
 		
-		Recurso p = new Recurso();
-		this.tID.setText(new Integer(p.maxIdRecurso()).toString());
-		this.tNombreProy.setText("");
+		GestionParametros gestPar = new GestionParametros();
 		
-		tpFiltros.setExpanded(false);
-		tpValores.setExpanded(true);
-		
-		ParamRecurso pProy = new ParamRecurso();
-		ArrayList<Object> lista = new ArrayList<Object>();
-		lista.addAll(MetaParamRecurso.listado.values());
-		ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
-		tParametros.setItems(dataTable);
-		
-		ParamRecurso pRecurso = new ParamRecurso();
-		pRecurso.fijaColumnas(tParametros);		
+		FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(new URL(gestPar.getFXML()));
+        	        
+        tParametros.getChildren().add(loader.load());
+        gestPar = loader.getController();
+        
+        HashMap<String, Object> variablesPaso = new HashMap<String, Object>();
+        variablesPaso.put("entidadBuscar", Recurso.class.getSimpleName());
+        variablesPaso.put("subventana", new Boolean(true));
+        variablesPaso.put("idEntidadBuscar", idRecurso);
+        variablesPaso.put("ancho", new Double(800));
+        variablesPaso.put("alto", new Double(400));
+        gestPar.setParametrosPaso(variablesPaso);
+        
+        rActual.listadoParametros = gestPar.listaParametros;
 	}
 	
 	private void guardarRecurso(){
@@ -106,31 +164,23 @@ public class AltaModRecurso implements ControladorPantalla {
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el recurso?", "Se almacenará tanto el recurso como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
-			Recurso p = new Recurso();
-			p.id = new Integer(this.tID.getText());
-			p.nombre = this.tNombreProy.getText();
+			rActual.nombre = this.tNombre.getText();
 			
 			try {
-				modificacion = p.altaRecurso(p);
+				String idTransaccion = ConsultaBD.getTicket();
+				
+				modificacion = rActual.guardaRecurso(idTransaccion);
 				
 				int contador = 0;
 			
-				ObservableList<Tableable> dataTable = tParametros.getItems();
-				Iterator<Tableable> it = dataTable.iterator();
-				
-				while (it.hasNext()){
-					ParamRecurso pRecurso = (ParamRecurso) it.next();
-					if (pRecurso.modificado) {
-						ParametroRecurso bParamRecurso = new ParametroRecurso();
-						bParamRecurso.mpRecurso = new MetaParamRecurso(pRecurso);
-						bParamRecurso.cod_parm = bParamRecurso.mpRecurso.id;
-						bParamRecurso.idRecurso = p.id;
-						bParamRecurso.setValor(pRecurso.get(ParamRecurso.VALORREAL));
-						contador++;
-						
-						bParamRecurso.insertaParametro(p.id);
-					}
+				Iterator<? extends Parametro> itParams = rActual.listadoParametros.values().iterator();
+				while (itParams.hasNext()) {
+					ParametroRecurso pr = (ParametroRecurso) itParams.next();
+					pr.idEntidadAsociada = rActual.id;
+					pr.actualizaParametro(idTransaccion, false);
 				}
+				
+				ConsultaBD.ejecutaTicket(idTransaccion);
 				
 				String accion = "Alta";
 				
@@ -140,9 +190,17 @@ public class AltaModRecurso implements ControladorPantalla {
 				
 				Dialogo.alert("Proceso Finalizado", accion + " de usuario completada", "Se ha guardado el usuario y sus " + contador + " asociados.");
 				
-				p = new Recurso();
 				cbListaRec.getItems().clear();
-				cbListaRec.getItems().addAll(p.listadoRecursos());
+				cbListaRec.getItems().addAll(rActual.listadoRecursos());
+				
+				rActual.listadoRecursosEstatico(true);
+				
+				tParametros.getChildren().removeAll(tParametros.getChildren());
+				gbGuardar.desActivarBoton();
+				gbEliminar.desActivarBoton();
+				vbDetalle.setDisable(true);
+				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}				
@@ -150,79 +208,54 @@ public class AltaModRecurso implements ControladorPantalla {
 		}
 	}
 	
-	private void eliminaRecurso(){
+	private void eliminaRecurso() throws Exception{
 		
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
-			imGuardar.getStyleClass().remove("iconoEnabled");
-			imGuardar.getStyleClass().add("iconoDisabled");
-			
-			imGuardar.setMouseTransparent(true);
-			
-			imEliminar.getStyleClass().remove("iconoEnabled");
-			imEliminar.getStyleClass().add("iconoDisabled");
-			
-			imEliminar.setMouseTransparent(true);
-			
 			Recurso p = cbListaRec.getValue();
 			
-			p.bajaRecurso();
+			String idTransaccion = ConsultaBD.getTicket();
+			
+			p.bajaRecurso(idTransaccion);
+			
+			ConsultaBD.ejecutaTicket(idTransaccion);
 			
 			this.tID.setText("");
-			this.tNombreProy.setText("");
-			
-			ParamRecurso pRec = new ParamRecurso();
-			ArrayList<Object> lista = new ArrayList<Object>();
-			ObservableList<Tableable> dataTable = pRec.toListTableable(lista);
-			tParametros.setItems(dataTable);	
-			
-			ParamRecurso pRecurso = new ParamRecurso();
-			pRecurso.fijaColumnas(tParametros);	
-			
-			tpFiltros.setExpanded(true);
-			tpValores.setExpanded(false);
-				
+			this.tNombre.setText("");
+		
 			Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
 			
 			p = new Recurso();
 			cbListaRec.getItems().clear();
 			cbListaRec.getItems().addAll(p.listadoRecursos());
 			
+			tParametros.getChildren().removeAll(tParametros.getChildren());
+			gbGuardar.desActivarBoton();
+			gbEliminar.desActivarBoton();
+			vbDetalle.setDisable(true);		
+			
+			rActual.listadoRecursosEstatico(true);
 		} else {
 		}
 	}
 	
 	private void cargaRecurso(){
 		try {
-			imGuardar.getStyleClass().remove("iconoDisabled");
-			imGuardar.getStyleClass().add("iconoEnabled");
+			gbGuardar.activarBoton();
+			gbEliminar.activarBoton();
+			vbDetalle.setDisable(false);	
 			
-			imGuardar.setMouseTransparent(false);
+			rActual = cbListaRec.getValue();
 			
-			imEliminar.getStyleClass().remove("iconoDisabled");
-			imEliminar.getStyleClass().add("iconoEnabled");
+			rActual.cargaRecurso();
 			
-			imEliminar.setMouseTransparent(false);
+			this.tID.setText(new Integer(rActual.id).toString());
+			this.tID.setDisable(true);
 			
-			Recurso p = cbListaRec.getValue();
+			this.tNombre.setText(rActual.nombre);
 			
-			p.cargaRecurso();
-			
-			this.tID.setText(new Integer(p.id).toString());
-			this.tNombreProy.setText(p.nombre);
-			
-			ParamRecurso pProy = new ParamRecurso();
-			ArrayList<Object> lista = new ArrayList<Object>();
-			lista.addAll(p.listadoParametros);
-			ObservableList<Tableable> dataTable = pProy.toListTableable(lista);
-			tParametros.setItems(dataTable);	
-			
-			ParamRecurso pRecurso = new ParamRecurso();
-			pRecurso.fijaColumnas(tParametros);	
-			
-			tpFiltros.setExpanded(false);
-			tpValores.setExpanded(true);
+			cargaPropiedades(rActual.id);	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

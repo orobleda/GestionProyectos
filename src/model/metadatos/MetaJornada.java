@@ -23,6 +23,24 @@ public class MetaJornada implements Cargable{
 		
 	public static HashMap<Integer,MetaJornada> listaMetaJornadas = null;
 
+	public static HashMap<Integer,MetaJornada> getlistaMetaJornadasEstatico() {
+		if (listaMetaJornadas==null) {
+			MetaJornada mj = new MetaJornada();
+			listaMetaJornadas = mj.listado ();
+		}
+		
+		return listaMetaJornadas;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		try {
+			return this.id == ((MetaJornada) o).id;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public HashMap<Integer,MetaJornada> listado () {
 		if (listaMetaJornadas!=null) return listaMetaJornadas;
 		

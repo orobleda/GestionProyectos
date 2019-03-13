@@ -8,25 +8,23 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.Faseado">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.Faseado">
    <top>
-      <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+      <VBox>
          <children>
-            <Label text="Proyecto" />
-            <ComboBox fx:id="cbProyecto" prefWidth="250.0">
-               <HBox.margin>
-                  <Insets left="25.0" />
-               </HBox.margin>
-            </ComboBox>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </BorderPane.margin>
-      </HBox>
-   </top>
-   <center>
-      <VBox alignment="TOP_CENTER">
-         <children>
+            <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Proyecto" />
+                  <ComboBox fx:id="cbProyecto" prefWidth="250.0">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </BorderPane.margin>
+            </HBox>
             <HBox alignment="TOP_CENTER">
                <children>
                   <TableView fx:id="tDemandas" prefHeight="70.0" />
@@ -35,16 +33,24 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </VBox.margin>
             </HBox>
-            <ScrollPane prefHeight="400.0" prefViewportWidth="352.0" prefWidth="900.0">
-               <content>
-                  <VBox fx:id="vbContenedorFases" />
-               </content>
-            </ScrollPane>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
       </VBox>
+   </top>
+   <center>
+      <ScrollPane fx:id="scrFases" fitToHeight="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefViewportWidth="352.0" prefWidth="900.0">
+         <content>
+            <VBox fx:id="vbContenedorFases" />
+         </content>
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </ScrollPane>
    </center>
    <bottom>
-      <HBox alignment="TOP_RIGHT" BorderPane.alignment="TOP_RIGHT">
+      <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" prefHeight="50.0" BorderPane.alignment="TOP_RIGHT">
          <BorderPane.margin>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </BorderPane.margin>

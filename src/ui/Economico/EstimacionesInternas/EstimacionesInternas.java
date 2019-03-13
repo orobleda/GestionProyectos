@@ -36,7 +36,6 @@ import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
-import model.metadatos.MetaParamRecurso;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
@@ -140,7 +139,8 @@ public class EstimacionesInternas implements ControladorPantalla {
             public void handle(MouseEvent t)
             {   
 				editarEstimacion();
-            } }, "Guardar Cambios", this);	
+            } }, "Guardar Cambios", this);
+		gbAniadir.activarBoton();
 		
 		tFiltroResumen.setText("500");
 		tablaResumen = new Tabla(tResumen,new LineaCosteProyectoEstimacion(),tFiltroResumen, this);
@@ -328,7 +328,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 				Recurso r = Recurso.listaRecursos.get(key);				
 				
 				LineaDetalleUsuario ldu = new LineaDetalleUsuario();
-				ldu.codUsuario = (String) r.getValorParametro(MetaParamRecurso.IDRecurso);
+				ldu.codUsuario = (String) r.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
 				ldu.nomUsuario = r.nombre;
 				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_TOTAL;
 				lista.add(ldu);
@@ -431,7 +431,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 		while (itRecursos.hasNext()) {
 			Recurso r = itRecursos.next();
 			
-			if (new Integer((String) r.getValorParametro(MetaParamRecurso.INTERNO))==this.cbNatCoste.getValue().id && new Integer((String) r.getValorParametro(MetaParamRecurso.COD_PARM_GESTOR)) == Constantes.USUARIORESPONSABLE) {
+			if (((MetaConcepto) r.getValorParametro(MetaParametro.RECURSO_NAT_COSTE)).id==this.cbNatCoste.getValue().id && ((Recurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR)).id == Constantes.getAdministradorSistema().id) {
 				recursosDisponibles.put(new Integer(r.id).toString(), r);
 				
 				Estimacion est = new Estimacion();

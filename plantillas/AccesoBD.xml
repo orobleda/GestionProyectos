@@ -91,6 +91,15 @@
 		</parametros>
 	</acceso>
 	<acceso>
+		<query>update RECURSO set Nombre= $B$||2||$E$ where id = $B$||1||$E$</query>
+		<id tipo="I">iUpdateRec</id>
+		<tabla>RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+	</parametros>
+	</acceso>
+	<acceso>
 		<query>insert into RECURSO (id,Nombre) values ($B$||1||$E$,$B$||2||$E$)</query>
 		<id tipo="I">iAltaRec</id>
 		<tabla>RECURSO</tabla>

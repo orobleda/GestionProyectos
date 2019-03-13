@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -50,6 +51,10 @@ public class Faseado implements ControladorPantalla {
     @FXML
     private ImageView imGuardar;
     private GestionBotones gbGuardar;
+    
+
+    @FXML
+    private ScrollPane scrFases;
 
 	
 
@@ -57,6 +62,9 @@ public class Faseado implements ControladorPantalla {
 	private AnchorPane anchor;
 	
 	public void initialize(){
+		scrFases.setFitToWidth(true);
+		scrFases.setFitToHeight(true);
+		
 		tablaDemandas = new Tabla(tDemandas,new DemandasAsociadasTabla(),this);
 		
 		ArrayList<Proyecto> listaProyectos = (new Proyecto()).listadoProyectosGGP();

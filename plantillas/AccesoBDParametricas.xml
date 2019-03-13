@@ -107,4 +107,37 @@
 			<parametro id="7" tipo="str"></parametro>		
 		</parametros>
 	</acceso>
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_RECURSO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO_RECURSO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO_RECURSO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>
 </accesoBD>
