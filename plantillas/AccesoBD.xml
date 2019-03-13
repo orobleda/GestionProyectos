@@ -976,4 +976,137 @@
 			<parametro id="4" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
+	<acceso>
+		<query>select sistema cerSistema ,proyecto cerProyecto ,id cerId	from  CERTIFICACION where 1=1 and $B$and proyecto=||1||$E$</query>
+		<id tipo="C">cConsultaCertificacion</id>
+		<tabla>CERTIFICACION</tabla>
+		<parametros>
+			<parametro id=1 tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into CERTIFICACION (sistema ,proyecto ,id) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$)</query>
+		<id tipo="I">iInsertaCertificacion</id>
+		<tabla>CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from CERTIFICACION where 1=1 $B$and id=||1||$E$</query>
+		<id tipo="D">dBorraCertificacion</id>
+		<tabla>CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE CERTIFICACION SET sistema= $B$||2||$E$ , proyecto= $B$||3||$E$ where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaCertificacion</id>
+		<tabla>CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select fase cerFase ,certificacion cerCertificacion ,id cerId ,adicional cerAdicional from  CERTIFICACION_FASE where 1=1 and $B$and certificacion=||1||$E$</query>
+		<id tipo="C">cConsultaCertificacion_fase</id>
+		<tabla>CERTIFICACION_FASE</tabla>
+		<parametros>
+			<parametro id=1 tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into CERTIFICACION_FASE (fase ,certificacion ,id ,adicional) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$)</query>
+		<id tipo="I">iInsertaCertificacion_fase</id>
+		<tabla>CERTIFICACION_FASE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from CERTIFICACION_FASE where 1=1 $B$and certificacion=||1||$E$ $B$and id=||2||$E$</query>
+		<id tipo="D">dBorraCertificacion_fase</id>
+		<tabla>CERTIFICACION_FASE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE CERTIFICACION_FASE SET fase= $B$||2||$E$ , certificacion= $B$||3||$E$ , adicional= $B$||4||$E$ where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaCertificacion_fase</id>
+		<tabla>CERTIFICACION_FASE</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select valReal cerValreal ,certificacion_fase cerCertificacion_fase ,valEstimado cerValestimado ,tarifaReal cerTarifareal ,nombre cerNombre ,tipoEstimacion cerTipoestimacion ,fxCertificacion cerFxcertificacion ,tsCertificacion cerTscertificacion ,horReal cerHorreal ,tarifaEstimada cerTarifaestimada ,id cerId ,horEstimadas cerHorestimadas ,porcentaje cerPorcentaje	from  CERTIFICACION_FASE_PARCIAL where 1=1 and $B$and id=||1||$E$</query>
+		<id tipo="C">cConsultaCertificacion_fase_parcial</id>
+		<tabla>CERTIFICACION_FASE_PARCIAL</tabla>
+		<parametros>
+			<parametro id=1 tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into CERTIFICACION_FASE_PARCIAL (valReal ,certificacion_fase ,valEstimado ,tarifaReal ,nombre ,tipoEstimacion ,fxCertificacion ,tsCertificacion ,horReal ,tarifaEstimada ,id ,horEstimadas ,porcentaje) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$ ,$B$||7||$E$ ,$B$||8||$E$ ,$B$||9||$E$ ,$B$||10||$E$ ,$B$||11||$E$ ,$B$||12||$E$ ,$B$||13||$E$)</query>
+		<id tipo="I">iInsertaCertificacion_fase_parcial</id>
+		<tabla>CERTIFICACION_FASE_PARCIAL</tabla>
+		<parametros>
+			<parametro id="1" tipo="rea"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="rea"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="str"></parametro>
+			<parametro id="6" tipo="int"></parametro>
+			<parametro id="7" tipo="dat"></parametro>
+			<parametro id="8" tipo="long"></parametro>
+			<parametro id="9" tipo="rea"></parametro>
+			<parametro id="10" tipo="int"></parametro>
+			<parametro id="11" tipo="int"></parametro>
+			<parametro id="12" tipo="rea"></parametro>
+			<parametro id="13" tipo="rea"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from CERTIFICACION_FASE_PARCIAL where 1=1 $B$and id=||1||$E$</query>
+		<id tipo="D">dBorraCertificacion_fase_parcial</id>
+		<tabla>CERTIFICACION_FASE_PARCIAL</tabla>
+		<parametros>
+			<parametro id="1" tipo="rea"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE CERTIFICACION_FASE_PARCIAL SET valReal= $B$||2||$E$ , certificacion_fase= $B$||3||$E$ , valEstimado= $B$||4||$E$ , tarifaReal= $B$||5||$E$ , nombre= $B$||6||$E$ , tipoEstimacion= $B$||7||$E$ , fxCertificacion= $B$||8||$E$ , tsCertificacion= $B$||9||$E$ , horReal= $B$||10||$E$ , tarifaEstimada= $B$||11||$E$ , id= $B$||12||$E$ , horEstimadas= $B$||13||$E$ , porcentaje= $B$||14||$E$ where id = $B$||1||$E$</query>
+		<id tipo="U">uActualizaCertificacion_fase_parcial</id>
+		<tabla>CERTIFICACION_FASE_PARCIAL</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="rea"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="rea"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="str"></parametro>
+			<parametro id="7" tipo="int"></parametro>
+			<parametro id="8" tipo="dat"></parametro>
+			<parametro id="9" tipo="long"></parametro>
+			<parametro id="10" tipo="rea"></parametro>
+			<parametro id="11" tipo="int"></parametro>
+			<parametro id="12" tipo="int"></parametro>
+			<parametro id="13" tipo="rea"></parametro>
+			<parametro id="14" tipo="rea"></parametro>
+		</parametros>
+	</acceso>
+	
 </accesoBD>
