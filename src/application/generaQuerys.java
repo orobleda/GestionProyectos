@@ -5,21 +5,11 @@ import java.util.Iterator;
 
 public class generaQuerys {
 	public static void main(String[] args) {
-		String estructura = "CREATE TABLE 'CERTIFICACION_FASE_PARCIAL'\r\n" + 
+		String estructura = "CREATE TABLE [TIPO_COBRO_VCT]\r\n" + 
 				"(\r\n" + 
-				"	[id] integer NOT NULL PRIMARY KEY AUTOINCREMENT,\r\n" + 
-				"	[nombre] text,\r\n" + 
-				"	[fxCertificacion] text,\r\n" + 
-				"	[tsCertificacion] real,\r\n" + 
-				"	[horEstimadas] real,\r\n" + 
-				"	[valEstimado] real,\r\n" + 
-				"	[horReal] real,\r\n" + 
-				"	[valReal] real,\r\n" + 
-				"	[porcentaje] real,\r\n" + 
-				"	[tarifaEstimada] integer,\r\n" + 
-				"	[tarifaReal] real,\r\n" + 
-				"	[tipoEstimacion] integer,\r\n" + 
-				"	[certificacion_fase] integer,";
+				"	[id] integer NOT NULL UNIQUE,\r\n" + 
+				"	[codigo] text NOT NULL,\r\n" + 
+				"	[porcentaje] real NOT NULL,";
 		
 		String [] lineasAux = estructura.split("\\(");
 		String tabla = lineasAux[0].replaceAll("CREATE TABLE '", "").replaceAll("'", "").trim();

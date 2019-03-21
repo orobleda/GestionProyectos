@@ -14,6 +14,9 @@ public class TipoPresupuesto implements Cargable, Loadable  {
 	public String descripcion = "";
 	public String codigo = "";
 	
+	public static final int ESTIMACION = 1;
+	public static final int VCT = 2;
+	
 	public static HashMap<Integer, TipoPresupuesto> listado = null;
 	
 	@Override

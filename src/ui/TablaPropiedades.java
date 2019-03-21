@@ -17,6 +17,7 @@ import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.MetaJornada;
+import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
 import ui.interfaces.Propiediable;
@@ -73,7 +74,8 @@ public class TablaPropiedades extends PropertySheet{
 		this.setPrefWidth(ancho);
 		
 		this.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {
-		    @Override
+		    @SuppressWarnings("unchecked")
+			@Override
 		    public PropertyEditor<?> call(Item param) {
 		    	Propiedad prop = (Propiedad) param;
 		    	
@@ -124,6 +126,10 @@ public class TablaPropiedades extends PropertySheet{
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_TXT || prop.tipo == TipoDato.FORMATO_URL) {
 		    		return Editors.createTextEditor(param);
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_TIPO_COBRO_VCT) {
+		    		return Editors.createChoiceEditor(param, TipoCobroVCT.listado.values());
 		    	}
 		    	
 		    	return null;

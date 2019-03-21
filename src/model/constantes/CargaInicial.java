@@ -10,6 +10,7 @@ import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParamRecurso;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoParamProyecto;
 import model.metadatos.TipoPresupuesto;
 import model.metadatos.TipoProyecto;
@@ -25,7 +26,7 @@ public class CargaInicial {
 											new TransicionEstados(), new MetaParamRecurso(),
 											new TipoPresupuesto(),new Sistema(), new MetaConcepto(), 
 											new MetaFormatoProyecto(), new TipoParamProyecto(), new Festivo(), 
-											new Proveedor(), new MetaGerencia()	, new MetaParametro()											
+											new Proveedor(), new MetaGerencia()	, new MetaParametro(), new TipoCobroVCT()											
 											};
 	
 	public void load(){

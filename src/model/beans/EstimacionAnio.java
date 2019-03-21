@@ -1,11 +1,13 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import controller.AnalizadorPresupuesto;
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -78,6 +80,16 @@ public class EstimacionAnio  implements Cargable {
 				em.repartirResto(s, c, repartoMensual);
 			}			
 		}		
+	}
+	
+	public void repartirCertificacion(Certificacion cert) {
+		Iterator<EstimacionMes> itEm = this.estimacionesMensuales.values().iterator();
+		
+		while (itEm.hasNext()) {
+			EstimacionMes em = itEm.next();
+			
+			em.repartirCertificacion(cert, this);
+		}
 	}
 	
 	public void repartirFijo(Sistema s, MetaConcepto c, Date fechaPivote, AnalizadorPresupuesto ap, float repartoMensual) {

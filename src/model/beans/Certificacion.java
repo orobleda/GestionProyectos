@@ -1,12 +1,19 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
+import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoCobroVCT;
+import model.metadatos.TipoPresupuesto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -82,7 +89,7 @@ public class Certificacion implements Cargable{
 	}
 	
 	
-	public ArrayList<Certificacion> listado () {		
+	public HashMap<String,Certificacion> listado () {		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.p.id));
 				
@@ -90,7 +97,7 @@ public class Certificacion implements Cargable{
 		ArrayList<Cargable> fases = consulta.ejecutaSQL("cConsultaCertificacion", listaParms, this);
 		
 		Iterator<Cargable> itFase = fases.iterator();
-		ArrayList<Certificacion> salida = new ArrayList<Certificacion>();
+		HashMap<String,Certificacion> salida = new HashMap<String,Certificacion>();
 		
 		while (itFase.hasNext()) {
 			Certificacion p = (Certificacion) itFase.next();
@@ -108,7 +115,7 @@ public class Certificacion implements Cargable{
 				cfAux.certificacion = p;
 			}
 			
-			salida.add(p);
+			salida.put(p.s.codigo,p);
 		}
 				
 		return salida;
@@ -202,6 +209,132 @@ public class Certificacion implements Cargable{
 
 		}		
 	}
+	
+	public Certificacion generaCertificacion(Sistema s, Proyecto p, HashMap<String,Certificacion> listaCertificaciones ) throws Exception {
+		Certificacion cert = new Certificacion();
+		
+		if (listaCertificaciones.containsKey(s.codigo)) {
+			return listaCertificaciones.get(s.codigo);
+		}
+		
+		if (p.fasesProyecto==null)
+			p.cargaFasesProyecto();
+		
+		FaseProyecto fp = new FaseProyecto();
+		fp.insertaFaseSistema(p,s);
+		
+		cert.id = -1;
+		cert.p = p;
+		cert.s = s;
+		
+		ParametroCertificacion par = new ParametroCertificacion();
+		cert.parametrosCertificacion = par.dameParametros(Certificacion.class.getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+		cert.certificacionesFases = new ArrayList<CertificacionFase>();
+		
+		Iterator<FaseProyecto> itFases = p.fasesProyecto.iterator();
+		
+		while (itFases.hasNext()) {
+			fp = itFases.next();
+			FaseProyectoSistema fps = fp.fasesProyecto.get(s.codigo);
+			
+			if (fps!=null) {
+				float valorFase = 0;
+				
+				Iterator<FaseProyectoSistemaDemanda> itFpsd = fps.demandasSistema.iterator();
+				while (itFpsd.hasNext()) {
+					FaseProyectoSistemaDemanda fpsd = itFpsd.next();
+					
+					Presupuesto presAux = new Presupuesto();
+					presAux.p = fpsd.p;
+					presAux.cargaCostes();
+					fpsd.p.presupuestoActual = presAux;
+					Concepto c = fpsd.p.presupuestoActual.getCosteConcepto(s, MetaConcepto.porId(MetaConcepto.DESARROLLO));
+					
+					ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+					float porc = (Float) parFas.getValor();
+					
+					valorFase += c.valorEstimado*porc/100;
+				}
+				
+				if (valorFase!=0) {
+					CertificacionFase cf = new CertificacionFase();
+					cf.adicional = false;
+					cf.certificacion = cert;
+					cf.fase = fp;
+					cf.certificacionesParciales = new ArrayList<CertificacionFaseParcial>();
+					cf.id = -1;
+					cf.parametrosCertificacionFase = par.dameParametros(cf.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+					cert.certificacionesFases.add(cf);
+					
+					Parametro parGen = Parametro.listadoParametros.get(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
+					TipoCobroVCT tpVCT = (TipoCobroVCT) parGen.getValor();
+					
+					Date fechaAnterior =  cf.fase.getFechaImplantacion();
+							
+					for (int i=(tpVCT.porcentajes.size()-1);i>0;i--) {
+						float porcentaje = tpVCT.porcentajes.get(i);
+						float valorParcial = porcentaje*valorFase/100;
+						
+						CertificacionFaseParcial cfp = new CertificacionFaseParcial();
+						cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
+						fechaAnterior = cfp.fxCertificacion;
+						
+						cfp.id = -1;
+						cfp.nombre = tpVCT.nombres.get(i);
+						cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+						cfp.porcentaje = porcentaje;
+						cfp.tsCertificacion = fechaAnterior.getTime();
+						cfp.valEstimado = valorParcial;
+						cfp.tipoEstimacion = TipoPresupuesto.ESTIMACION;
+						
+						cf.certificacionesParciales.add(cfp);
+					}
+				}
+			}
+		}
+		
+		return cert;
+	}
+	
+	public Date calcularFechaPrevia(Date fechaFinal) {
+		ParametroProyecto parPro = this.p.getValorParametro(MetaParametro.PROYECTO_FX_INICIO);
+		ParametroProyecto parProFin = this.p.getValorParametro(MetaParametro.PROYECTO_FX_FIN);
+		
+		Parametro par = new Parametro();
+		par = Parametro.listadoParametros.get(MetaParametro.PARAMETRO_ECONOMICO_PERINTRACERT);
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(fechaFinal);
+		c.add(Calendar.DAY_OF_MONTH, -1*(Integer) par.getValor());
+		
+		Calendar cActual = Calendar.getInstance();
+		cActual.setTime(Constantes.fechaActual());
+		
+		Calendar cInicio = Calendar.getInstance();
+		cInicio.setTime((Date) parPro.getValor() );
+		
+		if (c.after(cActual) && c.after(cInicio)) {
+			return c.getTime();
+		}
+		
+		if (c.before(cActual) && c.before(cInicio)) {
+			if (cActual.before(cInicio)) {
+				return cInicio.getTime();
+			} else {
+				return cActual.getTime();
+			}
+		} 
+		
+		if (c.before(cActual) && c.after(cInicio)) {
+			return cActual.getTime();
+		}
+		
+		if (c.after(cActual) && c.before(cInicio)) {
+			return cInicio.getTime();
+		}
+		
+		return (Date) parProFin.getValor();
+	} 
 	
 
 	

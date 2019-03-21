@@ -275,4 +275,64 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 		return salida;
 	}
 	
+	public void insertaFaseSistema(Proyecto p, Sistema s) throws Exception  {
+		if (p.fasesProyecto==null) {
+			p.fasesProyecto = new ArrayList<FaseProyecto>();
+		}
+		
+		Iterator<FaseProyecto> itFases = p.fasesProyecto.iterator();
+		while (itFases.hasNext()) {
+			FaseProyecto fp = itFases.next();
+			
+			if (fp.fasesProyecto.containsKey(s.codigo)) return;
+		}
+		
+		FaseProyecto fp = null;
+		ParametroFases pf = new ParametroFases();
+		
+		if (p.fasesProyecto.size()==0) {
+			fp = new FaseProyecto();
+			fp.id = -1;
+			fp.p = p;
+			fp.idProyecto = p.id;
+			fp.fasesProyecto = new HashMap<String, FaseProyectoSistema>();
+			fp.parametrosFase = pf.dameParametros(fp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+			pf = (ParametroFases) fp.parametrosFase.get(MetaParametro.FASE_PROYECTO_FX_IMPLANTACION);
+			ParametroProyecto pp = p.getValorParametro(MetaParametro.PROYECTO_FX_FIN);
+			
+			pf.valorfecha = (Date) pp.getValor();
+		} else {
+			fp = p.fasesProyecto.get(p.fasesProyecto.size()-1);
+		}		
+		
+		FaseProyectoSistema fps = new FaseProyectoSistema();
+		fp.fasesProyecto.put(s.codigo, fps);
+		fps.demandasSistema = new ArrayList<FaseProyectoSistemaDemanda>();
+		fps.id = -1;
+		fps.idFase = fp.id;
+		fps.idSistema = s.id;
+		fps.parametrosFaseSistema = pf.dameParametros(fps.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+		fps.s = s;		
+		
+		ArrayList<Proyecto> listaProy = p.getDemandasAsociadas();
+		Iterator<Proyecto> itDems = listaProy.iterator();
+		while (itDems.hasNext()) {
+			Proyecto demanda = itDems.next();
+			Presupuesto pres = new Presupuesto();
+			demanda.presupuestoActual = pres.dameUltimaVersionPresupuesto(demanda);
+			if (demanda.presupuestoActual.costes.containsKey(s.id)) {
+				FaseProyectoSistemaDemanda fpsd = new FaseProyectoSistemaDemanda();
+				fpsd.id = -1;
+				fpsd.apunteContable = demanda.apunteContable;
+				fpsd.idDemanda = demanda.id;
+				fpsd.idSistema = s.id;
+				fpsd.p = demanda;
+				fpsd.parametrosFaseSistemaDemanda = pf.dameParametros(fpsd.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+				pf = (ParametroFases) fpsd.parametrosFaseSistemaDemanda.get(MetaParametro.FASES_COBERTURA_DEMANDA);
+				pf.valorReal = 100;
+				fps.demandasSistema.add(fpsd);
+			}
+		}
+	}
+	
 }

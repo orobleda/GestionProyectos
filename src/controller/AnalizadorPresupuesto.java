@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.beans.Certificacion;
+import model.beans.CertificacionFase;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Estimacion;
@@ -28,6 +30,7 @@ public class AnalizadorPresupuesto {
 	public ArrayList<EstimacionAnio> estimacionAnual = null;
 	public Date fechaPivote = null;
 	public Presupuesto presupuesto = null;
+	public HashMap<String,Certificacion> certificaciones = null;
 	
 	public AnalizadorPresupuesto clone() {
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
@@ -57,6 +60,7 @@ public class AnalizadorPresupuesto {
 			pueblaImputaciones(lImputacion,lFraccionImputacion);
 			pueblaEstimaciones(lEstimacion);
 			pueblaTopes(lTopeImputacion);
+			pueblaCertificaciones(null);
 			
 			Iterator<Coste> itCostes = pres.costes.values().iterator();
 			
@@ -66,9 +70,23 @@ public class AnalizadorPresupuesto {
 				
 				while (itMConcepto.hasNext()) {
 					MetaConcepto mc = itMConcepto.next();
-					analizaConceptoSistema(c.sistema, mc, pres);
+					if (mc.tipoGestionEconomica== MetaConcepto.GESTION_HORAS) {
+						analizaConceptoSistema(c.sistema, mc, pres);
+					} 				
 				}				
 			}
+			
+			Iterator<Certificacion> itCert = this.certificaciones.values().iterator();
+			while (itCert.hasNext()) {
+				Certificacion cAux = itCert.next();
+				
+				Iterator<EstimacionAnio> itEa = this.estimacionAnual.iterator();
+				while (itEa.hasNext()) {
+					EstimacionAnio eA = itEa.next();
+					eA.repartirCertificacion(cAux);
+				}
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -259,6 +277,53 @@ public class AnalizadorPresupuesto {
 		}
 		
 		return null;
+	}
+	
+	private void pueblaCertificaciones(HashMap<String, Certificacion> listaCertificaciones) throws Exception{
+		Certificacion cert = new Certificacion();
+		
+		certificaciones = cert.listado();
+		
+		Iterator<Certificacion> itCerts = listaCertificaciones.values().iterator();
+		while (itCerts.hasNext()) {
+			Certificacion certAux = itCerts.next();
+			/*if ()*/
+		}
+		
+		Iterator<Coste> itCostes = this.presupuesto.costes.values().iterator();
+		this.proyecto.presupuestoActual = this.presupuesto;
+		
+		while (itCostes.hasNext()) {
+			Coste c = itCostes.next();
+			Iterator<MetaConcepto> itMConcepto = MetaConcepto.listado.values().iterator();
+			
+			while (itMConcepto.hasNext()) {
+				MetaConcepto mc = itMConcepto.next();
+				if (mc.id == MetaConcepto.DESARROLLO) {
+
+					boolean encontrado = false;
+					
+					if (this.certificaciones.containsKey(c.sistema.codigo)) {
+						cert = this.certificaciones.get(c.sistema.codigo);
+						Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
+						
+						while (itCf.hasNext()) {
+							CertificacionFase cf = itCf.next();
+							if (!cf.adicional) {
+								encontrado = true;
+							}
+						}
+					} 
+					
+					if (!encontrado) {
+						cert = cert.generaCertificacion(c.sistema, this.proyecto, certificaciones);
+						certificaciones.put(cert.s.codigo, cert);
+					}
+					
+				}					
+			}				
+		}
+		
 	}
 	
 	

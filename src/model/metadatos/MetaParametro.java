@@ -26,6 +26,8 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
 	
 	public static final String PARAMETRO_ADMIN = "admin";
+	public static final String PARAMETRO_ECONOMICO_PERINTRACERT = "perIntraCert";	
+	public static final String PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT = "tipoCobroEstandVCT";	
 	
 	
 	public int id =0;

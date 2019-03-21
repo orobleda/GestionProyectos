@@ -17,6 +17,7 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.MetaJornada;
 import model.metadatos.MetaParametro;
+import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
@@ -56,6 +57,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_METAJORNADA, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_COBRO_VCT, TipoDato.FORMATO_FORMATO_PROYECTO);
 	}
 	
 	public static boolean isObjeto(int tipo) {
@@ -192,6 +194,10 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 				this.valorObjeto = Recurso.listaRecursos.get(this.valorEntero);				
 			}
 			
+			if (mpp.tipoDato == TipoDato.FORMATO_TIPO_COBRO_VCT) {
+				this.valorObjeto = TipoCobroVCT.listado.get(this.valorEntero);				
+			}
+			
 		} catch (Exception e) {
 			
 		}
@@ -283,6 +289,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
 			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
 			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
+			if (TipoDato.FORMATO_TIPO_COBRO_VCT==this.metaParam.tipoDato) 		this.valorEntero = ((TipoCobroVCT) this.valorObjeto).id;
 			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
 		}
 

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import controller.AnalizadorPresupuesto;
+import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
@@ -34,6 +35,36 @@ public class EstimacionMes {
 		tp.cantidad = reparto;
 		
 		cAux.topeImputacion = tp;
+	}
+	
+	public void repartirCertificacion(Certificacion cert, EstimacionAnio ea) {
+		Date fInicioMes = Constantes.inicioMes(this.mes, ea.anio);
+		Calendar cFInicioMes = Calendar.getInstance();
+		cFInicioMes.setTime(fInicioMes);
+		Date fFinMes = Constantes.finMes(this.mes, ea.anio);
+		Calendar cFFinMes = Calendar.getInstance();
+		cFFinMes.setTime(fFinMes);
+		
+		Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
+		while (itCf.hasNext()) {
+			CertificacionFase cf = itCf.next();
+			
+			Iterator<CertificacionFaseParcial> itCFp = cf.certificacionesParciales.iterator();
+			while (itCFp.hasNext()) {
+				CertificacionFaseParcial cfp = itCFp.next();
+				
+				Calendar cFaseParcial = Calendar.getInstance();
+				cFaseParcial.setTime(cfp.fxCertificacion);
+				
+				if (cFaseParcial.after(cFInicioMes) || cFaseParcial.before(cFFinMes)) {
+					Sistema sBuscado = estimacionesPorSistemas.get(cert.s.codigo);
+					Concepto cAux = sBuscado.listaConceptos.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
+					
+					cAux.valor = cfp.valReal;
+					cAux.valorEstimado = cfp.valEstimado;
+				}
+			}
+		}		
 	}
 	
 	public float calcularPresupuesto(MetaConcepto c, Sistema s, int tipoPres) {

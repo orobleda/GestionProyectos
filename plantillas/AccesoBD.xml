@@ -1108,5 +1108,12 @@
 			<parametro id="14" tipo="rea"></parametro>
 		</parametros>
 	</acceso>
-	
+	<acceso>
+		<query>select codigo creCodigo ,id creId ,porcentaje crePorcentaje ,nombre creNombre from TIPO_COBRO_VCT  where 1=1 and $B$and id=||1||$E$</query>
+		<id tipo="C">cConsultatipo_cobro_vct</id>
+		<tabla>TIPO_COBRO_VCT</tabla>
+		<parametros>
+			<parametro id=1 tipo="int"></parametro>
+		</parametros>
+	</acceso>	
 </accesoBD>
