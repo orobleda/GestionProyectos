@@ -5,12 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
-import model.metadatos.MetaParametro;
-import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -22,6 +19,7 @@ public class CertificacionFaseParcial implements Cargable{
 	
 	public float valReal;
 	public int certificacion_fase;
+	public CertificacionFase certificacionFase;
 	public float valEstimado;
 	public float tarifaReal;
 	public String nombre;

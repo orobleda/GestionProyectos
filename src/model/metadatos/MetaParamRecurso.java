@@ -9,7 +9,7 @@ import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
 import ui.Recursos.GestionRecursos.Tables.ParamRecurso;
 
-public class MetaParamRecurso implements Cargable, Loadable {
+public class MetaParamRecurso implements Cargable {
 	
 	public int id =0;
 	public String descripcion = "";
@@ -62,32 +62,8 @@ public class MetaParamRecurso implements Cargable, Loadable {
 	}
 
 	@Override
-	public void load() {
-		listado = new HashMap<Integer, MetaParamRecurso>();	
-			
-		ConsultaBD consulta = new ConsultaBD();
-		ArrayList<Cargable> estados = consulta.ejecutaSQL("cMetaParmRecurso", null, this);
-		
-		Iterator<Cargable> it = estados.iterator();
-		while (it.hasNext()){
-			MetaParamRecurso est = (MetaParamRecurso) it.next();
-			listado.put(est.id, est);
-		}
-	}
-	
-	@Override
 	public String toString() {
 		return descripcion;
 	}
 	
-	@Override
-	public HashMap<?, ?> getListado() {
-		return MetaParamRecurso.listado;
-	}
-	
-	@Override
-	public int getId() {
-		return this.id;
-	}
-
 }

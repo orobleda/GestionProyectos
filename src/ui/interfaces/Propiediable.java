@@ -2,10 +2,14 @@ package ui.interfaces;
 
 import java.util.ArrayList;
 
+import model.beans.Certificacion;
+import model.beans.CertificacionFase;
+import model.beans.CertificacionFaseParcial;
 import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.Parametro;
+import model.beans.ParametroCertificacion;
 import model.beans.ParametroFases;
 import model.beans.ParametroProyecto;
 import model.beans.ParametroRecurso;
@@ -54,6 +58,12 @@ public interface Propiediable {
 			return new ParametroFases();
 		if (Recurso.class.getSimpleName().equals(entidad))
 			return new ParametroRecurso();
+		if (Certificacion.class.getSimpleName().equals(entidad))
+			return new ParametroCertificacion();
+		if (CertificacionFase.class.getSimpleName().equals(entidad))
+			return new ParametroCertificacion();	
+		if (CertificacionFaseParcial.class.getSimpleName().equals(entidad))
+			return new ParametroCertificacion();		
 		return null;
 	}
 	

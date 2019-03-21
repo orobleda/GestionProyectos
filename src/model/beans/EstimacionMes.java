@@ -56,12 +56,15 @@ public class EstimacionMes {
 				Calendar cFaseParcial = Calendar.getInstance();
 				cFaseParcial.setTime(cfp.fxCertificacion);
 				
-				if (cFaseParcial.after(cFInicioMes) || cFaseParcial.before(cFFinMes)) {
+				if (cFaseParcial.after(cFInicioMes) && cFaseParcial.before(cFFinMes)) {
 					Sistema sBuscado = estimacionesPorSistemas.get(cert.s.codigo);
 					Concepto cAux = sBuscado.listaConceptos.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
 					
-					cAux.valor = cfp.valReal;
-					cAux.valorEstimado = cfp.valEstimado;
+					if (cAux.listaCertificaciones == null) {
+						cAux.listaCertificaciones = new ArrayList<CertificacionFaseParcial>();
+					}
+					
+					cAux.listaCertificaciones.add(cfp);
 				}
 			}
 		}		
@@ -157,6 +160,21 @@ public class EstimacionMes {
 					while (itEst.hasNext()) {
 						Estimacion eAux = itEst.next();
 						cSalida.valorEstimado += eAux.importe;
+					}
+					
+					if (cAux.listaCertificaciones!=null) {
+						Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
+						while (itCert.hasNext()) {
+							CertificacionFaseParcial ceAux = itCert.next();
+							if (s==null) {
+								cSalida.valorEstimado += ceAux.valEstimado;
+								cSalida.valor += ceAux.valReal;
+							} else 
+							if (ceAux.certificacionFase.certificacion.s.id == s.id) {
+								cSalida.valorEstimado += ceAux.valEstimado;
+								cSalida.valor += ceAux.valReal;
+							}
+						}
 					}
 				}
 			}

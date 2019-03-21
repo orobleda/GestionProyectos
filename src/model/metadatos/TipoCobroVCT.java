@@ -11,21 +11,21 @@ import model.utils.db.ConsultaBD;
 public class TipoCobroVCT implements Cargable, Loadable {
 
 	public int id =0;
-	public float porcentaje = 0;
+	public double porcentaje = 0;
 	public String codigo = "";
 	public String nombre = "";
 	
-	public ArrayList<Float> porcentajes = null;
+	public ArrayList<Double> porcentajes = null;
 	public ArrayList<String> nombres = null;
 		
-	public static HashMap<Integer, TipoCobroVCT> listado = null;
+	public static HashMap<String, TipoCobroVCT> listado = null;
 	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> salida = (HashMap<String, Object>) o;
 		
-		porcentajes = new ArrayList<Float>();
+		porcentajes = new ArrayList<Double>();
 		nombres = new ArrayList<String>();
 		
 		try {
@@ -53,7 +53,7 @@ public class TipoCobroVCT implements Cargable, Loadable {
 		 	if (salida.get("crePorcentaje")==null)  { 
 		 		this.porcentaje = 0;
 			} else {
-		 		this.porcentaje = (Float) salida.get("crePorcentaje");
+		 		this.porcentaje = (Double) salida.get("crePorcentaje");
 			}
 		} catch (Exception ex) {}
 				
@@ -62,7 +62,7 @@ public class TipoCobroVCT implements Cargable, Loadable {
 
 	@Override
 	public void load() {
-		listado = new HashMap<Integer, TipoCobroVCT>();	
+		listado = new HashMap<String, TipoCobroVCT>();	
 		
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Cargable> estados = consulta.ejecutaSQL("cConsultatipo_cobro_vct", null, this);
@@ -72,10 +72,10 @@ public class TipoCobroVCT implements Cargable, Loadable {
 		while (it.hasNext()){
 			TipoCobroVCT estAux = (TipoCobroVCT) it.next();
 			
-			if (listado.containsKey(estAux.id)) {
-				est = listado.get(estAux.id);
+			if (listado.containsKey(estAux.codigo)) {
+				est = listado.get(estAux.codigo);
 			} else {
-				listado.put(estAux.id, estAux);
+				listado.put(estAux.codigo, estAux);
 				est = estAux;
 			}
 			
@@ -88,7 +88,7 @@ public class TipoCobroVCT implements Cargable, Loadable {
 	public String toString() {
 		String salida = "";
 		
-		Iterator<Float> itPorcs = this.porcentajes.iterator();
+		Iterator<Double> itPorcs = this.porcentajes.iterator();
 		while (itPorcs.hasNext()) {
 			salida += itPorcs.next();
 			

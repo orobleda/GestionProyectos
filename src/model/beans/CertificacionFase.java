@@ -119,8 +119,13 @@ public class CertificacionFase implements Cargable{
 			p.parametrosCertificacionFase = pf.dameParametros(this.getClass().getSimpleName(), p.id);
 			
 			CertificacionFaseParcial cf = new CertificacionFaseParcial();
-			cf.certificacion_fase = p.id;
 			p.certificacionesParciales = cf.listado();
+			
+			Iterator<CertificacionFaseParcial> itCFP = p.certificacionesParciales.iterator();
+			while (itCFP.hasNext()) {
+				CertificacionFaseParcial cfp = itCFP.next();
+				cfp.certificacionFase = p;
+			}
 			
 			salida.add(p);
 		}

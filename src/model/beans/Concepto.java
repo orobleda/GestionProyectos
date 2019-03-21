@@ -35,6 +35,7 @@ public class Concepto implements Cargable {
 	
 	public ArrayList<Estimacion> listaEstimaciones = null;
 	public ArrayList<Imputacion> listaImputaciones = null;
+	public ArrayList<CertificacionFaseParcial> listaCertificaciones = null;
 	public TopeImputacion topeImputacion = null;
 	
 	public Concepto () {

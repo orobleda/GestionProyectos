@@ -281,13 +281,15 @@ public class AnalizadorPresupuesto {
 	
 	private void pueblaCertificaciones(HashMap<String, Certificacion> listaCertificaciones) throws Exception{
 		Certificacion cert = new Certificacion();
-		
+		cert.p = this.proyecto;
 		certificaciones = cert.listado();
 		
-		Iterator<Certificacion> itCerts = listaCertificaciones.values().iterator();
-		while (itCerts.hasNext()) {
-			Certificacion certAux = itCerts.next();
-			/*if ()*/
+		if (listaCertificaciones!=null) {
+			Iterator<Certificacion> itCerts = listaCertificaciones.values().iterator();
+			while (itCerts.hasNext()) {
+				Certificacion certAux = itCerts.next();
+				/*if ()*/
+			}
 		}
 		
 		Iterator<Coste> itCostes = this.presupuesto.costes.values().iterator();
@@ -317,7 +319,8 @@ public class AnalizadorPresupuesto {
 					
 					if (!encontrado) {
 						cert = cert.generaCertificacion(c.sistema, this.proyecto, certificaciones);
-						certificaciones.put(cert.s.codigo, cert);
+						if (cert!=null)
+							certificaciones.put(cert.s.codigo, cert);
 					}
 					
 				}					
@@ -550,7 +553,7 @@ public class AnalizadorPresupuesto {
 		proyecto.id = idProyecto;		
 		proyecto.cargaProyecto();
 		
-		Date fInicio = (Date) proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
+		Date fInicio = (Date) proyecto.getValorParametro(MetaParametro.PROYECTO_FX_INICIO).getValor();
 		Date fFin = (Date) proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();
 		
 		Calendar cInicio = Calendar.getInstance();

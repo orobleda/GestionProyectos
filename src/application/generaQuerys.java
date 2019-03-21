@@ -38,12 +38,12 @@ public class generaQuerys {
 				System.out.print(" ,");
 			}
 		}
-		System.out.println("	from  " + tabla + " where 1=1 and $B$and id=||1||$E$</query>");
+		System.out.println("	from  " + tabla + " where 1=1 $B$and id=||1||$E$</query>");
 		System.out.println("	<id tipo=\"C\">cConsulta" + tabla.toLowerCase().substring(0, 1).toUpperCase() + tabla.toLowerCase().substring(1, tabla.length())+ "</id>");
 		System.out.println("	<tabla>" + tabla + "</tabla>");
 		System.out.println("	<parametros>");
 
-		System.out.println("		<parametro id=1 tipo=\"int\"></parametro>");
+		System.out.println("		<parametro id=\"1\" tipo=\"int\"></parametro>");
 			
 		System.out.println("	</parametros>");
 		System.out.println("</acceso>");

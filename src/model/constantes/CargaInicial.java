@@ -23,8 +23,7 @@ import model.utils.xls.PlantillasXLS;
 public class CargaInicial {
 	
 	public final Loadable[] listaInicial = {new QuerysBD(), new PlantillasXLS(), new TipoProyecto(), new EstadoProyecto(), 
-											new TransicionEstados(), new MetaParamRecurso(),
-											new TipoPresupuesto(),new Sistema(), new MetaConcepto(), 
+											new TransicionEstados(), new TipoPresupuesto(),new Sistema(), new MetaConcepto(), 
 											new MetaFormatoProyecto(), new TipoParamProyecto(), new Festivo(), 
 											new Proveedor(), new MetaGerencia()	, new MetaParametro(), new TipoCobroVCT()											
 											};

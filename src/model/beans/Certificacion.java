@@ -246,10 +246,13 @@ public class Certificacion implements Cargable{
 					
 					Presupuesto presAux = new Presupuesto();
 					presAux.p = fpsd.p;
+					presAux = presAux.dameUltimaVersionPresupuesto(presAux.p);
 					presAux.cargaCostes();
 					fpsd.p.presupuestoActual = presAux;
 					Concepto c = fpsd.p.presupuestoActual.getCosteConcepto(s, MetaConcepto.porId(MetaConcepto.DESARROLLO));
 					
+					if (c==null) 
+						return null;
 					ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
 					float porc = (Float) parFas.getValor();
 					
@@ -266,25 +269,30 @@ public class Certificacion implements Cargable{
 					cf.parametrosCertificacionFase = par.dameParametros(cf.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
 					cert.certificacionesFases.add(cf);
 					
-					Parametro parGen = Parametro.listadoParametros.get(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
+					Parametro parGen = (new Parametro()).getParametro(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
 					TipoCobroVCT tpVCT = (TipoCobroVCT) parGen.getValor();
 					
 					Date fechaAnterior =  cf.fase.getFechaImplantacion();
 							
-					for (int i=(tpVCT.porcentajes.size()-1);i>0;i--) {
-						float porcentaje = tpVCT.porcentajes.get(i);
-						float valorParcial = porcentaje*valorFase/100;
+					for (int i=(tpVCT.porcentajes.size()-1);i>=0;i--) {
+						double porcentaje = tpVCT.porcentajes.get(i);
+						double valorParcial = porcentaje*valorFase/100;
 						
 						CertificacionFaseParcial cfp = new CertificacionFaseParcial();
-						cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
+						cfp.certificacionFase = cf;
+						if (i==(tpVCT.porcentajes.size()-1)) {
+							cfp.fxCertificacion = fechaAnterior;
+						} else {
+							cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
+						}
 						fechaAnterior = cfp.fxCertificacion;
 						
 						cfp.id = -1;
 						cfp.nombre = tpVCT.nombres.get(i);
 						cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
-						cfp.porcentaje = porcentaje;
+						cfp.porcentaje = new Float(porcentaje);
 						cfp.tsCertificacion = fechaAnterior.getTime();
-						cfp.valEstimado = valorParcial;
+						cfp.valEstimado = new Float(valorParcial);
 						cfp.tipoEstimacion = TipoPresupuesto.ESTIMACION;
 						
 						cf.certificacionesParciales.add(cfp);

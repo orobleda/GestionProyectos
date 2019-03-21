@@ -191,11 +191,11 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			}
 			
 			if (mpp.tipoDato == TipoDato.FORMATO_RECURSO) {
-				this.valorObjeto = Recurso.listaRecursos.get(this.valorEntero);				
+				this.valorObjeto = Recurso.listadoRecursosEstatico().get(this.valorEntero);				
 			}
 			
 			if (mpp.tipoDato == TipoDato.FORMATO_TIPO_COBRO_VCT) {
-				this.valorObjeto = TipoCobroVCT.listado.get(this.valorEntero);				
+				this.valorObjeto = TipoCobroVCT.listado.get(this.valorTexto);				
 			}
 			
 		} catch (Exception e) {
@@ -210,7 +210,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			Parametro.listadoParametros = this.dameParametros(this.getClass().getSimpleName(), Parametro.SIN_ID_ELEMENTO);
 		}
 		
-		return Parametro.listadoParametros.get(MetaParametro.PARAMETRO_ADMIN);
+		return Parametro.listadoParametros.get(codParametro);
 	}
 	
 	public HashMap<String,Parametro> dameParametros(String entidad, int idElemento) {
@@ -289,7 +289,10 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
 			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
 			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
-			if (TipoDato.FORMATO_TIPO_COBRO_VCT==this.metaParam.tipoDato) 		this.valorEntero = ((TipoCobroVCT) this.valorObjeto).id;
+			if (TipoDato.FORMATO_TIPO_COBRO_VCT==this.metaParam.tipoDato) {
+				this.valorTexto = ((TipoCobroVCT) this.valorObjeto).codigo;
+				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
+			}
 			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
 		}
 

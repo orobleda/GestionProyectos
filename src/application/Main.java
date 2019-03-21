@@ -123,7 +123,7 @@ public class Main extends Application {
 	    model3.getChildren().add(model31);
 		TreeItem<String> model311 = new TreeItem<String>("Gestión Presupuestos");
 	    model3.getChildren().add(model311);
-	    TreeItem<String> model32 = new TreeItem<String>("Control Presupuestario");
+	    TreeItem<String> model32 = new TreeItem<String>("Planificación Económica");
 	    model3.getChildren().add(model32);
 	    TreeItem<String> model34 = new TreeItem<String>("Estimaciones Por Horas");
 	    model3.getChildren().add(model34);
@@ -187,6 +187,9 @@ public class Main extends Application {
 		        
 		        if ("Gestión Presupuestos".equals(name))
 		        	controlPantalla = new GestionPresupuestos();
+		        
+		        if ("Planificación Económica".equals(name))
+		        	controlPantalla = new ControlPresupuestario();
 		        
 		        if ("Estimaciones Por Horas".equals(name))
 		        	controlPantalla = new EstimacionesInternas();

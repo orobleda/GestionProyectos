@@ -251,7 +251,8 @@ public class JornadasMes {
 		mj.listado();
 		
 		try {
-			mj = (MetaJornada) recurso.getValorParametro(MetaParametro.RECURSO_JORNADA);
+			ParametroRecurso parRec = (ParametroRecurso) recurso.getValorParametro(MetaParametro.RECURSO_JORNADA);
+			mj = (MetaJornada) parRec.getValor();
 		} catch (Exception e) {
 		}
 		
