@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.ComboBox?>
@@ -12,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ControlPresupuestario">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ControlPresupuestario">
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -91,6 +96,7 @@
               <panes>
                 <TitledPane fx:id="panTopeImput" animated="false" text="Patrón Imputaciones" />
                 <TitledPane fx:id="panDetalleProyecto" animated="false" text="Detalle Proyecto" />
+                  <TitledPane fx:id="panCertificacion" animated="false" text="Detalle Certificaciones" />
               </panes>
             </Accordion>
          </children>

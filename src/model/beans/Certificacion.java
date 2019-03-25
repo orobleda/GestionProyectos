@@ -21,6 +21,7 @@ public class Certificacion implements Cargable{
 	public int id = 0;
 	public Proyecto p;
 	public Sistema s;
+	public Concepto concepto;
 	
 	public HashMap<String,? extends Parametro> parametrosCertificacion = null;
 	public ArrayList<CertificacionFase> certificacionesFases = null;
@@ -241,6 +242,7 @@ public class Certificacion implements Cargable{
 				float valorFase = 0;
 				
 				Iterator<FaseProyectoSistemaDemanda> itFpsd = fps.demandasSistema.iterator();
+				Concepto cSistema = new Concepto();
 				while (itFpsd.hasNext()) {
 					FaseProyectoSistemaDemanda fpsd = itFpsd.next();
 					
@@ -259,8 +261,11 @@ public class Certificacion implements Cargable{
 					valorFase += c.valorEstimado*porc/100;
 				}
 				
+				cSistema.valor = valorFase; 
+				
 				if (valorFase!=0) {
 					CertificacionFase cf = new CertificacionFase();
+					cf.concepto = cSistema;
 					cf.adicional = false;
 					cf.certificacion = cert;
 					cf.fase = fp;

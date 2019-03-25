@@ -307,6 +307,7 @@ public class AnalizadorPresupuesto {
 					
 					if (this.certificaciones.containsKey(c.sistema.codigo)) {
 						cert = this.certificaciones.get(c.sistema.codigo);
+						cert.concepto = c.conceptosCoste.get(c.sistema.codigo);
 						Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
 						
 						while (itCf.hasNext()) {
@@ -319,8 +320,10 @@ public class AnalizadorPresupuesto {
 					
 					if (!encontrado) {
 						cert = cert.generaCertificacion(c.sistema, this.proyecto, certificaciones);
-						if (cert!=null)
+						if (cert!=null) {
+							cert.concepto = c.conceptosCoste.get(mc.codigo);
 							certificaciones.put(cert.s.codigo, cert);
+						}
 					}
 					
 				}					

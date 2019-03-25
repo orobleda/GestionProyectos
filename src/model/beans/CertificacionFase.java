@@ -24,6 +24,7 @@ public class CertificacionFase implements Cargable{
 	public Certificacion certificacion;
 	public int idCertificacion;
 	public boolean adicional;
+	public Concepto concepto = null;
 	
 	public HashMap<String,? extends Parametro> parametrosCertificacionFase = null;
 	public ArrayList<CertificacionFaseParcial> certificacionesParciales = null;

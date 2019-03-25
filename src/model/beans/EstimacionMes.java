@@ -96,6 +96,14 @@ public class EstimacionMes {
 							acumulado += iAux.getImporte();
 							yaImputado.put(iAux.recurso.id, iAux.recurso.id);
 						}
+						
+						if (cAux.listaCertificaciones!=null) {
+							Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
+							while (itCert.hasNext()) {
+								CertificacionFaseParcial certAux = itCert.next();
+								acumulado += certAux.valReal;							
+							}
+						}
 					}
 					
 					if (tipoPres!=ControlPresupuestario.VISTA_PRES_REAL) {
@@ -104,6 +112,14 @@ public class EstimacionMes {
 							Estimacion eAux = itEst.next();
 							if (!yaImputado.containsKey(eAux.recurso.id))
 								acumulado += eAux.importe;
+						}
+						
+						if (cAux.listaCertificaciones!=null) {
+							Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
+							while (itCert.hasNext()) {
+								CertificacionFaseParcial certAux = itCert.next();
+								acumulado += certAux.valEstimado;							
+							}
 						}
 					}
 				}

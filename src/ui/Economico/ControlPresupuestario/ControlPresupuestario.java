@@ -62,6 +62,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public static AnalizadorPresupuesto ap = null;
 	public static String mesActual = null;
 	public TopeImputaciones tp = null;
+	public ListaCertificaciones lc = null;
 	public VistaPPM vPPM = null;
 	public VistaJerarquizada vJer = null;
 		
@@ -113,6 +114,9 @@ public class ControlPresupuestario implements ControladorPantalla {
     private Accordion acResumen;
     @FXML
     private TitledPane tpDetalleProyecto;
+    
+    @FXML
+    private TitledPane panCertificacion;
 
     @FXML
     private ImageView imJerarquia;
@@ -396,6 +400,13 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        flujoBotoneraCambioTipoInfo();		        
 		        
 		        this.tp.adscribir(this,p.p);
+		        
+		        ListaCertificaciones lc = new ListaCertificaciones();
+		        loader = new FXMLLoader();
+		        loader.setLocation(new URL(lc.getFXML()));
+		        panCertificacion.setContent(loader.load());
+		        this.lc = loader.getController();
+		        this.lc.pintaCertificaciones(ControlPresupuestario.ap);
 		        
 		        Iterator<Presupuesto> itPres = cbDrcha.getItems().iterator();
 		        Presupuesto pAux = null;
