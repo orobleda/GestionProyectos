@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -158,6 +159,38 @@ public class Tarifa implements Cargable{
 		
 		return null;
 		
+	}
+	
+	public ArrayList<Tarifa> tarifas(boolean desarrollo) {
+		HashMap<String, Object> filtros  = new HashMap<String, Object>();
+		filtros.put(Tarifa.filtro_DESARROLLO, Constantes.TRUE);
+		
+		ArrayList<Tarifa> listaTarifas = listado (filtros);
+		
+		return listaTarifas;
+	}
+	
+	public Tarifa tarifaPorCoste(boolean desarrollo, float coste) {
+		HashMap<String, Object> filtros  = new HashMap<String, Object>();
+		filtros.put(Tarifa.filtro_DESARROLLO, Constantes.TRUE);
+		
+		ArrayList<Tarifa> listaTarifas = listado (filtros);
+		
+		Iterator<Tarifa> itTarifa = listaTarifas.iterator();
+		while (itTarifa.hasNext()) {
+			Tarifa t = itTarifa.next();
+			
+			if (t.costeHora == coste) {
+				return t;
+			}
+		}
+		
+		Tarifa t = new Tarifa();
+		t.costeHora = coste;
+		t.esDesarrollo = true;
+		t.fFinVig = Constantes.finMes(12, 2999);
+		t.fFinVig = Constantes.inicioMes(1, 1999);
+		return t;
 	}
 	
 	public Tarifa tarifaEstandar(Sistema s, Concepto c) {

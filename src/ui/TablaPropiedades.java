@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.util.Callback;
 import model.beans.Proveedor;
 import model.beans.Recurso;
+import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
@@ -130,6 +131,12 @@ public class TablaPropiedades extends PropertySheet{
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_TIPO_COBRO_VCT) {
 		    		return Editors.createChoiceEditor(param, TipoCobroVCT.listado.values());
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_TARIFA) {
+		    		Tarifa t = new Tarifa();
+		    		ArrayList<Tarifa> listado = t.listado(new HashMap<String, Object> () );
+		    		return Editors.createChoiceEditor(param, listado);
 		    	}
 		    	
 		    	return null;

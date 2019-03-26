@@ -73,7 +73,7 @@ public class CertificacionFaseParcial implements Cargable{
 		 	if (salida.get("cerValreal")==null)  { 
 		 		this.valReal = 0;
 			} else {
-		 		this.valReal = (Float) salida.get("cerValreal");
+		 		this.valReal = ((Double) salida.get("cerValreal")).floatValue();
 			}
 		} catch (Exception ex) {}
 		try {
@@ -87,14 +87,14 @@ public class CertificacionFaseParcial implements Cargable{
 		 	if (salida.get("cerValestimado")==null)  { 
 		 		this.valEstimado = 0;
 			} else {
-		 		this.valEstimado = (Float) salida.get("cerValestimado");
+		 		this.valEstimado = ((Double) salida.get("cerValestimado")).floatValue();
 			}
 		} catch (Exception ex) {}
 		try {
 		 	if (salida.get("cerTarifareal")==null)  { 
 		 		this.tarifaReal = 0;
 			} else {
-		 		this.tarifaReal = (Float) salida.get("cerTarifareal");
+		 		this.tarifaReal = ((Double) salida.get("cerTarifareal")).floatValue();
 			}
 		} catch (Exception ex) {}
 		try {
@@ -115,21 +115,21 @@ public class CertificacionFaseParcial implements Cargable{
 		 	if (salida.get("cerFxcertificacion")==null)  { 
 		 		this.fxCertificacion = null;
 			} else {
-		 		this.fxCertificacion = (Date) salida.get("cerFxcertificacion");
+		 		this.fxCertificacion = (Date) FormateadorDatos.parseaDato(salida.get("cerFxcertificacion").toString(),FormateadorDatos.FORMATO_FECHA);;
 			}
 		} catch (Exception ex) {}
 		try {
 		 	if (salida.get("cerTscertificacion")==null)  { 
 		 		this.tsCertificacion = 0;
 			} else {
-		 		this.tsCertificacion = (Long) salida.get("cerTscertificacion");
+		 		this.tsCertificacion = ((Double) salida.get("cerTscertificacion")).longValue();
 			}
 		} catch (Exception ex) {}
 		try {
 		 	if (salida.get("cerHorreal")==null)  { 
 		 		this.horReal = 0;
 			} else {
-		 		this.horReal = (Float) salida.get("cerHorreal");
+		 		this.horReal = ((Double) salida.get("cerHorreal")).floatValue();
 			}
 		} catch (Exception ex) {}
 		try {
@@ -150,14 +150,14 @@ public class CertificacionFaseParcial implements Cargable{
 		 	if (salida.get("cerHorestimadas")==null)  { 
 		 		this.horEstimadas = 0;
 			} else {
-		 		this.horEstimadas = (Float) salida.get("cerHorestimadas");
+		 		this.horEstimadas = ((Double) salida.get("cerHorestimadas")).floatValue();
 			}
 		} catch (Exception ex) {}
 		try {
 		 	if (salida.get("cerPorcentaje")==null)  { 
 		 		this.porcentaje = 0;
 			} else {
-		 		this.porcentaje = (Float) salida.get("cerPorcentaje");
+		 		this.porcentaje = ((Double) salida.get("cerPorcentaje")).floatValue();
 			}
 		} catch (Exception ex) {}
 		
@@ -218,7 +218,7 @@ public class CertificacionFaseParcial implements Cargable{
 		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_REAL, this.tarifaReal));
 		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_STR, this.nombre));
 		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_INT, this.tipoEstimacion));
-		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_FECHA, FormateadorDatos.formateaDato(this.fxCertificacion, TipoDato.FORMATO_FECHA)));
+		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_FECHA, this.fxCertificacion));
 		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_LONG, this.fxCertificacion.getTime()));
 		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_REAL, this.horReal));
 		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_INT, this.tarifaEstimada));
@@ -252,19 +252,18 @@ public class CertificacionFaseParcial implements Cargable{
 		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_REAL, this.tarifaReal));
 		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_STR, this.nombre));
 		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_INT, this.tipoEstimacion));
-		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_FECHA, FormateadorDatos.formateaDato(this.fxCertificacion, TipoDato.FORMATO_FECHA)));
+		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_FECHA, this.fxCertificacion));
 		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_LONG, this.fxCertificacion.getTime()));
 		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_REAL, this.horReal));
 		listaParms.add(new ParametroBD(11, ConstantesBD.PARAMBD_INT, this.tarifaEstimada));
 		listaParms.add(new ParametroBD(12, ConstantesBD.PARAMBD_INT, this.id));
 		listaParms.add(new ParametroBD(13, ConstantesBD.PARAMBD_REAL, this.horEstimadas));
 		listaParms.add(new ParametroBD(14, ConstantesBD.PARAMBD_REAL, this.porcentaje ));
-		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_ID, this.id));
+		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
 
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("uActualizaCertificacion_fase_parcial", listaParms, this, idTransaccion);
 		
-		this.id = ParametroBD.ultimoId;
 		
 		if (this.paramCertificacionFaseParcial!=null) {
 			Iterator<? extends Parametro> itpf = this.paramCertificacionFaseParcial.values().iterator();
@@ -277,6 +276,8 @@ public class CertificacionFaseParcial implements Cargable{
 				
 	}
 	
-
+	public Float calculaCoste() {
+		return this.valEstimado;
+	}
 	
 }

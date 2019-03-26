@@ -12,6 +12,8 @@ import model.metadatos.TipoDato;
 import model.metadatos.TipoPresupuesto;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.EdicionCert.EdicionCertificacion;
+import ui.Economico.ControlPresupuestario.EdicionEstImp.General;
 import ui.interfaces.Tableable;
 
 public class LineaCosteCertificacion extends ParamTable implements Tableable  {
@@ -38,14 +40,17 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
     
 	public void setConfig() {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
-		configuracionTabla.put(LineaCosteCertificacion.SISTEMA, new ConfigTabla(LineaCosteCertificacion.SISTEMA, LineaCosteCertificacion.SISTEMA, false,0, false));
-		configuracionTabla.put(LineaCosteCertificacion.FASE, new ConfigTabla(LineaCosteCertificacion.FASE, LineaCosteCertificacion.FASE, false,1, false));
-		configuracionTabla.put(LineaCosteCertificacion.FECHA, new ConfigTabla(LineaCosteCertificacion.FECHA, LineaCosteCertificacion.FECHA, false,2, false));
-		configuracionTabla.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new ConfigTabla(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, LineaCosteCertificacion.PORCENTAJE_ESTIMADO, false,3, false));
-		configuracionTabla.put(LineaCosteCertificacion.TOTAL, new ConfigTabla(LineaCosteCertificacion.TOTAL, LineaCosteCertificacion.TOTAL, false,4, false));
-		configuracionTabla.put(LineaCosteCertificacion.TIPO_ESTIMACION, new ConfigTabla(LineaCosteCertificacion.TIPO_ESTIMACION, LineaCosteCertificacion.TIPO_ESTIMACION, false,5, false));
-		configuracionTabla.put(LineaCosteCertificacion.VALOR_ESTIMADO, new ConfigTabla(LineaCosteCertificacion.VALOR_ESTIMADO, LineaCosteCertificacion.VALOR_ESTIMADO, false,6, false));
-		configuracionTabla.put(LineaCosteCertificacion.VALOR_REAL, new ConfigTabla(LineaCosteCertificacion.VALOR_REAL, LineaCosteCertificacion.VALOR_REAL, false,7, false));
+		configuracionTabla.put(LineaCosteCertificacion.SISTEMA, new ConfigTabla(LineaCosteCertificacion.SISTEMA, LineaCosteCertificacion.SISTEMA, true,0, false));
+		configuracionTabla.put(LineaCosteCertificacion.FASE, new ConfigTabla(LineaCosteCertificacion.FASE, LineaCosteCertificacion.FASE, true,1, false));
+		configuracionTabla.put(LineaCosteCertificacion.FECHA, new ConfigTabla(LineaCosteCertificacion.FECHA, LineaCosteCertificacion.FECHA, true,2, false));
+		configuracionTabla.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new ConfigTabla(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, LineaCosteCertificacion.PORCENTAJE_ESTIMADO, true,3, false));
+		configuracionTabla.put(LineaCosteCertificacion.TOTAL, new ConfigTabla(LineaCosteCertificacion.TOTAL, LineaCosteCertificacion.TOTAL, true,4, false));
+		configuracionTabla.put(LineaCosteCertificacion.TIPO_ESTIMACION, new ConfigTabla(LineaCosteCertificacion.TIPO_ESTIMACION, LineaCosteCertificacion.TIPO_ESTIMACION, true,5, false));
+		configuracionTabla.put(LineaCosteCertificacion.VALOR_ESTIMADO, new ConfigTabla(LineaCosteCertificacion.VALOR_ESTIMADO, LineaCosteCertificacion.VALOR_ESTIMADO, true,6, false));
+		configuracionTabla.put(LineaCosteCertificacion.VALOR_REAL, new ConfigTabla(LineaCosteCertificacion.VALOR_REAL, LineaCosteCertificacion.VALOR_REAL, true,7, false));
+		this.controlPantalla =  EdicionCertificacion.objetoThis;
+		((EdicionCertificacion) this.controlPantalla).esPopUp = true;
+		EdicionCertificacion.metodoRetorno = "elementoSeleccionado";
 
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaCosteCertificacion.SISTEMA, new Integer(60));
@@ -89,7 +94,7 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
    	
 	@Override
 	public Object muestraSelector() {
-		return null;
+		return this;
 	}
     
     @Override

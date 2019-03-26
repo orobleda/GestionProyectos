@@ -1013,7 +1013,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select fase cerFase ,certificacion cerCertificacion ,id cerId ,adicional cerAdicional from  CERTIFICACION_FASE where 1=1 $B$and certificacion=||1||$E$</query>
+		<query>select fase cerFase ,certificacion cerCertificacion ,id cerId ,adicional cerAdicional ,porcentaje cerPorc  from  CERTIFICACION_FASE where 1=1 $B$and certificacion=||1||$E$</query>
 		<id tipo="C">cConsultaCertificacion_fase</id>
 		<tabla>CERTIFICACION_FASE</tabla>
 		<parametros>
@@ -1021,7 +1021,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>insert into CERTIFICACION_FASE (fase ,certificacion ,id ,adicional) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$)</query>
+		<query>insert into CERTIFICACION_FASE (fase ,certificacion ,id ,adicional,porcentaje) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$,$B$||5||$E$)</query>
 		<id tipo="I">iInsertaCertificacion_fase</id>
 		<tabla>CERTIFICACION_FASE</tabla>
 		<parametros>
@@ -1029,6 +1029,7 @@
 			<parametro id="2" tipo="int"></parametro>
 			<parametro id="3" tipo="int"></parametro>
 			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
@@ -1041,7 +1042,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>UPDATE CERTIFICACION_FASE SET fase= $B$||2||$E$ , certificacion= $B$||3||$E$ , adicional= $B$||4||$E$ where id = $B$||1||$E$</query>
+		<query>UPDATE CERTIFICACION_FASE SET fase= $B$||2||$E$ , certificacion= $B$||3||$E$ , adicional= $B$||4||$E$ , porcentaje= $B$||5||$E$ where id = $B$||1||$E$</query>
 		<id tipo="U">uActualizaCertificacion_fase</id>
 		<tabla>CERTIFICACION_FASE</tabla>
 		<parametros>
@@ -1049,10 +1050,11 @@
 			<parametro id="2" tipo="int"></parametro>
 			<parametro id="3" tipo="int"></parametro>
 			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select valReal cerValreal ,certificacion_fase cerCertificacion_fase ,valEstimado cerValestimado ,tarifaReal cerTarifareal ,nombre cerNombre ,tipoEstimacion cerTipoestimacion ,fxCertificacion cerFxcertificacion ,tsCertificacion cerTscertificacion ,horReal cerHorreal ,tarifaEstimada cerTarifaestimada ,id cerId ,horEstimadas cerHorestimadas ,porcentaje cerPorcentaje	from  CERTIFICACION_FASE_PARCIAL where 1=1 $B$and id=||1||$E$</query>
+		<query>select valReal cerValreal ,certificacion_fase cerCertificacion_fase ,valEstimado cerValestimado ,tarifaReal cerTarifareal ,nombre cerNombre ,tipoEstimacion cerTipoestimacion ,fxCertificacion cerFxcertificacion ,tsCertificacion cerTscertificacion ,horReal cerHorreal ,tarifaEstimada cerTarifaestimada ,id cerId ,horEstimadas cerHorestimadas ,porcentaje cerPorcentaje	from  CERTIFICACION_FASE_PARCIAL where 1=1 $B$and certificacion_fase=||1||$E$</query>
 		<id tipo="C">cConsultaCertificacion_fase_parcial</id>
 		<tabla>CERTIFICACION_FASE_PARCIAL</tabla>
 		<parametros>

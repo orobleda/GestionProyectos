@@ -108,6 +108,7 @@ public class Certificacion implements Cargable{
 			
 			CertificacionFase cf = new CertificacionFase();
 			cf.idCertificacion = p.id;
+			cf.certificacion = p;
 			p.certificacionesFases = cf.listado();
 			
 			Iterator<CertificacionFase> itCert = p.certificacionesFases.iterator();
@@ -179,7 +180,7 @@ public class Certificacion implements Cargable{
 		}
 	}
 		
-	public void updateCertificacion(ArrayList<Certificacion> listadoFases, String idTransaccion)  throws Exception{
+	public void updateCertificacion( String idTransaccion)  throws Exception{
 
 		ConsultaBD consulta = new ConsultaBD();
 		
@@ -190,8 +191,6 @@ public class Certificacion implements Cargable{
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("uActualizaCertificacion", listaParms, this, idTransaccion);
-		
-		this.id = ParametroBD.ultimoId;
 		
 		if (this.parametrosCertificacion!=null) {
 			Iterator<? extends Parametro> itpf = this.parametrosCertificacion.values().iterator();
@@ -206,7 +205,10 @@ public class Certificacion implements Cargable{
 		while (itFps.hasNext()) {
 			CertificacionFase fps = itFps.next();
 			fps.idCertificacion = this.id;
-			fps.updateCertificacionFase(idTransaccion);
+			if (fps.id == -1)
+				fps.insertCertificacionFase(idTransaccion);
+			else
+				fps.updateCertificacionFase(idTransaccion);
 
 		}		
 	}
@@ -240,6 +242,7 @@ public class Certificacion implements Cargable{
 			
 			if (fps!=null) {
 				float valorFase = 0;
+				float valorTotal = 0;
 				
 				Iterator<FaseProyectoSistemaDemanda> itFpsd = fps.demandasSistema.iterator();
 				Concepto cSistema = new Concepto();
@@ -259,6 +262,7 @@ public class Certificacion implements Cargable{
 					float porc = (Float) parFas.getValor();
 					
 					valorFase += c.valorEstimado*porc/100;
+					valorTotal += c.valorEstimado;
 				}
 				
 				cSistema.valor = valorFase; 
@@ -272,6 +276,7 @@ public class Certificacion implements Cargable{
 					cf.certificacionesParciales = new ArrayList<CertificacionFaseParcial>();
 					cf.id = -1;
 					cf.parametrosCertificacionFase = par.dameParametros(cf.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+					cf.porcentaje = valorFase/valorTotal*100;
 					cert.certificacionesFases.add(cf);
 					
 					Parametro parGen = (new Parametro()).getParametro(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
@@ -299,6 +304,8 @@ public class Certificacion implements Cargable{
 						cfp.tsCertificacion = fechaAnterior.getTime();
 						cfp.valEstimado = new Float(valorParcial);
 						cfp.tipoEstimacion = TipoPresupuesto.ESTIMACION;
+						cfp.tarifaEstimada = -1;
+						cfp.tarifaReal = -1;
 						
 						cf.certificacionesParciales.add(cfp);
 					}
@@ -347,7 +354,66 @@ public class Certificacion implements Cargable{
 		}
 		
 		return (Date) parProFin.getValor();
-	} 
+	}
+	
+	public void guardarCertificacion() throws Exception{
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		if (this.id==-1)
+			insertCertificacion(idTransaccion);
+		else 
+			updateCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+		
+	}
+	
+	public Float calculaCoste() {
+		float acumulado = 0;
+		
+		Iterator<CertificacionFase> itCf = this.certificacionesFases.iterator();
+		while (itCf.hasNext()) {
+			CertificacionFase cf = itCf.next();			
+			acumulado += cf.calculaCoste();
+		}
+		
+		return acumulado;
+	}
+	
+	public Tarifa getTarifa() {
+		int idTarifa = -1;
+		
+		Iterator<CertificacionFase> itCf = this.certificacionesFases.iterator();
+		while (itCf.hasNext()) {
+			CertificacionFase cf = itCf.next();
+			
+			Iterator<CertificacionFaseParcial> itCfp = cf.certificacionesParciales.iterator();
+			while (itCfp.hasNext()) {
+				CertificacionFaseParcial cfp = itCfp.next();
+				
+				if (cfp.tarifaReal != -1) {
+					Tarifa t = new Tarifa();
+					t = t.tarifaPorCoste(true, cfp.tarifaReal);
+					return t;
+				} else 
+					if (cfp.tarifaEstimada!=idTarifa) {
+						Tarifa t = new Tarifa();
+						t = Tarifa.porId(cfp.tarifaEstimada);
+						if (t!=null) return t;
+					}
+			}
+		}
+		
+		try {
+			Tarifa t = (Tarifa) Parametro.getParametro(Sistema.class.getSimpleName(), this.s.id, MetaParametro.PARAMETRO_SISTEMA_TARIFA);
+			
+			return t;
+		} catch (Exception e) {
+			
+		}
+		
+		return null;
+	}
 	
 
 	

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.EdicionCert.EditCertificacion">
+   <children>
+      <HBox>
+         <children>
+            <Label prefWidth="100.0" text="Sistema" />
+            <ComboBox fx:id="cbSistema" prefWidth="250.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
+         </children>
+      </HBox>
+      <HBox>
+         <children>
+            <Label prefWidth="100.0" text="Horas" />
+            <TextField fx:id="tHoras">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <Label prefWidth="100.0" text="Tarifa" />
+            <ComboBox fx:id="cbTarifas" prefWidth="250.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <Label prefWidth="100.0" text="Importe" />
+            <TextField fx:id="tImporte">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox fx:id="hbProperties" prefHeight="100.0" prefWidth="200.0">
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="TOP_RIGHT">
+         <children>
+            <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</VBox>

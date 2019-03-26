@@ -20,6 +20,7 @@ public class TipoDato {
 	public static final int FORMATO_NAT_COSTE = 13;
 	public static final int FORMATO_RECURSO = 14;
 	public static final int FORMATO_TIPO_COBRO_VCT = 15;
+	public static final int FORMATO_TARIFA = 16;
 	
 	public static Class<?> getClassTipo(int tipo) {
 		if (tipo == FORMATO_INT) return Integer.class;

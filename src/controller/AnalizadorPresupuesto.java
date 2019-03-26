@@ -13,6 +13,7 @@ import model.beans.Coste;
 import model.beans.Estimacion;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
+import model.beans.FaseProyecto;
 import model.beans.FraccionImputacion;
 import model.beans.Imputacion;
 import model.beans.Presupuesto;
@@ -284,6 +285,30 @@ public class AnalizadorPresupuesto {
 		cert.p = this.proyecto;
 		certificaciones = cert.listado();
 		
+		if (certificaciones!=null) {
+			Iterator<Certificacion> itCerts = certificaciones.values().iterator();
+			while (itCerts.hasNext()) {
+				Certificacion certAux = itCerts.next();
+				
+				Iterator<CertificacionFase> itCf = certAux.certificacionesFases.iterator();
+				while (itCf.hasNext()) {
+					CertificacionFase cf = itCf.next();
+					
+					if (this.proyecto.fasesProyecto==null)
+						this.proyecto.cargaFasesProyecto();
+					
+					Iterator<FaseProyecto> itFs = this.proyecto.fasesProyecto.iterator();
+					while (itFs.hasNext()) {
+						FaseProyecto fp = itFs.next();
+						if (fp.id == cf.idFase) {
+							cf.fase = fp;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
 		if (listaCertificaciones!=null) {
 			Iterator<Certificacion> itCerts = listaCertificaciones.values().iterator();
 			while (itCerts.hasNext()) {
@@ -307,11 +332,15 @@ public class AnalizadorPresupuesto {
 					
 					if (this.certificaciones.containsKey(c.sistema.codigo)) {
 						cert = this.certificaciones.get(c.sistema.codigo);
-						cert.concepto = c.conceptosCoste.get(c.sistema.codigo);
+						cert.concepto = c.conceptosCoste.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
 						Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
 						
 						while (itCf.hasNext()) {
 							CertificacionFase cf = itCf.next();
+							Concepto cp = new Concepto();
+							cp.valorEstimado = cf.porcentaje * cert.concepto.valorEstimado/100;
+							cp.valor = cp.valorEstimado;
+							cf.concepto = cp;
 							if (!cf.adicional) {
 								encontrado = true;
 							}

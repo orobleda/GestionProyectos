@@ -1,15 +1,12 @@
 package model.beans;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
-import model.metadatos.MetaParametro;
-import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -25,6 +22,7 @@ public class CertificacionFase implements Cargable{
 	public int idCertificacion;
 	public boolean adicional;
 	public Concepto concepto = null;
+	public float porcentaje = 0;
 	
 	public HashMap<String,? extends Parametro> parametrosCertificacionFase = null;
 	public ArrayList<CertificacionFaseParcial> certificacionesParciales = null;
@@ -37,6 +35,7 @@ public class CertificacionFase implements Cargable{
 		fp.fase = this.fase;
 		fp.certificacion = this.certificacion;
 		fp.adicional = this.adicional;
+		fp.porcentaje = this.porcentaje;
 		
 		if (this.certificacionesParciales!=null ) {
 			fp.certificacionesParciales = new ArrayList<CertificacionFaseParcial>();
@@ -97,6 +96,13 @@ public class CertificacionFase implements Cargable{
 		 		this.adicional = (Integer) salida.get("cerAdicional") == CertificacionFase.CERTIFICACION_ADICIONAL?Constantes.TRUE:Constantes.FALSE;
 			}
 		} catch (Exception ex) {}
+		try {
+		 	if (salida.get("cerPorc")==null)  { 
+		 		this.porcentaje = 0;
+			} else {
+		 		this.porcentaje = ((Double) salida.get("cerPorc")).floatValue();
+			}
+		} catch (Exception ex) {}
 		
 		return this;
 	}
@@ -120,6 +126,7 @@ public class CertificacionFase implements Cargable{
 			p.parametrosCertificacionFase = pf.dameParametros(this.getClass().getSimpleName(), p.id);
 			
 			CertificacionFaseParcial cf = new CertificacionFaseParcial();
+			cf.certificacion_fase = p.id;
 			p.certificacionesParciales = cf.listado();
 			
 			Iterator<CertificacionFaseParcial> itCFP = p.certificacionesParciales.iterator();
@@ -167,6 +174,7 @@ public class CertificacionFase implements Cargable{
 		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_ID, this.id));
 		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.certificacion.id));
 		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, this.adicional == Constantes.TRUE? CertificacionFase.CERTIFICACION_ADICIONAL: CertificacionFase.CERTIFICACION_BASE));
+		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_REAL, this.porcentaje));
 		if (this.fase!=null)
 			listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.fase.id));
 		
@@ -203,12 +211,12 @@ public class CertificacionFase implements Cargable{
 			listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.fase.id));
 		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.certificacion.id));
 		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, this.adicional == Constantes.TRUE? CertificacionFase.CERTIFICACION_ADICIONAL: CertificacionFase.CERTIFICACION_BASE));
+		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_REAL, this.porcentaje));
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("uActualizaCertificacion_fase", listaParms, this, idTransaccion);
 		
-		this.id = ParametroBD.ultimoId;
-		
+			
 		if (this.parametrosCertificacionFase!=null) {
 			Iterator<? extends Parametro> itpf = this.parametrosCertificacionFase.values().iterator();
 			while (itpf.hasNext()) {
@@ -222,11 +230,35 @@ public class CertificacionFase implements Cargable{
 		while (itFps.hasNext()) {
 			CertificacionFaseParcial fps = itFps.next();
 			fps.certificacion_fase = this.id;
-			fps.updateCertificacionFaseParcial(idTransaccion);
+			if (fps.id == -1)
+				fps.insertCertificacionFaseParcial(idTransaccion);
+			else
+				fps.updateCertificacionFaseParcial(idTransaccion);
 
 		}		
 	}
 	
-
+	public void reparteCoste(float coste, Tarifa t) {
+		Iterator<CertificacionFaseParcial> itcfp = this.certificacionesParciales.iterator();
+		while (itcfp.hasNext()) {
+			CertificacionFaseParcial cfp = itcfp.next();
+			cfp.valEstimado = coste*cfp.porcentaje/100;
+			cfp.horEstimadas = cfp.valEstimado/t.costeHora;
+			cfp.tarifaEstimada = t.idTarifa;
+		}
+	}
+	
+	public Float calculaCoste() {
+		float acumulado = 0;
+		
+		Iterator<CertificacionFaseParcial> itCfp = this.certificacionesParciales.iterator();
+		while (itCfp.hasNext()) {
+			CertificacionFaseParcial cfp = itCfp.next();
+			
+			acumulado += cfp.calculaCoste();
+		}
+		
+		return acumulado;
+	}
 	
 }

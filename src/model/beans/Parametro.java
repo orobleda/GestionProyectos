@@ -58,6 +58,13 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_COBRO_VCT, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TARIFA, TipoDato.FORMATO_FORMATO_PROYECTO);
+	}
+	
+	public static Object getParametro(String entidad, int idElemento, String codParametro) {
+		Parametro p = new Parametro();
+		HashMap<String, Parametro> listado = p.dameParametros(entidad, idElemento);
+		return listado.get(codParametro).getValor();
 	}
 	
 	public static boolean isObjeto(int tipo) {
@@ -198,6 +205,10 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 				this.valorObjeto = TipoCobroVCT.listado.get(this.valorTexto);				
 			}
 			
+			if (mpp.tipoDato == TipoDato.FORMATO_TARIFA) {
+				this.valorObjeto = Tarifa.porId(this.valorEntero);				
+			}
+			
 		} catch (Exception e) {
 			
 		}
@@ -289,6 +300,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
 			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
 			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
+			if (TipoDato.FORMATO_TARIFA==this.metaParam.tipoDato) 		this.valorEntero = ((Tarifa) this.valorObjeto).idTarifa;
 			if (TipoDato.FORMATO_TIPO_COBRO_VCT==this.metaParam.tipoDato) {
 				this.valorTexto = ((TipoCobroVCT) this.valorObjeto).codigo;
 				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));

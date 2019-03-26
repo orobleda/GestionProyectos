@@ -63,7 +63,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase);
 	        scene.getStylesheets().add("application.css");	        
 	        
-	        AltaModRecurso c = new AltaModRecurso();
+	        ControlPresupuestario c = new ControlPresupuestario();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();
