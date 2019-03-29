@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accesoBD>
+	<acceso>
+		<query>select id tipPId, entidad tipPEntidad, cod_parm tipPCodParm, categoria tipPCategoria, obligatorio tipPObligatorio, tipoDato tipPTipoDato, nom_parm tipPNomParm from META_PARAMETRO where 1=1 $B$and entidad=||1||$E$</query>
+		<id tipo="C">cConsultaTipoParametro</id>
+		<tabla>META_PARAMETRO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametro</id>
+		<tabla>PARAMETRO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametro</id>
+		<tabla>PARAMETRO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametro</id>
+		<tabla>PARAMETRO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>	
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_PROYECTO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametroProyecto</id>
+		<tabla>PARAMETRO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO_PROYECTO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametroProyecto</id>
+		<tabla>PARAMETRO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO_PROYECTO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametroProyecto</id>
+		<tabla>PARAMETRO_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_FASES p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametroFase</id>
+		<tabla>PARAMETRO_FASES</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO_FASES where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametroFase</id>
+		<tabla>PARAMETRO_FASES</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO_FASES (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametroFase</id>
+		<tabla>PARAMETRO_FASES</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_RECURSO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO_RECURSO where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO_RECURSO (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametroRecurso</id>
+		<tabla>PARAMETRO_RECURSO</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO_CERTIFICACION p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<id tipo="C">cConsultaParametroCertificacion</id>
+		<tabla>PARAMETRO_CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from PARAMETRO_CERTIFICACION where 1=1 $B$and cod_parm=||1||$E$ $B$and idElemento=||2||$E$</query>
+		<id tipo="D">dBorraParametroCertificacion</id>
+		<tabla>PARAMETRO_CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+			<parametro id="2" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>Insert into PARAMETRO_CERTIFICACION (id, idElemento, valorTexto, valorEntero, valorReal, valorFecha, cod_parm) values ($B$||1||$E$, $B$||2||$E$, $B$||3||$E$, $B$||4||$E$, $B$||5||$E$, $B$||6||$E$, $B$||7||$E$)</query>
+		<id tipo="I">iInsertaParametroCertificacion</id>
+		<tabla>PARAMETRO_CERTIFICACION</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>	
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="rea"></parametro>
+			<parametro id="6" tipo="dat"></parametro>
+			<parametro id="7" tipo="str"></parametro>		
+		</parametros>
+	</acceso>
+</accesoBD>

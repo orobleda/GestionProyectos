@@ -77,27 +77,43 @@
       </HBox>
       <HBox alignment="TOP_RIGHT">
          <children>
-            <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../imgs/iconos/Guardar3_PAS.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="imNuevaFase" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
-               </image>
+            <HBox>
+               <children>
+                  <ComboBox fx:id="cbFases" prefWidth="150.0">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <ImageView fx:id="imNuevaFase" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
                <HBox.margin>
-                  <Insets left="10.0" />
+                  <Insets right="100.0" />
                </HBox.margin>
-            </ImageView>
-            <ImageView fx:id="imBorraFase" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../imgs/iconos/BorraFila3_PAS.png" />
-               </image>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </ImageView>
+            </HBox>
+            <HBox>
+               <children>
+                  <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../imgs/iconos/Guardar3_PAS.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imBorraFase" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../imgs/iconos/BorraFila3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
          </children>
       </HBox>
    </children>

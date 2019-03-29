@@ -1,0 +1,20 @@
+.label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: blue;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+.iconoDisabled {
+	-fx-cursor: default;
+	-fx-opacity: 0.2;
+}
+
+.iconoEnabled {
+	-fx-cursor: hand;	
+	-fx-opacity: 1.0;
+}
+
+.imJerarquia:hover {
+    -fx-graphic: url(../imgs/iconos/jerarquia_ON.png);
+}

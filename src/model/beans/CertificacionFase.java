@@ -160,7 +160,7 @@ public class CertificacionFase implements Cargable{
 		ConsultaBD consulta = new ConsultaBD();
 	
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
+		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.id));
 	
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraCertificacion_fase", listaParms, this, idTransaccion);
