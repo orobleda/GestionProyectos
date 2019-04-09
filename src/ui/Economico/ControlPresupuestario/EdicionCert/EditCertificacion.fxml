@@ -70,6 +70,14 @@
                   <Image url="@../../../../../imgs/iconos/Guardar3_PAS.png" />
                </image>
             </ImageView>
+            <ImageView fx:id="imBorrar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../imgs/iconos/Eliminar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
          </children>
       </HBox>
    </children>

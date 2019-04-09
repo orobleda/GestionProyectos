@@ -16,12 +16,18 @@ import javafx.scene.layout.HBox;
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
 import model.beans.Parametro;
+import model.beans.Proveedor;
 import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
+import model.utils.db.ConsultaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Administracion.Parametricas.GestionParametros;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.ControladorPantalla;
 import ui.popUps.PopUp;
 
@@ -57,6 +63,11 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
     private ImageView imGuardar;
     
     private GestionBotones gbGuardar;
+    
+    @FXML
+    private ImageView imBorrar;
+    
+    private GestionBotones gbBorrar;
 	
 	@FXML
 	private AnchorPane anchor;
@@ -81,12 +92,33 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
             { 
 				try {
 					guardarCertificacion();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Guardado de Certificación correcto", "Guardado Correcto", "Se guardó la certificación");
+	            	ControlPresupuestario.cargaPosicionActual();					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				//ParamTable.po.hide();
-            } }, "Desaprobar Estimación/Imputación");
+            } }, "Guardar Certificación");
 		gbGuardar.activarBoton();
+		
+		gbBorrar = new GestionBotones(imBorrar, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            { 
+				try {
+					borrarCertificacion();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Borrado de Certificación correcto", "Eliminación Correcta", "Se eliminó la certificación");
+	            	ControlPresupuestario.cargaPosicionActual();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				//ParamTable.po.hide();
+            } }, "Borrar Certificación");
+		gbBorrar.activarBoton();
 		
 		this.tImporte.focusedProperty().addListener((ov, oldV, newV) -> { 
 			if (!newV) {
@@ -149,8 +181,14 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 		Tarifa t = cert.getTarifa();
 		
 		this.cbTarifas.getItems().removeAll(this.cbTarifas.getItems());
+		
+		Parametro par = new Parametro();
+		par = par.dameParametros(cert.s.getClass().getSimpleName(), cert.s.id).get(MetaParametro.PARAMETRO_SISTEMA_PROVEEDOR);
+				
+		Proveedor prov = (Proveedor) par.getValor();
+		
 		Tarifa tAux = new Tarifa(); 
-		this.cbTarifas.getItems().addAll(tAux.tarifas(true));
+		this.cbTarifas.getItems().addAll(prov.listaTarifas());
 		
 		boolean encontrado = false;
 		Iterator<Tarifa> itTarifa = this.cbTarifas.getItems().iterator();
@@ -215,7 +253,21 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 			cf.reparteCoste(importe * cf.porcentaje/100, this.cbTarifas.getValue());
 		}
 		
-		this.certificacion.guardarCertificacion();
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		this.certificacion.guardarCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+	}
+	
+	public void borrarCertificacion() throws Exception{
+		if (this.certificacion.id==-1) return;
+				
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		this.certificacion.borraCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
 	}
 	
 	@Override

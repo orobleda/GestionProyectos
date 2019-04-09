@@ -120,6 +120,23 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 				e.printStackTrace();
 			}
 		}
+		
+		if (parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_REAL) {
+			try {
+				CertificacionFase cf = (CertificacionFase) (((LineaCosteCertificacion) parametrosPaso.get("filaDatos")).cfp).certificacionFase;
+				
+				EditCertificacionFaseParcial editarCertificacion = new EditCertificacionFaseParcial();
+		        FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(new URL(editarCertificacion.getFXML()));
+		        hbDetalle.getChildren().removeAll(hbDetalle.getChildren());
+		        hbDetalle.getChildren().add(loader.load());
+		        editarCertificacion = loader.getController();
+		        editarCertificacion.variablesPaso = this.variablesPaso;	
+		        editarCertificacion.pintaValores(null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 			
 	}
 

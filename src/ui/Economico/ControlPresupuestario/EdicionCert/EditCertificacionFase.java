@@ -2,6 +2,7 @@ package ui.Economico.ControlPresupuestario.EdicionCert;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -15,16 +16,26 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import model.beans.Certificacion;
 import model.beans.CertificacionFase;
+import model.beans.CertificacionFaseParcial;
 import model.beans.Concepto;
 import model.beans.FaseProyecto;
 import model.beans.Parametro;
+import model.beans.ParametroFases;
+import model.beans.Proveedor;
 import model.beans.Tarifa;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
+import model.metadatos.MetaParametro;
+import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Administracion.Parametricas.GestionParametros;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.ControladorPantalla;
 import ui.popUps.PopUp;
 
@@ -64,9 +75,13 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
     private GestionBotones gbGuardar;
 
     @FXML
+    private ImageView imMoverFase;   
+    private GestionBotones gbMoverFase;
+
+    @FXML
     private ImageView imNuevaFase;   
     private GestionBotones gbNuevaFase;
-
+    
     @FXML
     private ImageView imBorraFase;    
     private GestionBotones gbBorraFase;
@@ -76,7 +91,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 	
     @FXML
     private ComboBox<FaseProyecto> cbFases;
-	
+    	
 	public EditCertificacionFase (){
 	}
 	
@@ -99,6 +114,10 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
             { 
 				try {
 					borraFase();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Borrado de Certificación correcto", "Eliminación Correcta", "Se eliminó la certificación");
+	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -112,12 +131,50 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
             { 
 				try {
 					guardarCertificacion();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Guardado de Certificación correcto", "Guardado Correcto", "Se guardó la certificación");
+	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				//ParamTable.po.hide();
             } }, "Guardar Cambios fase");
 		gbGuardar.activarBoton();
+		
+		gbMoverFase = new GestionBotones(imMoverFase, "MoverFase3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            { 
+				try {
+					moverCertificacion();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Cambio de fase correcto", "Cambio de fase Correcto", "Se cambió la fase correctamente");
+	            	ControlPresupuestario.cargaPosicionActual();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				//ParamTable.po.hide();
+            } }, "Cambiar fase");
+		gbMoverFase.activarBoton();
+		
+		gbNuevaFase = new GestionBotones(imNuevaFase, "NuevaFila3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            { 
+				try {
+					nuevaCertificacion();
+					ControlPresupuestario.salvaPosicionActual();
+	            	ParamTable.po.hide();
+	            	Dialogo.alert("Añadida Fase", "Fase añadida correctamente", "Se añadió la fase correctamente");
+	            	ControlPresupuestario.cargaPosicionActual();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				//ParamTable.po.hide();
+            } }, "Borrar Asignación de fase");
+		gbNuevaFase.activarBoton();
 		
 		this.tPorcentaje.focusedProperty().addListener((ov, oldV, newV) -> { 
 			if (!newV) {
@@ -199,6 +256,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 				}
 			}
 		});
+		
 	}
 	
 	public void pintaValores(CertificacionFase cert) throws Exception{
@@ -214,16 +272,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		while (itFp.hasNext()) {
 			FaseProyecto fp = itFp.next();
 			
-			boolean encontrado = false;
-			Iterator<CertificacionFase> itFpAux = this.certificacion.certificacion.certificacionesFases.iterator();
-			while (itFpAux.hasNext()) {
-				CertificacionFase cf = itFpAux.next();
-				if (cf.fase!=null && cf.fase.id == fp.id) {
-					encontrado = true;
-				}
-			}
-			
-			if (!encontrado)
+			if (fp.id != this.certificacion.fase.id)
 				listaFases.add(fp);
 		}
 		
@@ -235,9 +284,13 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		this.tPorcentaje.setText(FormateadorDatos.formateaDato(cert.porcentaje,TipoDato.FORMATO_PORC));
 		this.chkAdicional.setSelected(cert.adicional);
 		
-		this.cbTarifas.getItems().removeAll(this.cbTarifas.getItems());
+		Parametro par = new Parametro();
+		par = par.dameParametros(cert.certificacion.s.getClass().getSimpleName(), cert.certificacion.s.id).get(MetaParametro.PARAMETRO_SISTEMA_PROVEEDOR);
+				
+		Proveedor prov = (Proveedor) par.getValor();
+		
 		Tarifa tAux = new Tarifa(); 
-		this.cbTarifas.getItems().addAll(tAux.tarifas(true));
+		this.cbTarifas.getItems().addAll(prov.listaTarifas());
 		
 		boolean encontrado = false;
 		Iterator<Tarifa> itTarifa = this.cbTarifas.getItems().iterator();
@@ -264,6 +317,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		this.tImporte.setText(FormateadorDatos.formateaDato(coste,TipoDato.FORMATO_MONEDA));
 		
 		cargaPropiedades(cert.id, cert);
+		
 	}
 	
 	private void cargaPropiedades(int idCertificacion, Object claseMostrar) throws Exception {
@@ -281,16 +335,128 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
         variablesPaso.put("entidadBuscar", claseMostrar.getClass().getSimpleName());
         variablesPaso.put("subventana", new Boolean(true));
         
-        if (idCertificacion==-1)
+        if (idCertificacion!=-1)
            variablesPaso.put("idEntidadBuscar", idCertificacion);
         else
            variablesPaso.put("idEntidadBuscar", Parametro.SOLO_METAPARAMETROS);
         
         variablesPaso.put("ancho", new Double(800));
         variablesPaso.put("alto", new Double(200));
+        
+        variablesPaso.put(GestionParametros.PARAMETROS_DIRECTOS,Constantes.TRUE);
+		variablesPaso.put(GestionParametros.LISTA_PARAMETROS,this.certificacion.parametrosCertificacionFase);
+        
         gestPar.setParametrosPaso(variablesPaso);
         
         listaParametros = gestPar.listaParametros;
+        certificacion.parametrosCertificacionFase = listaParametros;
+	}
+	
+	public void nuevaCertificacion() throws Exception{
+		
+		FaseProyecto fp = this.cbFases.getValue();
+		
+		if (fp==null) return;
+		
+		Iterator<CertificacionFase> itCf = this.certificacion.certificacion.certificacionesFases.iterator();
+		
+		while (itCf.hasNext()) {
+			CertificacionFase cf = itCf.next();
+			
+			if (cf.fase.id == fp.id) {
+				return;
+			}
+		}
+		
+		Certificacion cert = new Certificacion();
+		cert.p = this.certificacion.certificacion.p;
+				
+		this.certificacion.certificacion.generaCertificacionFaseVacia(this.certificacion.certificacion.s, this.certificacion.certificacion.p, this.certificacion.certificacion, fp);
+				
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		Parametro par = this.listaParametros.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
+		if (par.modificado)
+			par.modificado = false;
+				
+		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+	}
+	
+	public void moverCertificacion() throws Exception{
+		
+		FaseProyecto fp = this.cbFases.getValue();
+		if (fp==null) return;
+		CertificacionFase cf = null;
+		Iterator<CertificacionFase> itCf = this.certificacion.certificacion.certificacionesFases.iterator();
+		
+		while (itCf.hasNext()) {
+			CertificacionFase cfAux = itCf.next();
+			if (cfAux.fase.id == fp.id) {
+				cf = cfAux;
+			}
+		}
+		
+		if (cf==null) {
+			this.certificacion.fase = fp;
+			if (fp.parametrosFase== null) {
+				ParametroFases pf = new ParametroFases();
+				fp.parametrosFase = pf.dameParametros(pf.getClass().getSimpleName(), fp.id);
+			}
+			Date fFin = (Date) ((Parametro) fp.parametrosFase.get(MetaParametro.FASE_PROYECTO_FX_IMPLANTACION)).getValor();
+			
+			Iterator<CertificacionFaseParcial> itCfp = this.certificacion.certificacionesParciales.iterator();
+			while (itCfp.hasNext()) {
+				CertificacionFaseParcial cfp = itCfp.next();
+				cfp.fxCertificacion = fFin;
+				fFin = this.certificacion.certificacion.calcularFechaPrevia(fFin);
+			}
+		} else {
+			float importe = 0;
+			
+			Iterator<CertificacionFaseParcial> itCfp = this.certificacion.certificacionesParciales.iterator();
+			while (itCfp.hasNext()) {
+				CertificacionFaseParcial cfp = itCfp.next();
+				
+				importe += cfp.valEstimado;
+			}
+			
+			itCfp = cf.certificacionesParciales.iterator();
+			while (itCfp.hasNext()) {
+				CertificacionFaseParcial cfp = itCfp.next();
+				
+				importe += cfp.valEstimado;
+			}
+			
+			cf.reparteCoste(importe, this.cbTarifas.getValue());
+		}
+		
+		
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		Parametro par = this.listaParametros.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
+		if (par.modificado)
+			par.modificado = false;
+		
+		this.certificacion.borraCertificacionFase(idTransaccion);
+		
+		ArrayList<CertificacionFase> lCf = new ArrayList<CertificacionFase>();
+				
+		itCf = this.certificacion.certificacion.certificacionesFases.iterator();
+		
+		while (itCf.hasNext()) {
+			CertificacionFase cfAux = itCf.next();
+			if (this.certificacion != cfAux) {
+				lCf.add(cfAux);
+			}
+		}
+		
+		this.certificacion.certificacion.certificacionesFases = lCf;
+		
+		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
 	}
 	
 	public void guardarCertificacion() throws Exception{
@@ -308,7 +474,15 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		
 		this.certificacion.certificacion.concepto.valorEstimado = importeTotal;
 		
-		this.certificacion.certificacion.guardarCertificacion();
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		Parametro par = this.listaParametros.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
+		if (par.modificado)
+			this.certificacion.cambiaTipoVCT( (TipoCobroVCT) par.getValor(),idTransaccion);
+		
+		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
 	}
 	
 	public void borraFase() throws Exception{
@@ -336,10 +510,14 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		}
 		
 		this.certificacion.certificacion.certificacionesFases = listCf;
+		
 		String idTransaccion = ConsultaBD.getTicket();
+		
 		this.certificacion.borraCertificacionFase(idTransaccion);
+		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
+		
 		ConsultaBD.ejecutaTicket(idTransaccion);
-		this.certificacion.certificacion.guardarCertificacion();
+		
 	}
 	
 	@Override

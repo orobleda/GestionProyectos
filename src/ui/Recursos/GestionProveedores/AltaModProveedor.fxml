@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -18,41 +19,52 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionTarifas.AsignacionTarifas">
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionProveedores.AltaModProveedor">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
             <HBox>
                <children>
-                  <Label prefWidth="100.0" text="Recurso">
+                  <Label text="Elemento">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                      <HBox.margin>
-                        <Insets right="25.0" />
+                        <Insets left="15.0" right="50.0" />
                      </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
                   </Label>
-                  <ComboBox fx:id="cbRecurso" prefWidth="300.0" />
+                  <ComboBox fx:id="cbListaRec" prefWidth="450.0">
+                     <opaqueInsets>
+                        <Insets left="15.0" />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="15.0" />
+                     </padding>
+                  </ComboBox>
                </children>
                <padding>
-                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                  <Insets bottom="15.0" />
                </padding>
             </HBox>
             <HBox>
                <children>
-                  <RadioButton fx:id="rbUsuarios" mnemonicParsing="false" text="Usuarios" />
-                  <RadioButton fx:id="rbProveedores" mnemonicParsing="false" text="Proveedores">
+                  <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/aniadir.png" />
+                     </image>
                      <HBox.margin>
-                        <Insets left="15.0" />
+                        <Insets right="25.0" />
                      </HBox.margin>
-                  </RadioButton>
-               </children>
-               <padding>
-                  <Insets left="25.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="TOP_RIGHT">
-               <children>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
                   <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/buscar.png" />
@@ -62,72 +74,67 @@
                      </cursor>
                   </ImageView>
                </children>
+               <VBox.margin>
+                  <Insets bottom="25.0" left="650.0" />
+               </VBox.margin>
             </HBox>
          </children>
          <BorderPane.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </BorderPane.margin>
       </VBox>
    </top>
    <center>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox fx:id="vbDetalle" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Id">
+                  <Label prefWidth="120.0" text="Id">
                      <HBox.margin>
-                        <Insets left="15.0" right="50.0" />
+                        <Insets />
                      </HBox.margin>
-                     <padding>
-                        <Insets right="38.0" />
-                     </padding>
                   </Label>
-                  <TextField fx:id="tID" disable="true" editable="false" />
+                  <TextField fx:id="tID" editable="false" />
                </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
-            <HBox prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Nombre">
+                  <Label prefWidth="120.0" text="Nombre Corto">
                      <HBox.margin>
-                        <Insets left="15.0" right="55.0" />
+                        <Insets />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="tNombreProy" disable="true" maxWidth="700.0" prefWidth="400.0" />
+                  <TextField fx:id="tNombreCorto" prefWidth="200.0" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" top="15.0" />
                </VBox.margin>
             </HBox>
-            <HBox alignment="TOP_RIGHT">
+            <HBox>
                <children>
-                  <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/aniadir.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
+                  <Label prefWidth="120.0" text="Descripción">
                      <HBox.margin>
-                        <Insets right="25.0" />
+                        <Insets />
                      </HBox.margin>
-                  </ImageView>
+                  </Label>
+                  <TextField fx:id="tNombre" prefWidth="600.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="tRelaciones" minHeight="300.0" prefHeight="500.0" prefWidth="600.0">
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                  </TableView>
+                  <VBox fx:id="tParametros">
+                     <HBox.margin>
+                        <Insets top="25.0" />
+                     </HBox.margin>
+                  </VBox>
                </children>
-               <VBox.margin>
-                  <Insets left="15.0" top="15.0" />
-               </VBox.margin>
             </HBox>
             <HBox>
                <children>
-                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/guardar.jpg" />
                      </image>
@@ -135,7 +142,7 @@
                         <Insets left="630.0" right="25.0" />
                      </HBox.margin>
                   </ImageView>
-                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/eliminar.png" />
                      </image>
@@ -146,11 +153,8 @@
                </VBox.margin>
             </HBox>
          </children>
-         <padding>
-            <Insets top="20.0" />
-         </padding>
          <BorderPane.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </BorderPane.margin>
       </VBox>
    </center>

@@ -9,7 +9,7 @@ import model.beans.CertificacionFaseParcial;
 import model.beans.Concepto;
 import model.constantes.FormateadorDatos;
 import model.metadatos.TipoDato;
-import model.metadatos.TipoPresupuesto;
+import model.metadatos.TipoEnumerado;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Economico.ControlPresupuestario.EdicionCert.EdicionCertificacion;
@@ -78,7 +78,7 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
    				}
    				return FormateadorDatos.formateaDato(0,TipoDato.FORMATO_MONEDA);
    			} 
-   			if (LineaCosteCertificacion.TIPO_ESTIMACION.equals(campo))  return TipoPresupuesto.listado.get(this.cfp.tipoEstimacion).toString();
+   			if (LineaCosteCertificacion.TIPO_ESTIMACION.equals(campo))  return TipoEnumerado.listadoIds.get(this.cfp.tipoEstimacion).toString();
    			if (LineaCosteCertificacion.PORCENTAJE_ESTIMADO.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.porcentaje,TipoDato.FORMATO_PORC);
    			if (LineaCosteCertificacion.VALOR_ESTIMADO.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.valEstimado,TipoDato.FORMATO_MONEDA);
    			if (LineaCosteCertificacion.VALOR_REAL.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.valReal,TipoDato.FORMATO_MONEDA);

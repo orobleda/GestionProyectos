@@ -8,7 +8,7 @@ import model.interfaces.Cargable;
 import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
 
-public class TipoCobroVCT implements Cargable, Loadable {
+public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 
 	public int id =0;
 	public double porcentaje = 0;
@@ -19,6 +19,7 @@ public class TipoCobroVCT implements Cargable, Loadable {
 	public ArrayList<String> nombres = null;
 		
 	public static HashMap<String, TipoCobroVCT> listado = null;
+	public static HashMap<Integer, TipoCobroVCT> listadoIds = null;
 	
 	@Override
 	public Cargable cargar(Object o) {
@@ -86,7 +87,7 @@ public class TipoCobroVCT implements Cargable, Loadable {
 	
 	@Override
 	public String toString() {
-		String salida = "";
+		String salida = this.codigo + " ";
 		
 		Iterator<Double> itPorcs = this.porcentajes.iterator();
 		while (itPorcs.hasNext()) {
@@ -107,6 +108,11 @@ public class TipoCobroVCT implements Cargable, Loadable {
 	@Override
 	public int getId() {
 		return this.id;
+	}
+
+	@Override
+	public int compareTo(Object arg0) {
+		return this.codigo.compareTo(((TipoCobroVCT)arg0).codigo);
 	}
 
 }

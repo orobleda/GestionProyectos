@@ -14,8 +14,10 @@ import model.beans.Estimacion;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
 import model.beans.FaseProyecto;
+import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.FraccionImputacion;
 import model.beans.Imputacion;
+import model.beans.ParametroFases;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
@@ -339,7 +341,26 @@ public class AnalizadorPresupuesto {
 							CertificacionFase cf = itCf.next();
 							Concepto cp = new Concepto();
 							cp.valorEstimado = cf.porcentaje * cert.concepto.valorEstimado/100;
-							cp.valor = cp.valorEstimado;
+							
+							Iterator<FaseProyectoSistemaDemanda> itFases = cf.fase.fasesProyecto.get(c.sistema.codigo).demandasSistema.iterator();
+							float valorEstimado = 0;
+							while (itFases.hasNext()) {
+								FaseProyectoSistemaDemanda fpsd = itFases.next();
+								Presupuesto presAux = new Presupuesto();
+								presAux.p = fpsd.p;
+								presAux = presAux.dameUltimaVersionPresupuesto(presAux.p);
+								presAux.cargaCostes();
+								fpsd.p.presupuestoActual = presAux;
+								Concepto caux = fpsd.p.presupuestoActual.getCosteConcepto(c.sistema, MetaConcepto.porId(MetaConcepto.DESARROLLO));
+								
+								if (caux!=null) { 
+									ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+									float porc = (Float) parFas.getValor();
+									valorEstimado += caux.valorEstimado*porc/100;
+								}
+							}							
+							
+							cp.valor = valorEstimado;
 							cf.concepto = cp;
 							if (!cf.adicional) {
 								encontrado = true;

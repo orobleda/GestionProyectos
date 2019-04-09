@@ -31,7 +31,7 @@ import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
-import model.metadatos.TipoPresupuesto;
+import model.metadatos.TipoEnumerado;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
@@ -222,7 +222,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		pApunteContable.presupuestoActual.descripcion = "Apunte Contable";
 		pApunteContable.presupuestoActual.fxAlta = Constantes.fechaActual();
 		pApunteContable.presupuestoActual.p = pApunteContable;
-		pApunteContable.presupuestoActual.tipo = TipoPresupuesto.listado.get(1);
+		pApunteContable.presupuestoActual.tipo = TipoEnumerado.listadoIds.get(TipoEnumerado.TIPO_PRESUPUESTO_EST);
 		pApunteContable.presupuestoActual.version = 0;
 		
 		proyOperado = new Proyecto();
@@ -333,7 +333,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		if (this.proyOperado.modo == Proyecto.ANIADIR) {
 			this.proyOperado.nombre = this.tNomProyecto.getText();
 			this.presOperado.descripcion = this.tVsProyecto.getText();
-			this.presOperado.tipo = TipoPresupuesto.listado.get(1);
+			this.presOperado.tipo = TipoEnumerado.listadoIds.get(TipoEnumerado.TIPO_PRESUPUESTO_EST);
 			this.presOperado.version = 1;
 			this.proyOperado.presupuestoActual = this.presOperado;
 			

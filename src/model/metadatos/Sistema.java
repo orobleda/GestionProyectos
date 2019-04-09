@@ -6,6 +6,9 @@ import java.util.Iterator;
 
 import model.beans.Concepto;
 import model.beans.Estimacion;
+import model.beans.Parametro;
+import model.beans.Proveedor;
+import model.beans.Tarifa;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
@@ -88,6 +91,23 @@ public class Sistema implements Cargable, Loadable {
 		t.descripcion = Sistema.TODOS;
 		t.responsable = 0;
 		return t;
+	}
+	
+	public Tarifa getTarifa() {
+		Parametro par = new Parametro();
+		par = par.dameParametros(this.getClass().getSimpleName(), this.id).get(MetaParametro.PARAMETRO_SISTEMA_PROVEEDOR);
+				
+		Proveedor prov = (Proveedor) par.getValor();
+		
+		if (prov!=null) {
+			ArrayList<Tarifa> listaTarifas = prov.listaTarifas();
+			
+			if (listaTarifas.size()!=0) {
+				return listaTarifas.get(0);
+			} else
+				return null;
+			
+		} else return null;
 	}
 	
 	public static Sistema get(String codigo) {

@@ -19,8 +19,15 @@ public class TipoDato {
 	public static final int FORMATO_METAJORNADA = 12;
 	public static final int FORMATO_NAT_COSTE = 13;
 	public static final int FORMATO_RECURSO = 14;
-	public static final int FORMATO_TIPO_COBRO_VCT = 15;
 	public static final int FORMATO_TARIFA = 16;
+	public static final int FORMATO_COBRO_VCT = 17;
+	
+	public static final int FORMATO_TIPO_VCT = 1000;
+	
+	public static boolean isEnumerado (int tipo) {
+		if (tipo>1000) return true;
+		else return false;
+	}
 	
 	public static Class<?> getClassTipo(int tipo) {
 		if (tipo == FORMATO_INT) return Integer.class;

@@ -19,6 +19,7 @@ import model.metadatos.MetaJornada;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoEnumerado;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -57,8 +58,9 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_METAJORNADA, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_FORMATO_PROYECTO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_COBRO_VCT, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_VCT, TipoDato.FORMATO_TIPO_VCT);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TARIFA, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_COBRO_VCT, TipoDato.FORMATO_FORMATO_PROYECTO);
 	}
 	
 	public static Object getParametro(String entidad, int idElemento, String codParametro) {
@@ -201,12 +203,20 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 				this.valorObjeto = Recurso.listadoRecursosEstatico().get(this.valorEntero);				
 			}
 			
-			if (mpp.tipoDato == TipoDato.FORMATO_TIPO_COBRO_VCT) {
+			if (mpp.tipoDato == TipoDato.FORMATO_TIPO_VCT) {
 				this.valorObjeto = TipoCobroVCT.listado.get(this.valorTexto);				
 			}
 			
 			if (mpp.tipoDato == TipoDato.FORMATO_TARIFA) {
 				this.valorObjeto = Tarifa.porId(this.valorEntero);				
+			}
+			
+			if (mpp.tipoDato == TipoDato.FORMATO_COBRO_VCT) {
+				this.valorObjeto = TipoCobroVCT.listado.get(this.valorTexto);				
+			}
+			
+			if (TipoDato.isEnumerado(mpp.tipoDato)) {
+				this.valorObjeto = TipoEnumerado.listadoIds.get(this.valorEntero);				
 			}
 			
 		} catch (Exception e) {
@@ -301,13 +311,16 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
 			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
 			if (TipoDato.FORMATO_TARIFA==this.metaParam.tipoDato) 		this.valorEntero = ((Tarifa) this.valorObjeto).idTarifa;
-			if (TipoDato.FORMATO_TIPO_COBRO_VCT==this.metaParam.tipoDato) {
+			if (TipoDato.FORMATO_COBRO_VCT==this.metaParam.tipoDato) {
 				this.valorTexto = ((TipoCobroVCT) this.valorObjeto).codigo;
 				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
-			}
+			}			
 			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
 		}
-
+		if (TipoDato.isEnumerado(this.metaParam.tipoDato)) 	{
+			this.valorEntero = ((TipoEnumerado) this.valorObjeto).id;
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+		}
 		if (TipoDato.FORMATO_REAL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_MONEDA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_REAL,this.valorReal));
 		if (TipoDato.FORMATO_FECHA==this.metaParam.tipoDato) listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_FECHA,this.valorfecha));

@@ -21,11 +21,13 @@ public class RelRecursoTarifa implements Cargable{
 	public int id = 0;
 	
 	public Recurso recurso = null;
+	public Proveedor proveedor = null;
 	public Tarifa tarifa = null;
 	public Date fechaInicio = null;
 	public Date fechaFin = null;
 	public boolean modificado = false;
 	public boolean vigente = false; 
+	public boolean usuario = false; 
 
 	public RelRecursoTarifa() {
     	id = RelRecursoTarifa.identificadorUnico;
@@ -48,8 +50,8 @@ public class RelRecursoTarifa implements Cargable{
 		}
 	}
 	
-	public RelRecursoTarifa tarifaVigente(ArrayList<RelRecursoTarifa> listaTarifas,int idRecurso) { 
-		if (listaTarifas==null) listaTarifas = buscaRelacion(idRecurso);
+	public RelRecursoTarifa tarifaVigente(ArrayList<RelRecursoTarifa> listaTarifas,int idRecurso, boolean proveedor) { 
+		if (listaTarifas==null) listaTarifas = buscaRelacion(idRecurso, proveedor);
 		
 		Date fechaActual = new Date();
 		Calendar cActual = Calendar.getInstance();
@@ -76,11 +78,14 @@ public class RelRecursoTarifa implements Cargable{
 		return rec;
     }
 	
-	public ArrayList<RelRecursoTarifa> buscaRelacion(int idRecurso) { 			
+	public ArrayList<RelRecursoTarifa> buscaRelacion(int idRecurso, boolean proveedor) { 			
 		ConsultaBD consulta = new ConsultaBD();
 		
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,idRecurso));
+		if (proveedor)
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,idRecurso));
+		else
+			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,idRecurso));
 		
 		ArrayList<Cargable> relRecursoTarifas = consulta.ejecutaSQL("cRelTarifaRec", listaParms, this);
 		
@@ -98,7 +103,10 @@ public class RelRecursoTarifa implements Cargable{
 	public void insertaRelacion(String idTransaccion) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));
-		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
+		if (this.usuario)
+			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
+		else
+			listaParms.add(new ParametroBD(8,ConstantesBD.PARAMBD_INT,this.proveedor.id));
 		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
 		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_FECHA,this.fechaInicio));
 		listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_REAL,new Double(this.fechaInicio.getTime())));
@@ -113,8 +121,11 @@ public class RelRecursoTarifa implements Cargable{
 	
 	public void updateRelacion(String idTransaccion) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
-		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
+		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));		
+		if (this.usuario)
+			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
+		else
+			listaParms.add(new ParametroBD(8,ConstantesBD.PARAMBD_INT,this.proveedor.id));
 		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
 		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_FECHA,this.fechaInicio));
 		listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_REAL,new Double(this.fechaInicio.getTime())));
@@ -130,6 +141,7 @@ public class RelRecursoTarifa implements Cargable{
 	
 	public void deleteRelacion(int idElemento) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		
 		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idElemento));
 				
 		ConsultaBD consulta = new ConsultaBD();
@@ -146,10 +158,21 @@ public class RelRecursoTarifa implements Cargable{
 			
 			if (salida.get("reltrIdRec")==null) this.recurso = null; else try { 
 					int id = (Integer) salida.get("reltrIdRec");
-					Recurso rec = new Recurso();
-					rec.id = id;
-					rec.cargaRecurso();
-					this.recurso = rec;
+					if (id!=0) {
+						Recurso rec = new Recurso();
+						rec.id = id;
+						rec.cargaRecurso();
+						this.recurso = rec;
+						this.usuario = true;
+					}
+			} catch (Exception e) {}
+			
+			if (salida.get("reltrIdProv")==null) this.proveedor = null; else try { 
+				int id = (Integer) salida.get("reltrIdProv");
+				if (id!=0) {
+					this.proveedor = Proveedor.listadoId.get(id);
+					this.usuario = false;
+				}
 			} catch (Exception e) {}
 			
 			if (salida.get("reltrIdTar")==null) this.tarifa = null; else try { 

@@ -65,7 +65,11 @@ public class InformaAsignacion implements ControladorPantalla {
 		Tarifa t = new Tarifa();
 		
 		HashMap<String, Object> filtros = new HashMap<String, Object> ();
-		filtros.put(Tarifa.filtro_DESARROLLO, new Boolean(false));
+		
+		if (AsignacionTarifas.proveedores)
+			filtros.put(Tarifa.filtro_DESARROLLO, new Boolean(true));
+		else
+			filtros.put(Tarifa.filtro_DESARROLLO, new Boolean(false));
 		
 		ArrayList<Tarifa> tarifas = t.listado(filtros);
 		

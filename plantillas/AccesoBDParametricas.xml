@@ -1,5 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <accesoBD>
+<acceso>
+	<query>select codigo metCodigo ,id_agrupacion metId_agrupacion ,persistir metPersistir ,valor metValor ,nombre_agrupacion metNombre_agrupacion ,id metId	from  META_TIPO_ENUMERADO where 1=1 $B$and id=||1||$E$</query>
+	<id tipo="C">cConsultaMeta_tipo_enumerado</id>
+	<tabla>META_TIPO_ENUMERADO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into META_TIPO_ENUMERADO (codigo ,id_agrupacion ,persistir ,valor ,nombre_agrupacion ,id) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$)</query>
+	<id tipo="I">iInsertaMeta_tipo_enumerado</id>
+	<tabla>META_TIPO_ENUMERADO</tabla>
+	<parametros>
+		<parametro id="1" tipo="str"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+		<parametro id="4" tipo="str"></parametro>
+		<parametro id="5" tipo="str"></parametro>
+		<parametro id="6" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from META_TIPO_ENUMERADO where 1=1 $B$and id=||1||$E$ $B$and id_agrupacion=||2|| and persistir!=1$E$</query>
+	<id tipo="D">dBorraMeta_tipo_enumerado</id>
+	<tabla>META_TIPO_ENUMERADO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>UPDATE META_TIPO_ENUMERADO SET codigo= $B$||2||$E$ , id_agrupacion= $B$||3||$E$ , valor= $B$||4||$E$ , nombre_agrupacion= $B$||5||$E$ , id= $B$||6||$E$ where id = $B$||1||$E$</query>
+	<id tipo="U">uActualizaMeta_tipo_enumerado</id>
+	<tabla>META_TIPO_ENUMERADO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="1" tipo="String"></parametro>
+		<parametro id="2" tipo="String"></parametro>
+		<parametro id="3" tipo="String"></parametro>
+		<parametro id="4" tipo="String"></parametro>
+		<parametro id="5" tipo="int"></parametro>
+	</parametros>
+</acceso>
 	<acceso>
 		<query>select id tipPId, entidad tipPEntidad, cod_parm tipPCodParm, categoria tipPCategoria, obligatorio tipPObligatorio, tipoDato tipPTipoDato, nom_parm tipPNomParm from META_PARAMETRO where 1=1 $B$and entidad=||1||$E$</query>
 		<id tipo="C">cConsultaTipoParametro</id>

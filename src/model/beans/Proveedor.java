@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
+import model.utils.db.ParametroBD;
 
 public class Proveedor implements Cargable, Loadable {
 
@@ -15,7 +17,9 @@ public class Proveedor implements Cargable, Loadable {
 	public String nomCorto = "";
 		
 	public static HashMap<String, Proveedor> listado = null;
-	public static HashMap<Integer, Proveedor> listadoId = null;
+	public static HashMap<Integer, Proveedor> listadoId = null;	
+
+	public HashMap<String,? extends Parametro> listadoParametros = null;
 	
 	@Override
 	public Cargable cargar(Object o) {
@@ -55,6 +59,73 @@ public class Proveedor implements Cargable, Loadable {
 		}
 		
 		return null;
+	}
+	
+	public ArrayList<Tarifa> listaTarifas() {
+		RelRecursoTarifa rrt = new RelRecursoTarifa();
+		Iterator<RelRecursoTarifa> itRel = rrt.buscaRelacion(this.id, true).iterator();
+		
+		ArrayList<Tarifa> salida = new ArrayList<Tarifa>();
+		
+		while (itRel.hasNext()) {
+			rrt = itRel.next();
+			salida.add(rrt.tarifa);
+		}
+		
+		return salida;
+	}
+	
+	public boolean guardaProveedor(String idTransaccion) {
+		boolean modificacion = true;
+		
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		String cadConexion = "";
+		
+		if (this.id == -1) { 
+			ParametroBD pBD = new ParametroBD(2,ConstantesBD.PARAMBD_ID,this.id);
+			listaParms.add(pBD);
+			cadConexion = "iInsertaProveedor";
+			modificacion = false;
+		} else {
+			ParametroBD pBD = new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.id);
+			listaParms.add(pBD);
+			cadConexion = "uActualizaProveedor";
+		}
+		
+		ParametroBD pBD = new ParametroBD(1,ConstantesBD.PARAMBD_STR,this.descripcion);
+		listaParms.add(pBD);
+		pBD = new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.nomCorto);
+		listaParms.add(pBD);
+		
+		ConsultaBD consulta = new ConsultaBD();
+		consulta.ejecutaSQL(cadConexion, listaParms, this, idTransaccion);
+		
+		if (!modificacion) {
+			this.id = ParametroBD.ultimoId;
+		}
+			
+		return modificacion;
+	}
+	
+	public void bajaRecurso(String idTransaccion) throws Exception{		
+		cargaProveedor(); 
+		
+		Iterator<? extends Parametro> itParm = this.listadoParametros.values().iterator();
+		while (itParm.hasNext()) {
+			Parametro pr = (Parametro) itParm.next();
+			pr.bajaParametro(idTransaccion);
+		}
+		
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
+		ConsultaBD consulta = new ConsultaBD();
+		consulta.ejecutaSQL("dBorraProveedor", listaParms, this, idTransaccion);
+	}
+	
+	public void cargaProveedor() throws Exception{			
+		Parametro pp = new Parametro();
+				
+		this.listadoParametros = pp.dameParametros(this.getClass().getSimpleName(), this.id);
 	}
 	
 	@Override

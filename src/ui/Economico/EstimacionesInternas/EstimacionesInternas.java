@@ -465,8 +465,8 @@ public class EstimacionesInternas implements ControladorPantalla {
 				
 				try {
 					RelRecursoTarifa rrt = new RelRecursoTarifa();
-					ArrayList<RelRecursoTarifa> listaTarifas = rrt.buscaRelacion(r.id);
-					Tarifa t = rrt.tarifaVigente(listaTarifas, r.id).tarifa;
+					ArrayList<RelRecursoTarifa> listaTarifas = rrt.buscaRelacion(r.id,true);
+					Tarifa t = rrt.tarifaVigente(listaTarifas, r.id,true).tarifa;
 					multiplicador = t.costeHora;
 				} catch (Exception e) {
 					multiplicador = 1;

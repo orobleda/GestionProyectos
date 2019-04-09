@@ -1,12 +1,16 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
+import model.metadatos.MetaParametro;
+import model.metadatos.TipoCobroVCT;
+import model.metadatos.TipoEnumerado;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -259,6 +263,89 @@ public class CertificacionFase implements Cargable{
 		}
 		
 		return acumulado;
+	}
+	
+	public void cambiaTipoVCT(TipoCobroVCT tpcv, String idTransaccion) throws Exception{
+		Iterator<CertificacionFaseParcial> itTpcv = this.certificacionesParciales.iterator();
+		
+		boolean igual = true;
+		float cantidadRepartir = 0;
+		
+		while (itTpcv.hasNext()) {
+			CertificacionFaseParcial cfp = itTpcv.next();
+			cantidadRepartir += cfp.valEstimado;
+			
+			if (cfp.tarifaReal!=-1) {
+				return;
+			}
+			
+			Iterator<Double> itPorc = tpcv.porcentajes.iterator();
+			boolean encontrado = false;
+			while (itPorc.hasNext()) {
+				Double porc = itPorc.next();
+				if (cfp.porcentaje - porc == 0) {
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (!encontrado) {
+				igual = false;
+			}
+		}
+		
+		if (igual) {
+			 return;
+		}
+		
+		ArrayList<CertificacionFaseParcial> aCFP = new ArrayList<CertificacionFaseParcial>();
+		
+		Iterator<Double> itPorc = tpcv.porcentajes.iterator();
+		Date fechaAnterior = null;
+		
+		if (this.fase!=null)
+			fechaAnterior =  this.fase.getFechaImplantacion();
+		else {
+			fechaAnterior = (Date) (this.certificacion.p.getValorParametro(MetaParametro.PROYECTO_FX_FIN)).getValor();				
+		}
+		
+		int contador = 0;
+		
+		while (itPorc.hasNext()) {
+			Double porc = itPorc.next();
+			
+			double cantidadFase = porc * cantidadRepartir/100;
+			
+			CertificacionFaseParcial cfp = new CertificacionFaseParcial();
+			cfp.certificacion_fase = this.id;
+			cfp.certificacionFase = this;
+			cfp.fxCertificacion = fechaAnterior;
+			
+			Tarifa tAux = this.certificacion.s.getTarifa(); 
+			if (tAux!=null) {
+				cfp.horEstimadas = new Double(cantidadFase/tAux.costeHora).floatValue();
+				cfp.tarifaEstimada = tAux.idTarifa;
+			}
+					
+			cfp.id = -1;
+			cfp.nombre = tpcv.nombres.get(contador++);
+			cfp.porcentaje = new Double(porc).floatValue();
+			cfp.tipoEstimacion = TipoEnumerado.TIPO_PRESUPUESTO_EST;
+			cfp.valEstimado = new Double(cantidadFase).floatValue();
+			
+			aCFP.add(cfp);
+			
+			fechaAnterior = this.certificacion.calcularFechaPrevia(fechaAnterior);
+		}
+		
+		Iterator<CertificacionFaseParcial> itFps = this.certificacionesParciales.iterator();
+		while (itFps.hasNext()) {
+			CertificacionFaseParcial fps = itFps.next();
+			fps.borraCertificacionFaseParcial(idTransaccion);
+		}
+		
+		this.certificacionesParciales = aCFP;		
+		
 	}
 	
 }

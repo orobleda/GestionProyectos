@@ -29,8 +29,9 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PARAMETRO_ECONOMICO_PERINTRACERT = "perIntraCert";	
 	public static final String PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT = "tipoCobroEstandVCT";	
 	
-	public static final String PARAMETRO_SISTEMA_TARIFA = "SIST.tarifaSistema";
+	public static final String PARAMETRO_SISTEMA_PROVEEDOR = "SIST.Proveedor";
 	
+	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
 	
 	public int id =0;
 	public String entidad = "";

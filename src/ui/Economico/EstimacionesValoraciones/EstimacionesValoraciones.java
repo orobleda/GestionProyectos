@@ -34,7 +34,8 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
-import model.metadatos.TipoPresupuesto;
+import model.metadatos.TipoDato;
+import model.metadatos.TipoEnumerado;
 import ui.ConfigTabla;
 import ui.Dialogo;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
@@ -55,7 +56,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	@FXML
 	private ComboBox<Proyecto> cbProyectos = null;
 	@FXML
-	private ComboBox<TipoPresupuesto> cbTipoPrep = null;
+	private ComboBox<TipoEnumerado> cbTipoPrep = null;
 	@FXML
 	private ComboBox<Presupuesto> cbVsPresupuesto = null;
 	@FXML
@@ -392,7 +393,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			taDesc.setText("");
 			
 			this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
-			cbTipoPrep.getItems().addAll(TipoPresupuesto.listado.values());
+			cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
 			
 			LineaCostePresupuesto lcp = new LineaCostePresupuesto();
 			lcp.limpiarColumnas(tLineasCoste);
@@ -453,7 +454,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			taDesc.setText(EstimacionesValoraciones.presupuesto.descripcion);
 			
 			this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
-			cbTipoPrep.getItems().addAll(TipoPresupuesto.listado.values());
+			cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
 			this.cbTipoPrep.setValue(EstimacionesValoraciones.presupuesto.tipo);
 			
 			Coste cst = null;

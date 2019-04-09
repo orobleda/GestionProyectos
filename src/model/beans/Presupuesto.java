@@ -11,7 +11,7 @@ import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
-import model.metadatos.TipoPresupuesto;
+import model.metadatos.TipoEnumerado;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -22,7 +22,7 @@ public class Presupuesto implements Cargable {
 	public int idApunteContable = 0;
 	public Date fxAlta = null;
 	public Proyecto p = null;
-	public TipoPresupuesto tipo = null;
+	public TipoEnumerado tipo = null;
 	public String descripcion = null;
 	public HashMap<Integer, Coste> costes = new HashMap<Integer, Coste>();
 	public HashMap<Integer, Coste> costesTotal = new HashMap<Integer, Coste>();
@@ -90,7 +90,9 @@ public class Presupuesto implements Cargable {
 			if (salida.get("presProy")==null) {      this.idProyecto = 0;}   else this.idProyecto = (Integer) salida.get("presProy");
 			if (salida.get("presDesc")==null) {      this.descripcion = "";} else this.descripcion = (String) salida.get("presDesc");
 			if (salida.get("presFxAlta")==null) {    this.fxAlta = null;   } else this.fxAlta =  (Date) FormateadorDatos.parseaDato((String) salida.get("presFxAlta"),FormateadorDatos.FORMATO_FECHA);
-			if (salida.get("presTipoP")==null) {     this.tipo = null;     } else this.tipo = TipoPresupuesto.listado.get((Integer) salida.get("presTipoP"));
+			if (salida.get("presTipoP")==null) {     this.tipo = null;     } else {
+				this.tipo = TipoEnumerado.listadoIds.get((Integer) salida.get("presTipoP"));
+			}
 			if (salida.get("presApCont")==null) {     this.idApunteContable = -1;     } else this.idApunteContable = (Integer) salida.get("presApCont");
 		} catch (Exception e) {
 			

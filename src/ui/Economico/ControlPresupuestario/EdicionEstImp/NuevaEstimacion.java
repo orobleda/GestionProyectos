@@ -286,7 +286,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 		
 		cbRecurso.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			ArrayList<RelRecursoTarifa> listado = rrt.buscaRelacion(this.cbRecurso.getValue().id);
+			ArrayList<RelRecursoTarifa> listado = rrt.buscaRelacion(this.cbRecurso.getValue().id,true);
 			
 			Recurso r = this.cbRecurso.getValue();
 			try {
@@ -313,7 +313,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 			oListado.setAll(listado);
 			cbTarifa.setItems(oListado);
 			
-			rrt = rrt.tarifaVigente(listado, this.cbRecurso.getValue().id);
+			rrt = rrt.tarifaVigente(listado, this.cbRecurso.getValue().id,true);
 			
 			if (rrt!=null) cbTarifa.setValue(rrt);
 			

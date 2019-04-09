@@ -13,7 +13,7 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoCobroVCT;
-import model.metadatos.TipoPresupuesto;
+import model.metadatos.TipoEnumerado;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -281,6 +281,8 @@ public class Certificacion implements Cargable{
 					
 					Parametro parGen = (new Parametro()).getParametro(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
 					TipoCobroVCT tpVCT = (TipoCobroVCT) parGen.getValor();
+					parGen = cf.parametrosCertificacionFase.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
+					parGen.valorObjeto = tpVCT;
 					
 					Date fechaAnterior =  cf.fase.getFechaImplantacion();
 							
@@ -303,7 +305,7 @@ public class Certificacion implements Cargable{
 						cfp.porcentaje = new Float(porcentaje);
 						cfp.tsCertificacion = fechaAnterior.getTime();
 						cfp.valEstimado = new Float(valorParcial);
-						cfp.tipoEstimacion = TipoPresupuesto.ESTIMACION;
+						cfp.tipoEstimacion = TipoEnumerado.TIPO_PRESUPUESTO_EST;
 						cfp.tarifaEstimada = -1;
 						cfp.tarifaReal = -1;
 						
@@ -314,6 +316,85 @@ public class Certificacion implements Cargable{
 		}
 		
 		return cert;
+	}
+	
+	public CertificacionFase generaCertificacionFaseVacia(Sistema s, Proyecto p, Certificacion cert, FaseProyecto f) throws Exception {
+		if (p.fasesProyecto==null)
+			p.cargaFasesProyecto();
+		
+		FaseProyecto fp = f;
+		
+		CertificacionFase cf = new CertificacionFase();
+		cert.certificacionesFases.add(cf);
+		Concepto cSistema = new Concepto();
+		
+		Iterator<FaseProyectoSistemaDemanda> itFases = f.fasesProyecto.get(s.codigo).demandasSistema.iterator();
+		float valorEstimado = 0;
+		while (itFases.hasNext()) {
+			FaseProyectoSistemaDemanda fpsd = itFases.next();
+			Presupuesto presAux = new Presupuesto();
+			presAux.p = fpsd.p;
+			presAux = presAux.dameUltimaVersionPresupuesto(presAux.p);
+			presAux.cargaCostes();
+			fpsd.p.presupuestoActual = presAux;
+			Concepto c = fpsd.p.presupuestoActual.getCosteConcepto(s, MetaConcepto.porId(MetaConcepto.DESARROLLO));
+			
+			if (c!=null) { 
+					
+				ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+				float porc = (Float) parFas.getValor();
+				
+				valorEstimado += c.valorEstimado*porc/100;
+			}
+		}
+		
+		
+		cSistema.valor = valorEstimado;
+		cf.concepto = cSistema;
+		cf.adicional = false;
+		cf.certificacion = cert;
+		cf.fase = fp;
+		cf.certificacionesParciales = new ArrayList<CertificacionFaseParcial>();
+		cf.id = -1;
+		ParametroFases par = new ParametroFases();
+		cf.parametrosCertificacionFase = par.dameParametros(cf.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+		cf.porcentaje = 0;
+		cert.certificacionesFases.add(cf);
+		
+		Parametro parGen = (new Parametro()).getParametro(MetaParametro.PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT);
+		TipoCobroVCT tpVCT = (TipoCobroVCT) parGen.getValor();
+		parGen = cf.parametrosCertificacionFase.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
+		parGen.valorObjeto = tpVCT;
+		
+		Date fechaAnterior =  cf.fase.getFechaImplantacion();
+				
+		for (int i=(tpVCT.porcentajes.size()-1);i>=0;i--) {
+			double porcentaje = tpVCT.porcentajes.get(i);
+			double valorParcial = porcentaje*0/100;
+			
+			CertificacionFaseParcial cfp = new CertificacionFaseParcial();
+			cfp.certificacionFase = cf;
+			if (i==(tpVCT.porcentajes.size()-1)) {
+				cfp.fxCertificacion = fechaAnterior;
+			} else {
+				cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
+			}
+			fechaAnterior = cfp.fxCertificacion;
+			
+			cfp.id = -1;
+			cfp.nombre = tpVCT.nombres.get(i);
+			cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+			cfp.porcentaje = new Float(porcentaje);
+			cfp.tsCertificacion = fechaAnterior.getTime();
+			cfp.valEstimado = new Float(valorParcial);
+			cfp.tipoEstimacion = TipoEnumerado.TIPO_PRESUPUESTO_EST;
+			cfp.tarifaEstimada = -1;
+			cfp.tarifaReal = -1;
+			
+			cf.certificacionesParciales.add(cfp);
+		}
+		
+		return cf;
 	}
 	
 	public Date calcularFechaPrevia(Date fechaFinal) {
@@ -356,16 +437,11 @@ public class Certificacion implements Cargable{
 		return (Date) parProFin.getValor();
 	}
 	
-	public void guardarCertificacion() throws Exception{
-		String idTransaccion = ConsultaBD.getTicket();
-		
+	public void guardarCertificacion(String idTransaccion) throws Exception{
 		if (this.id==-1)
 			insertCertificacion(idTransaccion);
 		else 
 			updateCertificacion(idTransaccion);
-		
-		ConsultaBD.ejecutaTicket(idTransaccion);
-		
 	}
 	
 	public Float calculaCoste() {
@@ -405,9 +481,18 @@ public class Certificacion implements Cargable{
 		}
 		
 		try {
-			Tarifa t = (Tarifa) Parametro.getParametro(Sistema.class.getSimpleName(), this.s.id, MetaParametro.PARAMETRO_SISTEMA_TARIFA);
+			Parametro par = new Parametro();
+			par = par.dameParametros(this.s.getClass().getSimpleName(), this.s.id).get(MetaParametro.PARAMETRO_SISTEMA_PROVEEDOR);
+					
+			Proveedor prov = (Proveedor) par.getValor();
 			
-			return t;
+			ArrayList<Tarifa> lTarifas = prov.listaTarifas();
+			Iterator<Tarifa> itTarifa = lTarifas.iterator();
+			
+			while (itTarifa.hasNext()) {
+				return itTarifa.next(); 
+			}
+			
 		} catch (Exception e) {
 			
 		}

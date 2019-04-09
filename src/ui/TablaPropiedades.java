@@ -20,6 +20,7 @@ import model.metadatos.MetaFormatoProyecto;
 import model.metadatos.MetaJornada;
 import model.metadatos.TipoCobroVCT;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoEnumerado;
 import model.metadatos.TipoProyecto;
 import ui.interfaces.Propiediable;
 
@@ -129,14 +130,18 @@ public class TablaPropiedades extends PropertySheet{
 		    		return Editors.createTextEditor(param);
 		    	}
 		    	
-		    	if (prop.tipo == TipoDato.FORMATO_TIPO_COBRO_VCT) {
-		    		return Editors.createChoiceEditor(param, TipoCobroVCT.listado.values());
+		    	if (TipoDato.isEnumerado(prop.tipo)) {
+		    		return Editors.createChoiceEditor(param, TipoEnumerado.getValores(prop.tipo).values());
 		    	}
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_TARIFA) {
 		    		Tarifa t = new Tarifa();
 		    		ArrayList<Tarifa> listado = t.listado(new HashMap<String, Object> () );
 		    		return Editors.createChoiceEditor(param, listado);
+		    	}
+		    	
+		    	if (prop.tipo == TipoDato.FORMATO_COBRO_VCT) {
+		    		return Editors.createChoiceEditor(param, TipoCobroVCT.listado.values());
 		    	}
 		    	
 		    	return null;

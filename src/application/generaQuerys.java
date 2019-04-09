@@ -5,14 +5,14 @@ import java.util.Iterator;
 
 public class generaQuerys {
 	public static void main(String[] args) {
-		String estructura = "CREATE TABLE [TIPO_COBRO_VCT]\r\n" + 
+		String estructura = "CREATE TABLE [PROVEEDOR]\r\n" + 
 				"(\r\n" + 
-				"	[id] integer NOT NULL UNIQUE,\r\n" + 
-				"	[codigo] text NOT NULL,\r\n" + 
-				"	[porcentaje] real NOT NULL,";
+				"	[id] integer NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,\r\n" + 
+				"	[descripcion] text,\r\n" + 
+				"	[nombreCorto] text";
 		
 		String [] lineasAux = estructura.split("\\(");
-		String tabla = lineasAux[0].replaceAll("CREATE TABLE '", "").replaceAll("'", "").trim();
+		String tabla = lineasAux[0].replaceAll("CREATE TABLE \\[", "").replaceAll("\\]", "").trim();
 		
 		String [] lineas = estructura.split("\\[");
 		
@@ -22,7 +22,11 @@ public class generaQuerys {
 			if (!lineas[i].equals("")) {
 				String [] campo = lineas[i].split("\\]");
 				String tipo = campo[1].trim().split(" ")[0];
-				campos.put(campo[0],tipo);
+				if ("text".equals(tipo)) tipo = "String";
+				if ("integer".equals(tipo)) tipo = "int";
+				if ("real".equals(tipo)) tipo = "float";
+				if (!campo[0].equals(tabla))
+					campos.put(campo[0],tipo);
 			}
 		}
 		
@@ -144,9 +148,9 @@ public class generaQuerys {
 			String valor = valores.next();
 			System.out.println("try {");
 			System.out.println(" 	if (salida.get(\""+tabla.substring(0, 3).toLowerCase() + valor.toLowerCase().substring(0, 1).toUpperCase() + valor.toLowerCase().substring(1, valor.length())+"\")==null)  { ");
-			System.out.println(" 		this."+tabla.substring(0, 3).toLowerCase() + valor.toLowerCase().substring(0, 1).toUpperCase() + valor.toLowerCase().substring(1, valor.length())+" = null;");
+			System.out.println(" 		this."+valor+" = null;");
 			System.out.println("	} else {");
-			System.out.println(" 		this."+tabla.substring(0, 3).toLowerCase() + valor.toLowerCase().substring(0, 1).toUpperCase() + valor.toLowerCase().substring(1, valor.length())+" = (" + campos.get(valor) + ") salida.get(\""+tabla.substring(0, 3).toLowerCase() + valor.toLowerCase().substring(0, 1).toUpperCase() + valor.toLowerCase().substring(1, valor.length())+"\");");
+			System.out.println(" 		this."+valor+" = (" + campos.get(valor) + ") salida.get(\""+tabla.substring(0, 3).toLowerCase() + valor.toLowerCase().substring(0, 1).toUpperCase() + valor.toLowerCase().substring(1, valor.length())+"\");");
 			System.out.println("	}");
 			System.out.println("} catch (Exception ex) {}");
 						
@@ -158,7 +162,7 @@ public class generaQuerys {
 		contador = 1;
 		while (valores.hasNext()) {
 			String valor = valores.next();
-			System.out.println("public "+campos.get(valor).trim() + " " + valor);
+			System.out.println("public "+campos.get(valor).trim() + " " + valor+";");
 		}
 		
 	}

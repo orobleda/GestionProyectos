@@ -2,19 +2,22 @@ package ui.Recursos.GestionTarifas;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import model.beans.Proveedor;
 import model.beans.Recurso;
 import model.beans.RelRecursoTarifa;
 import model.utils.db.ConsultaBD;
@@ -29,12 +32,14 @@ public class AsignacionTarifas implements ControladorPantalla {
 	
 	public static ArrayList<RelRecursoTarifa> listaAsignaciones = null;
 	public static Recurso recurso = null;
+	public static Proveedor proveedor = null;
+	public static boolean proveedores = false;
 	
 	@FXML
 	private AnchorPane anchor;
 	
     @FXML
-    private ComboBox<Recurso> cbRecurso;
+    private ComboBox<Object> cbRecurso;
 
     @FXML
     private ImageView imBuscar;
@@ -56,10 +61,12 @@ public class AsignacionTarifas implements ControladorPantalla {
 
     @FXML
     private ImageView imEliminar;
+    
     @FXML
-    private TitledPane tpFiltros;
+    private RadioButton rbProveedores;
+
     @FXML
-    private TitledPane tpResultados;
+    private RadioButton rbUsuarios;
 
 	
 	@Override
@@ -75,10 +82,7 @@ public class AsignacionTarifas implements ControladorPantalla {
 	public AsignacionTarifas(){
 	}
 	
-	public void initialize(){
-			tpFiltros.setExpanded(true);
-			tpResultados.setExpanded(false);
-			
+	public void initialize(){			
 		    imAniadir.setMouseTransparent(true);
 		    imGuardar.setMouseTransparent(true);
 		    imEliminar.setMouseTransparent(true);
@@ -90,16 +94,53 @@ public class AsignacionTarifas implements ControladorPantalla {
 		    imAniadir.getStyleClass().remove("iconoEnabled");
 		    imAniadir.getStyleClass().add("iconoDisabled");
 			
-		    imBuscar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 cargaRecurso(); }	});
+		    imBuscar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 
+		    	if (rbUsuarios.isSelected())
+		    		cargaRecurso();
+		    	else 
+		    		cargaProveedor();
+		    }	});
 		    imAniadir.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 aniadirAsignacion(); }	});
 		    imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardarElementos() ; }	});
 		    imEliminar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) { eliminaElemento() ; }	});
 		    
+		    rbProveedores.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		        @Override
+		        public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+		        	cargaCombo();
+		        }
+		    });
+
+		    rbUsuarios.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		        @Override
+		        public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+		        	cargaCombo();
+		        }
+		    });
+		    
 			Recurso p = new Recurso();
 			cbRecurso.getItems().addAll(p.listadoRecursos());
-			
-				
+						
+			ToggleGroup toggleGroup = new ToggleGroup();
+
+			rbUsuarios.setToggleGroup(toggleGroup);
+			rbProveedores.setToggleGroup(toggleGroup);
+			rbUsuarios.setSelected(true);
     }
+	
+	private void cargaCombo() {
+		if (rbUsuarios.isSelected()) {
+			cbRecurso.getItems().removeAll(cbRecurso.getItems());
+        	Recurso p = new Recurso();
+        	cbRecurso.getItems().addAll(p.listadoRecursos());					
+			rbUsuarios.setSelected(true);
+			proveedores = false;
+		} else {
+			cbRecurso.getItems().removeAll(cbRecurso.getItems());
+        	cbRecurso.getItems().addAll(Proveedor.listado.values());
+        	proveedores = true;
+		}
+	}
 	
 	private boolean guardarElementos() {
 		boolean validacion = validaRangos();
@@ -136,7 +177,15 @@ public class AsignacionTarifas implements ControladorPantalla {
 	private void aniadirAsignacion() {
 		RelRecursoTarifa rrt = new RelRecursoTarifa();
 		rrt.id = -1;
-		rrt.recurso = recurso;
+		
+		if (rbUsuarios.isSelected()) {
+			rrt.recurso = recurso;
+			rrt.usuario = true;
+		}
+		else {
+			rrt.proveedor = proveedor;
+			rrt.usuario = false;
+		}
 				
 		AsignacionRecursoTarifa rAsigRecTar = new AsignacionRecursoTarifa();
 		
@@ -151,6 +200,8 @@ public class AsignacionTarifas implements ControladorPantalla {
 	
 	private boolean validaRangos() {
 		boolean solapado = false;
+		
+		if (rbProveedores.isSelected()) return false;
 		
 		Iterator<RelRecursoTarifa> itPuntero = listaAsignaciones.iterator();
 		Iterator<RelRecursoTarifa> itRecorrer = listaAsignaciones.iterator();
@@ -202,6 +253,47 @@ public class AsignacionTarifas implements ControladorPantalla {
 		
 	}
 	
+	private void cargaProveedor(){
+		try {
+			imGuardar.getStyleClass().remove("iconoDisabled");
+			imGuardar.getStyleClass().add("iconoEnabled");
+			imEliminar.getStyleClass().remove("iconoDisabled");
+			imEliminar.getStyleClass().add("iconoEnabled");
+			imAniadir.getStyleClass().remove("iconoDisabled");
+			imAniadir.getStyleClass().add("iconoEnabled");
+			
+			imAniadir.setMouseTransparent(false);
+		    imGuardar.setMouseTransparent(true);
+		    imEliminar.setMouseTransparent(false);
+			
+			Proveedor p = (Proveedor) cbRecurso.getValue();
+			
+			AsignacionTarifas.listaAsignaciones = new ArrayList<RelRecursoTarifa>();
+			AsignacionTarifas.proveedor = p;
+			
+			p.cargaProveedor();
+			
+			this.tID.setText(new Integer(p.id).toString());
+			this.tNombreProy.setText(p.nomCorto);
+			
+			AsignacionRecursoTarifa rAsigRecTar = new AsignacionRecursoTarifa();
+			RelRecursoTarifa rrt = new RelRecursoTarifa();
+			listaAsignaciones = rrt.buscaRelacion(p.id,true);
+			ArrayList<Object> lista = new ArrayList<Object>(); 
+			lista.addAll(listaAsignaciones);
+			ObservableList<Tableable> dataTable = rAsigRecTar.toListTableable(lista);
+			tRelaciones.setItems(dataTable);	
+			
+			rAsigRecTar = new AsignacionRecursoTarifa();
+			rAsigRecTar.fijaColumnas(tRelaciones);	
+			
+			imGuardar.setMouseTransparent(false);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void cargaRecurso(){
 		try {
 			imGuardar.getStyleClass().remove("iconoDisabled");
@@ -215,7 +307,7 @@ public class AsignacionTarifas implements ControladorPantalla {
 		    imGuardar.setMouseTransparent(true);
 		    imEliminar.setMouseTransparent(false);
 			
-			Recurso p = cbRecurso.getValue();
+			Recurso p = (Recurso) cbRecurso.getValue();
 			
 			AsignacionTarifas.listaAsignaciones = new ArrayList<RelRecursoTarifa>();
 			AsignacionTarifas.recurso = p;
@@ -227,7 +319,7 @@ public class AsignacionTarifas implements ControladorPantalla {
 			
 			AsignacionRecursoTarifa rAsigRecTar = new AsignacionRecursoTarifa();
 			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			listaAsignaciones = rrt.buscaRelacion(p.id);
+			listaAsignaciones = rrt.buscaRelacion(p.id,false);
 			ArrayList<Object> lista = new ArrayList<Object>(); 
 			lista.addAll(listaAsignaciones);
 			ObservableList<Tableable> dataTable = rAsigRecTar.toListTableable(lista);
@@ -238,8 +330,6 @@ public class AsignacionTarifas implements ControladorPantalla {
 			
 			imGuardar.setMouseTransparent(false);
 			
-			tpFiltros.setExpanded(false);
-			tpResultados.setExpanded(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

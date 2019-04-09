@@ -30,6 +30,7 @@ import ui.Economico.EstimacionesInternas.EstimacionesInternas;
 import ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones;
 import ui.Economico.GestionPresupuestos.GestionPresupuestos;
 import ui.GestionProyectos.AltaModProyecto;
+import ui.Recursos.GestionProveedores.AltaModProveedor;
 import ui.Recursos.GestionRecursos.AltaModRecurso;
 import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
@@ -107,10 +108,11 @@ public class Main extends Application {
 	    model1.getChildren().add(model12);
 		
 	    TreeItem<String> model2 = new TreeItem<String>("Recursos");
-	    TreeItem<String> model21 = new TreeItem<String>("Gestión Recursos");
+	    TreeItem<String> model21 = new TreeItem<String>("Gestión Usuarios");
+	    TreeItem<String> model24 = new TreeItem<String>("Gestión Proveedores");
 	    TreeItem<String> model22 = new TreeItem<String>("Asignación Tarifas");
 	    TreeItem<String> model23 = new TreeItem<String>("Gestión horas trabajadas");
-	    model2.getChildren().addAll(model21,model22,model23);
+	    model2.getChildren().addAll(model21,model24,model22,model23);
 	    
 	    TreeItem<String> model3b = new TreeItem<String>("Planificación");
 		
@@ -169,6 +171,9 @@ public class Main extends Application {
 		        
 		        if ("Gestión Recursos".equals(name))
 		        	controlPantalla = new AltaModRecurso();
+		        
+		        if ("Gestión Proveedores".equals(name))
+		        	controlPantalla = new AltaModProveedor();
 		        
 		        if ("Asignación Tarifas".equals(name))
 		        	controlPantalla = new AsignacionTarifas();
