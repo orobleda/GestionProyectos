@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.beans.Parametro;
 import model.beans.Proyecto;
+import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
@@ -119,7 +120,7 @@ public class AdministracionParametros implements ControladorPantalla {
 			
 			int contador = 0;
 			
-			String idTransaccion = "actualizaParametros" + new Date().getTime();
+			String idTransaccion = "actualizaParametros" + Constantes.fechaActual().getTime();
 			
 			Iterator<Parametro> itParametro = gestPar.getParametros().values().iterator();
 			while (itParametro.hasNext()) {

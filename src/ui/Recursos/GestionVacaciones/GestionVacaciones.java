@@ -62,7 +62,7 @@ public class GestionVacaciones implements ControladorPantalla {
 	}
 	
 	public void initialize(){
-		Date d = new Date();
+		Date d = Constantes.fechaActual();
 		Calendar c = Calendar.getInstance();
 		c.setTime(d);
 		cbAnios.getItems().add(c.get(Calendar.YEAR)-1);
@@ -156,7 +156,7 @@ public class GestionVacaciones implements ControladorPantalla {
 	
 	public void guardarDatos() {
     	try {
-			String idTransaccion = "updateListaVacacionesAusencias" + new Date().getTime();
+			String idTransaccion = "updateListaVacacionesAusencias" + Constantes.fechaActual().getTime();
 			
 			int contador = 0;
 			

@@ -165,7 +165,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 		cbNatCoste.setValue(seleccionCBNAT);
 		
 		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
+		c.setTime(Constantes.fechaActual());
 		
 		cbAnio.getItems().removeAll(cbAnio.getItems());
 		Integer seleccion = null;
@@ -236,7 +236,7 @@ public class EstimacionesInternas implements ControladorPantalla {
              if (prep!=null) {
             	 Presupuesto pAux = prep;
             	 pAux.cargaCostes();
-			 	 ap.construyePresupuestoMensualizado(pAux, new Date(), null, null, null, null);
+			 	 ap.construyePresupuestoMensualizado(pAux, Constantes.fechaActual(), null, null, null, null);
 			 	 
 			 	 Concepto c = new Concepto();
 			 	 c.tipoConcepto = cbNatCoste.getValue();
@@ -465,8 +465,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 				
 				try {
 					RelRecursoTarifa rrt = new RelRecursoTarifa();
-					ArrayList<RelRecursoTarifa> listaTarifas = rrt.buscaRelacion(r.id,true);
-					Tarifa t = rrt.tarifaVigente(listaTarifas, r.id,true).tarifa;
+					Tarifa t = rrt.tarifaVigente(r.id,true,null).tarifa;
 					multiplicador = t.costeHora;
 				} catch (Exception e) {
 					multiplicador = 1;
@@ -721,7 +720,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 		try {
 			int contador = 0;
 
-			String idTransaccion = "insertaEstimacionesBD" + new Date().getTime();
+			String idTransaccion = "insertaEstimacionesBD" + Constantes.fechaActual().getTime();
 			
 			Iterator<Estimacion> itEstimacion = this.listaEstimacionesProvisionales.iterator();
 			while (itEstimacion.hasNext()) {

@@ -202,16 +202,22 @@ public class Faseado implements ControladorPantalla {
 			
 			float porc = 0;
 			
-			Iterator<Coste> itCoste = demanda.presupuestoActual.costes.values().iterator();
-			while (itCoste.hasNext()) {
-				Coste c = itCoste.next();
-				porc += pActual.coberturaDemandaFases(demanda, demanda.apunteContable, c.sistema);
+			if (demanda.presupuestoActual.costes.size()!=0) {
+				Iterator<Coste> itCoste = demanda.presupuestoActual.costes.values().iterator();
+				while (itCoste.hasNext()) {
+					Coste c = itCoste.next();
+					porc = pActual.coberturaDemandaFases(demanda, demanda.apunteContable, c.sistema);
+					
+					if (porc!=100) {
+						Dialogo.alert("No se puede guardar", "Demandas imcompletas", "La demanda " + demanda.nombre + " no está totalmente asignada.");
+						return false;
+					}
+				}
+			} else {
+				porc = 100;
 			}
 			
-			if (porc!=100) {
-				Dialogo.alert("No se puede guardar", "Demandas imcompletas", "La demanda " + demanda.nombre + " no está totalmente asignada.");
-				return false;
-			}
+			
 		}
 		
 		Iterator<FaseProyecto> itFases = pActual.fasesProyecto.iterator();

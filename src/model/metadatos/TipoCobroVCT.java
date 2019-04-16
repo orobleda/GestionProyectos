@@ -15,6 +15,8 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 	public String codigo = "";
 	public String nombre = "";
 	
+	public static int PAGO_UNICO = 6;
+	
 	public ArrayList<Double> porcentajes = null;
 	public ArrayList<String> nombres = null;
 		
@@ -63,7 +65,8 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 
 	@Override
 	public void load() {
-		listado = new HashMap<String, TipoCobroVCT>();	
+		listado = new HashMap<String, TipoCobroVCT>();
+		listadoIds = new HashMap<Integer, TipoCobroVCT>();	
 		
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Cargable> estados = consulta.ejecutaSQL("cConsultatipo_cobro_vct", null, this);
@@ -82,6 +85,8 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 			
 			est.porcentajes.add(estAux.porcentaje);
 			est.nombres.add(estAux.nombre);
+			
+			listadoIds.put(estAux.id, estAux);
 		}
 	}
 	

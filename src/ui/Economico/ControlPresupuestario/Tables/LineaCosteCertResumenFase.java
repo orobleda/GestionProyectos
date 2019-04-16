@@ -84,6 +84,7 @@ public class LineaCosteCertResumenFase extends ParamTable implements Tableable  
    				CertificacionFaseParcial cfp = itCfp.next();
    				acumulado += cfp.valEstimado;
    			   }
+   			   acumulado += this.cf.concAdicional.valorEstimado;
    			  return FormateadorDatos.formateaDato(new Float(acumulado),TipoDato.FORMATO_MONEDA);
    			}
    			if (LineaCosteCertResumenFase.VALOR_REAL.equals(campo))  {
@@ -93,6 +94,7 @@ public class LineaCosteCertResumenFase extends ParamTable implements Tableable  
     				CertificacionFaseParcial cfp = itCfp.next();
     				acumulado += cfp.valReal;
     			   }
+    			   acumulado += this.cf.concAdicional.valor;
     			  return FormateadorDatos.formateaDato(new Float(acumulado),TipoDato.FORMATO_MONEDA);
    			} 
    				   			

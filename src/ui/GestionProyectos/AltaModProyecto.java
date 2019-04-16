@@ -182,7 +182,7 @@ public class AltaModProyecto implements ControladorPantalla {
 			p.nombre = this.tNombreProy.getText();
 			
 			try {
-				String idTransaccion = "guardarCambiosProyecto" + new Date().getTime();
+				String idTransaccion = "guardarCambiosProyecto" + Constantes.fechaActual().getTime();
 				
 				if ("".equals(this.tID.getText())) {
 					p.id = -1;
@@ -224,7 +224,7 @@ public class AltaModProyecto implements ControladorPantalla {
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
-			String idTransaccion = "eliminaProyecto" + new Date().getTime();
+			String idTransaccion = "eliminaProyecto" + Constantes.fechaActual().getTime();
 			
 			gbGuardar.desActivarBoton();
 			gbEliminar.desActivarBoton();

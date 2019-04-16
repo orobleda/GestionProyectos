@@ -28,6 +28,7 @@ import model.beans.Coste;
 import model.beans.ParametroProyecto;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Loadable;
 import model.metadatos.MetaConcepto;
@@ -387,7 +388,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			EstimacionesValoraciones.proyConsultado= cbProyectos.getValue();
 			EstimacionesValoraciones.proyConsultado.cargaProyecto();
 			
-			tFxAlta.setText(FormateadorDatos.formateaDato(new Date(), FormateadorDatos.FORMATO_FECHA));
+			tFxAlta.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(), FormateadorDatos.FORMATO_FECHA));
 			tId.setText(new Integer(id).toString());
 			tVersion.setText("1");
 			taDesc.setText("");

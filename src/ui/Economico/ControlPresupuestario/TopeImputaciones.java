@@ -23,6 +23,7 @@ import model.beans.FraccionImputacion;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
@@ -87,7 +88,7 @@ public class TopeImputaciones implements ControladorPantalla {
 			if (ControlPresupuestario.ap!=null)
 				this.tFechaPivote.setText(FormateadorDatos.formateaDato(ControlPresupuestario.ap.fechaPivote,FormateadorDatos.FORMATO_FECHA));
 			else 
-				this.tFechaPivote.setText(FormateadorDatos.formateaDato(new Date(),FormateadorDatos.FORMATO_FECHA));
+				this.tFechaPivote.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(),FormateadorDatos.FORMATO_FECHA));
 		} catch (Exception e) {
 			
 		}
@@ -103,7 +104,7 @@ public class TopeImputaciones implements ControladorPantalla {
                 	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception e) {
 					try {
-						this.tFechaPivote.setText(FormateadorDatos.formateaDato(new Date(),FormateadorDatos.FORMATO_FECHA));
+						this.tFechaPivote.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(),FormateadorDatos.FORMATO_FECHA));
 					} catch (Exception ex) {}
 				}
 			}	
@@ -116,7 +117,7 @@ public class TopeImputaciones implements ControladorPantalla {
 				try {
 					if (validaTopesParaCargar()) {
 	                	ControlPresupuestario.salvaPosicionActual();
-						String idTransaccion = "fraccionaImputacion" + new Date().getTime();
+						String idTransaccion = "fraccionaImputacion" + Constantes.fechaActual().getTime();
 						
 						Iterator<TopeImputacion> itTopes = TopeImputaciones.listadoTopes.iterator();
 						
@@ -252,7 +253,7 @@ public class TopeImputaciones implements ControladorPantalla {
 		try {
 			fechaPivote = (Date) FormateadorDatos.parseaDato(this.tFechaPivote.getText(),FormateadorDatos.FORMATO_FECHA);			
 		} catch (Exception e) {
-			fechaPivote = new Date();
+			fechaPivote = Constantes.fechaActual();
 		}		
 		
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();

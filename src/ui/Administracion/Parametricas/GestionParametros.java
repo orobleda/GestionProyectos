@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.Parametro;
+import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
 import ui.GestionBotones;
 import ui.TablaPropiedades;
@@ -81,7 +82,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
             public void handle(MouseEvent t)
             {
 				try {	
-					String idTransaccion = "guardarParametros" + new Date().getTime();
+					String idTransaccion = "guardarParametros" + Constantes.fechaActual().getTime();
 					
 					Iterator<Parametro> itParametro = listaParametros.values().iterator();
 					while (itParametro.hasNext()) {

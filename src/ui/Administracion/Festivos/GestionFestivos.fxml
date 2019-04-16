@@ -341,7 +341,7 @@
             </ScrollPane>
             <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/guardar.jpg" />
                      </image>

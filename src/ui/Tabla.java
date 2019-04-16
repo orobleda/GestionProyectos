@@ -12,6 +12,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 

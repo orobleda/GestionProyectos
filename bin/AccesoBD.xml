@@ -496,49 +496,38 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>INSERT INTO REL_TARIFA_RECURSO (id,idRecurso,idTarifa,fInicioVig,fFInVig,tsInicioVig,tsFinVig,idProveedor) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$,$B$||7||$E$,$B$||8||$E$)</query>
+		<query>INSERT INTO REL_TARIFA_RECURSO (id,idRecurso,idTarifa,mes,anio,idProveedor) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$,$B$||4||$E$,$B$||5||$E$,$B$||6||$E$)</query>
 		<id tipo="I">iInsertaRelTarifaRecurso</id>
 		<tabla>REL_TARIFA_RECURSO</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
 			<parametro id="2" tipo="int"></parametro>
 			<parametro id="3" tipo="int"></parametro>
-			<parametro id="4" tipo="dat"></parametro>
-			<parametro id="5" tipo="dat"></parametro>
-			<parametro id="6" tipo="rea"></parametro>
-			<parametro id="7" tipo="rea"></parametro>
-			<parametro id="8" tipo="int"></parametro>			
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>			
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>UPDATE REL_TARIFA_RECURSO SET idRecurso = $B$||2||$E$,idTarifa = $B$||3||$E$,fInicioVig=$B$||4||$E$,fFInVig=$B$||5||$E$,tsInicioVig=$B$||6||$E$,tsFinVig=$B$||7||$E$,idProveedor=$B$||8||$E$ where id = $B$||1||$E$</query>
+		<query>UPDATE REL_TARIFA_RECURSO SET idTarifa = $B$||3||$E$ $B$, idRecurso = ||2||$E$ $B$,idProveedor=||6||$E$ ,mes=$B$||4||$E$,anio=$B$||5||$E$ where id = $B$||1||$E$</query>
 		<id tipo="U">uActualizaRelTarifaRecurso</id>
 		<tabla>REL_TARIFA_RECURSO</tabla>
 		<parametros>
-			<parametro id="1" tipo="id"></parametro>
+			<parametro id="1" tipo="int"></parametro>
 			<parametro id="2" tipo="int"></parametro>
 			<parametro id="3" tipo="int"></parametro>
-			<parametro id="4" tipo="dat"></parametro>
-			<parametro id="5" tipo="dat"></parametro>
-			<parametro id="6" tipo="rea"></parametro>
-			<parametro id="7" tipo="rea"></parametro>
-			<parametro id="8" tipo="int"></parametro>			
+			<parametro id="4" tipo="int"></parametro>
+			<parametro id="5" tipo="int"></parametro>
+			<parametro id="6" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select id reltrId,idRecurso reltrIdRec,idTarifa reltrIdTar,fInicioVig reltrFIni,fFInVig reltrFfin,tsInicioVig reltrtsIniv,tsFinVig reltrtsFinv from REL_TARIFA_RECURSO</query>
-		<id tipo="C">cMaxIdRelTarifaRec</id>
-		<tabla>REL_TARIFA_RECURSO</tabla>
-	</acceso>
-	<acceso>
-		<query>select id reltrId,idRecurso reltrIdRec,idTarifa reltrIdTar,fInicioVig reltrFIni,fFInVig reltrFfin,tsInicioVig reltrtsIniv,tsFinVig reltrtsFinv,idProveedor reltrIdProv from REL_TARIFA_RECURSO where 1=1 $B$and idRecurso=||1||$E$ $B$and idProveedor=||4||$E$ $B$and tsInicioVig&lt;=||2||$E$ $B$and (tsFinVig is null or tsFinVig&gt;=||3||)$E$ </query>
+		<query>select id reltrId,idRecurso reltrIdRec,idTarifa reltrIdTar,mes relMes,anio relAnio,idProveedor reltrIdProv from REL_TARIFA_RECURSO where 1=1 $B$and idRecurso=||1||$E$ $B$and idProveedor=||2||$E$ </query>
 		<id tipo="C">cRelTarifaRec</id>
 		<tabla>REL_TARIFA_RECURSO</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
-			<parametro id="2" tipo="rea"></parametro>
-			<parametro id="3" tipo="rea"></parametro>
-			<parametro id="4" tipo="int"></parametro>			
+			<parametro id="2" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>

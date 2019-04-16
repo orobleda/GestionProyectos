@@ -21,6 +21,7 @@ import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.Parametro;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
@@ -176,7 +177,12 @@ public class InfoFase implements ControladorPantalla, PopUp {
 		    }
 		}
 		
-		String fxImplantacion = FormateadorDatos.formateaDato(fechaImpl.getValor().toString(), TipoDato.FORMATO_FECHA);
+		String fxImplantacion = null;
+		
+		if (fechaImpl.getValor()!=null)
+			fxImplantacion = FormateadorDatos.formateaDato(fechaImpl.getValor().toString(), TipoDato.FORMATO_FECHA);
+		else
+			fxImplantacion = FormateadorDatos.formateaDato(Constantes.fechaActual(), TipoDato.FORMATO_FECHA);
 		
 		ObservableValue<Date> seguimientoFechaImpl = new SimpleObjectProperty<Date>(fechaImpl.valorfecha);
 		

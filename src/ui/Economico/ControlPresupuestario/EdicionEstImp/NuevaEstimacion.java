@@ -313,7 +313,9 @@ public class NuevaEstimacion implements ControladorPantalla {
 			oListado.setAll(listado);
 			cbTarifa.setItems(oListado);
 			
-			rrt = rrt.tarifaVigente(listado, this.cbRecurso.getValue().id,true);
+			Date fecha = this.calculaFecha();
+			
+			rrt = rrt.tarifaVigente(this.cbRecurso.getValue().id,true,fecha);
 			
 			if (rrt!=null) cbTarifa.setValue(rrt);
 			
@@ -345,7 +347,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 		}
 		
 		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
+		c.setTime(Constantes.fechaActual());
 		
 		String valor = Constantes.nomMes(c.get(Calendar.MONTH)) + "'" + c.get(Calendar.YEAR);
 
@@ -603,7 +605,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 		Date d = null;
 		
 		try {
-			d = (Date) FormateadorDatos.parseaDato("01/" + mes + "/" + anio, FormateadorDatos.FORMATO_FECHA);
+			d = Constantes.inicioMes(mes, anio);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

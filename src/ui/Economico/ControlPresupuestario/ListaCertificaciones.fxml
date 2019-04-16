@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -28,6 +29,23 @@
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
+      </HBox>
+      <HBox>
+         <children>
+            <Label prefWidth="250.0" text="Añadir Certificación Adicional" />
+            <ComboBox fx:id="cbSistema" prefWidth="250.0" />
+            <ImageView fx:id="imNuevaCertAdicional" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
       </HBox>
    </children>
 </VBox>

@@ -1,6 +1,6 @@
 package ui.Economico.EstimacionesInternas;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -96,7 +96,7 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
             {   
 				guardaDatos();
             } }, "Guardar Cambios", this);	
-		//gbGuardar.desActivarBoton();
+		gbGuardar.activarBoton();
 		this.tHoras.focusedProperty().addListener((ov, oldV, newV) -> { 
 			if (!newV) { 
 				try {
@@ -281,8 +281,17 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 		
 		try {
 			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			ArrayList<RelRecursoTarifa> listaTarifas = rrt.buscaRelacion(r.id,true);
-			Tarifa t = rrt.tarifaVigente(listaTarifas, r.id,true).tarifa;
+			
+			Date fecha = null;
+			
+			try {
+				int mes = Constantes.numMes(this.cbMes.getValue());
+				int anio = this.cbAnio.getValue();
+				fecha = Constantes.finMes(mes, anio);
+			} catch (Exception e) {
+			}
+			
+			Tarifa t = rrt.tarifaVigente(r.id,true,fecha).tarifa;
 			multiplicador = t.costeHora;
 		} catch (Exception e) {
 			multiplicador = 1;

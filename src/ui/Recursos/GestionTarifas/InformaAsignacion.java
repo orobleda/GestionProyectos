@@ -18,6 +18,7 @@ import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
+import model.metadatos.TipoDato;
 import ui.Recursos.GestionTarifas.Tables.AsignacionRecursoTarifa;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -35,10 +36,7 @@ public class InformaAsignacion implements ControladorPantalla {
     private ComboBox<Tarifa> cbTarifa;
 
     @FXML
-    private TextField tFechaInicio;
-
-    @FXML
-    private TextField tFechaFin;
+    private TextField tFecha;
 
     @FXML
     private ImageView imGuardar;
@@ -75,8 +73,7 @@ public class InformaAsignacion implements ControladorPantalla {
 		
 		cbTarifa.getItems().addAll(tarifas);
 		
-		tFechaInicio.focusedProperty().addListener((ov, oldV, newV) -> {    if (!newV) { validaFecha(tFechaInicio); validaCampos();  }  });
-		tFechaFin.focusedProperty().addListener((ov, oldV, newV) -> {    if (!newV) { validaFecha(tFechaFin); validaCampos();  }  });
+		tFecha.focusedProperty().addListener((ov, oldV, newV) -> {    if (!newV) { validaFecha(tFecha); validaCampos();  }  });
 		cbTarifa.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { validaCampos();   	});
 		imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardaElemento(); }	});
 		
@@ -87,12 +84,9 @@ public class InformaAsignacion implements ControladorPantalla {
 			RelRecursoTarifa lcp = art.relRecursoTarifa;
 			
 			if (lcp.tarifa!=null) cbTarifa.setValue(lcp.tarifa);
-			if (lcp.fechaInicio!=null) tFechaInicio.setText(FormateadorDatos.formateaDato(lcp.fechaInicio, FormateadorDatos.FORMATO_FECHA));
-			if (lcp.fechaFin!=null) 
-				if (Constantes.fechaFinal.compareTo(lcp.fechaFin)<=0)
-					tFechaFin.setText("");
-				else
-					tFechaFin.setText(FormateadorDatos.formateaDato(lcp.fechaFin, FormateadorDatos.FORMATO_FECHA));
+			
+			Date fecha = Constantes.finMes(lcp.mes, lcp.anio);
+			tFecha.setText(FormateadorDatos.formateaDato(fecha, TipoDato.FORMATO_FECHA));
 			
 		} catch (Exception e){
 			
@@ -110,7 +104,7 @@ public class InformaAsignacion implements ControladorPantalla {
 	public void validaCampos() {
 		boolean validacion = true;
 		
-		if ("".equals(tFechaInicio.getText())){
+		if ("".equals(tFecha.getText())){
 			validacion = false;
 		}
 		
@@ -137,21 +131,13 @@ public class InformaAsignacion implements ControladorPantalla {
 			
 			RelRecursoTarifa lcp = art.relRecursoTarifa;
 			lcp.modificado = true;
-			lcp.fechaInicio = (Date) FormateadorDatos.parseaDato(tFechaInicio.getText(), FormateadorDatos.FORMATO_FECHA);
+			Date fecha = (Date) FormateadorDatos.parseaDato(tFecha.getText(), FormateadorDatos.FORMATO_FECHA);
 			
-			Calendar c;
+			Calendar c = Calendar.getInstance();
+			c.setTime(fecha);
 			
-			if ("".equals(tFechaFin.getText())) {
-				c = Calendar.getInstance();
-				c.setTime(Constantes.fechaFinal);
-				c.add(Calendar.DAY_OF_MONTH, 1);
-				lcp.fechaFin = c.getTime();
-			} else {
-				Date d = (Date) FormateadorDatos.parseaDato(tFechaFin.getText(), FormateadorDatos.FORMATO_FECHA);
-				c = Calendar.getInstance();
-				c.setTime(d);
-				lcp.fechaFin = c.getTime();
-			}	
+			lcp.mes = c.get(Calendar.MONTH)+1;
+			lcp.anio = c.get(Calendar.YEAR);
 			
 			lcp.tarifa = cbTarifa.getValue();
 			

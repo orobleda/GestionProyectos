@@ -258,7 +258,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		setIdsPresOperado();
 		
-		String idTransaccion = "eliminarPresupuestoProyecto" + new Date().getTime();
+		String idTransaccion = "eliminarPresupuestoProyecto" + Constantes.fechaActual().getTime();
 		
 		Iterator<Proyecto> itDemandasAsociadas = this.listaDemAsociadas.iterator();
 		Proyecto pApunte = null;
@@ -328,7 +328,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 			return;
 		}
 		
-		String idTransaccion = "guardarPresupuestoProyecto" + new Date().getTime();
+		String idTransaccion = "guardarPresupuestoProyecto" + Constantes.fechaActual().getTime();
 		
 		if (this.proyOperado.modo == Proyecto.ANIADIR) {
 			this.proyOperado.nombre = this.tNomProyecto.getText();

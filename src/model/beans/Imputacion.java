@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -308,7 +309,7 @@ public class Imputacion implements Cargable{
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		
-		String idTransaccion = "fraccionaImputacion" + new Date().getTime();
+		String idTransaccion = "fraccionaImputacion" + Constantes.fechaActual().getTime();
 		
 		if (listaImputaciones.size()!=0) {
 			listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, i.id));

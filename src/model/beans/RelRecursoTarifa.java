@@ -9,7 +9,6 @@ import java.util.List;
 
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
-import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -23,8 +22,8 @@ public class RelRecursoTarifa implements Cargable{
 	public Recurso recurso = null;
 	public Proveedor proveedor = null;
 	public Tarifa tarifa = null;
-	public Date fechaInicio = null;
-	public Date fechaFin = null;
+	public int mes = 1;
+	public int anio = 2000;
 	public boolean modificado = false;
 	public boolean vigente = false; 
 	public boolean usuario = false; 
@@ -50,40 +49,12 @@ public class RelRecursoTarifa implements Cargable{
 		}
 	}
 	
-	public RelRecursoTarifa tarifaVigente(ArrayList<RelRecursoTarifa> listaTarifas,int idRecurso, boolean proveedor) { 
-		if (listaTarifas==null) listaTarifas = buscaRelacion(idRecurso, proveedor);
-		
-		Date fechaActual = new Date();
-		Calendar cActual = Calendar.getInstance();
-		cActual.setTime(fechaActual);
-		
-		Calendar cInicio = Calendar.getInstance();
-		Calendar cFin = Calendar.getInstance();
-		
-		Iterator<RelRecursoTarifa> itCargable = listaTarifas.iterator();
-		RelRecursoTarifa rec = null;
-		
-		while (itCargable.hasNext()) {
-			rec = (RelRecursoTarifa) itCargable.next();
-			Tarifa tarifaIterada = rec.tarifa;
-					
-			cInicio.setTime(tarifaIterada.fInicioVig);
-			cFin.setTime(tarifaIterada.fFinVig);
-			
-			if (cInicio.before(cActual) && cFin.after(cInicio)) {
-				return rec;	
-			}			
-		}
-		
-		return rec;
-    }
-	
 	public ArrayList<RelRecursoTarifa> buscaRelacion(int idRecurso, boolean proveedor) { 			
 		ConsultaBD consulta = new ConsultaBD();
 		
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		if (proveedor)
-			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,idRecurso));
+			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idRecurso));
 		else
 			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,idRecurso));
 		
@@ -106,14 +77,11 @@ public class RelRecursoTarifa implements Cargable{
 		if (this.usuario)
 			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
 		else
-			listaParms.add(new ParametroBD(8,ConstantesBD.PARAMBD_INT,this.proveedor.id));
+			listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,this.proveedor.id));
+		
 		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
-		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_FECHA,this.fechaInicio));
-		listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_REAL,new Double(this.fechaInicio.getTime())));
-		if (!(Constantes.fechaFinal.compareTo(this.fechaFin)<0)){
-			listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_FECHA,this.fechaFin));
-			listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_REAL,new Double(this.fechaFin.getTime())));
-		}
+		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.mes));
+		listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_INT,this.anio));
 			
 		ConsultaBD consulta = new ConsultaBD();
 		consulta.ejecutaSQL("iInsertaRelTarifaRecurso", listaParms, this, idTransaccion);
@@ -121,19 +89,20 @@ public class RelRecursoTarifa implements Cargable{
 	
 	public void updateRelacion(String idTransaccion) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));		
-		if (this.usuario)
-			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
-		else
-			listaParms.add(new ParametroBD(8,ConstantesBD.PARAMBD_INT,this.proveedor.id));
-		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
-		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_FECHA,this.fechaInicio));
-		listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_REAL,new Double(this.fechaInicio.getTime())));
+		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));	
 		
-		if (!(Constantes.fechaFinal.compareTo(this.fechaFin)<0)){
-			listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_FECHA,this.fechaFin));
-			listaParms.add(new ParametroBD(7,ConstantesBD.PARAMBD_REAL,new Double(this.fechaFin.getTime())));
+		if (this.usuario) {
+			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
+			listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,0));
 		}
+		else {
+			listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,this.proveedor.id));
+			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,0));
+		}
+		
+		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
+		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.mes));
+		listaParms.add(new ParametroBD(5,ConstantesBD.PARAMBD_INT,this.anio));
 		
 		ConsultaBD consulta = new ConsultaBD();
 		consulta.ejecutaSQL("uActualizaRelTarifaRecurso", listaParms, this, idTransaccion);
@@ -184,17 +153,12 @@ public class RelRecursoTarifa implements Cargable{
 				this.tarifa = tarifas.get(0);
 			} catch (Exception e) {}
 			
-			if (salida.get("reltrFIni")==null) this.fechaInicio = null; else try { 
-				this.fechaInicio = (Date) FormateadorDatos.parseaDato(salida.get("reltrFIni").toString(),FormateadorDatos.FORMATO_FECHA);
+			if (salida.get("relMes")==null) this.mes = 0; else try { 
+				this.mes = (Integer) salida.get("relMes");
 			} catch (Exception e) {}
 			
-			if (salida.get("reltrFfin")==null) {
-				Calendar c = Calendar.getInstance();
-				c.setTime(Constantes.fechaFinal);
-				c.add(Calendar.DAY_OF_MONTH, 1);
-				this.fechaFin = c.getTime(); 
-			} else try { 
-				this.fechaFin = (Date) FormateadorDatos.parseaDato(salida.get("reltrFfin").toString(),FormateadorDatos.FORMATO_FECHA);
+			if (salida.get("relAnio")==null) this.anio = 0; else try { 
+				this.anio = (Integer) salida.get("relAnio");
 			} catch (Exception e) {}
 			
 		} catch (Exception e) {
@@ -203,6 +167,51 @@ public class RelRecursoTarifa implements Cargable{
 		
 		return this;
 	}
+	
+	public RelRecursoTarifa tarifaVigente(int idRecurso, boolean proveedor, Date fechaBuscada) { 
+		ArrayList<RelRecursoTarifa> listaTarifas = buscaRelacion(idRecurso, proveedor);
+		
+		Date fechaActual = null;
+		
+		if (fechaBuscada == null)
+			fechaActual = Constantes.fechaActual();
+		else 
+			fechaActual = fechaBuscada;
+		
+		Calendar cFechaActual = Calendar.getInstance();
+		cFechaActual.setTime(fechaActual);
+		int mesBuscado = cFechaActual.get(Calendar.MONTH)+1;
+		int anioBuscado = cFechaActual.get(Calendar.YEAR)+1;
+		
+		Calendar cMaxima = Calendar.getInstance();
+		Calendar cIterada = Calendar.getInstance();
+		
+		cMaxima.setTime(Constantes.finMes(1, 1980));
+		long diff = 100000;
+		RelRecursoTarifa recMaximo = null;
+				
+		Iterator<RelRecursoTarifa> itCargable = listaTarifas.iterator();
+		RelRecursoTarifa rec = null;
+		
+		while (itCargable.hasNext()) {
+			rec = (RelRecursoTarifa) itCargable.next();
+			
+			if (rec.mes == mesBuscado && rec.anio == anioBuscado) 
+				return rec;
+			else {
+				Date fIterada = Constantes.finMes(rec.mes, rec.anio);
+				cIterada.setTime(fIterada);
+				
+				if (Math.abs(cMaxima.getTimeInMillis()-cIterada.getTimeInMillis())<diff) {
+					recMaximo = rec;
+					cMaxima = cIterada;
+					diff = Math.abs(cMaxima.getTimeInMillis()-cIterada.getTimeInMillis());
+				}
+			}
+		}
+		
+		return recMaximo;
+    }
 	
 	public String toString() {
 		return this.tarifa.toString();

@@ -89,11 +89,13 @@ public class AsigFaseSistema implements ControladorPantalla, PopUp {
 				try {
 					float porc = (Float) FormateadorDatos.parseaDato(this.tPorcentaje.getText(), TipoDato.FORMATO_PORC);
 					FaseProyectoSistemaDemanda fpsd = this.fase.fasesProyecto.get(sistema.codigo).getDemanda(this.demanda.id, this.demanda.apunteContable);
-					ParametroFases par = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
-					par.setValor(porc);
 					this.tPorcentaje.setText(FormateadorDatos.formateaDato(porc, TipoDato.FORMATO_PORC));
-					float coste = (Float) FormateadorDatos.parseaDato(af.tCosteAsignado.getText(), TipoDato.FORMATO_MONEDA);
-					this.tEstimado.setText(FormateadorDatos.formateaDato(coste*porc/100, TipoDato.FORMATO_MONEDA));
+					if (fpsd!= null) { 
+						ParametroFases par = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+						par.setValor(porc);
+						float coste = (Float) FormateadorDatos.parseaDato(af.tCosteAsignado.getText(), TipoDato.FORMATO_MONEDA);
+						this.tEstimado.setText(FormateadorDatos.formateaDato(coste*porc/100, TipoDato.FORMATO_MONEDA));
+					}
 				} catch (Exception ex){
 					this.tPorcentaje.setText("0 %");
 				}			

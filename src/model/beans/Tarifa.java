@@ -112,7 +112,7 @@ public class Tarifa implements Cargable{
 			if (o!=null) {
 				Boolean p = (Boolean) o;
 				if (p.booleanValue()) {
-					Date d = new Date();
+					Date d = Constantes.fechaActual();
 					listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_REAL, new Float(d.getTime())));
 					listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_REAL, new Float(d.getTime())));
 				}				

@@ -185,6 +185,7 @@ public class FaseProyectoSistema implements Cargable{
 	
 	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable) {
 		Iterator<FaseProyectoSistemaDemanda> itF = this.demandasSistema.iterator();
+		
 		while (itF.hasNext()) {
 			FaseProyectoSistemaDemanda fpsd = itF.next();
 			
@@ -192,7 +193,8 @@ public class FaseProyectoSistema implements Cargable{
 				ParametroFases pf = (ParametroFases) fpsd.parametrosFaseSistemaDemanda.get(MetaParametro.FASES_COBERTURA_DEMANDA);
 				return (Float) pf.getValor();
 			}
-		}		
+		}
+				
 		return 0;
 	} 
 	

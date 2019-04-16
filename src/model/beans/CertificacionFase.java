@@ -19,6 +19,8 @@ public class CertificacionFase implements Cargable{
 	public static final int CERTIFICACION_BASE = 0;
 	public static final int CERTIFICACION_ADICIONAL = 1;
 	
+	public Concepto concAdicional = null;
+	
 	public int id = 0;
 	public FaseProyecto fase;
 	public int idFase;

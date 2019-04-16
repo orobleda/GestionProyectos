@@ -45,8 +45,10 @@ public class ParamTable implements Tableable {
     
     @Override
     public void limpiarColumnas(TableView<Tableable> tParametros){
+    	if (tParametros.getItems().size()==0) return;
+    	
     	if (tParametros.getColumns().size()!=0)
-    		if (tParametros.getItems().get(0)==null) {
+    		if ( tParametros.getItems().get(0)==null) {
     			tParametros.getColumns().removeAll(tParametros.getColumns());
     		}
     	

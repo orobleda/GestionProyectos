@@ -20,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.Proveedor;
 import model.beans.Recurso;
 import model.beans.RelRecursoTarifa;
+import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.Recursos.GestionTarifas.Tables.AsignacionRecursoTarifa;
@@ -144,7 +145,7 @@ public class AsignacionTarifas implements ControladorPantalla {
 	
 	private boolean guardarElementos() {
 		boolean validacion = validaRangos();
-		String idTransaccion = "guardarAsignacion" + new Date().getTime();
+		String idTransaccion = "guardarAsignacion" + Constantes.fechaActual().getTime();
 		ConsultaBD consulta = new ConsultaBD();
 		
 		if (validacion)
@@ -210,11 +211,8 @@ public class AsignacionTarifas implements ControladorPantalla {
 			RelRecursoTarifa rrt = (RelRecursoTarifa) itPuntero.next();
 			while (itRecorrer.hasNext()){
 				RelRecursoTarifa rrtAux = (RelRecursoTarifa) itRecorrer.next();
-				if (!rrt.equals(rrtAux)){
-					if (rrtAux.fechaInicio!=null && rrt.fechaInicio!=null && rrtAux.fechaFin!=null && rrt.fechaFin!=null){
-						if (rrt.fechaInicio.compareTo(rrtAux.fechaInicio)<=0 && rrt.fechaFin.compareTo(rrtAux.fechaInicio)>=0) solapado = true;
-						if (rrt.fechaInicio.compareTo(rrtAux.fechaInicio)>=0 && rrt.fechaInicio.compareTo(rrtAux.fechaFin)<=0) solapado = true;
-					} else solapado = true;
+				if (rrt!=rrtAux && rrt.mes == rrtAux.mes && rrt.anio == rrtAux.anio){
+					solapado = true;
 					
 					if (solapado) break;
 				}

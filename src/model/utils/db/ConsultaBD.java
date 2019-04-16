@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 
@@ -261,7 +262,7 @@ public class ConsultaBD {
 	 public static String getTicket() {
 		 String sMethodName = new String (Thread.currentThread().getStackTrace()[2].getMethodName());
 		 String sClassName  = new String (Thread.currentThread().getStackTrace()[2].getClassName());
-		 return sClassName+":"+sMethodName + new Date().getTime();
+		 return sClassName+":"+sMethodName + Constantes.fechaActual().getTime();
 	 }
 	 
 	 public static void ejecutaTicket(String idTransaccion) throws Exception{

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionTarifas.InformaAsignacion">
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionTarifas.InformaAsignacion">
    <children>
       <VBox>
          <children>
@@ -33,18 +38,12 @@
             </HBox>
             <HBox>
                <children>
-                  <Label prefWidth="100.0" text="Fecha Inicio">
+                  <Label prefWidth="100.0" text="Fecha">
                      <HBox.margin>
                         <Insets right="25.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="tFechaInicio" />
-                  <Label prefWidth="75.0" text="Fecha Fin">
-                     <HBox.margin>
-                        <Insets left="25.0" right="15.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="tFechaFin" />
+                  <TextField fx:id="tFecha" />
                </children>
                <VBox.margin>
                   <Insets left="15.0" right="25.0" top="15.0" />
@@ -55,7 +54,7 @@
                   <Insets bottom="25.0" right="25.0" top="25.0" />
                </VBox.margin>
                <children>
-                  <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
                      <image>
                         <Image url="@../../../../imgs/iconos/guardar.jpg" />
                      </image>

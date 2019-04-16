@@ -86,7 +86,17 @@ public class Constantes {
 	}
 
 	public static Date fechaActual() {
-		return new Date();
+		Parametro p = new Parametro();
+		
+		Boolean bol = (Boolean) p.getParametro(MetaParametro.PARAMETRO_FIJAR_FX_ACTUAL).getValor();
+		
+		if (bol) {
+			Date fxActual = (Date) p.getParametro(MetaParametro.PARAMETRO_FX_ACTUAL_FIJADA).getValor();	
+			return fxActual;
+		} else {
+			return new Date();
+		}
+		
 	}
 	
 	public static int numMes(String valor) {

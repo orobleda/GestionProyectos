@@ -33,7 +33,7 @@ public class AnalizadorPresupuesto {
 	public ArrayList<EstimacionAnio> estimacionAnual = null;
 	public Date fechaPivote = null;
 	public Presupuesto presupuesto = null;
-	public HashMap<String,Certificacion> certificaciones = null;
+	public ArrayList<Certificacion> certificaciones = null;
 	
 	public AnalizadorPresupuesto clone() {
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
@@ -79,7 +79,7 @@ public class AnalizadorPresupuesto {
 				}				
 			}
 			
-			Iterator<Certificacion> itCert = this.certificaciones.values().iterator();
+			Iterator<Certificacion> itCert = this.certificaciones.iterator();
 			while (itCert.hasNext()) {
 				Certificacion cAux = itCert.next();
 				
@@ -288,7 +288,7 @@ public class AnalizadorPresupuesto {
 		certificaciones = cert.listado();
 		
 		if (certificaciones!=null) {
-			Iterator<Certificacion> itCerts = certificaciones.values().iterator();
+			Iterator<Certificacion> itCerts = certificaciones.iterator();
 			while (itCerts.hasNext()) {
 				Certificacion certAux = itCerts.next();
 				
@@ -332,38 +332,45 @@ public class AnalizadorPresupuesto {
 
 					boolean encontrado = false;
 					
-					if (this.certificaciones.containsKey(c.sistema.codigo)) {
-						cert = this.certificaciones.get(c.sistema.codigo);
-						cert.concepto = c.conceptosCoste.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
-						Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
-						
-						while (itCf.hasNext()) {
-							CertificacionFase cf = itCf.next();
-							Concepto cp = new Concepto();
-							cp.valorEstimado = cf.porcentaje * cert.concepto.valorEstimado/100;
+					Iterator<Certificacion> itCert = this.certificaciones.iterator();
+					while (itCert.hasNext()) {
+						cert = itCert.next();
+						if (cert.s.codigo.equals(c.sistema.codigo)) {
+							cert.concepto = c.conceptosCoste.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
+							Iterator<CertificacionFase> itCf = cert.certificacionesFases.iterator();
 							
-							Iterator<FaseProyectoSistemaDemanda> itFases = cf.fase.fasesProyecto.get(c.sistema.codigo).demandasSistema.iterator();
-							float valorEstimado = 0;
-							while (itFases.hasNext()) {
-								FaseProyectoSistemaDemanda fpsd = itFases.next();
-								Presupuesto presAux = new Presupuesto();
-								presAux.p = fpsd.p;
-								presAux = presAux.dameUltimaVersionPresupuesto(presAux.p);
-								presAux.cargaCostes();
-								fpsd.p.presupuestoActual = presAux;
-								Concepto caux = fpsd.p.presupuestoActual.getCosteConcepto(c.sistema, MetaConcepto.porId(MetaConcepto.DESARROLLO));
+							while (itCf.hasNext()) {
+								CertificacionFase cf = itCf.next();
+								Concepto cp = new Concepto();
+								float valorEstimado = 0;
 								
-								if (caux!=null) { 
-									ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
-									float porc = (Float) parFas.getValor();
-									valorEstimado += caux.valorEstimado*porc/100;
+								if (!cf.adicional) {
+									encontrado = true;
+								
+									cp.valorEstimado = cf.porcentaje * cert.concepto.valorEstimado/100;
+									
+									Iterator<FaseProyectoSistemaDemanda> itFases = cf.fase.fasesProyecto.get(c.sistema.codigo).demandasSistema.iterator();
+									
+									while (itFases.hasNext()) {
+										FaseProyectoSistemaDemanda fpsd = itFases.next();
+										Presupuesto presAux = new Presupuesto();
+										presAux.p = fpsd.p;
+										presAux = presAux.dameUltimaVersionPresupuesto(presAux.p);
+										presAux.cargaCostes();
+										fpsd.p.presupuestoActual = presAux;
+										Concepto caux = fpsd.p.presupuestoActual.getCosteConcepto(c.sistema, MetaConcepto.porId(MetaConcepto.DESARROLLO));
+										
+										if (caux!=null) { 
+											ParametroFases parFas = fpsd.getParametro(MetaParametro.FASES_COBERTURA_DEMANDA);
+											float porc = (Float) parFas.getValor();
+											valorEstimado += caux.valorEstimado*porc/100;
+										}
+									}	
 								}
-							}							
-							
-							cp.valor = valorEstimado;
-							cf.concepto = cp;
-							if (!cf.adicional) {
-								encontrado = true;
+								
+								cp.valor = valorEstimado;
+								cf.concepto = cp;
+								
 							}
 						}
 					} 
@@ -372,7 +379,7 @@ public class AnalizadorPresupuesto {
 						cert = cert.generaCertificacion(c.sistema, this.proyecto, certificaciones);
 						if (cert!=null) {
 							cert.concepto = c.conceptosCoste.get(mc.codigo);
-							certificaciones.put(cert.s.codigo, cert);
+							certificaciones.add(cert);
 						}
 					}
 					

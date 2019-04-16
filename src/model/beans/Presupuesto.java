@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -127,7 +128,7 @@ public class Presupuesto implements Cargable {
 		boolean cierraTransaccion = false;
 		
 		if (idTransaccion == null) {
-			idTransaccion = "borrarPresupuesto" + new Date().getTime();
+			idTransaccion = "borrarPresupuesto" + Constantes.fechaActual().getTime();
 			cierraTransaccion = true;
 		}
 		
@@ -169,7 +170,7 @@ public class Presupuesto implements Cargable {
 			boolean ejecutaTransaccion = false;
 			
 			if (idTransaccion == null) {
-				idTransaccion = "guardarPresupuesto" + new Date().getTime();
+				idTransaccion = "guardarPresupuesto" + Constantes.fechaActual().getTime();
 				ejecutaTransaccion = true;
 			};
 							
@@ -185,7 +186,7 @@ public class Presupuesto implements Cargable {
 				
 				consulta.ejecutaSQL("uActualizaPresupuesto", listaParms, this, idTransaccion);			
 			} else {
-				this.fxAlta = new Date();
+				this.fxAlta = Constantes.fechaActual();
 				this.version = this.version + 1;
 				
 				consulta = new ConsultaBD();

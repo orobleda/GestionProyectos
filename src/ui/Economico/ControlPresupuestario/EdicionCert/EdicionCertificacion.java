@@ -104,7 +104,8 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 			}
 		}
 		
-		if (parametrosPaso.get("columna")== LineaCosteCertificacion.FASE) {
+		if (parametrosPaso.get("columna")== LineaCosteCertificacion.FASE ||
+				parametrosPaso.get("columna")== LineaCosteCertificacion.PORCENTAJE_ESTIMADO) {
 			try {
 				CertificacionFase cf = (CertificacionFase) (((LineaCosteCertificacion) parametrosPaso.get("filaDatos")).cfp).certificacionFase;
 				
@@ -121,9 +122,12 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 			}
 		}
 		
-		if (parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_REAL) {
+		if (parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_REAL ||
+				parametrosPaso.get("columna")== LineaCosteCertificacion.FECHA || 
+				parametrosPaso.get("columna")== LineaCosteCertificacion.TIPO_ESTIMACION || 
+				parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_ESTIMADO) {
 			try {
-				CertificacionFase cf = (CertificacionFase) (((LineaCosteCertificacion) parametrosPaso.get("filaDatos")).cfp).certificacionFase;
+				CertificacionFaseParcial cf = (CertificacionFaseParcial) (((LineaCosteCertificacion) parametrosPaso.get("filaDatos")).cfp);
 				
 				EditCertificacionFaseParcial editarCertificacion = new EditCertificacionFaseParcial();
 		        FXMLLoader loader = new FXMLLoader();
@@ -132,7 +136,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        hbDetalle.getChildren().add(loader.load());
 		        editarCertificacion = loader.getController();
 		        editarCertificacion.variablesPaso = this.variablesPaso;	
-		        editarCertificacion.pintaValores(null);
+		        editarCertificacion.pintaValores(cf);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -71,6 +71,7 @@ public class LineaCosteCertResumenSistema extends ParamTable implements Tableabl
    	   				acumulado += cfp.valEstimado;
    	   			   }
    				}
+   				acumulado += this.c.conceptoAdicional.valorEstimado;
    			   
    			  return FormateadorDatos.formateaDato(new Float(acumulado),TipoDato.FORMATO_MONEDA);
    			}
@@ -85,6 +86,7 @@ public class LineaCosteCertResumenSistema extends ParamTable implements Tableabl
    	   				acumulado += cfp.valReal;
    	   			   }
    				}
+   				acumulado += this.c.conceptoAdicional.valor;
     			  return FormateadorDatos.formateaDato(new Float(acumulado),TipoDato.FORMATO_MONEDA);
    			} 
    				   			

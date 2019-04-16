@@ -228,7 +228,7 @@ public class VistaJerarquizada implements ControladorPantalla {
 		}
 		
 		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
+		c.setTime(Constantes.fechaActual());
 		
 		int valorI = 0;
 		int valorIa = 0;

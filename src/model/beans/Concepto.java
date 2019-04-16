@@ -213,7 +213,6 @@ public class Concepto implements Cargable {
 		c.tarifa = this.tarifa;
 		c.baseCalculo = this.baseCalculo;
 		
-		
 		return c;
 	}
 

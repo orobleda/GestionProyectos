@@ -18,6 +18,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import model.constantes.Constantes;
 import model.metadatos.Festivo;
 import ui.Dialogo;
 import ui.Administracion.Festivos.Tables.LineaFestivo;
@@ -65,7 +66,7 @@ public class GestionFestivos  implements ControladorPantalla {
 	
 	public void initialize(){
 		
-		Date d = new Date();
+		Date d = Constantes.fechaActual();
 		Calendar c = Calendar.getInstance();
 		c.setTime(d);
 		cbAnios.getItems().add(c.get(Calendar.YEAR)-1);

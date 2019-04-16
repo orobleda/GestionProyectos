@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import model.constantes.CargaInicial;
 import ui.Administracion.Festivos.GestionFestivos;
 import ui.Administracion.Parametricas.AdministracionParametros;
+import ui.Economico.CargaImputaciones.CargaImputaciones;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.EstimacionesInternas.EstimacionesInternas;
 import ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones;
@@ -64,7 +65,7 @@ public class Main extends Application {
 	        Scene scene = new Scene(panelBase);
 	        scene.getStylesheets().add("application.css");	        
 	        
-	        ControlPresupuestario c = new ControlPresupuestario();
+	        CargaImputaciones c = new CargaImputaciones();
 	        
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
 	        FXMLLoader loader = new FXMLLoader();
@@ -131,6 +132,8 @@ public class Main extends Application {
 	    model3.getChildren().add(model34);
 	    TreeItem<String> model33 = new TreeItem<String>("Gestión Tarifas");
 	    model3.getChildren().add(model33);
+	    TreeItem<String> model35 = new TreeItem<String>("Alta de Imputaciones");
+	    model3.getChildren().add(model35);
 
 	    TreeItem<String> model4 = new TreeItem<String>("Administración");
 		
@@ -177,7 +180,10 @@ public class Main extends Application {
 		        
 		        if ("Asignación Tarifas".equals(name))
 		        	controlPantalla = new AsignacionTarifas();
-
+		        
+		        if ("Alta de Imputaciones".equals(name))
+		        	controlPantalla = new CargaImputaciones();
+		        
 		        if ("Gestión horas trabajadas".equals(name))
 		        	controlPantalla = new GestionVacaciones();
 

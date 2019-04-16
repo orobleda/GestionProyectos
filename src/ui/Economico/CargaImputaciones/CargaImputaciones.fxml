@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.CargaImputaciones.CargaImputaciones">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Fichero" />
+                  <TextField fx:id="tFichero" prefWidth="400.0" />
+                  <ImageView id="imGuardar" fx:id="imBuscarFichero" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/BuscaFichero3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Desde" />
+                  <DatePicker fx:id="tFdesde" />
+                  <Label prefWidth="100.0" text="Hasta">
+                     <HBox.margin>
+                        <Insets left="80.0" />
+                     </HBox.margin>
+                  </Label>
+                  <DatePicker fx:id="tFhasta" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="TOP_RIGHT">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <children>
+                  <ImageView id="imGuardar" fx:id="imAnalizar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Analizar3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox>
+               <VBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </VBox.margin>
+               <children>
+                  <Label prefWidth="150.0" text="Proyectos Encontrados" />
+                  <ComboBox fx:id="cbProyectos" prefWidth="350.0" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <VBox>
+         <children>
+            <Label text="Imputaciones">
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </Label>
+            <ScrollPane fx:id="scrImputaciones" prefHeight="400.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </ScrollPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Detalle Proyecto">
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </Label>
+            <ScrollPane fx:id="scrDetalleProy" prefHeight="250.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </ScrollPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </bottom>
+</BorderPane>
