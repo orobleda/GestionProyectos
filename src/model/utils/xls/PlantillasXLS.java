@@ -5,20 +5,22 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
+import model.metadatos.TipoDato;
 import model.utils.xml.LectorXML;
 
 public class PlantillasXLS implements Loadable, Cargable{
 	String id = null;
-	String cabecera = null;
-	String inicioDatos = null;
+	int cabecera = 0;
+	int inicioDatos = 0;
 	
 	public static String ID = "id";
 	public static String POSICION = "pos";
 	
-	HashMap<String,HashMap<String,String>> columnas=null;
-	
+	public HashMap<String,ColumnaXLS> columnas=null;
+	public HashMap<Integer,ColumnaXLS> columnasporInt=null;
 	public static HashMap<String, PlantillasXLS> plantillas = null;
 	
 	public void load() {
@@ -39,40 +41,50 @@ public class PlantillasXLS implements Loadable, Cargable{
 			plantillas.put(xls.id, xls);
          }
 	}
+	
+	public ColumnaXLS getColumna(int col) {
+		return this.columnasporInt.get(col);
+	}
 
 	@Override
 	public Cargable cargar(Object o) {
 		Node n = (Node) o;
 		
-		for (int i = 0; i<n.getChildNodes().getLength();i++){
-			String nodo = n.getChildNodes().item(i).getNodeName();
-			
-			if ("id".equals(nodo)) {
-				this.id = n.getChildNodes().item(i).getTextContent();
-			}
-			if ("cabecera".equals(nodo)) {
-				this.cabecera = n.getChildNodes().item(i).getTextContent();
-			}
-			
-			if ("inicioDatos".equals(nodo)) {
-				this.inicioDatos = n.getChildNodes().item(i).getTextContent();
-			}
-			
-			if ("columnas".equals(nodo)) {
-				Node n2 =  n.getChildNodes().item(i);
-				this.columnas = new HashMap<String,HashMap<String,String>>();
-				HashMap<String,String> columna = null;
-				for (int j = 0; j<n2.getChildNodes().getLength();j++){
-					if ("columna".equals(n2.getChildNodes().item(j).getNodeName())) {
-						columna = new HashMap<String,String>();
-						columna.put(PlantillasXLS.ID, n2.getChildNodes().item(j).getAttributes().item(0).getNodeValue());
-						columna.put(PlantillasXLS.POSICION, n2.getChildNodes().item(j).getAttributes().item(1).getNodeValue());
-						this.columnas.put(columna.get(PlantillasXLS.ID),columna);
-					}					
+		try {
+			for (int i = 0; i<n.getChildNodes().getLength();i++){
+				String nodo = n.getChildNodes().item(i).getNodeName();
+				
+				if ("id".equals(nodo)) {
+					this.id = n.getChildNodes().item(i).getTextContent();
 				}
-			}		
+				if ("cabecera".equals(nodo)) {
+					this.cabecera = (Integer) FormateadorDatos.parseaDato(n.getChildNodes().item(i).getTextContent(),TipoDato.FORMATO_INT);
+				}
+				
+				if ("inicioDatos".equals(nodo)) {
+					this.inicioDatos = (Integer) FormateadorDatos.parseaDato(n.getChildNodes().item(i).getTextContent(),TipoDato.FORMATO_INT);
+				}
+				
+				if ("columnas".equals(nodo)) {
+					Node n2 =  n.getChildNodes().item(i);
+					this.columnas = new HashMap<String,ColumnaXLS>();
+					this.columnasporInt = new HashMap<Integer,ColumnaXLS>();
+					
+					for (int j = 0; j<n2.getChildNodes().getLength();j++){
+						if ("columna".equals(n2.getChildNodes().item(j).getNodeName())) {
+							ColumnaXLS col = new ColumnaXLS();
+							col.id = n2.getChildNodes().item(j).getAttributes().item(1).getNodeValue();
+							col.columna = (Integer) FormateadorDatos.parseaDato(n2.getChildNodes().item(j).getAttributes().item(0).getNodeValue(),TipoDato.FORMATO_INT);
+							col.tipo =  (Integer) FormateadorDatos.parseaDato(n2.getChildNodes().item(j).getAttributes().item(2).getNodeValue(),TipoDato.FORMATO_INT);
+							this.columnas.put(col.id,col);
+							this.columnasporInt.put(col.columna,col);
+						}					
+					}
+				}		
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		
 		return this;
 		
 	}

@@ -85,6 +85,9 @@
                <VBox.margin>
                   <Insets bottom="15.0" />
                </VBox.margin>
+               <content>
+                  <VBox fx:id="vbImputaciones" />
+               </content>
             </ScrollPane>
          </children>
          <BorderPane.margin>

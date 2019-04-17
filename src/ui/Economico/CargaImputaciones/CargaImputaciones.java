@@ -2,6 +2,10 @@ package ui.Economico.CargaImputaciones;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 
@@ -15,6 +19,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import model.beans.Imputacion;
+import model.beans.Proyecto;
+import model.utils.xls.ConsultaImputaciones;
 import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
 
@@ -28,6 +36,9 @@ public class CargaImputaciones implements ControladorPantalla  {
 
     @FXML
     private ScrollPane scrImputaciones;
+    
+    @FXML
+    private VBox vbImputaciones;
 
     @FXML
     private ScrollPane scrDetalleProy;
@@ -46,7 +57,9 @@ public class CargaImputaciones implements ControladorPantalla  {
     private TextField tFichero;
 
     @FXML
-    private ComboBox<?> cbProyectos;
+    private ComboBox<Proyecto> cbProyectos;
+    
+    public HashMap<Integer,ArrayList<Imputacion>> listaImputacionesProyecto = null;
 	
 	@Override
 	public AnchorPane getAnchor() {
@@ -71,13 +84,79 @@ public class CargaImputaciones implements ControladorPantalla  {
             public void handle(MouseEvent t)
             {   
 				try {
-					cargaImputaciones();
+					analizaFichero ();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
             } }, "Analiza Fichero", this);	
 		gbAnalizar.activarBoton();
+		
+		this.cbProyectos.setDisable(true);
+		
+		this.tFichero.setText("C:\\Users\\Oscar\\workspace\\Gestion Proyectos ENAGAS\\Imputaciones+DSI.xlsx");
+		
+		this.cbProyectos.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+			if (cbProyectos.getValue()!=null) {
+				try {
+					cargaProyecto();					
+				} catch (Exception ex) {					
+				}
+			}
+		});
 
+	}
+	
+	public void cargaProyecto() throws Exception{
+		ArrayList<Imputacion> lImputaciones = null;
+		lImputaciones = listaImputacionesProyecto.get(this.cbProyectos.getValue().id);
+		
+		Collections.sort(lImputaciones);
+		
+		vbImputaciones.getChildren().removeAll(vbImputaciones.getChildren());
+		
+		Iterator<Imputacion> itImputacion = lImputaciones.iterator();
+		while (itImputacion.hasNext()) {
+			Imputacion i = itImputacion.next();
+			
+			DetalleImputacion nueEstimacion = new DetalleImputacion();
+	        FXMLLoader loader = new FXMLLoader();
+	        loader.setLocation(new URL(nueEstimacion.getFXML()));
+	        vbImputaciones.getChildren().add(loader.load());
+	        nueEstimacion = loader.getController();
+	        nueEstimacion.adscribir(this, i, null);
+		}
+	}
+	
+	public void analizaFichero () throws Exception {
+		listaImputacionesProyecto = new HashMap<Integer,ArrayList<Imputacion>>();
+		this.cbProyectos.getItems().removeAll(this.cbProyectos.getItems());
+		vbImputaciones.getChildren().removeAll(vbImputaciones.getChildren());
+		
+		
+		ConsultaImputaciones ci = new ConsultaImputaciones();
+		ci.abrirArchivo(this.tFichero.getText(), 0);
+		ArrayList<HashMap<String,Object>> listado = ci.leeFichero();
+		ci.cerrarArchivo();
+		
+		 ArrayList<Imputacion> imputaciones = new Imputacion().generaImputacionesDesdeFichero(listado);
+		 Iterator<Imputacion> itI = imputaciones.iterator();
+		 while (itI.hasNext()) {
+			 Imputacion i = itI.next();
+			 ArrayList<Imputacion> lImputaciones = null;
+			 
+			 if (!this.cbProyectos.getItems().contains(i.proyecto)) {
+				 this.cbProyectos.getItems().add(i.proyecto);
+				 lImputaciones = new  ArrayList<Imputacion>();
+				 listaImputacionesProyecto.put(i.proyecto.id, lImputaciones);
+			 } else {
+				 lImputaciones = listaImputacionesProyecto.get(i.proyecto.id);
+			 }
+			 
+			 lImputaciones.add(i);
+		 }
+		 
+		 this.cbProyectos.setDisable(false);
+		 
 	}
 	
 	public void buscaFichero() {
@@ -92,14 +171,6 @@ public class CargaImputaciones implements ControladorPantalla  {
 			this.tFichero.setText(archivo.getAbsolutePath());
 		} else 
 			this.tFichero.setText("");
-	}
-	
-	public void cargaImputaciones() throws Exception{
-		DetalleImputacion nueEstimacion = new DetalleImputacion();
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(new URL(nueEstimacion.getFXML()));
-        scrImputaciones.setContent(loader.load());
-        nueEstimacion = loader.getController();
 	}
 	
 }

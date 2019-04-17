@@ -16,7 +16,7 @@ import model.metadatos.TipoProyecto;
 import model.metadatos.TransicionEstados;
 import model.utils.db.ConsultaBD;
 import model.utils.db.QuerysBD;
-import model.utils.xls.ConsultaXLS;
+import model.utils.xls.ConsultaImputaciones;
 import model.utils.xls.PlantillasXLS;
 
 public class CargaInicial {
@@ -36,7 +36,5 @@ public class CargaInicial {
 		for (int i=0; i<listaInicial.length; i++){
 			listaInicial[i].load();			
 		}
-		
-		ConsultaXLS.leeFichero();
 	}
 }

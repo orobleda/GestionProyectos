@@ -1,11 +1,9 @@
 package ui.Recursos.GestionRecursos;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,17 +16,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.beans.Parametro;
 import model.beans.ParametroRecurso;
-import model.beans.Proyecto;
 import model.beans.Recurso;
-import model.metadatos.MetaParamRecurso;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Administracion.Parametricas.GestionParametros;
-import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
-import ui.Recursos.GestionRecursos.Tables.ParamRecurso;
 import ui.interfaces.ControladorPantalla;
-import ui.interfaces.Tableable;
 
 public class AltaModRecurso implements ControladorPantalla {
 

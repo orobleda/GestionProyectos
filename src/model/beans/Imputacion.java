@@ -12,10 +12,11 @@ import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
-public class Imputacion implements Cargable{
+public class Imputacion implements Cargable, Comparable<Imputacion>{
 	
 	public static int IMPUTACION_NO_FRACCIONADA = 0;
 	public static int IMPUTACION_FRACCIONADA = 1;
@@ -28,16 +29,20 @@ public class Imputacion implements Cargable{
 	public int tipoImputacion = 0;
 
 	public int id = 0;
+	public String codRecurso = "";
 	public Recurso recurso = null;
 	public Proyecto proyecto = null;
+	public String nomProyecto = "";
 	public Sistema sistema = null;
 	public MetaGerencia gerencia = null;
+	public String nomGerencia = null;
 	public MetaConcepto natCoste = null;
 	public Date fxInicio = null;
 	public Date fxFin = null;
 	public float horas = 0;
 	public float importe = 0;
 	public Tarifa tarifa = null;
+	public float fTarifa = 0;
 	public String pedido = null;
 	public String OT = null;
 	public int estado = 0;
@@ -80,6 +85,67 @@ public class Imputacion implements Cargable{
 		}
 		
 		return listaSalida;
+	}
+	
+	public ArrayList<Imputacion> generaImputacionesDesdeFichero (ArrayList<HashMap<String,Object>> listado) throws Exception{
+		 ArrayList<Imputacion> salida = new  ArrayList<Imputacion>();
+		
+		Iterator<HashMap<String,Object>> itListaImputs = listado.iterator();
+		while (itListaImputs.hasNext()) {
+			HashMap<String,Object> imputs = itListaImputs.next();
+			Imputacion i = this.crearDesdeFichero(imputs);
+			if (i!=null)
+				salida.add(i);
+		}
+		
+		return salida;
+	}
+	
+	public Imputacion crearDesdeFichero(HashMap<String,Object> imput) throws Exception{
+		String proyecto = (String) imput.get("Proyecto");
+		if (proyecto==null || "".equals(proyecto)) return null;
+		
+		Proyecto p = new Proyecto();
+		p = p.getProyectoPPM(proyecto, true);
+		
+		Imputacion i = new Imputacion();
+		
+		if (p== null) return null;
+		else i.proyecto = p;
+		
+		i.id = -5;
+		i.codRecurso = (String) imput.get("Usuario");
+		
+		Recurso r = new Recurso();
+		i.recurso = r.getRecursoPorCodigo(i.codRecurso);
+		
+		i.nomProyecto = (String) imput.get("Proyecto");
+		i.sistema = null;
+		i.nomGerencia = (String) imput.get("Gerencia");
+		i.natCoste = null;
+		
+		String periodo =  (String) imput.get("Periodo");
+		String [] periodoCortado = periodo.split(" - ");
+		String [] fechaCortada = periodoCortado[0].split("/");
+				
+		i.fxInicio = Constantes.inicioMes(new Integer(fechaCortada[1]), new Integer("20"+fechaCortada[2]));
+		
+		fechaCortada = periodoCortado[1].split("/");
+		
+		i.fxInicio = Constantes.finMes(new Integer(fechaCortada[1]), new Integer("20"+fechaCortada[2]));
+		
+		i.fxFin = (Date) FormateadorDatos.parseaDato(periodoCortado[1], TipoDato.FORMATO_FECHA);
+		i.horas = ((Double) imput.get("Horas")).floatValue();
+		i.importe = ((Double) imput.get("Importe")).floatValue();
+		i.fTarifa = ((Double) imput.get("Tarifa")).floatValue();
+		i.pedido = "";
+		i.OT = "";
+		i.estado = 0;//(String) imput.get("Estado");
+		i.fxEnvioSAP = null;
+		i.validado = true;
+		i.modo = Imputacion.IMPUTACION_NO_FRACCIONADA;
+		
+		return i;
 	}
 	
 	public Imputacion clone() {
@@ -338,6 +404,17 @@ public class Imputacion implements Cargable{
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dDelImputacion", listaParms, this);
+	}
+
+	@Override
+	public int compareTo(Imputacion arg0) {
+
+		if (arg0.fxFin.equals(this.fxFin)) {
+			return arg0.codRecurso.compareTo(codRecurso);
+		} else {
+			return arg0.fxFin.compareTo(this.fxFin);
+		}
+
 	}
 	
 }

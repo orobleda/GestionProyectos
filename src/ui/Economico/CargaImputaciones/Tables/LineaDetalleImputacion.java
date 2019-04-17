@@ -16,6 +16,7 @@ import ui.interfaces.Tableable;
 public class LineaDetalleImputacion extends ParamTable implements Tableable  {
 	
 	public static final String USUARIO = "Usuario";
+	public static final String NOMBRE = "Nombre";
 	public static final String TARIFA = "Tarifa";
 	public static final String ESTIMADO = "Estimado";
 	public static final String IMPUTADO = "Imputado";
@@ -40,17 +41,19 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
 	public void setConfig() {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
 		configuracionTabla.put(LineaDetalleImputacion.USUARIO, new ConfigTabla(LineaDetalleImputacion.USUARIO, LineaDetalleImputacion.USUARIO, true,0, false));
-		configuracionTabla.put(LineaDetalleImputacion.TARIFA, new ConfigTabla(LineaDetalleImputacion.TARIFA, LineaDetalleImputacion.TARIFA, true,1, false));
-		configuracionTabla.put(LineaDetalleImputacion.ESTIMADO, new ConfigTabla(LineaDetalleImputacion.ESTIMADO, LineaDetalleImputacion.ESTIMADO, true,2, false));
-		configuracionTabla.put(LineaDetalleImputacion.IMPUTADO, new ConfigTabla(LineaDetalleImputacion.IMPUTADO, LineaDetalleImputacion.IMPUTADO, true,3, false));
-		configuracionTabla.put(LineaDetalleImputacion.PERIODO, new ConfigTabla(LineaDetalleImputacion.PERIODO, LineaDetalleImputacion.PERIODO, true,4, false));
+		configuracionTabla.put(LineaDetalleImputacion.NOMBRE, new ConfigTabla(LineaDetalleImputacion.NOMBRE, LineaDetalleImputacion.NOMBRE, true,1, false));
+		configuracionTabla.put(LineaDetalleImputacion.TARIFA, new ConfigTabla(LineaDetalleImputacion.TARIFA, LineaDetalleImputacion.TARIFA, true,2, false));
+		configuracionTabla.put(LineaDetalleImputacion.ESTIMADO, new ConfigTabla(LineaDetalleImputacion.ESTIMADO, LineaDetalleImputacion.ESTIMADO, true,3, false));
+		configuracionTabla.put(LineaDetalleImputacion.IMPUTADO, new ConfigTabla(LineaDetalleImputacion.IMPUTADO, LineaDetalleImputacion.IMPUTADO, true,4, false));
+		configuracionTabla.put(LineaDetalleImputacion.PERIODO, new ConfigTabla(LineaDetalleImputacion.PERIODO, LineaDetalleImputacion.PERIODO, true,5, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put(LineaDetalleImputacion.USUARIO, new Integer(60));
-    	anchoColumnas.put(LineaDetalleImputacion.TARIFA, new Integer(60));
-    	anchoColumnas.put(LineaDetalleImputacion.ESTIMADO, new Integer(80));
-    	anchoColumnas.put(LineaDetalleImputacion.IMPUTADO, new Integer(80));
-    	anchoColumnas.put(LineaDetalleImputacion.PERIODO, new Integer(80));
+    	anchoColumnas.put(LineaDetalleImputacion.USUARIO, new Integer(100));
+    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE, new Integer(250));
+    	anchoColumnas.put(LineaDetalleImputacion.TARIFA, new Integer(100));
+    	anchoColumnas.put(LineaDetalleImputacion.ESTIMADO, new Integer(100));
+    	anchoColumnas.put(LineaDetalleImputacion.IMPUTADO, new Integer(100));
+    	anchoColumnas.put(LineaDetalleImputacion.PERIODO, new Integer(100));
     }
     
    	public void set(String campo, String valor){
@@ -61,8 +64,18 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
        
    	public String get(String campo) {
    		try {
-   			if (LineaDetalleImputacion.USUARIO.equals(campo))  return this.imp.recurso.nombre;
-   			if (LineaDetalleImputacion.TARIFA.equals(campo))  return FormateadorDatos.formateaDato(this.imp.tarifa.costeHora,TipoDato.FORMATO_MONEDA);
+   			if (LineaDetalleImputacion.USUARIO.equals(campo))
+   					return this.imp.codRecurso;
+   			if (LineaDetalleImputacion.NOMBRE.equals(campo))
+   				if (this.imp.recurso==null)
+   					return "";
+   				else 
+   					return this.imp.recurso.nombre;
+   			if (LineaDetalleImputacion.TARIFA.equals(campo))
+   				if (this.imp.recurso==null)
+   					return FormateadorDatos.formateaDato(this.imp.fTarifa,TipoDato.FORMATO_MONEDA);
+   				else 
+   					return FormateadorDatos.formateaDato(this.imp.tarifa.costeHora,TipoDato.FORMATO_MONEDA);
    			if (LineaDetalleImputacion.ESTIMADO.equals(campo))  
    				if (this.est !=null)
    					return FormateadorDatos.formateaDato(this.est.importe,TipoDato.FORMATO_MONEDA);

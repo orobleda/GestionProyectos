@@ -109,7 +109,7 @@ public class Main extends Application {
 	    model1.getChildren().add(model12);
 		
 	    TreeItem<String> model2 = new TreeItem<String>("Recursos");
-	    TreeItem<String> model21 = new TreeItem<String>("Gestión Usuarios");
+	    TreeItem<String> model21 = new TreeItem<String>("Gestión Recursos");
 	    TreeItem<String> model24 = new TreeItem<String>("Gestión Proveedores");
 	    TreeItem<String> model22 = new TreeItem<String>("Asignación Tarifas");
 	    TreeItem<String> model23 = new TreeItem<String>("Gestión horas trabajadas");

@@ -85,6 +85,22 @@ public class Proyecto implements Cargable{
 			return listaProyecto.get(idProyecto);
 	}
 	
+	public static HashMap<Integer,Proyecto> getProyectosEstatico() {
+		if (listaProyecto==null) {
+			listaProyecto = new HashMap<Integer, Proyecto>();
+			
+			Iterator<Proyecto> itProy = new Proyecto().listadoProyectos().iterator();
+			while (itProy.hasNext()) {
+				Proyecto p = itProy.next();
+				listaProyecto.put(p.id, p);
+			}
+			
+			return listaProyecto;
+		} else {
+			return listaProyecto;
+		}
+	}
+	
 	public static Proyecto getProyectoEstatico(int idProyecto) {
 		if (listaProyecto==null) {
 			listaProyecto = new HashMap<Integer, Proyecto>();
@@ -116,6 +132,47 @@ public class Proyecto implements Cargable{
         return salida;
 	}
 	
+	public Proyecto getProyectoPPM(String descPPM, boolean soloAbiertos) {
+		HashMap<Integer,Proyecto> proyectos =Proyecto.getProyectosEstatico();
+		
+		Iterator<Proyecto> itProyecto = proyectos.values().iterator();
+		while (itProyecto.hasNext()) {
+			Proyecto p = itProyecto.next();
+			ParametroProyecto pp = p.getValorParametro(MetaParametro.PROYECTO_NOMPPM);
+			
+			if (pp!=null) {
+				
+				if ( descPPM.equals(pp.getValor())) {
+					boolean insertar = true;
+					if (soloAbiertos) {
+						pp = p.getValorParametro(MetaParametro.PROYECTO_CERRADO);
+						insertar = ! (Boolean) pp.getValor();
+					}
+					
+					if (insertar) return p;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<Proyecto> listadoProyectosGGP(boolean cerrado) {
+		ArrayList<Proyecto> proyectos = listadoProyectosGGP();
+		ArrayList<Proyecto> salida = new ArrayList<Proyecto>();
+		
+		Iterator<Proyecto> itProyecto = proyectos.iterator();
+		while (itProyecto.hasNext()) {
+			Proyecto p = itProyecto.next();
+			ParametroProyecto pp = (ParametroProyecto) ParametroProyecto.getParametro(p.getClass().getSimpleName(),p.id,MetaParametro.PROYECTO_CERRADO);
+			
+			if ( (Boolean) pp.getValor()) {
+				salida.add(p);
+			}
+		}
+		
+		return salida;
+	}
 	
 	public ArrayList<Proyecto> listadoProyectosGGP() {			
 		ConsultaBD consulta = new ConsultaBD();

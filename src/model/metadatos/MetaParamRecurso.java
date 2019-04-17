@@ -1,13 +1,8 @@
 package model.metadatos;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import model.interfaces.Cargable;
-import model.interfaces.Loadable;
-import model.utils.db.ConsultaBD;
-import ui.Recursos.GestionRecursos.Tables.ParamRecurso;
 
 public class MetaParamRecurso implements Cargable {
 	
@@ -24,15 +19,6 @@ public class MetaParamRecurso implements Cargable {
 	public static HashMap<Integer, MetaParamRecurso> listado = null;
 	
 	public MetaParamRecurso() {
-	}
-	
-	public MetaParamRecurso(ParamRecurso pRecurso) {
-		try {
-			this.id = new Integer(pRecurso.get(ParamRecurso.ID));
-			this.descripcion = pRecurso.get(ParamRecurso.DESCRIPCION);
-			this.tipo = pRecurso.get(ParamRecurso.TIPO);
-			this.tipoDato = pRecurso.tipoDato;
-		} catch (Exception e){}
 	}
 	
 	@Override

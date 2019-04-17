@@ -7,6 +7,7 @@ import java.util.Iterator;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -107,6 +108,23 @@ public class Recurso implements Cargable{
 		
 		Recurso p = (Recurso) proyectos.get(0);
         return p.id+1;
+	}
+	
+	public Recurso getRecursoPorCodigo(String codUser) throws Exception{
+		HashMap<Integer, Recurso> mRecursos = Recurso.listadoRecursosEstatico();
+		Iterator<Recurso> itRec = mRecursos.values().iterator();
+		while (itRec.hasNext()) {
+			Recurso rec = itRec.next();
+			ParametroRecurso pr = (ParametroRecurso) rec.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+			
+			if (pr!=null) {
+				if (codUser.equals((String) pr.getValor())) {
+					return rec;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	public Object getValorParametro(String codParm) throws Exception{
