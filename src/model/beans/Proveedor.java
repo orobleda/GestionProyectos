@@ -7,6 +7,7 @@ import java.util.Iterator;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
+import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -47,6 +48,33 @@ public class Proveedor implements Cargable, Loadable {
 			listado.put(est.nomCorto, est);
 			listadoId.put(est.id, est);
 		}
+	}
+	
+	public Parametro getParametro(String codParametro) throws Exception {
+		if (this.listadoParametros == null) {
+			this.cargaProveedor();
+		} 
+		return this.listadoParametros.get(codParametro);
+	}
+	
+	public Proveedor getProveedorPPM(String codPPM) throws Exception {
+		Iterator<Proveedor> itProv = listado.values().iterator();
+		
+		while (itProv.hasNext()) {
+			Proveedor prov = itProv.next();
+			Parametro par = (Parametro) prov.getParametro(MetaParametro.PROVEEDOR_CODPPM);
+			
+			if (par!=null && par.getValor()!=null) {
+				String[] cortado = ((String) par.getValor()).split(";");
+				
+				for (int i=0; i<cortado.length;i++) {
+					if (cortado[i].equals(codPPM))
+						return prov;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	public Proveedor getProveedor(int id) {

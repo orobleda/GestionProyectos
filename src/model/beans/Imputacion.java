@@ -30,6 +30,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 
 	public int id = 0;
 	public String codRecurso = "";
+	public String nomRecurso = "";
 	public Recurso recurso = null;
 	public Proyecto proyecto = null;
 	public String nomProyecto = "";
@@ -49,6 +50,9 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 	public Date fxEnvioSAP = null;
 	public boolean validado = false;
 	public int modo = -1;
+	
+	public Proveedor prov = null;
+	public String sProveedor = null;
 	
 	public ArrayList<Imputacion> crearFracciones(ArrayList<FraccionImputacion> listadoFracciones) {
 		ArrayList<Imputacion> listaSalida = new ArrayList<Imputacion>();
@@ -115,6 +119,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 		
 		i.id = -5;
 		i.codRecurso = (String) imput.get("Usuario");
+		i.nomRecurso = (String) imput.get("NombreUsuario");
 		
 		Recurso r = new Recurso();
 		i.recurso = r.getRecursoPorCodigo(i.codRecurso);
@@ -138,6 +143,22 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 		i.horas = ((Double) imput.get("Horas")).floatValue();
 		i.importe = ((Double) imput.get("Importe")).floatValue();
 		i.fTarifa = ((Double) imput.get("Tarifa")).floatValue();
+		
+		ArrayList<Tarifa> lTarifas = Tarifa.getTarifas();
+		Iterator<Tarifa> itTar = lTarifas.iterator();
+		while (itTar.hasNext()) {
+			Tarifa t = itTar.next();
+			if (Math.abs(t.costeHora - i.fTarifa)<=0.01) {
+				i.tarifa = t;
+				break;
+			}
+		}
+		
+		i.sProveedor = (String) imput.get("Proveedor");
+		Proveedor prov = new Proveedor();
+		if (!"".equals(i.sProveedor))
+			i.prov = prov.getProveedorPPM(i.sProveedor);
+		
 		i.pedido = "";
 		i.OT = "";
 		i.estado = 0;//(String) imput.get("Estado");

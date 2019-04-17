@@ -11,6 +11,14 @@
    <center>
       <HBox BorderPane.alignment="CENTER">
          <children>
+            <ImageView id="imGuardar" fx:id="imSemaforo" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/AltaUsuario3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </ImageView>
             <TableView fx:id="tResultado" />
             <ComboBox fx:id="cbSistema" prefWidth="200.0">
                <HBox.margin>

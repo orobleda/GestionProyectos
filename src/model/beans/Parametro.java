@@ -64,9 +64,12 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 	}
 	
 	public static Object getParametro(String entidad, int idElemento, String codParametro) {
-		Parametro p = new Parametro();
-		HashMap<String, Parametro> listado = p.dameParametros(entidad, idElemento);
-		return listado.get(codParametro).getValor();
+		if (listadoParametros==null) {
+			Parametro p = new Parametro();
+			listadoParametros = p.dameParametros(entidad, idElemento);
+		}
+		
+		return listadoParametros.get(codParametro);
 	}
 	
 	public static boolean isObjeto(int tipo) {

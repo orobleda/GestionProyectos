@@ -29,6 +29,22 @@ public class Tarifa implements Cargable{
 	public static final String filtro_DESARROLLO = "desarrollo";
 	public static final String filtro_VIGENTES = "vigentes";
 	
+	public static ArrayList<Tarifa> listaTarifas = null;
+	
+	public static ArrayList<Tarifa> getTarifas() {
+		if (listaTarifas==null) {
+			Tarifa t = new Tarifa();
+			listaTarifas = t.listado(new HashMap<String, Object>() );
+		}
+		
+		return listaTarifas;
+	}
+	
+	public static void forzarRecargaTarifas() {
+		Tarifa t = new Tarifa();
+		listaTarifas = t.listado(new HashMap<String, Object>() );		
+	}
+	
 	public void updateTarifa()  throws Exception{
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
@@ -60,16 +76,15 @@ public class Tarifa implements Cargable{
 	public void insertTarifa()  throws Exception{
 		
 		ConsultaBD consulta = new ConsultaBD();
-		ArrayList<Cargable> tarifas = consulta.ejecutaSQL("cMaxIdTarifa", null, this);
-		Tarifa t = (Tarifa) tarifas.get(0);
-		
-		this.idTarifa = t.idTarifa+1;
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, idTarifa));
+		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_ID, idTarifa));
 		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, esDesarrollo?1:0));
 		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, esMantenimiento?1:0));
-		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, proveedor.id));
+		if (proveedor!=null)
+			listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, proveedor.id));
+		else 
+			listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, -1));
 		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_REAL, costeHora));
 		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_FECHA, this.fInicioVig));
 		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_FECHA, this.fFinVig));

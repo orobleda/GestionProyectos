@@ -72,7 +72,7 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
    				else 
    					return this.imp.recurso.nombre;
    			if (LineaDetalleImputacion.TARIFA.equals(campo))
-   				if (this.imp.recurso==null)
+   				if (this.imp.tarifa==null)
    					return FormateadorDatos.formateaDato(this.imp.fTarifa,TipoDato.FORMATO_MONEDA);
    				else 
    					return FormateadorDatos.formateaDato(this.imp.tarifa.costeHora,TipoDato.FORMATO_MONEDA);

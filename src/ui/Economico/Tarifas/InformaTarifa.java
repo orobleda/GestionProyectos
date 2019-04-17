@@ -2,6 +2,7 @@ package ui.Economico.Tarifas;
 
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
@@ -15,15 +16,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import model.beans.Imputacion;
 import model.beans.Proveedor;
+import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
+import model.metadatos.TipoDato;
 import ui.Dialogo;
+import ui.GestionBotones;
+import ui.Economico.CargaImputaciones.DetalleImputacion;
+import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
+import ui.popUps.PopUp;
 
-public class InformaTarifa  implements ControladorPantalla  {
+public class InformaTarifa implements ControladorPantalla, PopUp {
 	
 public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.fxml";
 	
@@ -46,84 +54,126 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	private TextField tTarifa;
 	@FXML
     private ImageView imGuardar;
+    private GestionBotones gbGuardar;
     @FXML
     private ImageView imEliminar;
+    private GestionBotones gbEliminar;
 	
 	public static TarifaTabla t = null;
+	public DetalleImputacion di = null;
+	public Imputacion imputacion = null;
+	
+	public boolean esPopUp = false;
 
 	public void initialize(){
-		cbProveedor.getItems().addAll(Proveedor.listado.values());
-		if (t.t.proveedor!=null)
-			cbProveedor.setValue(t.t.proveedor);
-		
-		tsDesarrollo.setSelected(t.t.esDesarrollo);
-		
-		if (t.t.esDesarrollo) {
-			tsMantenimiento.setSelected(t.t.esMantenimiento);
-		} else {
-			tsMantenimiento.setSelected(false);
-			tsMantenimiento.setDisable(true);
-		}
-		
-		if (t.t.fInicioVig!=null) {
-			Calendar c = Calendar.getInstance();
-			c.setTime(t.t.fInicioVig);
-			LocalDate d =  LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
-			dpIniVig.setValue(d);
-		}
-		
-		if (t.t.fFinVig!=null) {
+		try {
+			cbProveedor.getItems().addAll(Proveedor.listado.values());
+			if (t.t.proveedor!=null)
+				cbProveedor.setValue(t.t.proveedor);
 			
-			if (Constantes.fechaFinal.compareTo(t.t.fFinVig)==1) {
-				Calendar c = Calendar.getInstance();
-				c.setTime(t.t.fFinVig);
-				LocalDate d2 =  LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
-				dpFinVig.setValue(d2);
+			tsDesarrollo.setSelected(t.t.esDesarrollo);
+			
+			if (t.t.esDesarrollo) {
+				tsMantenimiento.setSelected(t.t.esMantenimiento);
+			} else {
+				tsMantenimiento.setSelected(false);
+				tsMantenimiento.setDisable(true);
 			}
+			
+			if (t.t.fInicioVig!=null) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(t.t.fInicioVig);
+				LocalDate d =  LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
+				dpIniVig.setValue(d);
+			}
+			
+			if (t.t.fFinVig!=null) {
+				
+				if (Constantes.fechaFinal.compareTo(t.t.fFinVig)==1) {
+					Calendar c = Calendar.getInstance();
+					c.setTime(t.t.fFinVig);
+					LocalDate d2 =  LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
+					dpFinVig.setValue(d2);
+				}
+			}
+			
+			try{
+				tTarifa.setText(FormateadorDatos.formateaDato(t.t.costeHora, FormateadorDatos.FORMATO_MONEDA));
+			} catch (Exception e) {}
+		
+		} catch (Exception ex) {
+			
 		}
 		
-		try{
-			tTarifa.setText(FormateadorDatos.formateaDato(t.t.costeHora, FormateadorDatos.FORMATO_MONEDA));
-		} catch (Exception e) {}
+		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				modificaTarifa();
+            } }, "Guardar Tarifa", this);	
+		gbGuardar.desActivarBoton();
+		
+		gbEliminar = new GestionBotones(imEliminar, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				try {
+					borraTarifa(); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Eliminar Tarifa", this);	
+		gbEliminar.desActivarBoton();
 		
 		tsDesarrollo.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 modificaEsDesarrollo(); }	});
-		imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 modificaTarifa(); }	});
-		imEliminar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 borraTarifa(); }	});
 		tTarifa.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try { tTarifa.setText(FormateadorDatos.formateaDato(tTarifa.getText(), FormateadorDatos.FORMATO_MONEDA)); } catch (Exception e) {tTarifa.setText("");}   }  });
 	}
 	
 	public void modificaTarifa () {
-		
 		try {
-			expander.toggleExpanded();
+			Tarifa tar = null;
 			
-			t.t.proveedor = cbProveedor.getValue();
-			t.t.esDesarrollo = tsDesarrollo.isSelected();
-			t.t.esMantenimiento = tsMantenimiento.isSelected();
-			t.t.costeHora = (Float) FormateadorDatos.parseaDato(tTarifa.getText(), FormateadorDatos.FORMATO_MONEDA);
+			if (!esPopUp) {	
+				tar = t.t;
+				t.set(t.t);
+				t.modificado = true;
+			} else
+				tar = new Tarifa();
+			
+			tar.proveedor = cbProveedor.getValue();
+			tar.esDesarrollo = tsDesarrollo.isSelected();
+			tar.esMantenimiento = tsMantenimiento.isSelected();
+			tar.costeHora = (Float) FormateadorDatos.parseaDato(tTarifa.getText(), FormateadorDatos.FORMATO_MONEDA);
 			
 			Calendar c = Calendar.getInstance();
 			c.set(dpIniVig.getValue().getYear(), dpIniVig.getValue().getMonthValue()-1, dpIniVig.getValue().getDayOfMonth());
-			t.t.fInicioVig = c.getTime();
+			tar.fInicioVig = c.getTime();
 			
 			if (dpFinVig.getValue()==null) {
 				c = Calendar.getInstance();
 				c.setTime(Constantes.fechaFinal);
 				c.add(Calendar.DAY_OF_MONTH, 1);
-				t.t.fFinVig = c.getTime();
+				tar.fFinVig = c.getTime();
 			} else {
 				c = Calendar.getInstance();
 				c.set(dpFinVig.getValue().getYear(), dpFinVig.getValue().getMonthValue()-1, dpFinVig.getValue().getDayOfMonth());
-				t.t.fFinVig = c.getTime();
+				tar.fFinVig = c.getTime();
 			}			
-			
-			t.set(t.t);
-			t.modificado = true;
-			
-			expander.getTableRow().getTableView().refresh();
-			
-			GestionTarifas.botonGuardar.getStyleClass().remove("iconoDisabled");
-			GestionTarifas.botonGuardar.getStyleClass().add("iconoEnabled");
+						
+			if (!esPopUp) {	
+				expander.toggleExpanded();
+				
+				expander.getTableRow().getTableView().refresh();
+				
+				GestionTarifas.botonGuardar.getStyleClass().remove("iconoDisabled");
+				GestionTarifas.botonGuardar.getStyleClass().add("iconoEnabled");
+			} else {
+				tar.insertTarifa();
+				Tarifa.forzarRecargaTarifas();
+				this.di.altaFinalizada();
+				
+				Dialogo.alert("Gestión de Tarifas", "Tarifa guardada", "Se guardó la tarifa correctamente");
+			}
 			
 		} catch (Exception e) {
 			Dialogo.error("Gestión de Tarifas", "Error al guardar", "Faltan campos por informar en la tarifa");
@@ -173,6 +223,48 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+
+	@Override
+	public String getControlFXML() {
+		return InformaTarifa.fxml;
+	}
+
+	@Override
+	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
+		esPopUp = true;
+		this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
+		this.di = (DetalleImputacion)  variablesPaso.get("padre");
+		
+		this.tsDesarrollo.setDisable(true);
+		this.tsMantenimiento.setDisable(true);
+		this.gbGuardar.activarBoton();
+		
+		try {
+			this.tTarifa.setText(FormateadorDatos.formateaDato(this.imputacion.fTarifa, TipoDato.FORMATO_MONEDA));
+			
+			if (this.imputacion.prov!=null) {
+				this.cbProveedor.setValue(this.imputacion.prov);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void setClaseContenida(Object claseContenida) {
+	}
+
+	@Override
+	public boolean noEsPopUp() {
+		return false;
+	}
+
+	@Override
+	public String getMetodoRetorno() {
+		return null;
 	}
 	
 	

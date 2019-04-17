@@ -11,22 +11,12 @@ import model.utils.db.ConsultaBD;
 
 public class MetaParametro implements Cargable, Loadable {
 
-	public static final String PROYECTO_PERFIL_ECONOMICO = "PROY.perfEconomico";
-	public static final String PROYECTO_TIPO_PROYECTO = "PROY.tpProyecto";
-	public static final String PROYECTO_FX_INICIO = "PROY.fxInicio";
-	public static final String PROYECTO_FX_FIN = "PROY.fxFin";
-	public static final String PROYECTO_CERRADO = "PROY.CERRADO";
-	public static final String PROYECTO_NOMPPM = "PROY.NOMPPM";
+	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
 	
 	public static final String FASE_PROYECTO_FX_IMPLANTACION = "F.PR.fxImplantacion";
 	
 	public static final String FASES_COBERTURA_DEMANDA = "F.PR.SIS.DEM.cobertura";
-	
-	public static final String RECURSO_JORNADA = "REC.jornada";
-	public static final String RECURSO_NAT_COSTE = "REC.natCoste";
-	public static final String RECURSO_COD_USUARIO = "REC.codUsuario";
-	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
-	
+
 	public static final String PARAMETRO_ADMIN = "admin";
 	public static final String PARAMETRO_FIJAR_FX_ACTUAL = "FX_ACTUAL_MOD";
 	public static final String PARAMETRO_FX_ACTUAL_FIJADA = "FX_ACTUAL_FIJA";
@@ -35,7 +25,23 @@ public class MetaParametro implements Cargable, Loadable {
 	
 	public static final String PARAMETRO_SISTEMA_PROVEEDOR = "SIST.Proveedor";
 	
-	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
+	public static final String PROVEEDOR_CODPPM = "PROV.NOMPPM";
+	
+	public static final String PROYECTO_PERFIL_ECONOMICO = "PROY.perfEconomico";
+	public static final String PROYECTO_TIPO_PROYECTO = "PROY.tpProyecto";
+	public static final String PROYECTO_FX_INICIO = "PROY.fxInicio";
+	public static final String PROYECTO_FX_FIN = "PROY.fxFin";
+	public static final String PROYECTO_CERRADO = "PROY.CERRADO";
+	public static final String PROYECTO_NOMPPM = "PROY.NOMPPM";
+	
+	public static final String RECURSO_JORNADA = "REC.jornada";
+	public static final String RECURSO_NAT_COSTE = "REC.natCoste";
+	public static final String RECURSO_COD_USUARIO = "REC.codUsuario";
+	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
+	
+
+	
+	
 	
 	public int id =0;
 	public String entidad = "";

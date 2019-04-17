@@ -14,16 +14,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import model.beans.Imputacion;
 import model.beans.Parametro;
 import model.beans.ParametroRecurso;
 import model.beans.Recurso;
+import model.constantes.Constantes;
+import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Administracion.Parametricas.GestionParametros;
+import ui.Economico.CargaImputaciones.DetalleImputacion;
+import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.interfaces.ControladorPantalla;
+import ui.popUps.PopUp;
 
-public class AltaModRecurso implements ControladorPantalla {
+public class AltaModRecurso implements ControladorPantalla, PopUp {
 
 	public static final String fxml = "file:src/ui/Recursos/GestionRecursos/AltaModRecurso.fxml"; 
 	
@@ -42,6 +48,9 @@ public class AltaModRecurso implements ControladorPantalla {
 
     @FXML
     private VBox tParametros;
+    
+    @FXML
+    private VBox vbCamposEntada;
 
     @FXML
     private ImageView imAniadir;
@@ -62,6 +71,8 @@ public class AltaModRecurso implements ControladorPantalla {
     private GestionBotones gbGuardar;
     
     Recurso rActual = null;
+    Imputacion imputacion = null;
+    DetalleImputacion di = null;
 
     
 	public AltaModRecurso(){
@@ -83,7 +94,7 @@ public class AltaModRecurso implements ControladorPantalla {
 	            public void handle(MouseEvent t)
 	            {   
 					try {
-						nuevoRecurso();
+						nuevoRecurso(false);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -107,14 +118,14 @@ public class AltaModRecurso implements ControladorPantalla {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-	            } }, "Guardar Recurso", this);	
+	            } }, "Eliminar Recurso", this);	
 			gbEliminar.desActivarBoton();
 			
 			Recurso p = new Recurso();
 			cbListaRec.getItems().addAll(p.listadoRecursos());
     }
 	
-	private void nuevoRecurso() throws Exception{
+	private void nuevoRecurso(boolean popUp) throws Exception{
 		gbGuardar.activarBoton();
 		gbEliminar.activarBoton();
 		vbDetalle.setDisable(false);
@@ -126,10 +137,10 @@ public class AltaModRecurso implements ControladorPantalla {
 		this.tNombre.setText("");
 		this.tID.setDisable(true);
 		
-		cargaPropiedades(Parametro.SOLO_METAPARAMETROS);				
+		cargaPropiedades(Parametro.SOLO_METAPARAMETROS, popUp);				
 	}
 	
-	private void cargaPropiedades(int idRecurso) throws Exception {
+	private void cargaPropiedades(int idRecurso, boolean popUp) throws Exception {
 		tParametros.getChildren().removeAll(tParametros.getChildren());
 		
 		GestionParametros gestPar = new GestionParametros();
@@ -146,6 +157,19 @@ public class AltaModRecurso implements ControladorPantalla {
         variablesPaso.put("idEntidadBuscar", idRecurso);
         variablesPaso.put("ancho", new Double(800));
         variablesPaso.put("alto", new Double(400));
+        
+        if (popUp) {
+        	variablesPaso.put(GestionParametros.PARAMETROS_DIRECTOS,Constantes.TRUE);
+        	HashMap<String,Parametro> listaParametros = new HashMap<String,Parametro>();
+        	
+        	ParametroRecurso par = new ParametroRecurso();
+			listaParametros = par.dameParametros(Recurso.class.getSimpleName(), Parametro.SOLO_METAPARAMETROS);
+			par = (ParametroRecurso) listaParametros.get(MetaParametro.RECURSO_COD_USUARIO);
+			par.valorTexto = this.imputacion.codRecurso;
+        	
+        	variablesPaso.put(GestionParametros.LISTA_PARAMETROS,listaParametros);
+		} 
+        
         gestPar.setParametrosPaso(variablesPaso);
         
         rActual.listadoParametros = gestPar.listaParametros;
@@ -154,9 +178,6 @@ public class AltaModRecurso implements ControladorPantalla {
 	private void guardarRecurso(){
 		boolean modificacion = false;
 		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el recurso?", "Se almacenará tanto el recurso como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
 			rActual.nombre = this.tNombre.getText();
 			
 			try {
@@ -183,22 +204,22 @@ public class AltaModRecurso implements ControladorPantalla {
 				
 				Dialogo.alert("Proceso Finalizado", accion + " de usuario completada", "Se ha guardado el usuario y sus " + contador + " asociados.");
 				
-				cbListaRec.getItems().clear();
-				cbListaRec.getItems().addAll(rActual.listadoRecursos());
+				Recurso.listadoRecursosEstatico(true);
 				
-				rActual.listadoRecursosEstatico(true);
-				
-				tParametros.getChildren().removeAll(tParametros.getChildren());
-				gbGuardar.desActivarBoton();
-				gbEliminar.desActivarBoton();
-				vbDetalle.setDisable(true);
-				
+				if (imputacion==null) {
+					cbListaRec.getItems().clear();
+					cbListaRec.getItems().addAll(rActual.listadoRecursos());
+					tParametros.getChildren().removeAll(tParametros.getChildren());
+					gbGuardar.desActivarBoton();
+					gbEliminar.desActivarBoton();
+					vbDetalle.setDisable(true);
+				} else {
+					this.di.altaFinalizada();
+				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}				
-		} else {
-		}
 	}
 	
 	private void eliminaRecurso() throws Exception{
@@ -228,7 +249,7 @@ public class AltaModRecurso implements ControladorPantalla {
 			gbEliminar.desActivarBoton();
 			vbDetalle.setDisable(true);		
 			
-			rActual.listadoRecursosEstatico(true);
+			Recurso.listadoRecursosEstatico(true);
 		} else {
 		}
 	}
@@ -248,7 +269,7 @@ public class AltaModRecurso implements ControladorPantalla {
 			
 			this.tNombre.setText(rActual.nombre);
 			
-			cargaPropiedades(rActual.id);	
+			cargaPropiedades(rActual.id, false);	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -262,6 +283,46 @@ public class AltaModRecurso implements ControladorPantalla {
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+
+	@Override
+	public String getControlFXML() {
+		return fxml;
+	}
+
+	@Override
+	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
+		try {
+			vbCamposEntada.getChildren().removeAll(vbCamposEntada.getChildren());
+			this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
+			this.di = (DetalleImputacion)  variablesPaso.get("padre");
+			
+			this.nuevoRecurso(true);
+			this.gbEliminar.desActivarBoton();
+			
+			this.tNombre.setText(this.imputacion.nomRecurso);
+			
+		} catch (Exception ex) {
+			
+		} 
+	}
+
+	@Override
+	public void setClaseContenida(Object claseContenida) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean noEsPopUp() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getMetodoRetorno() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 		
 }

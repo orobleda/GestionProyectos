@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 
+import controller.AnalizadorPresupuesto;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +22,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import model.beans.Imputacion;
+import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.constantes.Constantes;
 import model.utils.xls.ConsultaImputaciones;
 import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
@@ -30,7 +33,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 		
 	public static final String fxml = "file:src/ui/Economico/CargaImputaciones/CargaImputaciones.fxml"; 
 	
-    @FXML
+	@FXML
     private ImageView imBuscarFichero;
     private GestionBotones gbBuscarFichero;
 
@@ -127,6 +130,18 @@ public class CargaImputaciones implements ControladorPantalla  {
 		}
 	}
 	
+	public void recargar() {
+		try {
+			Proyecto p = this.cbProyectos.getValue();
+			
+			analizaFichero ();
+			
+			this.cbProyectos.setValue(p);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void analizaFichero () throws Exception {
 		listaImputacionesProyecto = new HashMap<Integer,ArrayList<Imputacion>>();
 		this.cbProyectos.getItems().removeAll(this.cbProyectos.getItems());
@@ -171,6 +186,18 @@ public class CargaImputaciones implements ControladorPantalla  {
 			this.tFichero.setText(archivo.getAbsolutePath());
 		} else 
 			this.tFichero.setText("");
+	}
+	
+	public void cargaPresupuesto() {
+		Proyecto p = this.cbProyectos.getValue();
+		p.presupuestoActual = new Presupuesto();
+		p.presupuestoActual = p.presupuestoActual.dameUltimaVersionPresupuesto(p);
+		p.presupuestoActual.cargaCostes();
+		
+		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
+		ap.construyePresupuestoMensualizado(p.presupuestoActual, Constantes.fechaActual(), null, null, null, null);
+		
+		
 	}
 	
 }

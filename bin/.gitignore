@@ -1,5 +1,4 @@
 /ui/
-/proyectosDemanda.png
 /AltaTarifa3_DES.png
 /AltaTarifa3_ON.png
 /AltaTarifa3_PAS.png
@@ -16,6 +15,7 @@
 /Aprobar3_ON.png
 /Aprobar3_PAS.png
 /Aprobar3_PRES.png
+/proyectosDemanda.png
 /BorraFila3_DES.png
 /BorraFila3_ON.png
 /BorraFila3_PAS.png
@@ -75,9 +75,6 @@
 /Mostrar3R_DES.png
 /Mostrar3R_ON.png
 /Mostrar3R_PAS.png
-/AccesoBD.xml
-/AccesoBDParametricas.xml
-/AccesoXLSFicheros.xml
 /Mostrar3R_PRES.png
 /MoverFase3_DES.png
 /MoverFase3_ON.png
@@ -104,9 +101,12 @@
 /antPagina_ON.png
 /antPagina_PAS.png
 /antPagina_PRES.png
+/botones.psd
+/AccesoBD.xml
+/AccesoBDParametricas.xml
+/AccesoXLSFicheros.xml
 /application.css
 /application/
-/botones.psd
 /botonesRedx25 - copia.psd
 /botonesx200.psd
 /botonesx25.psd
@@ -124,6 +124,9 @@
 /listado_PRES.png
 /model/
 /nuevaVersion.png
+/semaforo_ambar.png
+/semaforo_rojo.png
+/semaforo_verde.png
 /sigPagina_ON.png
 /sigPagina_PAS.png
 /sigPagina_PRES.png
