@@ -16,18 +16,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import model.beans.Coste;
 import model.beans.Imputacion;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.constantes.Constantes;
+import model.metadatos.TipoDato;
 import model.utils.xls.ConsultaImputaciones;
 import ui.GestionBotones;
+import ui.Tabla;
+import ui.Economico.CargaImputaciones.Tables.LineaCosteEconomico;
 import ui.interfaces.ControladorPantalla;
+import ui.interfaces.Tableable;
 
 public class CargaImputaciones implements ControladorPantalla  {
 		
@@ -58,6 +64,14 @@ public class CargaImputaciones implements ControladorPantalla  {
 
     @FXML
     private TextField tFichero;
+    
+    @FXML
+    private TableView<Tableable> tRestanteAnio;
+	public Tabla tablaRestanteAnio;
+
+    @FXML
+    private TableView<Tableable> tRestanteTotal;
+	public Tabla tablaRestanteTotal;
 
     @FXML
     private ComboBox<Proyecto> cbProyectos;
@@ -128,6 +142,8 @@ public class CargaImputaciones implements ControladorPantalla  {
 	        nueEstimacion = loader.getController();
 	        nueEstimacion.adscribir(this, i, null);
 		}
+		
+		cargaPresupuesto();
 	}
 	
 	public void recargar() {
@@ -197,6 +213,14 @@ public class CargaImputaciones implements ControladorPantalla  {
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
 		ap.construyePresupuestoMensualizado(p.presupuestoActual, Constantes.fechaActual(), null, null, null, null);
 		
+		this.tablaRestanteAnio = new Tabla(tRestanteAnio,new LineaCosteEconomico());
+		this.tablaRestanteTotal = new Tabla(tRestanteTotal,new LineaCosteEconomico());
+		
+		HashMap<String,Coste> lCosteTotal = ap.getRestante(true, -1);
+		HashMap<String,Coste> lCosteAnual = ap.getRestante(true, -1);
+		
+		this.tablaRestanteTotal.pintaTabla(TipoDato.toListaObjetos(lCosteTotal.values()));
+		this.tablaRestanteAnio.pintaTabla(TipoDato.toListaObjetos(lCosteAnual.values()));
 		
 	}
 	

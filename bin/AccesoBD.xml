@@ -626,29 +626,33 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select  	id relrsId,	idRecurso relrsIdRec,	idArea relrsIdSis from REL_RECURSO_AREA where 1=1 $B$and idRecurso=||1||$E$</query>
+		<query>select  	id relrsId,	idRecurso relrsIdRec, idArea relrsIdSis, ocurrencias relrsOcur from REL_RECURSO_AREA where 1=1 $B$and idRecurso=||1||$E$ $B$and idArea=||2||$E$</query>
 		<id tipo="C">cRelRecSistema</id>
 		<tabla>REL_RECURSO_AREA</tabla>
 		<parametros>
-			<parametro id="1" tipo="int"></parametro>	
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>	
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>INSERT INTO REL_RECURSO_AREA (id,idRecurso,idArea) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$)</query>
+		<query>INSERT INTO REL_RECURSO_AREA (id,idRecurso,idArea,ocurrencias) values ($B$||1||$E$,$B$||2||$E$, $B$||3||$E$, $B$||4||$E$)</query>
 		<id tipo="I">iInsertaRelRecursoSistema</id>
 		<tabla>REL_RECURSO_AREA</tabla>
 		<parametros>
 			<parametro id="1" tipo="id"></parametro>
 			<parametro id="2" tipo="int"></parametro>
-			<parametro id="3" tipo="int"></parametro>			
+			<parametro id="3" tipo="int"></parametro>	
+			<parametro id="4" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>DELETE FROM REL_RECURSO_AREA where id = $B$||1||$E$</query>
-		<id tipo="D">dRelRecursoSistema</id>
+		<query>UPDATE REL_RECURSO_AREA SET ocurrencias=$B$||1||$E$ where idRecurso = $B$||2||$E$ and idArea = $B$||3||$E$</query>
+		<id tipo="U">uActualizaRelRecursoSistema</id>
 		<tabla>REL_RECURSO_AREA</tabla>
 		<parametros>
-			<parametro id="1" tipo="int"></parametro>		
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>	
 		</parametros>
 	</acceso>
 	<acceso>

@@ -28,6 +28,8 @@ public class CargaInicial {
 											};
 	
 	public void load(){
+		FormateadorDatos.cargaAcutes();
+		
 		ConsultaBD.init("C:\\Users\\Oscar\\workspace\\Gestion Proyectos ENAGAS\\gProyectos.s3db");
 		
 		ConsultaBD cbd = new ConsultaBD();

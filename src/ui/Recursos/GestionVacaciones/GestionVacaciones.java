@@ -99,7 +99,7 @@ public class GestionVacaciones implements ControladorPantalla {
 				 Recurso gestorRecurso = (Recurso) parRec.getValor();
 				 MetaConcepto mc = (MetaConcepto) parRecAux.getValor();
 				
-				if (gestorRecurso.id == Constantes.getAdministradorSistema().id && mc.id == MetaConcepto.SATAD) {
+				if (gestorRecurso!=null && gestorRecurso.id == Constantes.getAdministradorSistema().id && mc.id == MetaConcepto.SATAD) {
 					contenedorRecurso = new HBox();
 					contenedorRecursos.getChildren().add(contenedorRecurso);
 					
@@ -135,9 +135,10 @@ public class GestionVacaciones implements ControladorPantalla {
 				r = itRecurso.next();
 				r.cargaRecurso();
 				
-				Recurso gestorRecurso = ((Recurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR));
+				ParametroRecurso pGestorRecurso = ((ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR));
+				Recurso gestorRecurso = ((Recurso) pGestorRecurso.getValor());
 				
-				if (gestorRecurso.id == Constantes.getAdministradorSistema().id) {
+				if (gestorRecurso!=null && gestorRecurso.id == Constantes.getAdministradorSistema().id) {
 					contenedorRecurso = new HBox();
 					contenedorRecursos.getChildren().add(contenedorRecurso);
 					

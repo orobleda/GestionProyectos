@@ -770,4 +770,46 @@ public class AnalizadorPresupuesto {
 		
 		return pres;
 	}
+	
+	public HashMap<String, Coste> getRestante(boolean total, int anio) {
+		HashMap<String, Coste> salida = new HashMap<String, Coste>();
+		
+		Iterator<EstimacionAnio> itEa = this.estimacionAnual.iterator();
+		
+		while (itEa.hasNext()) {
+			EstimacionAnio ea = itEa.next();
+			
+			if (total == true || anio == ea.anio) {
+				HashMap<String, Coste> costeAnio = ea.getRestante();
+				
+				Iterator<Coste> itCostes = costeAnio.values().iterator();
+				while (itCostes.hasNext()) {
+					Coste c = itCostes.next();
+					
+					Coste cAux = null;
+					
+					if (salida.containsKey(c.sistema.codigo)) {
+						cAux = salida.get(c.sistema.codigo);
+						
+						Iterator<Concepto> itConcepto = c.conceptosCoste.values().iterator();
+						while (itConcepto.hasNext()) {
+							Concepto conc = itConcepto.next();
+							
+							Concepto concAux = cAux.conceptosCoste.get(conc.tipoConcepto.codigo);
+							concAux.valor += conc.valor;
+						}						
+					} else {
+						salida.put(c.sistema.codigo,c);
+					}
+				}
+				
+				if (total==true || anio == ea.anio) {
+					return salida;
+				}
+			}
+		}
+		
+		return salida;
+	}
+	
 }

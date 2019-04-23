@@ -44,7 +44,7 @@ public class Constantes {
 	
 	public static Date finAnio(int anio) {
 		Calendar c = Calendar.getInstance();
-		c.set(anio, 11,30,0,0,0);
+		c.set(anio, 11,31,0,0,0);
 		c.set(Calendar.MILLISECOND, 0);
 		return c.getTime();
 	}
@@ -59,6 +59,27 @@ public class Constantes {
 	public static Date finMes(int mes, int anio) {
 		Calendar c = Calendar.getInstance();
 		c.set(anio, mes-1,1,0,0,0); 
+		c.set(Calendar.DAY_OF_MONTH,c.getActualMaximum(Calendar.DAY_OF_MONTH));
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+	
+	public static Date inicioMes(Date fecha) {
+		Calendar cAux = Calendar.getInstance();
+		cAux.setTime(fecha);
+		
+		Calendar c = Calendar.getInstance();
+		c.set(cAux.get(Calendar.YEAR), cAux.get(Calendar.MONTH),1,0,0,0); 
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+	
+	public static Date finMes(Date fecha) {
+		Calendar cAux = Calendar.getInstance();
+		cAux.setTime(fecha);
+		
+		Calendar c = Calendar.getInstance();
+		c.set(cAux.get(Calendar.YEAR), cAux.get(Calendar.MONTH),1,0,0,0); 
 		c.set(Calendar.DAY_OF_MONTH,c.getActualMaximum(Calendar.DAY_OF_MONTH));
 		c.set(Calendar.MILLISECOND, 0);
 		return c.getTime();

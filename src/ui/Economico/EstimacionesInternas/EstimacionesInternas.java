@@ -28,6 +28,7 @@ import javafx.scene.layout.Pane;
 import model.beans.Concepto;
 import model.beans.Estimacion;
 import model.beans.JornadasMes;
+import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.Recurso;
@@ -247,7 +248,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 			 	 while (itSistema.hasNext()) {
 			 		Sistema sAux = itSistema.next(); 
 			 		
-			 		if (sAux.responsable == Constantes.USUARIORESPONSABLE) {
+			 		if (sAux.responsable == Constantes.getAdministradorSistema().id) {
 			 			LineaCosteProyectoEstimacion lcpe = new LineaCosteProyectoEstimacion();
 				 		lcpe.proyecto = p;
 				 		lcpe.sistema = sAux;
@@ -328,7 +329,8 @@ public class EstimacionesInternas implements ControladorPantalla {
 				Recurso r = Recurso.listaRecursos.get(key);				
 				
 				LineaDetalleUsuario ldu = new LineaDetalleUsuario();
-				ldu.codUsuario = (String) r.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+				ParametroRecurso codUsuario = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+				ldu.codUsuario = (String) codUsuario.getValor() ;
 				ldu.nomUsuario = r.nombre;
 				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_TOTAL;
 				lista.add(ldu);
@@ -431,7 +433,9 @@ public class EstimacionesInternas implements ControladorPantalla {
 		while (itRecursos.hasNext()) {
 			Recurso r = itRecursos.next();
 			
-			if (((MetaConcepto) r.getValorParametro(MetaParametro.RECURSO_NAT_COSTE)).id==this.cbNatCoste.getValue().id && ((Recurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR)).id == Constantes.getAdministradorSistema().id) {
+			ParametroRecurso tipoRec = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
+			ParametroRecurso gestor = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR);
+			if (tipoRec!=null && ((MetaConcepto) tipoRec.getValor()).id==this.cbNatCoste.getValue().id && gestor!=null && gestor.getValor()!=null && ((Recurso) gestor.getValor()).id == Constantes.getAdministradorSistema().id) {
 				recursosDisponibles.put(new Integer(r.id).toString(), r);
 				
 				Estimacion est = new Estimacion();
@@ -444,7 +448,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 				while (itEstimacion.hasNext()) {
 					est = itEstimacion.next();
 					
-					if (est.sistema.responsable == Constantes.USUARIORESPONSABLE) {
+					if (est.sistema.responsable == Constantes.getAdministradorSistema().id) {
 						HashMap<Integer,Estimacion> meses = null;
 						
 						if (listaEstimaciones.containsKey(est.proyecto.id)) {
@@ -465,7 +469,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 				
 				try {
 					RelRecursoTarifa rrt = new RelRecursoTarifa();
-					Tarifa t = rrt.tarifaVigente(r.id,true,null).tarifa;
+					Tarifa t = rrt.tarifaVigente(r.id,false,null).tarifa;
 					multiplicador = t.costeHora;
 				} catch (Exception e) {
 					multiplicador = 1;
@@ -564,7 +568,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 		
 		Proyecto pAux = new Proyecto();
 		
-		Iterator<Proyecto> itProyecto = pAux.listadoProyectos().iterator();
+		Iterator<Proyecto> itProyecto = pAux.listadoProyectosGGP().iterator();
 		
 		while (itProyecto.hasNext()) {
 			Proyecto p = itProyecto.next();

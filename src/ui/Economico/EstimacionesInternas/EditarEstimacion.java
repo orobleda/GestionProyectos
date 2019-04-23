@@ -291,7 +291,7 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 			} catch (Exception e) {
 			}
 			
-			Tarifa t = rrt.tarifaVigente(r.id,true,fecha).tarifa;
+			Tarifa t = rrt.tarifaVigente(r.id,false,fecha).tarifa;
 			multiplicador = t.costeHora;
 		} catch (Exception e) {
 			multiplicador = 1;

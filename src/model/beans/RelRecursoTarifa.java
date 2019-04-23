@@ -196,6 +196,10 @@ public class RelRecursoTarifa implements Cargable{
 		while (itCargable.hasNext()) {
 			rec = (RelRecursoTarifa) itCargable.next();
 			
+			if (recMaximo==null) {
+				recMaximo = rec;
+			}
+			
 			if (rec.mes == mesBuscado && rec.anio == anioBuscado) 
 				return rec;
 			else {

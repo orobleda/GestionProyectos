@@ -524,10 +524,16 @@ public class NuevaEstimacion implements ControladorPantalla {
 				}
 			}		
 		} else {
+			cbSistema.getItems().addAll(Sistema.listado.values());
+						
 			RelRecursoSistema rrs = new RelRecursoSistema();
-			cbSistema.getItems().addAll(rrs.buscaRelaciones(cbRecurso.getValue()));
+			rrs.recurso = cbRecurso.getValue();
+			ArrayList<Sistema> lSistemas = new ArrayList<Sistema>();
+			lSistemas.addAll(cbSistema.getItems());
+			Sistema sAux = rrs.getMejorSistema(lSistemas, null, -1, -1);
+			
 			if (cbSistema.getItems().size()>0) {
-				cbSistema.setValue(cbSistema.getItems().get(0));
+				cbSistema.setValue(sAux);
 			}
 		}
 			

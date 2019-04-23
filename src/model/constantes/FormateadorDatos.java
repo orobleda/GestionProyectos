@@ -2,6 +2,7 @@ package model.constantes;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -18,6 +19,33 @@ public class FormateadorDatos {
 	public static final int FORMATO_FORMATO_PROYECTO = 7;
 	public static final int FORMATO_PORC = 9;
 	public static final int FORMATO_TIPO_PROYECTO = 8;
+	
+	public static HashMap<String, String> acutes = null;
+	
+	public static int MODO_ACUTE = 0;
+	public static int MODO_CASTELLANO = 1;
+	
+	public static void cargaAcutes() {
+		acutes = new HashMap<String, String>();
+		acutes.put("Á","&Aacute;");
+		acutes.put("á","&aacute;");
+		acutes.put("É","&Eacute;");
+		acutes.put("é","&eacute;");
+		acutes.put("Í","&Iacute;");
+		acutes.put("í","&iacute;");
+		acutes.put("Ó","&Oacute;");
+		acutes.put("ó","&oacute;");
+		acutes.put("Ñ","&Ntilde;");
+		acutes.put("ñ","&ntilde;");
+		acutes.put("Ú","&Uacute;");
+		acutes.put("ú","&uacute;");
+		acutes.put("Ü","&Uuml;");
+		acutes.put("ü","&uuml;");
+		acutes.put("¡","&iexcl;");
+		acutes.put("ª","&ordf;");
+		acutes.put("¿","&iquest;");
+		acutes.put("º","&ordm;");
+	}
 	
 	public static String formateaDato(String Dato, int formato) throws Exception {
 		if ("".equals(Dato)) return Dato;
@@ -87,6 +115,19 @@ public class FormateadorDatos {
 		}
 				
 		return Dato;
+	}
+	
+	public static String cambiaAcutes(String cadena, int modo) {
+		Iterator<String> acutes = FormateadorDatos.acutes.keySet().iterator();
+		while (acutes.hasNext()) {
+			String letra = acutes.next();
+			String acute = FormateadorDatos.acutes.get(letra);
+			
+			if (modo == FormateadorDatos.MODO_ACUTE) cadena = cadena.replaceAll(letra, acute);
+			else cadena = cadena.replaceAll(acute, letra);
+		}
+		
+		return cadena;
 	}
 	
 	public static String formateaDato(Object Dato, int formato) throws Exception {

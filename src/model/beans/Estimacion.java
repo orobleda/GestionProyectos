@@ -173,9 +173,9 @@ public class Estimacion implements Cargable{
 		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_INT, this.gerencia.id));
 		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_INT, this.natCoste.id));
 		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_FECHA, this.fxInicio));
-		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_LONG, new Long(this.fxInicio.getTime())));
+		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_LONG, new Long(Constantes.inicioMes(this.fxInicio).getTime())));
 		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_FECHA, this.fxFin));
-		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_LONG, new Long(this.fxFin.getTime())));
+		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_LONG, new Long(Constantes.finMes(this.fxInicio).getTime())));
 		listaParms.add(new ParametroBD(11, ConstantesBD.PARAMBD_REAL, this.horas));
 		listaParms.add(new ParametroBD(12, ConstantesBD.PARAMBD_REAL, this.importe));
 		listaParms.add(new ParametroBD(13, ConstantesBD.PARAMBD_INT, this.aprobacion));
@@ -198,9 +198,9 @@ public class Estimacion implements Cargable{
 		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_INT, this.gerencia.id));
 		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_INT, this.natCoste.id));
 		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_FECHA, this.fxInicio));
-		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_LONG, new Long(this.fxInicio.getTime())));
+		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_LONG, new Long(Constantes.inicioMes(this.fxInicio).getTime())));
 		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_FECHA, this.fxFin));
-		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_LONG, new Long(this.fxFin.getTime())));
+		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_LONG, new Long(Constantes.finMes(this.fxInicio).getTime())));
 		listaParms.add(new ParametroBD(11, ConstantesBD.PARAMBD_REAL, this.horas));
 		listaParms.add(new ParametroBD(12, ConstantesBD.PARAMBD_REAL, this.importe));
 		

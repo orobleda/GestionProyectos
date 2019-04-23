@@ -12,6 +12,7 @@ import java.util.List;
 
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
+import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 
 public class ConsultaBD {
@@ -73,6 +74,7 @@ public class ConsultaBD {
 		 }
 		 
 		 String query = this.preparaQuery(QuerysBD.querys.get(codQuery), filtros, idTransaccion);
+		 query = FormateadorDatos.cambiaAcutes(query,FormateadorDatos.MODO_ACUTE);
 		 querys.add(query);
 	 }
 	 
@@ -84,6 +86,7 @@ public class ConsultaBD {
 	   
 	    try {
 	      String query = this.preparaQuery(QuerysBD.querys.get(codQuery), filtros, null);
+	      query = FormateadorDatos.cambiaAcutes(query,FormateadorDatos.MODO_ACUTE);
 	      System.out.println(query);
 	       	
 	      if (ConstantesBD.QUERYCONSULTA.equals(QuerysBD.querys.get(codQuery).tipo)){
@@ -97,7 +100,13 @@ public class ConsultaBD {
 	    		  
 	    		  for (int col=0;col<rs.getMetaData().getColumnCount();col++){
 	    			  String cabecera = rs.getMetaData().getColumnName(col+1);
-	    			  listadoCampos.put(cabecera, rs.getObject(cabecera));
+	    			  Object campo = rs.getObject(cabecera);
+	    			  if (campo!=null)
+		    			  if ("String".equals(campo.getClass().getSimpleName())) {
+		    				  campo = FormateadorDatos.cambiaAcutes((String) campo,FormateadorDatos.MODO_CASTELLANO);
+		    			  }
+	    			  
+	    			  listadoCampos.put(cabecera, campo);
 	    		  }
 	    		  
 	    		  objSalida = objSalida.getClass().newInstance();
@@ -143,7 +152,13 @@ public class ConsultaBD {
 	    		  
 	    		  for (int col=0;col<rs.getMetaData().getColumnCount();col++){
 	    			  String cabecera = rs.getMetaData().getColumnName(col+1);
-	    			  listadoCampos.put(cabecera, rs.getObject(cabecera));
+	    			  Object campo = rs.getObject(cabecera);
+	    			  if (campo!=null)
+		    			  if ("String".equals(campo.getClass().getSimpleName())) {
+		    				  campo = FormateadorDatos.cambiaAcutes((String) campo,FormateadorDatos.MODO_CASTELLANO);
+		    			  }
+	    			  
+	    			  listadoCampos.put(cabecera, campo);
 	    		  }
 	    		  
 	    		  salida.add(listadoCampos);	    		  

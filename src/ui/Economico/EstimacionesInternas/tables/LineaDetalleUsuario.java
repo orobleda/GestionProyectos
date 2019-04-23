@@ -63,6 +63,7 @@ public class LineaDetalleUsuario extends ParamTable implements Tableable  {
 		configuracionTabla.put(LineaDetalleUsuario.SISTEMA, new ConfigTabla(LineaDetalleUsuario.SISTEMA, LineaDetalleUsuario.SISTEMA, false,3, false));
 		
 		anchoColumnas = new HashMap<String, Integer>();
+		anchoColumnas.put(LineaDetalleUsuario.COD_USUARIO, new Integer(70));
 		anchoColumnas.put(LineaDetalleUsuario.USUARIO, new Integer(130));
 		anchoColumnas.put(LineaDetalleUsuario.CONCEPTO, new Integer(130));
 		anchoColumnas.put(LineaDetalleUsuario.SISTEMA, new Integer(75));

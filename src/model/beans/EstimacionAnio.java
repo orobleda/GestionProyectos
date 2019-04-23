@@ -310,6 +310,42 @@ public class EstimacionAnio  implements Cargable {
 		return salida;
 	}
 	
+	public HashMap<String, Coste> getRestante() {
+		HashMap<String, Coste> salida = new HashMap<String, Coste>();
+		
+		Iterator<EstimacionMes> itEm = this.estimacionesMensuales.values().iterator();
+		
+		while (itEm.hasNext()) {
+			EstimacionMes em = itEm.next();
+			
+			HashMap<String, Coste> costeAnio = em.getRestante();
+				
+			Iterator<Coste> itCostes = costeAnio.values().iterator();
+			while (itCostes.hasNext()) {
+				Coste c = itCostes.next();
+				
+				Coste cAux = null;
+				
+				if (salida.containsKey(c.sistema.codigo)) {
+					cAux = salida.get(c.sistema.codigo);
+					
+					Iterator<Concepto> itConcepto = c.conceptosCoste.values().iterator();
+					while (itConcepto.hasNext()) {
+						Concepto conc = itConcepto.next();
+						
+						Concepto concAux = cAux.conceptosCoste.get(conc.tipoConcepto.codigo);
+						concAux.valor += conc.valor;
+					}						
+				} else {
+					salida.put(c.sistema.codigo,c);
+				}
+			}
+			
+		}
+		
+		return salida;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")

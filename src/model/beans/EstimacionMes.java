@@ -129,6 +129,47 @@ public class EstimacionMes {
 		return acumulado;
 	}
 	
+	public HashMap<String, Coste> getRestante() {
+		HashMap<String, Coste> salida = new HashMap<String, Coste>();
+		
+		Iterator<Sistema> itSis = this.estimacionesPorSistemas.values().iterator();
+		Coste c = null;
+		
+		while (itSis.hasNext()) {
+			Sistema sis = itSis.next();
+			
+			c = new Coste();
+			salida.put(sis.codigo, c);
+			c.sistema = sis;
+			c.conceptosCoste = new HashMap<String,Concepto>();
+			
+			Iterator<Concepto> itConcepto = sis.listaConceptos.values().iterator();
+			while (itConcepto.hasNext()) {
+				Concepto cAux = itConcepto.next();
+				Concepto cRestante = cAux.clone();
+				
+				if (cAux.topeImputacion!=null)
+					cRestante.valor += cAux.topeImputacion.cantidad;
+				
+				Iterator<Imputacion> itImp = cAux.listaImputaciones.iterator();
+				while (itImp.hasNext()) {
+					Imputacion iAux = itImp.next();
+					cRestante.valor -= iAux.getImporte();
+				}
+				
+				Iterator<Estimacion> itEst = cAux.listaEstimaciones.iterator();
+				while (itEst.hasNext()) {
+					Estimacion eAux = itEst.next();
+					cRestante.valor += eAux.importe;
+				}
+				
+				c.conceptosCoste.put(cAux.tipoConcepto.codigo, cRestante); 
+			}			
+		}
+		
+		return salida;
+	}
+	
 	public HashMap<String, Concepto> totalPorConcepto(Sistema s) {
 		HashMap<String, Concepto> salida = new HashMap<String, Concepto>();
 		

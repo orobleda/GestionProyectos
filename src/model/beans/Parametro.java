@@ -195,7 +195,7 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 			}
 			
 			if (mpp.tipoDato == TipoDato.FORMATO_METAJORNADA) {
-				this.valorObjeto = MetaJornada.listaMetaJornadas.get(this.valorEntero);				
+				this.valorObjeto = MetaJornada.getlistaMetaJornadasEstatico().get(this.valorEntero);				
 			}
 			
 			if (mpp.tipoDato == TipoDato.FORMATO_NAT_COSTE) {
@@ -307,18 +307,21 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		if (TipoDato.FORMATO_URL==this.metaParam.tipoDato) listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
 		if (TipoDato.FORMATO_INT==this.metaParam.tipoDato) listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
 		if (isObjeto(metaParam.tipoDato) ) {
-			if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((MetaFormatoProyecto) this.valorObjeto).id;
-			if (TipoDato.FORMATO_TIPO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((TipoProyecto) this.valorObjeto).id;
-			if (TipoDato.FORMATO_PROVEEDOR==this.metaParam.tipoDato)	this.valorEntero = ((Proveedor) this.valorObjeto).id;
-			if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
-			if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
-			if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
-			if (TipoDato.FORMATO_TARIFA==this.metaParam.tipoDato) 		this.valorEntero = ((Tarifa) this.valorObjeto).idTarifa;
-			if (TipoDato.FORMATO_COBRO_VCT==this.metaParam.tipoDato) {
-				this.valorTexto = ((TipoCobroVCT) this.valorObjeto).codigo;
-				listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
-			}			
-			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+			if (this.valorObjeto!=null) {
+				if (TipoDato.FORMATO_FORMATO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((MetaFormatoProyecto) this.valorObjeto).id;
+				if (TipoDato.FORMATO_TIPO_PROYECTO==this.metaParam.tipoDato) this.valorEntero = ((TipoProyecto) this.valorObjeto).id;
+				if (TipoDato.FORMATO_PROVEEDOR==this.metaParam.tipoDato)	this.valorEntero = ((Proveedor) this.valorObjeto).id;
+				if (TipoDato.FORMATO_METAJORNADA==this.metaParam.tipoDato) this.valorEntero = ((MetaJornada) this.valorObjeto).id;
+				if (TipoDato.FORMATO_NAT_COSTE==this.metaParam.tipoDato) 	this.valorEntero = ((MetaConcepto) this.valorObjeto).id;
+				if (TipoDato.FORMATO_RECURSO==this.metaParam.tipoDato) 		this.valorEntero = ((Recurso) this.valorObjeto).id;
+				if (TipoDato.FORMATO_TARIFA==this.metaParam.tipoDato) 		this.valorEntero = ((Tarifa) this.valorObjeto).idTarifa;
+				if (TipoDato.FORMATO_COBRO_VCT==this.metaParam.tipoDato) {
+					this.valorTexto = ((TipoCobroVCT) this.valorObjeto).codigo;
+					listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_STR,this.valorTexto));
+				}
+				listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.valorEntero));
+			}
+			
 		}
 		if (TipoDato.isEnumerado(this.metaParam.tipoDato)) 	{
 			this.valorEntero = ((TipoEnumerado) this.valorObjeto).id;

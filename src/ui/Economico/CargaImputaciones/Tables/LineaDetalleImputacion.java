@@ -7,7 +7,9 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 import javafx.scene.layout.AnchorPane;
 import model.beans.Estimacion;
 import model.beans.Imputacion;
+import model.beans.ParametroRecurso;
 import model.constantes.FormateadorDatos;
+import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
 import ui.ConfigTabla;
 import ui.ParamTable;
@@ -16,7 +18,8 @@ import ui.interfaces.Tableable;
 public class LineaDetalleImputacion extends ParamTable implements Tableable  {
 	
 	public static final String USUARIO = "Usuario";
-	public static final String NOMBRE = "Nombre";
+	public static final String NOMBRE = "Nombre ENAGAS";
+	public static final String NOMBRE_REAL = "Nombre";
 	public static final String TARIFA = "Tarifa";
 	public static final String ESTIMADO = "Estimado";
 	public static final String IMPUTADO = "Imputado";
@@ -42,14 +45,16 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
 		configuracionTabla.put(LineaDetalleImputacion.USUARIO, new ConfigTabla(LineaDetalleImputacion.USUARIO, LineaDetalleImputacion.USUARIO, true,0, false));
 		configuracionTabla.put(LineaDetalleImputacion.NOMBRE, new ConfigTabla(LineaDetalleImputacion.NOMBRE, LineaDetalleImputacion.NOMBRE, true,1, false));
-		configuracionTabla.put(LineaDetalleImputacion.TARIFA, new ConfigTabla(LineaDetalleImputacion.TARIFA, LineaDetalleImputacion.TARIFA, true,2, false));
-		configuracionTabla.put(LineaDetalleImputacion.ESTIMADO, new ConfigTabla(LineaDetalleImputacion.ESTIMADO, LineaDetalleImputacion.ESTIMADO, true,3, false));
-		configuracionTabla.put(LineaDetalleImputacion.IMPUTADO, new ConfigTabla(LineaDetalleImputacion.IMPUTADO, LineaDetalleImputacion.IMPUTADO, true,4, false));
-		configuracionTabla.put(LineaDetalleImputacion.PERIODO, new ConfigTabla(LineaDetalleImputacion.PERIODO, LineaDetalleImputacion.PERIODO, true,5, false));
+		configuracionTabla.put(LineaDetalleImputacion.NOMBRE_REAL, new ConfigTabla(LineaDetalleImputacion.NOMBRE_REAL, LineaDetalleImputacion.NOMBRE_REAL, true,2, false));
+		configuracionTabla.put(LineaDetalleImputacion.TARIFA, new ConfigTabla(LineaDetalleImputacion.TARIFA, LineaDetalleImputacion.TARIFA, true,3, false));
+		configuracionTabla.put(LineaDetalleImputacion.ESTIMADO, new ConfigTabla(LineaDetalleImputacion.ESTIMADO, LineaDetalleImputacion.ESTIMADO, true,4, false));
+		configuracionTabla.put(LineaDetalleImputacion.IMPUTADO, new ConfigTabla(LineaDetalleImputacion.IMPUTADO, LineaDetalleImputacion.IMPUTADO, true,5, false));
+		configuracionTabla.put(LineaDetalleImputacion.PERIODO, new ConfigTabla(LineaDetalleImputacion.PERIODO, LineaDetalleImputacion.PERIODO, true,6, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaDetalleImputacion.USUARIO, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.NOMBRE, new Integer(250));
+    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE_REAL, new Integer(250));
     	anchoColumnas.put(LineaDetalleImputacion.TARIFA, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.ESTIMADO, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.IMPUTADO, new Integer(100));
@@ -71,6 +76,15 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
    					return "";
    				else 
    					return this.imp.recurso.nombre;
+   			if (LineaDetalleImputacion.NOMBRE_REAL.equals(campo))
+   				if (this.imp.recurso==null)
+   					return "";
+   				else {
+   					ParametroRecurso pr = (ParametroRecurso) this.imp.recurso.getValorParametro(MetaParametro.RECURSO_NOMBRE_REAL);
+   					if (pr!=null)
+   						return (String) pr.getValor();
+   				}
+   					   			
    			if (LineaDetalleImputacion.TARIFA.equals(campo))
    				if (this.imp.tarifa==null)
    					return FormateadorDatos.formateaDato(this.imp.fTarifa,TipoDato.FORMATO_MONEDA);
