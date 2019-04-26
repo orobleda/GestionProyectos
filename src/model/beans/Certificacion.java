@@ -100,6 +100,24 @@ public class Certificacion implements Cargable{
 		return false;
 	}
 	
+	public CertificacionFaseParcial totaliza() {
+		CertificacionFaseParcial cfp = new CertificacionFaseParcial();
+		
+		Iterator<CertificacionFase> itCf = this.certificacionesFases.iterator();
+		while (itCf.hasNext()) {
+			CertificacionFase cf = itCf.next();
+			
+			Iterator<CertificacionFaseParcial> itCfp = cf.certificacionesParciales.iterator();
+			while (itCfp.hasNext()) {
+				CertificacionFaseParcial cfpAux = itCfp.next();
+				cfp.valEstimado += cfpAux.valEstimado;
+				cfp.valReal += cfpAux.valReal;
+			} 
+		}
+		
+		return cfp;
+	}
+	
 	public ArrayList<Certificacion> listado () {		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.p.id));

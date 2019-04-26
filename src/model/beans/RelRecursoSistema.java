@@ -85,7 +85,7 @@ public class RelRecursoSistema implements Cargable{
 							}
 						}
 					} else
-						if (est.anio == anio && est.mes == mes) {
+						if (est.recurso.id == this.recurso.id) {
 							Iterator<Sistema> itSistema = sistemasDisponibles.iterator();
 							while (itSistema.hasNext()) {
 								Sistema sIte = itSistema.next();

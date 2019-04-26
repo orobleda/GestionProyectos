@@ -277,7 +277,7 @@ public class ConsultaBD {
 	 public static String getTicket() {
 		 String sMethodName = new String (Thread.currentThread().getStackTrace()[2].getMethodName());
 		 String sClassName  = new String (Thread.currentThread().getStackTrace()[2].getClassName());
-		 return sClassName+":"+sMethodName + Constantes.fechaActual().getTime();
+		 return sClassName+":"+sMethodName + new Date().getTime();
 	 }
 	 
 	 public static void ejecutaTicket(String idTransaccion) throws Exception{

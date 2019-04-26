@@ -23,6 +23,7 @@ public class TipoDato {
 	public static final int FORMATO_COBRO_VCT = 17;
 	
 	public static final int FORMATO_TIPO_VCT = 1000;
+	public static final int FORMATO_ESTADO_IMPUTACION = 1001;
 	
 	public static boolean isEnumerado (int tipo) {
 		if (tipo>1000) return true;

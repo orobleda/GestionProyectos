@@ -1,6 +1,7 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,10 +14,20 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoEnumerado;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
 public class Imputacion implements Cargable, Comparable<Imputacion>{
+	
+	public static int ESTADO_CONGELADO = 3;
+	public static int ESTADO_NO_CREADO = 4;
+	public static int ESTADO_SIN_ENVIAR = 5;
+	public static int ESTADO_RECHAZADO = 6;
+	public static int ESTADO_CANCELADO = 7;
+	public static int ESTADO_ENVIADO = 8;
+	public static int ESTADO_APROBADO = 9;
+	public static int ESTADO_CERRADO = 10;
 	
 	public static int IMPUTACION_NO_FRACCIONADA = 0;
 	public static int IMPUTACION_FRACCIONADA = 1;
@@ -50,6 +61,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 	public Date fxEnvioSAP = null;
 	public boolean validado = false;
 	public int modo = -1;
+	public int modo_fichero = -1;
 	
 	public Proveedor prov = null;
 	public String sProveedor = null;
@@ -91,15 +103,42 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 		return listaSalida;
 	}
 	
-	public ArrayList<Imputacion> generaImputacionesDesdeFichero (ArrayList<HashMap<String,Object>> listado) throws Exception{
+	public ArrayList<Imputacion> generaImputacionesDesdeFichero (ArrayList<HashMap<String,Object>> listado, Date fInicio, Date fFin) throws Exception{
 		 ArrayList<Imputacion> salida = new  ArrayList<Imputacion>();
 		
 		Iterator<HashMap<String,Object>> itListaImputs = listado.iterator();
 		while (itListaImputs.hasNext()) {
 			HashMap<String,Object> imputs = itListaImputs.next();
 			Imputacion i = this.crearDesdeFichero(imputs);
-			if (i!=null)
-				salida.add(i);
+			if (i!=null) {
+				boolean insertar = true;
+				
+				Calendar cPerImpIni = Calendar.getInstance();
+				cPerImpIni.setTime(Constantes.inicioMes(i.fxInicio));
+				
+				Calendar cPerImpFin = Calendar.getInstance();
+				cPerImpFin.setTime(Constantes.finMes(i.fxFin));
+				
+				if (fInicio!=null) {
+					Calendar cInicio = Calendar.getInstance();
+					cInicio.setTime(Constantes.finMes(fInicio));
+					if (cInicio.after(cPerImpIni)) insertar = false;					
+				}
+				
+				if (fFin!=null) {
+					Calendar cFin = Calendar.getInstance();
+					cFin.setTime(Constantes.finMes(fFin));
+					if (cFin.before(cPerImpFin)) insertar = false;					
+				}
+				
+				if (i.estado == Imputacion.ESTADO_CANCELADO || i.estado == Imputacion.ESTADO_NO_CREADO || i.estado == Imputacion.ESTADO_RECHAZADO || i.estado == Imputacion.ESTADO_SIN_ENVIAR) {
+					insertar = false;
+				}
+				
+				if (insertar)
+					salida.add(i);
+			}
+				
 		}
 		
 		return salida;
@@ -137,9 +176,8 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 		
 		fechaCortada = periodoCortado[1].split("/");
 		
-		i.fxInicio = Constantes.finMes(new Integer(fechaCortada[1]), new Integer("20"+fechaCortada[2]));
+		i.fxFin = Constantes.finMes(new Integer(fechaCortada[1]), new Integer("20"+fechaCortada[2]));
 		
-		i.fxFin = (Date) FormateadorDatos.parseaDato(periodoCortado[1], TipoDato.FORMATO_FECHA);
 		i.horas = ((Double) imput.get("Horas")).floatValue();
 		i.importe = ((Double) imput.get("Importe")).floatValue();
 		i.fTarifa = ((Double) imput.get("Tarifa")).floatValue();
@@ -161,7 +199,11 @@ public class Imputacion implements Cargable, Comparable<Imputacion>{
 		
 		i.pedido = "";
 		i.OT = "";
-		i.estado = 0;//(String) imput.get("Estado");
+		String estado = (String) imput.get("Estado");
+		TipoEnumerado tp = TipoEnumerado.getPorDesc(TipoDato.FORMATO_ESTADO_IMPUTACION, estado);	
+		
+		if (tp!=null)
+			i.estado = tp.id;
 		i.fxEnvioSAP = null;
 		i.validado = true;
 		i.modo = Imputacion.IMPUTACION_NO_FRACCIONADA;

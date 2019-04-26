@@ -11,6 +11,7 @@ import model.beans.ParametroRecurso;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParametro;
 import model.metadatos.TipoDato;
+import model.metadatos.TipoEnumerado;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.interfaces.Tableable;
@@ -24,6 +25,7 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
 	public static final String ESTIMADO = "Estimado";
 	public static final String IMPUTADO = "Imputado";
 	public static final String PERIODO = "Periodo";
+	public static final String ESTADO = "Estado";
 	
 	public Estimacion est = null;
 	public Imputacion imp = null;
@@ -50,15 +52,17 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
 		configuracionTabla.put(LineaDetalleImputacion.ESTIMADO, new ConfigTabla(LineaDetalleImputacion.ESTIMADO, LineaDetalleImputacion.ESTIMADO, true,4, false));
 		configuracionTabla.put(LineaDetalleImputacion.IMPUTADO, new ConfigTabla(LineaDetalleImputacion.IMPUTADO, LineaDetalleImputacion.IMPUTADO, true,5, false));
 		configuracionTabla.put(LineaDetalleImputacion.PERIODO, new ConfigTabla(LineaDetalleImputacion.PERIODO, LineaDetalleImputacion.PERIODO, true,6, false));
+		configuracionTabla.put(LineaDetalleImputacion.ESTADO, new ConfigTabla(LineaDetalleImputacion.ESTADO, LineaDetalleImputacion.ESTADO, true,7, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaDetalleImputacion.USUARIO, new Integer(100));
-    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE, new Integer(250));
-    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE_REAL, new Integer(250));
+    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE, new Integer(190));
+    	anchoColumnas.put(LineaDetalleImputacion.NOMBRE_REAL, new Integer(190));
     	anchoColumnas.put(LineaDetalleImputacion.TARIFA, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.ESTIMADO, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.IMPUTADO, new Integer(100));
     	anchoColumnas.put(LineaDetalleImputacion.PERIODO, new Integer(100));
+    	anchoColumnas.put(LineaDetalleImputacion.ESTADO, new Integer(80));
     }
     
    	public void set(String campo, String valor){
@@ -95,6 +99,11 @@ public class LineaDetalleImputacion extends ParamTable implements Tableable  {
    					return FormateadorDatos.formateaDato(this.est.importe,TipoDato.FORMATO_MONEDA);
    			if (LineaDetalleImputacion.IMPUTADO.equals(campo)) return FormateadorDatos.formateaDato(this.imp.importe,TipoDato.FORMATO_MONEDA);
    			if (LineaDetalleImputacion.PERIODO.equals(campo)) return FormateadorDatos.formateaDato(this.imp.fxInicio,TipoDato.FORMATO_FECHA);
+   			if (LineaDetalleImputacion.ESTADO.equals(campo)) {
+   				TipoEnumerado tp = TipoEnumerado.listadoIds.get(this.imp.estado);
+   				if (tp!=null)
+   					return tp.valor;
+   			}
    				   			
    			return "";
    		} catch ( Exception e) {

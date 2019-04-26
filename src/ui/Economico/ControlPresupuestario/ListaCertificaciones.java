@@ -107,56 +107,58 @@ public class ListaCertificaciones implements ControladorPantalla {
 		ArrayList<Object> cfList = new ArrayList<Object>();
 		ArrayList<Object> cList = new ArrayList<Object>();
 		
-		Iterator<Certificacion> itCert = ap.certificaciones.iterator();
-		while (itCert.hasNext()) {
-			Certificacion cert = itCert.next();
-			if (!cert.isAdicional()) {
-				cList.add(cert);
-				cert.conceptoAdicional = new Concepto();
-			}
-			
-			Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
-			while (itCFase.hasNext()) {
-				CertificacionFase certF = itCFase.next();
-				if (!certF.adicional) {
-					cfList.add(certF);
-					certF.concAdicional = new Concepto();
+		if (ap.certificaciones!=null) {
+			Iterator<Certificacion> itCert = ap.certificaciones.iterator();
+			while (itCert.hasNext()) {
+				Certificacion cert = itCert.next();
+				if (!cert.isAdicional()) {
+					cList.add(cert);
+					cert.conceptoAdicional = new Concepto();
 				}
 				
-				Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
-				while (itCfp.hasNext()) {
-					CertificacionFaseParcial cfp = itCfp.next();
-					cfpList.add(cfp);
+				Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
+				while (itCFase.hasNext()) {
+					CertificacionFase certF = itCFase.next();
+					if (!certF.adicional) {
+						cfList.add(certF);
+						certF.concAdicional = new Concepto();
+					}
+					
+					Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
+					while (itCfp.hasNext()) {
+						CertificacionFaseParcial cfp = itCfp.next();
+						cfpList.add(cfp);
+					}
 				}
 			}
-		}
-		
-		itCert = ap.certificaciones.iterator();
-		while (itCert.hasNext()) {
-			Certificacion cert = itCert.next();
 			
-			if (cert.isAdicional()) {
-				Iterator<Object> itCAux = cList.iterator();
-				while (itCAux.hasNext()) {
-					Certificacion cAux = (Certificacion) itCAux.next();
-					
-					if (cAux.s.codigo.equals(cert.s.codigo)) {
-						Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
-						while (itCFase.hasNext()) {
-							CertificacionFase certF = itCFase.next();
-							
-							Iterator<CertificacionFase> itCFaseAux = cAux.certificacionesFases.iterator();
-							while (itCFaseAux.hasNext()) {
-								CertificacionFase certFAux = itCFaseAux.next();
+			itCert = ap.certificaciones.iterator();
+			while (itCert.hasNext()) {
+				Certificacion cert = itCert.next();
+				
+				if (cert.isAdicional()) {
+					Iterator<Object> itCAux = cList.iterator();
+					while (itCAux.hasNext()) {
+						Certificacion cAux = (Certificacion) itCAux.next();
+						
+						if (cAux.s.codigo.equals(cert.s.codigo)) {
+							Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
+							while (itCFase.hasNext()) {
+								CertificacionFase certF = itCFase.next();
 								
-								if (certFAux.fase == certF.fase) {
-									Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
-									while (itCfp.hasNext()) {
-										CertificacionFaseParcial cfp = itCfp.next();
-										certFAux.concAdicional.valorEstimado += cfp.valEstimado;
-										certFAux.concAdicional.valor += cfp.valReal;
-										cAux.conceptoAdicional.valorEstimado += cfp.valEstimado;
-										cAux.conceptoAdicional.valor += cfp.valReal;
+								Iterator<CertificacionFase> itCFaseAux = cAux.certificacionesFases.iterator();
+								while (itCFaseAux.hasNext()) {
+									CertificacionFase certFAux = itCFaseAux.next();
+									
+									if (certFAux.fase == certF.fase) {
+										Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
+										while (itCfp.hasNext()) {
+											CertificacionFaseParcial cfp = itCfp.next();
+											certFAux.concAdicional.valorEstimado += cfp.valEstimado;
+											certFAux.concAdicional.valor += cfp.valReal;
+											cAux.conceptoAdicional.valorEstimado += cfp.valEstimado;
+											cAux.conceptoAdicional.valor += cfp.valReal;
+										}
 									}
 								}
 							}

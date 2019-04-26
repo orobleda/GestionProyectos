@@ -249,7 +249,10 @@ public class CertificacionFase implements Cargable{
 		while (itcfp.hasNext()) {
 			CertificacionFaseParcial cfp = itcfp.next();
 			cfp.valEstimado = coste*cfp.porcentaje/100;
-			cfp.horEstimadas = cfp.valEstimado/t.costeHora;
+			if (t.costeHora!=0)
+				cfp.horEstimadas = cfp.valEstimado/t.costeHora;
+			else 
+				cfp.horEstimadas = 0;
 			cfp.tarifaEstimada = t.idTarifa;
 		}
 	}

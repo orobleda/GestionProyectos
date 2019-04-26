@@ -1,6 +1,11 @@
 package ui;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -8,11 +13,15 @@ import org.controlsfx.control.ToggleSwitch;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseButton;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 
@@ -44,6 +53,8 @@ public class Tabla {
 				}
 			}	
 		});
+		
+		asignaConextual();
 	}
 	
 	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva, ToggleSwitch tsfiltro, ControladorPantalla ctrlPantalla) {
@@ -60,17 +71,95 @@ public class Tabla {
 					
 				}
 		});
+		asignaConextual();
 	}
 	
 	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva) {
 		this.componenteTabla = componenteTabla;
 		this.primitiva = primitiva;
+		asignaConextual();
 	}
 	
 	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva, ControladorPantalla ctrlPantalla) {
 		this.componenteTabla = componenteTabla;
 		this.primitiva = primitiva;
 		this.componenteTabla.getProperties().put("controlador", ctrlPantalla);
+		asignaConextual();
+	}
+	
+	private void asignaConextual() {
+
+		ContextMenu contextMenu = new ContextMenu();
+
+		MenuItem menuItemContext = new MenuItem("Copiar a Portapapeles");
+        contextMenu.getItems().addAll(menuItemContext);
+        
+		this.componenteTabla.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, new EventHandler<javafx.scene.input.MouseEvent>() {
+            @Override
+            public void handle(javafx.scene.input.MouseEvent event) {
+                if (event.getButton() == MouseButton.SECONDARY){
+                    contextMenu.show(componenteTabla,event.getScreenX(),event.getScreenY());
+                }
+ 
+            }
+        });
+        
+		menuItemContext.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				copiarPortapapeles();
+			}
+		});
+	}
+	
+	private void copiarPortapapeles() {
+		Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+		
+		
+		ArrayList<ConfigTabla> lcf = new ArrayList<ConfigTabla>();
+		
+		Iterator<ConfigTabla> itCf = this.primitiva.getConfigTabla().values().iterator();
+		while (itCf.hasNext()) {
+			ConfigTabla cf = itCf.next();
+			lcf.add(cf);
+		}
+		
+		Collections.sort(lcf);
+		
+		String salida = "";
+		
+		itCf = lcf.iterator();
+		while (itCf.hasNext()) {
+			ConfigTabla cf = itCf.next();
+			salida += cf.idCampo;
+			
+			if (itCf.hasNext()) {
+				salida += "\t";
+			}
+		}
+		
+		salida +="\r\n";
+		
+		Iterator<Tableable> itTB = this.listaDatos.iterator();
+		while (itTB.hasNext()) {
+			Tableable tb = itTB.next();
+			
+			itCf = lcf.iterator();
+			while (itCf.hasNext()) {
+				ConfigTabla cf = itCf.next();
+				salida += tb.get(cf.idCampo);
+				
+				if (itCf.hasNext()) {
+					salida += "\t";
+				}
+			}
+			
+			salida +="\r\n";
+		}
+		
+		StringSelection ss = new StringSelection(salida);
+		cb.setContents(ss, ss);
+		
 	}
 	
 	public void setPasoPrimitiva(HashMap<String,Object> pasoPrimitiva) {

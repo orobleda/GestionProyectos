@@ -310,7 +310,7 @@ public class EstimacionAnio  implements Cargable {
 		return salida;
 	}
 	
-	public HashMap<String, Coste> getRestante() {
+	public HashMap<String, Coste> getRestante(int modo) {
 		HashMap<String, Coste> salida = new HashMap<String, Coste>();
 		
 		Iterator<EstimacionMes> itEm = this.estimacionesMensuales.values().iterator();
@@ -318,7 +318,7 @@ public class EstimacionAnio  implements Cargable {
 		while (itEm.hasNext()) {
 			EstimacionMes em = itEm.next();
 			
-			HashMap<String, Coste> costeAnio = em.getRestante();
+			HashMap<String, Coste> costeAnio = em.getRestante(modo);
 				
 			Iterator<Coste> itCostes = costeAnio.values().iterator();
 			while (itCostes.hasNext()) {

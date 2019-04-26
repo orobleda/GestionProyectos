@@ -184,7 +184,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 					
 					float importe = porcentaje*c.valor/100; 
 					
-					if (cbTarifas.getValue()!=null) {
+					if (cbTarifas.getValue()!=null && cbTarifas.getValue().costeHora!=0) {
 						Tarifa t = cbTarifas.getValue();
 						float horas = importe/t.costeHora;
 						this.tHoras.setText(FormateadorDatos.formateaDato(horas, TipoDato.FORMATO_REAL));
@@ -204,7 +204,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 					String textImporte = this.tImporte.getText();
 					float importe = (Float) FormateadorDatos.parseaDato(textImporte, TipoDato.FORMATO_MONEDA);
 					
-					if (cbTarifas.getValue()!=null) {
+					if (cbTarifas.getValue()!=null && cbTarifas.getValue().costeHora!=0) {
 						Tarifa t = cbTarifas.getValue();
 						float horas = importe/t.costeHora;
 						this.tHoras.setText(FormateadorDatos.formateaDato(horas, TipoDato.FORMATO_REAL));
@@ -229,7 +229,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 					float horas = (Float) FormateadorDatos.parseaDato(textHoras, TipoDato.FORMATO_REAL);
 					float importe = 0;
 					
-					if (cbTarifas.getValue()!=null) {
+					if (cbTarifas.getValue()!=null && cbTarifas.getValue().costeHora!=0) {
 						Tarifa t = cbTarifas.getValue();
 						importe = horas * t.costeHora;
 						this.tImporte.setText(FormateadorDatos.formateaDato(importe, TipoDato.FORMATO_MONEDA));

@@ -102,6 +102,19 @@ public class TipoEnumerado implements Cargable, Loadable  {
 		}
 	}
 	
+	public static TipoEnumerado getPorDesc(int tipoEnumerado, String desc) {
+		HashMap<Integer,TipoEnumerado> listadoEnums = TipoEnumerado.getValores(tipoEnumerado);
+		Iterator<TipoEnumerado> itTipos = listadoEnums.values().iterator();
+		while (itTipos.hasNext()) {
+			TipoEnumerado tp = itTipos.next();
+			if (tp.valor.trim().toUpperCase().equals(desc.trim().toUpperCase())) {
+				return tp;
+			}
+		}
+		
+		return null;
+	}
+	
 	public static HashMap<Integer,TipoEnumerado> getValores(int idAgrupacion) {
 		return listado.get(idAgrupacion);
 	}

@@ -135,7 +135,7 @@ public class TopeImputacion implements Cargable{
 		listaParms.add(new ParametroBD(7, ConstantesBD.PARAMBD_INT, this.resto?TopeImputacion.A_RESTO:0));
 		listaParms.add(new ParametroBD(8, ConstantesBD.PARAMBD_INT, 1));
 		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_STR, ""));
-		listaParms.add(new ParametroBD(9, ConstantesBD.PARAMBD_STR, this.sistema.id));
+		listaParms.add(new ParametroBD(10, ConstantesBD.PARAMBD_INT, this.sistema.id));
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("iAltaTopeimputacion", listaParms, this,idTransaccion);

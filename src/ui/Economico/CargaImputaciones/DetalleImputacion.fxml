@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import org.controlsfx.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -9,7 +10,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.CargaImputaciones.DetalleImputacion">
    <center>
-      <HBox BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
          <children>
             <ImageView id="imGuardar" fx:id="imSemaforo" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -41,14 +42,12 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </ImageView>
-            <ImageView id="imGuardar" fx:id="imEnlazarEstimacion" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../imgs/iconos/Enlazar3_PAS.png" />
-               </image>
+            <Label fx:id="lAccionEstimacion" text="Incluir Dato">
                <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets left="15.0" />
                </HBox.margin>
-            </ImageView>
+            </Label>
+            <ToggleSwitch fx:id="tsAccionEstimacion" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

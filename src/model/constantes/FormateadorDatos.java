@@ -2,6 +2,10 @@ package model.constantes;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -270,5 +274,17 @@ public class FormateadorDatos {
 		}
 		
 		return Dato;
+	}
+	
+	public static Date toDate(LocalDate d) {
+		if (d==null) return null;
+		
+		return Date.from(d.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+	}
+	
+	public static LocalDate toLocalDate(Date d) {
+		if (d==null) return null;
+		
+		return Instant.ofEpochMilli(d.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 }

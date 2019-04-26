@@ -5,7 +5,13 @@ import javafx.scene.image.ImageView;
 
 public class Semaforo {
 	
-	ImageView boton = null;	
+	public static final int VERDE = 1;
+	public static final int AMBAR = 2;
+	public static final int ROJO = 3;
+	
+	ImageView boton = null;
+	
+	public int estado = 0;
 	
 	public Semaforo(ImageView boton) {
 		this.boton = boton;
@@ -13,9 +19,16 @@ public class Semaforo {
 		boton.setImage(new Image("semaforo_verde.png"));
 	}
 	
+	public void asignaEstado(int estado) {
+		if (estado == Semaforo.VERDE) verde();
+		if (estado == Semaforo.AMBAR) ambar();
+		if (estado == Semaforo.ROJO) rojo();
+	}
+	
 	public void verde() {
 		try {
 			boton.setImage(new Image("semaforo_verde.png"));
+			this.estado = Semaforo.VERDE;
 			
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso semaforo_verde.png\n\r" + e.getMessage());
@@ -25,7 +38,7 @@ public class Semaforo {
 	public void ambar() {
 		try {
 			boton.setImage(new Image("semaforo_ambar.png"));
-			
+			this.estado = Semaforo.AMBAR;
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso semaforo_ambar.png\n\r" + e.getMessage());
 		}
@@ -34,7 +47,7 @@ public class Semaforo {
 	public void rojo() {
 		try {
 			boton.setImage(new Image("semaforo_rojo.png"));
-			
+			this.estado = Semaforo.ROJO;
 		} catch (Exception e) {
 			System.out.println("No se encuentra el recurso semaforo_rojo.png\n\r" + e.getMessage());
 		}
@@ -44,3 +57,4 @@ public class Semaforo {
 		boton.setVisible(valor);		
 	}
 }
+

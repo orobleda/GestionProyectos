@@ -91,6 +91,8 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 	
 	@FXML
 	private AnchorPane anchor;
+	
+	boolean inicializa = true;
 	    	
 	public EditCertificacionFaseParcial (){
 	}
@@ -137,10 +139,10 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 		certificacion = cert;
 		
 		this.tFxCertificacion.setText(FormateadorDatos.formateaDato(cert.fxCertificacion, TipoDato.FORMATO_FECHA));
-		this.tImporteEst.setText(FormateadorDatos.formateaDato(cert.valEstimado, TipoDato.FORMATO_MONEDA));
-		this.tImporteImp.setText(FormateadorDatos.formateaDato(cert.valReal, TipoDato.FORMATO_MONEDA));
 		this.tHorasEst.setText(FormateadorDatos.formateaDato(cert.horEstimadas, TipoDato.FORMATO_REAL));
 		this.tHorasImp.setText(FormateadorDatos.formateaDato(cert.horReal, TipoDato.FORMATO_REAL));
+		this.tImporteEst.setText(FormateadorDatos.formateaDato(cert.valEstimado, TipoDato.FORMATO_MONEDA));
+		this.tImporteImp.setText(FormateadorDatos.formateaDato(cert.valReal, TipoDato.FORMATO_MONEDA));
 		
 		this.cbTipoEstimacion.setValue(TipoEnumerado.listadoIds.get(cert.tipoEstimacion));		
 		
@@ -177,6 +179,8 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 		}
 		
 		cargaPropiedades(this.certificacion.id, this.certificacion);
+		
+		inicializa = false;
 		
 	}
 	
@@ -276,6 +280,8 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 	}
 	
 	public void calculaValores(String modo, TextField importe, ComboBox<Tarifa> tarifa, TextField horas) throws Exception {
+		if (inicializa) return;
+		
 		float costehora = 0;
 		float datoHoras = 0;
 		float datoImporte = 0;

@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
+import model.beans.CertificacionFaseParcial;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Estimacion;
@@ -29,11 +30,16 @@ import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 
 public class AnalizadorPresupuesto {
 	
+	public static int MODO_RESTANTE = 0;
+	public static int MODO_IMPUTADO = 1;
+	public static int MODO_ESTIMADO = 2;
+	
 	public Proyecto proyecto = null;
 	public ArrayList<EstimacionAnio> estimacionAnual = null;
 	public Date fechaPivote = null;
 	public Presupuesto presupuesto = null;
 	public ArrayList<Certificacion> certificaciones = null;
+	public ArrayList<Estimacion> estimaciones = null;
 	
 	public AnalizadorPresupuesto clone() {
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
@@ -89,6 +95,7 @@ public class AnalizadorPresupuesto {
 					eA.repartirCertificacion(cAux);
 				}
 			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -481,6 +488,7 @@ public class AnalizadorPresupuesto {
 		Sistema s = null;
 		Calendar c = null;
 		ArrayList<Estimacion> listaEstimaciones = estimacion.listado(proyecto);
+		estimaciones = listaEstimaciones;
 		
 		listaEstimaciones = trataAccionesE(listaEstimaciones, lEstimacion);
 		
@@ -771,7 +779,7 @@ public class AnalizadorPresupuesto {
 		return pres;
 	}
 	
-	public HashMap<String, Coste> getRestante(boolean total, int anio) {
+	public HashMap<String, Coste> getRestante(boolean total, int anio, int modo, boolean incluirDes) {
 		HashMap<String, Coste> salida = new HashMap<String, Coste>();
 		
 		Iterator<EstimacionAnio> itEa = this.estimacionAnual.iterator();
@@ -780,7 +788,7 @@ public class AnalizadorPresupuesto {
 			EstimacionAnio ea = itEa.next();
 			
 			if (total == true || anio == ea.anio) {
-				HashMap<String, Coste> costeAnio = ea.getRestante();
+				HashMap<String, Coste> costeAnio = ea.getRestante(modo);
 				
 				Iterator<Coste> itCostes = costeAnio.values().iterator();
 				while (itCostes.hasNext()) {
@@ -797,19 +805,48 @@ public class AnalizadorPresupuesto {
 							
 							Concepto concAux = cAux.conceptosCoste.get(conc.tipoConcepto.codigo);
 							concAux.valor += conc.valor;
-						}						
+						}
 					} else {
 						salida.put(c.sistema.codigo,c);
+						cAux = c;
+					}
+					
+					if (incluirDes) {
+						Iterator<Certificacion> itCertificacion = this.certificaciones.iterator();
+						while (itCertificacion.hasNext()) {
+							Certificacion cert = itCertificacion.next();
+							Concepto cDesarrollo = null;
+							
+							if (cAux.conceptosCoste.containsKey(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo)) {
+								cDesarrollo = cAux.conceptosCoste.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
+							} else {
+								cDesarrollo = new Concepto();
+								cAux.conceptosCoste.put(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo,cDesarrollo);
+							}
+							
+							if (cert.s.id == cAux.sistema.id) {
+								CertificacionFaseParcial cfp = cert.totaliza();
+								if (modo == AnalizadorPresupuesto.MODO_ESTIMADO) {
+									cDesarrollo.valor = cfp.valEstimado;									
+								}
+								if (modo == AnalizadorPresupuesto.MODO_IMPUTADO) {
+									cDesarrollo.valor = cfp.valReal;
+								}
+								if (modo == AnalizadorPresupuesto.MODO_RESTANTE) {
+									cDesarrollo.valor = cfp.valEstimado- cfp.valReal;
+								}
+							}
+						}
+
 					}
 				}
-				
-				if (total==true || anio == ea.anio) {
-					return salida;
-				}
+
 			}
 		}
 		
 		return salida;
 	}
+	
+	
 	
 }

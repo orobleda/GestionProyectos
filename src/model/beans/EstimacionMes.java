@@ -56,7 +56,7 @@ public class EstimacionMes {
 				Calendar cFaseParcial = Calendar.getInstance();
 				cFaseParcial.setTime(cfp.fxCertificacion);
 				
-				if (cFaseParcial.after(cFInicioMes) && cFaseParcial.before(cFFinMes)) {
+				if (cFaseParcial.after(cFInicioMes) && cFaseParcial.before(cFFinMes) || fInicioMes.equals(cfp.fxCertificacion) || fFinMes.equals(cfp.fxCertificacion)) {
 					Sistema sBuscado = estimacionesPorSistemas.get(cert.s.codigo);
 					Concepto cAux = sBuscado.listaConceptos.get(MetaConcepto.listado.get(MetaConcepto.DESARROLLO).codigo);
 					
@@ -129,7 +129,7 @@ public class EstimacionMes {
 		return acumulado;
 	}
 	
-	public HashMap<String, Coste> getRestante() {
+	public HashMap<String, Coste> getRestante(int modo) {
 		HashMap<String, Coste> salida = new HashMap<String, Coste>();
 		
 		Iterator<Sistema> itSis = this.estimacionesPorSistemas.values().iterator();
@@ -148,19 +148,24 @@ public class EstimacionMes {
 				Concepto cAux = itConcepto.next();
 				Concepto cRestante = cAux.clone();
 				
-				if (cAux.topeImputacion!=null)
-					cRestante.valor += cAux.topeImputacion.cantidad;
+				if (modo == AnalizadorPresupuesto.MODO_RESTANTE || modo == AnalizadorPresupuesto.MODO_ESTIMADO)
+					if (cAux.topeImputacion!=null)
+						cRestante.valor += cAux.topeImputacion.cantidad;
 				
-				Iterator<Imputacion> itImp = cAux.listaImputaciones.iterator();
-				while (itImp.hasNext()) {
-					Imputacion iAux = itImp.next();
-					cRestante.valor -= iAux.getImporte();
+				if (modo == AnalizadorPresupuesto.MODO_RESTANTE || modo == AnalizadorPresupuesto.MODO_IMPUTADO) {
+					Iterator<Imputacion> itImp = cAux.listaImputaciones.iterator();
+					while (itImp.hasNext()) {
+						Imputacion iAux = itImp.next();
+						cRestante.valor -= iAux.getImporte();
+					}
 				}
 				
-				Iterator<Estimacion> itEst = cAux.listaEstimaciones.iterator();
-				while (itEst.hasNext()) {
-					Estimacion eAux = itEst.next();
-					cRestante.valor += eAux.importe;
+				if (modo == AnalizadorPresupuesto.MODO_RESTANTE || modo == AnalizadorPresupuesto.MODO_ESTIMADO) {
+					Iterator<Estimacion> itEst = cAux.listaEstimaciones.iterator();
+					while (itEst.hasNext()) {
+						Estimacion eAux = itEst.next();
+						cRestante.valor += eAux.importe;
+					}
 				}
 				
 				c.conceptosCoste.put(cAux.tipoConcepto.codigo, cRestante); 

@@ -1,17 +1,21 @@
 package ui.Economico.CargaImputaciones.Tables;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
 import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
 import model.beans.Coste;
+import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.TipoDato;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Tabla;
+import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.interfaces.Tableable;
 
 public class LineaCosteEconomico extends ParamTable implements Tableable  {
@@ -34,10 +38,10 @@ public class LineaCosteEconomico extends ParamTable implements Tableable  {
     
 	public void setConfig() {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
-		configuracionTabla.put(LineaCosteEconomico.SISTEMA, new ConfigTabla(LineaCosteEconomico.SISTEMA, LineaCosteEconomico.SISTEMA, true,0, false));
-		configuracionTabla.put(LineaCosteEconomico.TREI, new ConfigTabla(LineaCosteEconomico.TREI, LineaCosteEconomico.TREI, true,1, false));
-		configuracionTabla.put(LineaCosteEconomico.SATAD, new ConfigTabla(LineaCosteEconomico.SATAD, LineaCosteEconomico.SATAD, true,2, false));
-		configuracionTabla.put(LineaCosteEconomico.CC, new ConfigTabla(LineaCosteEconomico.CC, LineaCosteEconomico.CC, true,3, false));
+		configuracionTabla.put(LineaCosteEconomico.SISTEMA, new ConfigTabla(LineaCosteEconomico.SISTEMA, LineaCosteEconomico.SISTEMA, false,0, false));
+		configuracionTabla.put(LineaCosteEconomico.TREI, new ConfigTabla(LineaCosteEconomico.TREI, LineaCosteEconomico.TREI, false,1, false));
+		configuracionTabla.put(LineaCosteEconomico.SATAD, new ConfigTabla(LineaCosteEconomico.SATAD, LineaCosteEconomico.SATAD, false,2, false));
+		configuracionTabla.put(LineaCosteEconomico.CC, new ConfigTabla(LineaCosteEconomico.CC, LineaCosteEconomico.CC, false,3, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaCosteEconomico.SISTEMA, new Integer(100));
@@ -100,5 +104,18 @@ public class LineaCosteEconomico extends ParamTable implements Tableable  {
 	public AnchorPane getFilaEmbebida(TableRowDataFeatures<Tableable> expander) {
 		return null;
 	}
-	  	
+	
+	@Override
+	public String resaltar(int fila, String columna, Tabla tabla) {
+		try {
+			LineaCosteEconomico lce = (LineaCosteEconomico) tabla.listaDatosFiltrada.get(fila);
+			
+			Float cantidad = (Float) FormateadorDatos.parseaDato(lce.get(columna),TipoDato.FORMATO_MONEDA);
+			
+			if (cantidad<0)
+			     return "-fx-background-color: " + Constantes.COLOR_AMARILLO;
+			else return null;
+		} catch (Exception e) {return null;}
+	}
+	
 }

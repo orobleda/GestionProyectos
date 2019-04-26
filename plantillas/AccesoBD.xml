@@ -834,7 +834,7 @@
 			<parametro id="7" tipo="int"></parametro>
 			<parametro id="8" tipo="int"></parametro>
 			<parametro id="9" tipo="str"></parametro>
-			<parametro id="10" tipo="str"></parametro>			
+			<parametro id="10" tipo="int"></parametro>			
 		</parametros>
 	</acceso>
 	<acceso>

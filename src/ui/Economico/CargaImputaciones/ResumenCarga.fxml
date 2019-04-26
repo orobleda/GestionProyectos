@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.CargaImputaciones.ResumenCarga">
+   <children>
+      <HBox alignment="CENTER">
+         <children>
+            <Label text="Estado general" />
+            <ImageView id="imGuardar" fx:id="imSemaforoGeneral" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Analizar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </VBox.margin>
+      </HBox>
+      <VBox>
+         <children>
+            <Label text="Estado Proyectos" />
+            <TableView fx:id="tEstadoProyectos">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </TableView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox>
+         <children>
+            <Label text="Imputaciones a gestionar" />
+            <TableView fx:id="tImputaciones">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </TableView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </VBox>
+      <HBox alignment="TOP_RIGHT">
+         <VBox.margin>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+         </VBox.margin>
+         <children>
+            <ImageView id="imGuardar" fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+</VBox>
