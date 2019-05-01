@@ -646,13 +646,22 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>UPDATE REL_RECURSO_AREA SET ocurrencias=$B$||1||$E$ where idRecurso = $B$||2||$E$ and idArea = $B$||3||$E$</query>
+		<query>UPDATE REL_RECURSO_AREA SET ocurrencias=$B$||1||$E$ where 1=1  $B$ and idRecurso = ||2||$E$ $B$ and idArea = ||3||$E$ $B$ and id = ||4||$E$</query>
 		<id tipo="U">uActualizaRelRecursoSistema</id>
 		<tabla>REL_RECURSO_AREA</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
 			<parametro id="2" tipo="int"></parametro>
-			<parametro id="3" tipo="int"></parametro>	
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>	
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>delete from REL_RECURSO_AREA where id = $B$||1||$E$</query>
+		<id tipo="D">dDelRelRecursoSistema</id>
+		<tabla>REL_RECURSO_AREA</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>

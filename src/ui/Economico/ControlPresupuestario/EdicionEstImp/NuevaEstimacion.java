@@ -445,7 +445,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 					
 			while (itImp.hasNext()) {
 				Imputacion imp = (Imputacion) itImp.next();
-				imp.modificaImputacion();
+				imp.modificaImputacion(null);
 			}	
 		}
 	}
@@ -472,7 +472,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 					
 			while (itImp.hasNext()) {
 				Imputacion imp = (Imputacion) itImp.next();
-				imp.borraImputacion();
+				imp.borraImputacion(null);
 			}
 		}
 	
@@ -501,7 +501,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 				Dialogo.error("Analizador Cambios", "Imputación existente", "La imputación no se va a poder insertar al ya existir un elemento para el mismo recurso.");
 				return;
 			}
-			imp.insertImputacion();
+			imp.insertImputacion(null);
 		}		
 	}
 	

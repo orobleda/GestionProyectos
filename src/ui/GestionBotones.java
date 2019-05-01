@@ -19,6 +19,8 @@ public class GestionBotones {
 	boolean valor = false; 
 	int modoFuncionamiento = 0;
 	
+	public boolean liberado = false;
+	
 	String nombreBoton = null;
 	
 	public boolean presionado = false;
@@ -69,8 +71,13 @@ public class GestionBotones {
             @Override
             public void handle(MouseEvent t)
             {
-            	if (!presionado) 
-            		boton.setImage(new Image(nomBoton() + "_ON.png"));
+            	try {
+            		if (!presionado) 
+            			boton.setImage(new Image(nomBoton() + "_ON.png"));
+            	} catch (Exception ex) {
+            		ex.printStackTrace();
+            		System.out.println(nomBoton() + "_ON.png");
+            	}
             }
         });
 		
@@ -106,6 +113,7 @@ public class GestionBotones {
 			System.out.println("No se encuentra el recurso " + nombreBoton + "_PAS.png" + "\n\r" + e.getMessage());
 		}
 		presionado = false;
+		liberado = true;
 	}
 	
 	public void desActivarBoton() {
@@ -136,6 +144,7 @@ public class GestionBotones {
 			System.out.println("No se encuentra el recurso " +nombreBoton + "_PRES.png" + "\n\r" + e.getMessage());
 		}
 		presionado = true;
+		liberado = false;
 	}
 	
 	public void visibleBoton(boolean valor) {

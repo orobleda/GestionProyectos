@@ -29,20 +29,27 @@ import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Estimacion;
+import model.beans.EstimacionAnio;
+import model.beans.EstimacionMes;
 import model.beans.Imputacion;
+import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.beans.RelRecursoSistema;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.utils.xls.ConsultaImputaciones;
 import ui.GestionBotones;
+import ui.Persiana;
 import ui.Semaforo;
 import ui.Tabla;
 import ui.Economico.CargaImputaciones.Tables.LineaCosteEconomico;
 import ui.Economico.CargaImputaciones.Tables.LineaResumenEconomico;
+import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 
@@ -59,9 +66,6 @@ public class CargaImputaciones implements ControladorPantalla  {
     
     @FXML
     private VBox vbImputaciones;
-
-    @FXML
-    private ScrollPane scrDetalleProy;
 
     @FXML
     private DatePicker tFdesde;
@@ -97,6 +101,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 
     @FXML
     private VBox vbDetalle;
+    private VBox sacoDetalle = new VBox();
     
 
     @FXML
@@ -107,6 +112,12 @@ public class CargaImputaciones implements ControladorPantalla  {
 
     @FXML
     private ComboBox<Proyecto> cbProyectos;
+    
+    @FXML
+    private ImageView imPersiana;
+    
+    @FXML
+    private VBox vbCriterios;
     
     public HashMap<Integer,ArrayList<Imputacion>> listaImputacionesProyecto = null;
     public HashMap<Integer,ArrayList<Imputacion>> listaImputacionesAsignadasProyecto = null;
@@ -135,6 +146,8 @@ public class CargaImputaciones implements ControladorPantalla  {
 	}
 	
 	public void initialize(){
+		new Persiana(vbCriterios);
+				
 		listaImputacionesAsignadasProyecto = new HashMap<Integer,ArrayList<Imputacion>>(); 
 		listaSemaforosProyecto = new HashMap<Integer,Integer>();
 		
@@ -152,8 +165,7 @@ public class CargaImputaciones implements ControladorPantalla  {
             public void handle(MouseEvent t)
             {   
 				try {
-					vbDetalle.setVisible(false);
-					vbImputacionesGeneral.setVisible(false);
+					
 					analizaFichero ();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -176,6 +188,9 @@ public class CargaImputaciones implements ControladorPantalla  {
 		});
 		
 		vbDetalle.setVisible(false);
+		sacoDetalle.getChildren().addAll(vbDetalle.getChildren());
+		vbDetalle.getChildren().removeAll(vbDetalle.getChildren());
+		
 		vbImputacionesGeneral.setVisible(false);
 		this.chkResumen.setDisable(true);
 		
@@ -194,14 +209,15 @@ public class CargaImputaciones implements ControladorPantalla  {
 			this.hbEstadoProy.setVisible(true);
 			this.cbProyectos.setDisable(false);
 			this.cbProyectos.setValue(this.cbProyectos.getItems().get(0));
-			cargaProyecto();
-			this.vbDetalle.setVisible(true);
+			cargaProyecto();		
 			return;
 		}
 		
 		this.hbEstadoProy.setVisible(false);
 		this.cbProyectos.setDisable(true);
 		this.vbDetalle.setVisible(false);
+		sacoDetalle.getChildren().addAll(vbDetalle.getChildren());
+		vbDetalle.getChildren().removeAll(vbDetalle.getChildren());
 		
 		vbImputaciones.getChildren().removeAll(vbImputaciones.getChildren());
 		
@@ -216,18 +232,49 @@ public class CargaImputaciones implements ControladorPantalla  {
 	
 	public void cargaProyecto() throws Exception{
 		vbDetalle.setVisible(true);
+		
+		if (sacoDetalle.getChildren().size()!=0) {
+			vbDetalle.getChildren().removeAll(vbDetalle.getChildren());
+			vbDetalle.getChildren().addAll(sacoDetalle.getChildren());
+			sacoDetalle.getChildren().removeAll(sacoDetalle.getChildren());
+		}
+		
 		vbImputacionesGeneral.setVisible(true);
+		
+		cargaPresupuesto();
+		
+		ArrayList<Sistema> lSistema = new ArrayList<Sistema>();
+		Iterator<Coste> itCoste = this.proyecto.presupuestoActual.costes.values().iterator();
+		while (itCoste.hasNext()) {
+			Coste cAux = itCoste.next();
+			lSistema.add(cAux.sistema);
+		}
 		
 		ArrayList<Imputacion> lImputaciones = null;
 		lImputaciones = listaImputacionesProyecto.get(this.cbProyectos.getValue().id);
 		
-		cargaPresupuesto();
 		
 		if (listaImputacionesAsignadasProyecto.containsKey(this.cbProyectos.getValue().id)) {
 			listaImputacionesAsignadas = listaImputacionesAsignadasProyecto.get(this.cbProyectos.getValue().id);
 		} else {
 			listaImputacionesAsignadas = new ArrayList<Imputacion>();
 			listaImputacionesAsignadasProyecto.put(this.cbProyectos.getValue().id,listaImputacionesAsignadas);
+			
+			Iterator<Imputacion> itImputacion = lImputaciones.iterator();
+			while (itImputacion.hasNext()) {
+				Imputacion i = itImputacion.next();
+				asociaSistemaEstimacion(i, lSistema);
+			}
+			
+			ArrayList<Imputacion> lAuxiliar = this.ap.getImputacionesHuerfanas(lImputaciones);
+			
+			itImputacion = lAuxiliar.iterator();
+			while (itImputacion.hasNext()) {
+				Imputacion i = itImputacion.next();
+				asociaSistemaEstimacion(i, lSistema);
+			}
+			
+			lImputaciones.addAll(lAuxiliar);
 		}
 		
 		if (listaImputacionesAsignadasProyecto.size() == this.listaImputacionesProyecto.size()) {
@@ -244,16 +291,101 @@ public class CargaImputaciones implements ControladorPantalla  {
 		while (itImputacion.hasNext()) {
 			Imputacion i = itImputacion.next();
 			
-			DetalleImputacion nueEstimacion = new DetalleImputacion();
-	        FXMLLoader loader = new FXMLLoader();
-	        loader.setLocation(new URL(nueEstimacion.getFXML()));
-	        vbImputaciones.getChildren().add(loader.load());
-	        nueEstimacion = loader.getController();
-	        nueEstimacion.adscribir(this, i, null);
-	        lDetallesImputacion.add(nueEstimacion);
+			i = this.ap.getImputacion(i);			
+			
+			if (i.modo_fichero>=-1) {
+				DetalleImputacion nueEstimacion = new DetalleImputacion();
+		        FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(new URL(nueEstimacion.getFXML()));
+		        vbImputaciones.getChildren().add(loader.load());
+		        nueEstimacion = loader.getController();
+		        nueEstimacion.adscribir(this, i, null);
+		        lDetallesImputacion.add(nueEstimacion);
+			}
 		}
 		
 		refrescaPresupuesto(null, this.listaImputacionesAsignadas);
+	}
+	
+	private void asociaSistemaEstimacion(Imputacion i, ArrayList<Sistema> listaSistemas) throws Exception{
+		Calendar c = Calendar.getInstance();
+		c.setTime(i.fxInicio);
+		
+		if (i.sistema!=null) {			
+			Iterator<EstimacionAnio> itEa =  this.ap.estimacionAnual.iterator();
+			while (itEa.hasNext()) {
+				EstimacionAnio ea = itEa.next();
+				
+				if (ea.anio == c.get(Calendar.YEAR)) {
+					EstimacionMes em = ea.estimacionesMensuales.get(c.get(Calendar.MONTH));
+					
+					if (em!=null) {
+						Sistema s = em.estimacionesPorSistemas.get(i.sistema.codigo);
+						if (s!=null) {
+							if (s.listaConceptos!=null && i.recurso!=null) {
+								ParametroRecurso pr = (ParametroRecurso) i.recurso.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
+								MetaConcepto mc = (MetaConcepto) pr.getValor();
+								
+								Concepto conc = s.listaConceptos.get(mc.codigo);
+								
+								if (conc!=null) {
+									Iterator<Estimacion> itEstimacion = conc.listaEstimaciones.iterator();
+									while (itEstimacion.hasNext()) {
+										Estimacion estAux = itEstimacion.next();
+										if (estAux.recurso.id == i.recurso.id) {
+											i.estimacionAsociada = estAux;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			Iterator<EstimacionAnio> itEa =  this.ap.estimacionAnual.iterator();
+			while (itEa.hasNext()) {
+				EstimacionAnio ea = itEa.next();
+				
+				if (ea.anio == c.get(Calendar.YEAR)) {
+					EstimacionMes em = ea.estimacionesMensuales.get(c.get(Calendar.MONTH));
+					if (em!=null) {
+						Iterator<Sistema> itSistema = em.estimacionesPorSistemas.values().iterator();
+						while (itSistema.hasNext()) {
+							Sistema s = itSistema.next();
+							if (s.listaConceptos!=null && i.recurso!=null) {
+								ParametroRecurso pr = (ParametroRecurso) i.recurso.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
+								MetaConcepto mc = (MetaConcepto) pr.getValor();
+								
+								Concepto conc = s.listaConceptos.get(mc.codigo);
+								
+								if (conc!=null) {
+									Iterator<Estimacion> itEstimacion = conc.listaEstimaciones.iterator();
+									while (itEstimacion.hasNext()) {
+										Estimacion estAux = itEstimacion.next();
+										if (estAux.recurso.id == i.recurso.id) {
+											i.estimacionAsociada = estAux;
+											i.sistema = s;
+											i.natCoste = mc;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (i.estimacionAsociada==null && i.recurso!=null && i.sistema==null) {
+			RelRecursoSistema rrs = new RelRecursoSistema();
+			rrs.recurso = i.recurso;
+			ParametroRecurso pr = (ParametroRecurso) i.recurso.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
+			MetaConcepto mc = (MetaConcepto) pr.getValor();
+			i.natCoste = mc;
+			Sistema s = rrs.getMejorSistema(listaSistemas, this.ap.estimaciones, c.get(Calendar.MONTH)+1, c.get(Calendar.YEAR));
+			i.sistema = s;
+		}
 	}
 	
 	public void recargar() {
@@ -269,13 +401,11 @@ public class CargaImputaciones implements ControladorPantalla  {
 	}
 	
 	public void analizaFichero () throws Exception {
-		chkResumen.setDisable(true);
-		
+		listaImputacionesAsignadasProyecto = new HashMap<Integer,ArrayList<Imputacion>>(); 
 		listaImputacionesProyecto = new HashMap<Integer,ArrayList<Imputacion>>();
 		this.cbProyectos.getItems().removeAll(this.cbProyectos.getItems());
 		vbImputaciones.getChildren().removeAll(vbImputaciones.getChildren());
-		
-		
+				
 		ConsultaImputaciones ci = new ConsultaImputaciones();
 		ci.abrirArchivo(this.tFichero.getText(), 0);
 		ArrayList<HashMap<String,Object>> listado = ci.leeFichero();
@@ -302,7 +432,10 @@ public class CargaImputaciones implements ControladorPantalla  {
 		 }
 		 
 		 this.cbProyectos.setDisable(false);
-		 
+		
+		vbImputacionesGeneral.setVisible(false);
+		chkResumen.setSelected(false);		
+		chkResumen.setDisable(true);
 	}
 	
 	public void buscaFichero() {

@@ -1,7 +1,9 @@
 package application;
 	
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.controlsfx.control.HiddenSidesPane;
 
@@ -9,8 +11,11 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TreeCell;
@@ -20,9 +25,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
+import ui.GestionBotones;
+import ui.Persiana;
 import ui.Administracion.Festivos.GestionFestivos;
 import ui.Administracion.Parametricas.AdministracionParametros;
 import ui.Economico.CargaImputaciones.CargaImputaciones;
@@ -43,12 +53,32 @@ public class Main extends Application {
 	
 	public static final String PANTALLA_ACTIVA = "pantalla_Activa"; 
 	
+	public static int SOLICITUDES = 0;
+	public static int RECURSOS = 1;
+	public static int ECONOMICO = 2;
+	public static int PLANIFICACION = 3;
+	public static int REPORTES = 4;
+	public static int AJUSTES = 5;
+	
+	public HashMap<Integer, HashMap<String, ControladorPantalla>> listaMenu = null;
+	
 	public static HashMap<String, Object> sesion = null;
+	public HiddenSidesPane pane = null;
+	
+	HBox hb = null;
+	
+	public HBox solicRecursos = null;
+	public HBox econPlani = null;
+	public HBox reporAjustes = null;
+	
+	public ArrayList<GestionBotones> listaGBs = null;
 		
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			//Empieza el show
+			pueblaMenu();
+			
+			listaGBs = new ArrayList<GestionBotones>();
 			Main.sesion = new HashMap<String, Object>();
 			
 			new CargaInicial().load();
@@ -71,7 +101,7 @@ public class Main extends Application {
 	        FXMLLoader loader = new FXMLLoader();
             loader.setLocation(new URL(c.getFXML()));
             	        
-	        HiddenSidesPane pane = new HiddenSidesPane();
+	        pane = new HiddenSidesPane();
 	        pane.setPadding(new Insets(0, 0, 0, 0));
 	        pane.setContent(loader.load());
 	        mostrarMenu (pane);
@@ -91,136 +121,270 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private void mostrarMenu (HiddenSidesPane pane) {
-		TreeItem<String> dummyRoot = new TreeItem<>();
-		
-		final Node rootIcon = new ImageView(new Image("proyectosDemanda.png"));
-		rootIcon.getStyleClass().add("iconoMenu");
-		rootIcon.setAccessibleHelp("Demanda & Proyectos");
-		rootIcon.setAccessibleText("Demanda & Proyectos");
-		((ImageView)rootIcon).setFitWidth(35);
-		((ImageView)rootIcon).setPreserveRatio(true);
-		
-		TreeItem<String> model1 = new TreeItem<String>("", rootIcon);
-		
-		TreeItem<String> model12 = new TreeItem<String>("Gestión solicitudes");
-	    model1.getChildren().add(model12);
-		
-	    TreeItem<String> model2 = new TreeItem<String>("Recursos");
-	    TreeItem<String> model21 = new TreeItem<String>("Gestión Recursos");
-	    TreeItem<String> model24 = new TreeItem<String>("Gestión Proveedores");
-	    TreeItem<String> model22 = new TreeItem<String>("Asignación Tarifas");
-	    TreeItem<String> model23 = new TreeItem<String>("Gestión horas trabajadas");
-	    model2.getChildren().addAll(model21,model24,model22,model23);
+		VBox vb = new VBox();
+	    vb.setAlignment(Pos.CENTER);
 	    
-	    TreeItem<String> model3b = new TreeItem<String>("Planificación");
-		
-		TreeItem<String> model3b1 = new TreeItem<String>("Faseado Proyectos");
-	    model3b.getChildren().add(model3b1);
-
-	    TreeItem<String> model3 = new TreeItem<String>("Económico");
-		
-		TreeItem<String> model31 = new TreeItem<String>("Gestión Estimaciones");
-	    model3.getChildren().add(model31);
-		TreeItem<String> model311 = new TreeItem<String>("Gestión Presupuestos");
-	    model3.getChildren().add(model311);
-	    TreeItem<String> model32 = new TreeItem<String>("Planificación Económica");
-	    model3.getChildren().add(model32);
-	    TreeItem<String> model34 = new TreeItem<String>("Estimaciones Por Horas");
-	    model3.getChildren().add(model34);
-	    TreeItem<String> model33 = new TreeItem<String>("Gestión Tarifas");
-	    model3.getChildren().add(model33);
-	    TreeItem<String> model35 = new TreeItem<String>("Alta de Imputaciones");
-	    model3.getChildren().add(model35);
-
-	    TreeItem<String> model4 = new TreeItem<String>("Administración");
-		
-		TreeItem<String> model41 = new TreeItem<String>("Gestión Festivos");
-	    model4.getChildren().add(model41);
+	    HBox hb = new HBox();
+	    ImageView boton = new ImageView();
+	    GestionBotones gbBoton = new GestionBotones(boton, "Cerrar3R", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				pane.setPinnedSide(null);
+            } }, "Cerrar Menú", this);	
 	    
-		TreeItem<String> model42 = new TreeItem<String>("Gestión paramétricas");
-	    model4.getChildren().add(model42);
+	    gbBoton.activarBoton();
+	    hb.setAlignment(Pos.TOP_RIGHT);
+	    hb.getChildren().add(boton);	
 	    
-	    dummyRoot.getChildren().addAll(model1, model2, model3b, model3, model4);
+	    vb.getChildren().add(hb);
 	    
-	    TreeView<String> tree = new TreeView<>(dummyRoot);
-	    tree.setShowRoot(false);
+	   hb.setPadding(new Insets(0,0,10,0));
 	    
-	    pane.setLeft(tree);    
+		vb.getChildren().add(insertaSolicitudesRecursos());
+		vb.getChildren().add(insertaPlanificacionEconomico());
+		vb.getChildren().add(insertaAjustesReporte());
+		vb.getStyleClass().add("PanelLateral");
 	    
-	    EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
-	    	handleMouseClicked(event, tree, pane);
-	    };
-
-	    tree.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandle); 
-	    	        
+	    BorderPane p = new BorderPane();
+	    p.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+	    p.setCenter(vb);	    
+	    
+	    pane.setLeft(p);
 	}
 	
-	private void handleMouseClicked(MouseEvent event, TreeView<String> tree, HiddenSidesPane pane) {
-	    Node node = event.getPickResult().getIntersectedNode();
-	    // Accept clicks only on node cells, and not on empty spaces of the TreeView
-	    if (node instanceof Text || (node instanceof TreeCell && ((TreeCell) node).getText() != null)) {
-	        String name = (String) ((TreeItem) tree.getSelectionModel().getSelectedItem()).getValue();
-	        
-	        try{
-		        FXMLLoader loader = new FXMLLoader();
-		        ControladorPantalla controlPantalla = null;
-		        Main.sesion.put(Main.PANTALLA_ACTIVA, controlPantalla);
-		        
-		        if ("Gestión solicitudes".equals(name))
-		        	controlPantalla = new AltaModProyecto();
-		        
-		        if ("Gestión Recursos".equals(name))
-		        	controlPantalla = new AltaModRecurso();
-		        
-		        if ("Gestión Proveedores".equals(name))
-		        	controlPantalla = new AltaModProveedor();
-		        
-		        if ("Asignación Tarifas".equals(name))
-		        	controlPantalla = new AsignacionTarifas();
-		        
-		        if ("Alta de Imputaciones".equals(name))
-		        	controlPantalla = new CargaImputaciones();
-		        
-		        if ("Gestión horas trabajadas".equals(name))
-		        	controlPantalla = new GestionVacaciones();
+	private VBox insertaSolicitudesRecursos() {
+		VBox vb = new VBox();
+		
+		hb = new HBox();
+	    
+	    ImageView boton = new ImageView();
+	    GestionBotones gbBoton = new GestionBotones(boton, "Solicitudes", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.SOLICITUDES);
+            } }, "Solicitudes");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+		
+		boton = new ImageView();
+	    gbBoton = new GestionBotones(boton, "Recursos", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.RECURSOS);
+            } }, "Recursos");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+		
+		vb.getChildren().add(hb);
 
-		        if ("Gestión Estimaciones".equals(name))
-		        	controlPantalla = new EstimacionesValoraciones();
-		        
-		        if ("Faseado Proyectos".equals(name))
-		        	controlPantalla = new Faseado();
-		        
-		        if ("Gestión Tarifas".equals(name))
-		        	controlPantalla = new ui.Economico.Tarifas.GestionTarifas();
-		        
-		        if ("Gestión Presupuestos".equals(name))
-		        	controlPantalla = new GestionPresupuestos();
-		        
-		        if ("Planificación Económica".equals(name))
-		        	controlPantalla = new ControlPresupuestario();
-		        
-		        if ("Estimaciones Por Horas".equals(name))
-		        	controlPantalla = new EstimacionesInternas();
-		        
-		        if ("Gestión Festivos".equals(name))
-		        	controlPantalla = new GestionFestivos();
-		        
-		        if ("Gestión paramétricas".equals(name))
-		        	controlPantalla = new AdministracionParametros();
-		        
-		        if (controlPantalla!=null){
-		        	loader.setLocation(new URL(controlPantalla.getFXML()));
-		        	pane.setContent(loader.load());
-		        }
-		        
-		        tree.getSelectionModel().getSelectedItem().setExpanded(!tree.getSelectionModel().getSelectedItem().isExpanded());
-	        } catch (Exception e) {
-	        	e.printStackTrace();
+		solicRecursos = new HBox();
+		vb.getChildren().add(solicRecursos);
+		
+		return vb;
+	}
+	
+	private VBox insertaAjustesReporte() {
+		VBox vb = new VBox();
+		
+		hb = new HBox();
+	    
+	    ImageView boton = new ImageView();
+	    GestionBotones gbBoton = new GestionBotones(boton, "Reporting", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.REPORTES);
+            } }, "Reporting");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+		
+		boton = new ImageView();
+	    gbBoton = new GestionBotones(boton, "Ajustes", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.AJUSTES);
+            } }, "Ajustes");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+		
+		vb.getChildren().add(hb);
+
+		this.reporAjustes = new HBox();
+		vb.getChildren().add(reporAjustes);
+		
+		return vb;
+	}
+	
+	private VBox insertaPlanificacionEconomico() {
+		VBox vb = new VBox();
+		
+		hb = new HBox();
+		
+		ImageView boton = new ImageView();
+		GestionBotones gbBoton = new GestionBotones(boton, "Economico", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.ECONOMICO);
+            } }, "Económico");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+	    
+	     boton = new ImageView();
+	     gbBoton = new GestionBotones(boton, "Planificacion", true, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {   
+				cambiaBoton(Main.PLANIFICACION);
+            } }, "Planificación");	
+		gbBoton.activarBoton();
+		hb.getChildren().add(boton);
+		listaGBs.add(gbBoton);
+		
+		vb.getChildren().add(hb);
+
+		econPlani = new HBox();
+		vb.getChildren().add(econPlani);
+		
+		return vb;
+	}
+	
+	private void cambiaBoton(int index) {
+		Iterator<GestionBotones> itGb = this.listaGBs.iterator();
+		int contador = 0;
+		pane.setPinnedSide(Side.LEFT);
+		
+		while (itGb.hasNext()) {
+			GestionBotones gb = itGb.next();
+			
+			if (contador == index) {
+				if (!gb.liberado) {
+					gb.liberarBoton();
+					solicRecursos.getChildren().removeAll(solicRecursos.getChildren());
+				} else {
+					gb.pulsarBoton();
+					
+					if (index == Main.SOLICITUDES) insertaElementos(solicRecursos, index);
+					if (index == Main.RECURSOS) insertaElementos(solicRecursos, index);
+					if (index == Main.ECONOMICO) insertaElementos(this.econPlani, index);
+					if (index == Main.PLANIFICACION) insertaElementos(this.econPlani, index);
+					if (index == Main.AJUSTES) insertaElementos(this.reporAjustes, index);
+					if (index == Main.REPORTES) insertaElementos(this.reporAjustes, index);
+				}
+			} else {
+				gb.liberarBoton();
+			}
+			
+			contador ++;
+		}
+		
+	}
+	
+	private Label dameOpcionMenu(int idSeleccion, String opcion){
+		Label l = new Label(opcion);
+		l.getStyleClass().add("elementoMenu");
+		l.getProperties().put("CTRLPANTALLA", this.listaMenu.get(idSeleccion).get(opcion));
+		
+		l.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent t)
+            {
+            	ControladorPantalla cp = (ControladorPantalla) l.getProperties().get("CTRLPANTALLA");
+            	click(cp);
+            }
+        });
+		
+		return l;
+	}
+	
+	private VBox getContenedorMenu() {
+		VBox vb = new VBox();
+		vb.getStyleClass().add("elementosMenu");
+		vb.prefWidthProperty().bind(hb.widthProperty().multiply(1));
+		vb.setPadding(new Insets(15,15,15,70));
+		return vb;
+	}
+	
+	private void insertaElementos(HBox hb, int idSeleccion) {
+		VBox vb = getContenedorMenu();
+		Iterator<String> itOpciones = this.listaMenu.get(idSeleccion).keySet().iterator();
+		while (itOpciones.hasNext()) {
+			vb.getChildren().add(dameOpcionMenu(idSeleccion, itOpciones.next()));
+		}
+		
+		solicRecursos.getChildren().removeAll(solicRecursos.getChildren());
+		econPlani.getChildren().removeAll(econPlani.getChildren());
+		reporAjustes.getChildren().removeAll(reporAjustes.getChildren());
+		
+		hb.getChildren().removeAll(hb.getChildren());
+		hb.getChildren().add(vb);
+		
+	}
+	
+	private void pueblaMenu() {
+		listaMenu = new HashMap<Integer, HashMap<String, ControladorPantalla>>();
+		
+		HashMap<String, ControladorPantalla> opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.SOLICITUDES, opcionMenu);
+		opcionMenu.put("Gestión solicitudes", new AltaModProyecto());
+		
+		opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.RECURSOS, opcionMenu);
+		opcionMenu.put("Gestión Recursos", new AltaModRecurso());
+		opcionMenu.put("Gestión Proveedores", new AltaModProveedor());
+		opcionMenu.put("Asignación Tarifas", new AsignacionTarifas());
+		opcionMenu.put("Gestión horas trabajadas", new GestionVacaciones());
+		
+		opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.ECONOMICO, opcionMenu);
+		opcionMenu.put("Gestión Estimaciones", new EstimacionesValoraciones());
+		opcionMenu.put("Gestión Presupuestos", new GestionPresupuestos());
+		opcionMenu.put("Planificación Económica", new ControlPresupuestario());
+		opcionMenu.put("Estimaciones Por Horas", new EstimacionesInternas());
+		opcionMenu.put("Gestión Tarifas", new ui.Economico.Tarifas.GestionTarifas());
+		opcionMenu.put("Alta de Imputaciones", new CargaImputaciones());
+		
+		opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.PLANIFICACION, opcionMenu);
+		opcionMenu.put("Faseado Proyectos", new Faseado());
+
+		opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.AJUSTES, opcionMenu);
+		opcionMenu.put("Gestión Festivos", new GestionFestivos());
+		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());
+		
+		opcionMenu = new HashMap<String, ControladorPantalla>();
+		listaMenu.put(Main.REPORTES, opcionMenu);		
+	}
+	
+	private void click(ControladorPantalla ctl) {
+        try{
+        	pane.setPinnedSide(null);
+        	
+	        FXMLLoader loader = new FXMLLoader();
+	        ControladorPantalla controlPantalla = ctl;
+	        Main.sesion.put(Main.PANTALLA_ACTIVA, controlPantalla);
+	        		        
+	        if (controlPantalla!=null){
+	        	loader.setLocation(new URL(controlPantalla.getFXML()));
+	        	pane.setContent(loader.load());
 	        }
-	    }
+	        
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
 	}
 	
 }

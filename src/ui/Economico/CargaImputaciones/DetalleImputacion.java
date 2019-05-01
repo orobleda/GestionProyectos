@@ -123,8 +123,11 @@ public class DetalleImputacion implements ControladorPantalla  {
 		this.padre = padre; 
 		this.imputacion = i;
 		
-		if (i.sistema!=null) {
+		if (i.modo_fichero==NuevaEstimacion.MODO_ELIMINAR) {
 			lAccionEstimacion.setText("Excluir Dato");
+		}
+		if (i.modo_fichero==NuevaEstimacion.MODO_MODIFICAR) {
+			lAccionEstimacion.setText("Modificar Dato");
 		}
 		
 		HashMap<String, Object> detalle  = new HashMap<String, Object>();
@@ -141,67 +144,25 @@ public class DetalleImputacion implements ControladorPantalla  {
 		
 		if (i.sistema!=null) {
 			cbSistema.setValue(i.sistema);
-		}
-		
-		Iterator<EstimacionAnio> itEa =  this.padre.ap.estimacionAnual.iterator();
-		while (itEa.hasNext()) {
-			EstimacionAnio ea = itEa.next();
-			
-			if (ea.anio == c.get(Calendar.YEAR)) {
-				EstimacionMes em = ea.estimacionesMensuales.get(c.get(Calendar.MONTH));
-				if (em!=null) {
-					Iterator<Sistema> itSistema = em.estimacionesPorSistemas.values().iterator();
-					while (itSistema.hasNext()) {
-						Sistema s = itSistema.next();
-						if (s.listaConceptos!=null && i.recurso!=null) {
-							ParametroRecurso pr = (ParametroRecurso) i.recurso.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
-							MetaConcepto mc = (MetaConcepto) pr.getValor();
-							
-							Concepto conc = s.listaConceptos.get(mc.codigo);
-							
-							if (conc!=null) {
-								Iterator<Estimacion> itEstimacion = conc.listaEstimaciones.iterator();
-								while (itEstimacion.hasNext()) {
-									Estimacion estAux = itEstimacion.next();
-									if (estAux.recurso.id == i.recurso.id) {
-										detalle.put(LineaDetalleImputacion.ESTIMACION, estAux);
-										if (cbSistema.getValue()==null) {
-											cbSistema.setValue(s);
-											i.sistema = s;
-											i.natCoste = mc;
-											i.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
-											this.padre.listaImputacionesAsignadas.add(i);
-											this.tsAccionEstimacion.setSelected(true);
-										}
-									}
-								}
-							}
-						}
-					}
+			if (i.estimacionAsociada!=null) detalle.put(LineaDetalleImputacion.ESTIMACION, i.estimacionAsociada);
+			if (i.modo_fichero>=0 && i.tarifa!=null) {
+				this.tsAccionEstimacion.setSelected(true);
+				if (!this.padre.listaImputacionesAsignadas.contains(i))
+					this.padre.listaImputacionesAsignadas.add(i);
+			}
+		} else {
+			if (i.estimacionAsociada!=null) {
+				detalle.put(LineaDetalleImputacion.ESTIMACION, i.estimacionAsociada);
+				if (cbSistema.getValue()==null) {
+					cbSistema.setValue(i.estimacionAsociada.sistema);
+					i.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
+					if (!this.padre.listaImputacionesAsignadas.contains(i))
+						this.padre.listaImputacionesAsignadas.add(i);
+					this.tsAccionEstimacion.setSelected(true);
 				}
 			}
 		}
 
-		
-		if (!detalle.containsKey(LineaDetalleImputacion.ESTIMACION) && i.recurso!=null && this.cbSistema.getValue()==null) {
-			RelRecursoSistema rrs = new RelRecursoSistema();
-			rrs.recurso = i.recurso;
-			ParametroRecurso pr = (ParametroRecurso) i.recurso.getValorParametro(MetaParametro.RECURSO_NAT_COSTE);
-			MetaConcepto mc = (MetaConcepto) pr.getValor();
-			ArrayList<Sistema> lSistema = new ArrayList<Sistema>();
-			lSistema.addAll(this.cbSistema.getItems());
-			Sistema s = rrs.getMejorSistema(lSistema, this.padre.ap.estimaciones, c.get(Calendar.MONTH)+1, c.get(Calendar.YEAR));
-			if (s!=null ) {
-				cbSistema.setValue(s);
-				i.sistema = s;
-				if (i.tarifa!=null) {
-					this.padre.listaImputacionesAsignadas.add(i);
-					i.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
-					this.tsAccionEstimacion.setSelected(true);
-					i.natCoste = mc;
-				}
-			}			
-		}
 		
 		ArrayList<Object> lt = new ArrayList<Object>();
 		lt.add(detalle);
@@ -248,7 +209,14 @@ public class DetalleImputacion implements ControladorPantalla  {
 		if (tsAccionEstimacion.isSelected()) {
 			if (!padre.listaImputacionesAsignadas.contains(imputacion)) {
 				padre.listaImputacionesAsignadas.add(imputacion);
-				imputacion.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
+				
+				if (lAccionEstimacion.getText().equals("Excluir Dato")) {
+					imputacion.modo_fichero = NuevaEstimacion.MODO_ELIMINAR;
+				} else {
+					if (lAccionEstimacion.getText().equals("Modificar Dato")) {
+						imputacion.modo_fichero = NuevaEstimacion.MODO_MODIFICAR;
+					} else imputacion.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
+				}
 			}   
 		} else {
 			padre.listaImputacionesAsignadas.remove(imputacion);

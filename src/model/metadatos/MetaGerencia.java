@@ -51,6 +51,21 @@ public class MetaGerencia implements Cargable, Loadable, Comparable<MetaGerencia
 		}
 	}
 	
+	public static MetaGerencia getPorNombre(String nombre) {
+		Iterator<MetaGerencia> it = MetaGerencia.listado.values().iterator();
+		
+		MetaGerencia est = null;
+		
+		while (it.hasNext()){
+			est = (MetaGerencia) it.next();
+			if (nombre.equals(est.descripcion)) {
+				return est;
+			}
+		}
+		
+		return est;
+	}
+	
 	@Override
 	public String toString() {
 		return codigo;

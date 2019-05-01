@@ -13,6 +13,7 @@ import model.metadatos.TipoDato;
 import model.metadatos.TipoEnumerado;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 import ui.interfaces.Tableable;
 
 public class LineaEstadoRecursos extends ParamTable implements Tableable, Comparable<LineaEstadoRecursos>  {
@@ -24,6 +25,7 @@ public class LineaEstadoRecursos extends ParamTable implements Tableable, Compar
 	public static final String PROYECTO = "Proyecto";
 	public static final String HORAS = "Horas";
 	public static final String ESTADO = "Estado";
+	public static final String ACCION = "Acción";
 	
 	public Imputacion i;
 		
@@ -45,6 +47,7 @@ public class LineaEstadoRecursos extends ParamTable implements Tableable, Compar
 		configuracionTabla.put(LineaEstadoRecursos.PROYECTO, new ConfigTabla(LineaEstadoRecursos.PROYECTO, LineaEstadoRecursos.PROYECTO, false,4, false));
 		configuracionTabla.put(LineaEstadoRecursos.HORAS, new ConfigTabla(LineaEstadoRecursos.HORAS, LineaEstadoRecursos.HORAS, false,5, false));
 		configuracionTabla.put(LineaEstadoRecursos.ESTADO, new ConfigTabla(LineaEstadoRecursos.ESTADO, LineaEstadoRecursos.ESTADO, false,6, false));
+		configuracionTabla.put(LineaEstadoRecursos.ACCION, new ConfigTabla(LineaEstadoRecursos.ACCION, LineaEstadoRecursos.ACCION, false,7, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaEstadoRecursos.USUARIO, new Integer(80));
@@ -54,6 +57,7 @@ public class LineaEstadoRecursos extends ParamTable implements Tableable, Compar
     	anchoColumnas.put(LineaEstadoRecursos.PROYECTO, new Integer(300));
     	anchoColumnas.put(LineaEstadoRecursos.HORAS, new Integer(70));
     	anchoColumnas.put(LineaEstadoRecursos.ESTADO, new Integer(70));
+    	anchoColumnas.put(LineaEstadoRecursos.ACCION, new Integer(70));
 	}
     
    	public void set(String campo, String valor){
@@ -88,6 +92,11 @@ public class LineaEstadoRecursos extends ParamTable implements Tableable, Compar
    				TipoEnumerado tp = TipoEnumerado.listadoIds.get(this.i.estado);
    				if (tp!=null) return tp.toString();
    				else return "";
+   			}
+   			if (LineaEstadoRecursos.ACCION.equals(campo)) {
+   				if (this.i.modo_fichero == NuevaEstimacion.MODO_INSERTAR) return "Insertar";
+   				if (this.i.modo_fichero == NuevaEstimacion.MODO_MODIFICAR) return "Modificar";
+   				if (this.i.modo_fichero == NuevaEstimacion.MODO_ELIMINAR) return "Eliminar";
    			}
    					   			
    			return "";

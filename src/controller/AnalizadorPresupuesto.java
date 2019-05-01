@@ -18,7 +18,9 @@ import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.FraccionImputacion;
 import model.beans.Imputacion;
+import model.beans.Parametro;
 import model.beans.ParametroFases;
+import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
@@ -40,6 +42,7 @@ public class AnalizadorPresupuesto {
 	public Presupuesto presupuesto = null;
 	public ArrayList<Certificacion> certificaciones = null;
 	public ArrayList<Estimacion> estimaciones = null;
+	public ArrayList<Imputacion> listaImputaciones = null;
 	
 	public AnalizadorPresupuesto clone() {
 		AnalizadorPresupuesto ap = new AnalizadorPresupuesto();
@@ -579,12 +582,84 @@ public class AnalizadorPresupuesto {
 		
 	}
 	
+	public Imputacion getImputacion(Imputacion i) throws Exception {
+		if (i.modo_fichero>-2) {
+			return i;
+		}
+		
+		if (i.recurso==null) {
+			i.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
+			return i;
+		}
+		
+		Iterator<Imputacion> itImputacionesExistentes = this.listaImputaciones.iterator();
+		
+		while (itImputacionesExistentes.hasNext()) {
+			Imputacion iAux = itImputacionesExistentes.next();
+			
+			if (iAux.recurso.id == i.recurso.id && iAux.fxInicio.equals(i.fxInicio) && iAux.fxFin.equals(i.fxFin)) {
+				if (iAux.importe == i.importe) {
+					i.modo_fichero = -2;
+					return i;
+				} else {
+					i.modo_fichero = NuevaEstimacion.MODO_MODIFICAR;
+					i.id = iAux.id;
+					if (i.sistema==null) i.sistema = iAux.sistema;
+					if (i.natCoste==null) i.natCoste = iAux.natCoste;
+					return i;
+				}
+			}
+		}
+		
+		i.modo_fichero = NuevaEstimacion.MODO_INSERTAR;
+		return i;
+	}
+	
+	public ArrayList<Imputacion> getImputacionesHuerfanas(ArrayList<Imputacion> listaLeidas) throws Exception {
+		ArrayList<Imputacion> noIncluidas = new ArrayList<Imputacion>();
+		
+		Iterator<Imputacion> itImputacionesExistentes = this.listaImputaciones.iterator();
+		
+		while (itImputacionesExistentes.hasNext()) {
+			Imputacion iExistente = itImputacionesExistentes.next();
+			
+			Iterator<Imputacion> itImputacionesLeidas = listaLeidas.iterator();
+			boolean encontrado = false;
+			
+			while (itImputacionesLeidas.hasNext()) {
+				Imputacion iLeida = itImputacionesLeidas.next();
+				if (iLeida.recurso!=null && iLeida.sistema!=null) {
+					if (iExistente.recurso.id == iLeida.recurso.id &&
+						iExistente.sistema.id == iLeida.sistema.id &&
+						iExistente.fxInicio.equals(iLeida.fxInicio) &&
+						iExistente.fxFin.equals(iLeida.fxFin) &&
+						iExistente.proyecto == iLeida.proyecto) {
+						encontrado = true;
+						break;
+					}
+				}
+			}
+			
+			if (!encontrado) {
+				noIncluidas.add(iExistente);
+				iExistente.modo_fichero = NuevaEstimacion.MODO_ELIMINAR;
+				iExistente.modo = NuevaEstimacion.MODO_ELIMINAR;
+				
+				ParametroRecurso pr = (ParametroRecurso) iExistente.recurso.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+				if (pr!=null) iExistente.codRecurso = (String) pr.getValor();
+				
+			}
+		}
+		
+		return noIncluidas;
+	}
+	
 	private void pueblaImputaciones(ArrayList<Imputacion> lImputacion, ArrayList<FraccionImputacion> listaFracciones) throws Exception {
 		Imputacion imputacion = new Imputacion();
 		EstimacionAnio eA = null;
 		Sistema s = null;
 		Calendar c = null;
-		ArrayList<Imputacion> listaImputaciones = imputacion.listado(proyecto,listaFracciones);
+		listaImputaciones = imputacion.listado(proyecto,listaFracciones);
 		
 		listaImputaciones = trataAccionesI(listaImputaciones, lImputacion);
 		

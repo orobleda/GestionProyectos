@@ -1,6 +1,7 @@
 package ui.Economico.CargaImputaciones;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,8 @@ import model.beans.Estimacion;
 import model.beans.Imputacion;
 import model.beans.Proyecto;
 import model.metadatos.TipoDato;
+import model.utils.db.ConsultaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Semaforo;
 import ui.Tabla;
@@ -64,9 +67,12 @@ public class ResumenCarga implements ControladorPantalla  {
             public void handle(MouseEvent t)
             {   
 				try {
-					//altaUsuario();
+					guardarImputaciones();
+					
+					Dialogo.alert("Guardado correcto", "Se guardaron las imputaciones", "Se guardaron las imputaciones.");
 				} catch (Exception e) {
 					e.printStackTrace();
+					Dialogo.error("Error al guardar", "Se produjo un error al guardar", "Se produjo un error al guardar");
 				}
             } }, "Guardar Imputaciones", this);	
 		gbGuardar.activarBoton();
@@ -149,6 +155,78 @@ public class ResumenCarga implements ControladorPantalla  {
 		
 		this.tablaImputaciones = new Tabla(this.tImputaciones,new LineaEstadoRecursos());
 		this.tablaImputaciones.pintaTabla(TipoDato.toListaObjetos(lImputaciones));
+	}
+	
+	private void guardarImputaciones() throws Exception{
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		Iterator<ArrayList<Imputacion>> itListasImputaciones = this.padre.listaImputacionesAsignadasProyecto.values().iterator();
+		
+		while (itListasImputaciones.hasNext()) {
+			ArrayList<Imputacion> listaImputaciones = itListasImputaciones.next();
+			
+			Iterator<Imputacion> itImputaciones = listaImputaciones.iterator();
+			
+			while (itImputaciones.hasNext()) {
+				Imputacion i = itImputaciones.next();
+				
+				if (i.modo_fichero == NuevaEstimacion.MODO_INSERTAR) {
+					i.insertImputacion(idTransaccion);
+				} 
+				
+				if (i.modo_fichero == NuevaEstimacion.MODO_MODIFICAR) {
+					i.modificaImputacion(idTransaccion);
+				}
+				
+				if (i.modo_fichero == NuevaEstimacion.MODO_ELIMINAR) {
+					i.borraImputacion(idTransaccion);
+				}
+				
+				actualizaEstimacion(i, idTransaccion);
+			}
+		}
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+		
+		this.padre.analizaFichero () ;
+	}
+	
+	private void actualizaEstimacion(Imputacion i, String idTransaccion) throws Exception{
+		if (i.modo_fichero == NuevaEstimacion.MODO_ELIMINAR) {
+			if (i.estimacionAsociada!=null) {
+				i.estimacionAsociada.borraEstimacion(idTransaccion);
+				return;
+			} else return;
+		}
+		
+		if (i.estimacionAsociada!=null) {
+			if (i.importe!=i.estimacionAsociada.importe) {
+				i.estimacionAsociada.importe = i.importe;
+				i.estimacionAsociada.horas = i.horas;
+				i.estimacionAsociada.aprobacion = Estimacion.APROBADA;
+				i.estimacionAsociada.modificaEstimacion(idTransaccion);
+			}
+		} else {
+			Calendar c = Calendar.getInstance();
+			c.setTime(i.fxInicio);
+			
+			Estimacion e = new Estimacion();
+			e.anio = c.get(Calendar.YEAR);
+			e.aprobacion = Estimacion.APROBADA;
+			e.fxFin = i.fxFin;
+			e.fxInicio = i.fxInicio;
+			e.gerencia = i.gerencia;
+			e.horas = i.horas;
+			e.id = -1;
+			e.importe = i.importe;
+			e.mes = c.get(Calendar.MONTH)+1;
+			e.natCoste = i.natCoste;
+			e.proyecto = i.proyecto;
+			e.recurso = i.recurso;
+			e.sistema = i.sistema;
+			
+			e.insertEstimacion(idTransaccion);
+		}
 	}
 		
 }

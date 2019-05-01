@@ -142,7 +142,7 @@ public class RelRecursoSistema implements Cargable{
 		return sEncontrado;
 	}
 	
-	public void insertaRelacion(String idTransaccion) throws Exception{
+	public void insertaRelacion(String idTransaccion, Sistema sistOriginal) throws Exception{
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.recurso.id));
 		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.sistema.id));
@@ -150,12 +150,12 @@ public class RelRecursoSistema implements Cargable{
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Cargable> relRecursoTarifas = consulta.ejecutaSQL("cRelRecSistema", listaParms, this);
 		
-		Iterator<Cargable> itCargable = relRecursoTarifas.iterator();
+		int contador = 0;
 		
-		float contador = 0;
+		RelRecursoSistema rec = null;
 		
-		while (itCargable.hasNext()) {
-			RelRecursoSistema rec = (RelRecursoSistema) itCargable.next();
+		if (relRecursoTarifas.size()!=0) {
+			rec = (RelRecursoSistema) relRecursoTarifas.get(0);
 			contador = rec.ocurrencias;
 		}
 		
@@ -166,16 +166,48 @@ public class RelRecursoSistema implements Cargable{
 			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_ID,this.id));
 			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
 			listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.sistema.id));
-			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.ocurrencias));
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,contador));
 					
 			consulta.ejecutaSQL("iInsertaRelRecursoSistema", listaParms, this, idTransaccion);
 		} else {
 			listaParms = new ArrayList<ParametroBD>();
-			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
-			listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.sistema.id));
-			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.ocurrencias));
+			listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,rec.id));
+			listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,contador));
 					
 			consulta.ejecutaSQL("uActualizaRelRecursoSistema", listaParms, this, idTransaccion);
+			
+			if (sistOriginal!=null) {
+				listaParms = new ArrayList<ParametroBD>();
+				listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.recurso.id));
+				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,sistOriginal.id));
+						
+				consulta = new ConsultaBD();
+				relRecursoTarifas = consulta.ejecutaSQL("cRelRecSistema", listaParms, this);
+				
+				contador = 0;
+				
+				rec = null;
+				
+				if (relRecursoTarifas.size()!=0) {
+					rec = (RelRecursoSistema) relRecursoTarifas.get(0);
+					contador = rec.ocurrencias;
+				
+					contador--;
+					
+					if (contador==0) {
+						listaParms = new ArrayList<ParametroBD>();
+						listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,rec.id));
+								
+						consulta.ejecutaSQL("dDelRelRecursoSistema", listaParms, this, idTransaccion);
+					} else {
+						listaParms = new ArrayList<ParametroBD>();
+						listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,rec.id));
+						listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,contador));
+								
+						consulta.ejecutaSQL("uActualizaRelRecursoSistema", listaParms, this, idTransaccion);
+					}
+				}
+			}
 		}
 	}
 	
