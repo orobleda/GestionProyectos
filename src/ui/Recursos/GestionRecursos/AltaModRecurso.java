@@ -7,6 +7,7 @@ import java.util.Iterator;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -74,6 +75,11 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
     Imputacion imputacion = null;
     DetalleImputacion di = null;
 
+    
+    @Override
+	public void resize(Scene escena) {
+		
+	}
     
 	public AltaModRecurso(){
 	}

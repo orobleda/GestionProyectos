@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -42,6 +43,11 @@ public class FraccionUnitariaImputacion implements ControladorPantalla {
     public FraccionUnitariaImputacion() {
 		super();
 		FraccionUnitariaImputacion.elementoThis = this;
+	}
+    
+    @Override
+	public void resize(Scene escena) {
+		
 	}
 
 	public static final String fxml = "file:src/ui/Economico/ControlPresupuestario/EdicionEstImp/FraccionUnitariaImputacion.fxml"; 

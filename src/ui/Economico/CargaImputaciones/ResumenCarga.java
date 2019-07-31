@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -57,6 +58,11 @@ public class ResumenCarga implements ControladorPantalla  {
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+	
+	@Override
+	public void resize(Scene escena) {
+		
 	}
 	
 	public void initialize(){

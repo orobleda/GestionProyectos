@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.swing.event.ChangeListener;
+
+import org.apache.xmlbeans.SchemaStringEnumEntry;
 import org.controlsfx.control.HiddenSidesPane;
 
 import javafx.application.Application;
@@ -67,6 +70,7 @@ public class Main extends Application {
 	public HashMap<String, String> listaImgsPeque = null;
 	
 	public static HashMap<String, Object> sesion = null;
+	public static Scene scene;
 	public HiddenSidesPane pane = null;
 	
 	HBox hb = null;
@@ -80,7 +84,12 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			pueblaMenu();
+			imLoading = new ImageView();
+	        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2.5)-imLoading.getBoundsInLocal().getWidth()/2.5);
+	        imLoading.setLayoutY(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/2.5)-imLoading.getBoundsInLocal().getHeight()/2.5);
+	        imLoading.setImage(new Image("loading.gif"));
+	        
+	        pueblaMenu();
 			
 			listaGBs = new ArrayList<GestionBotones>();
 			Main.sesion = new HashMap<String, Object>();
@@ -96,14 +105,26 @@ public class Main extends Application {
 	        root.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 	        panelBase.setCenter(root);
 
-	        Scene scene = new Scene(panelBase);
-	        scene.getStylesheets().add("application.css");	        
+	        scene = new Scene(panelBase);
+	        scene.getStylesheets().add("application.css");
 	        
-	        CargaImputaciones c = new CargaImputaciones();
+	        scene.heightProperty().addListener((observable, oldvalue, newvalue) ->
+	        	Main.resizarPantalla()
+	        );
+	        /*
+	        scene.heightProperty().addListener(new ChangeListener<Double>() {
+	            @Override public void changed(ObservableValue<? extends Double> observableValue, Double oldSceneHeight, Double newSceneHeight) {
+	            	Main.resizarPantalla();
+	            }
+	        });*/
 	        
+	        GestionVacaciones c = new GestionVacaciones();
 	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
+	        
 	        FXMLLoader loader = new FXMLLoader();
             loader.setLocation(new URL(c.getFXML()));
+            c = loader.getController();
+	        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
             	        
 	        pane = new HiddenSidesPane();
 	        pane.setPadding(new Insets(0, 0, 0, 0));	        
@@ -121,6 +142,18 @@ public class Main extends Application {
 			
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void resizarPantalla() {
+		try {
+			ControladorPantalla c = (ControladorPantalla) Main.sesion.get(Main.PANTALLA_ACTIVA);
+			
+			if (c!=null)
+				c.resize(scene);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	
@@ -417,10 +450,11 @@ public class Main extends Application {
         	
 	        FXMLLoader loader = new FXMLLoader();
 	        ControladorPantalla controlPantalla = ctl;
-	        Main.sesion.put(Main.PANTALLA_ACTIVA, controlPantalla);
 	        		        
 	        if (controlPantalla!=null){
 	        	loader.setLocation(new URL(controlPantalla.getFXML()));
+
+		        Main.sesion.put(Main.PANTALLA_ACTIVA, controlPantalla);
 	        	
 	        	VBox vbContenedorGlobal = new VBox();
 		        HBox hbContenidoAplicacion = new HBox();
@@ -436,7 +470,9 @@ public class Main extends Application {
 		             
 		        Platform.runLater(() -> {
                     try {
-                    	hbContenidoAplicacion.getChildren().add(loader.load());
+                    	hbContenidoAplicacion.getChildren().add(loader.load()); 
+                    	ControladorPantalla c = loader.getController();
+        		        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
                 		
                 		Main.cortinaOFF();
             	        //c.start();
@@ -445,6 +481,8 @@ public class Main extends Application {
                     }
 		        }
                 );
+		        
+		        
 		        
 		        //hbContenidoAplicacion.getChildren().add(loader.load());
 		        
@@ -459,14 +497,19 @@ public class Main extends Application {
 	
 	public Group creaCortina(HBox contenidoAplicacion) {
 		curtain = new Rectangle( Screen.getPrimary().getBounds().getMinX()
-        		,Screen.getPrimary().getBounds().getMinY(),Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX(),
-        		Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY()) ;
+        		,Screen.getPrimary().getBounds().getMinY(),Screen.getPrimary().getBounds().getMaxX()*4 /*- Screen.getPrimary().getBounds().getMinX()*/,
+        		Screen.getPrimary().getBounds().getMaxY()*4 /*- Screen.getPrimary().getBounds().getMinY()*/) ;
         curtain.getStyleClass().add("cortina");
         
-        imLoading = new ImageView();
-        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2)-imLoading.get.getWidth()/2);
-        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/2)-imLoading.getBoundsInLocal().getHeight()/2);
-        imLoading.setImage(new Image("loading.gif"));
+        if (imLoading == null) {
+        	imLoading = new ImageView();
+	        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2)-imLoading.getBoundsInLocal().getWidth()/2);
+	        imLoading.setLayoutY(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/3)-imLoading.getBoundsInLocal().getHeight()/3);
+	        imLoading.setImage(new Image("loading.gif"));
+        } else {
+        	imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2)-imLoading.getBoundsInLocal().getWidth()/2);
+	        imLoading.setLayoutY(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/3)-imLoading.getBoundsInLocal().getHeight()/3);
+        }
         
         Group group_for_curtains_etc = new Group() ;
         group_for_curtains_etc.setManaged( false ) ;

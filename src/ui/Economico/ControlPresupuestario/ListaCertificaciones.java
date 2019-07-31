@@ -6,6 +6,7 @@ import java.util.Iterator;
 import controller.AnalizadorPresupuesto;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
@@ -58,6 +59,11 @@ public class ListaCertificaciones implements ControladorPantalla {
    @Override
 	public AnchorPane getAnchor() {
 		return anchor;
+	}
+   
+   @Override
+	public void resize(Scene escena) {
+		
 	}
 
 	@Override

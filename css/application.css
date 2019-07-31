@@ -69,3 +69,16 @@
 .cortina {
 	-fx-fill: rgba(234,240,255,.7);
 }
+
+.titled-pane  
+{
+	-fx-background-color: rgba(134,139,219,1);
+	-fx-text-fill:  rgba(255,255,255,1);
+	-fx-border-radius: 9;
+}
+
+.titled-pane > .title  
+{
+	-fx-background-color: rgba(134,139,219,1);
+	-fx-text-fill:  rgba(255,255,255,1);
+}

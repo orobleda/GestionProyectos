@@ -1,5 +1,6 @@
 package ui.Recursos.GestionVacaciones;
 
+import java.awt.Dimension;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,7 +10,10 @@ import java.util.Iterator;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -45,6 +49,9 @@ public class GestionVacaciones implements ControladorPantalla {
     private ImageView imGuardar;
     @FXML
     private ImageView imBuscarAn;
+    
+    @FXML
+    private ScrollPane scrollRecursos;
 	
 	public static ArrayList<DetalleRecurso> tablas = new ArrayList<DetalleRecurso>();
 		
@@ -59,6 +66,14 @@ public class GestionVacaciones implements ControladorPantalla {
 	}
 	
 	public GestionVacaciones(){
+	}
+	
+	@Override
+	public void resize(Scene escena) {	
+		if (scrollRecursos==null) return;
+				
+		scrollRecursos.setPrefHeight(escena.getWindow().getHeight()*0.8);
+		scrollRecursos.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 	}
 	
 	public void initialize(){

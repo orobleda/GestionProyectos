@@ -9,6 +9,7 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -50,6 +51,11 @@ public class InformaAsignacion implements ControladorPantalla {
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+	
+	@Override
+	public void resize(Scene escena) {
+		
 	}
 	
 	public InformaAsignacion(){

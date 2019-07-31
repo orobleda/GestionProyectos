@@ -9,6 +9,7 @@ import controller.AnalizadorPresupuesto;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
@@ -57,6 +58,11 @@ public class VistaJerarquizada implements ControladorPantalla {
 	public AnchorPane getAnchor() {
 		return anchor;
 	}
+    	
+    	@Override
+    	public void resize(Scene escena) {
+    		
+    	}
 
 	@Override
 	public String getFXML() {

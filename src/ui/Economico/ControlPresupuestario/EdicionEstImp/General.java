@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -76,6 +77,12 @@ public class General implements ControladorPantalla, PopUp {
     private ImageView imNuevo;
     private GestionBotones gbNuevo;
 	
+    
+    @Override
+	public void resize(Scene escena) {
+		
+	}
+    
 	public General (Object claseRetorno, String metodoRetorno){
 		General.claseRetorno = claseRetorno;
 		General.metodoRetorno = metodoRetorno;

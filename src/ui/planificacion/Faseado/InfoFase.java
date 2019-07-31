@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -120,6 +121,11 @@ public class InfoFase implements ControladorPantalla, PopUp {
     PanelResumible prDem = null;
 	 
 	public void initialize(){
+		
+	}
+	
+	@Override
+	public void resize(Scene escena) {
 		
 	}
 	

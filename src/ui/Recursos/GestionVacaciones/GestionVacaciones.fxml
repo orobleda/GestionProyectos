@@ -7,84 +7,80 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionVacaciones.GestionVacaciones">
-   <children>
-      <VBox>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionVacaciones.GestionVacaciones">
+   <top>
+      <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="TOP_CENTER">
-               <children>
-                  <Label fx:id="Mes" text="Mes">
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <ComboBox fx:id="cbMeses" prefWidth="150.0">
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
-                  </ComboBox>
-                  <Label layoutX="10.0" layoutY="25.0" text="Año">
-                     <padding>
-                        <Insets left="70.0" />
-                     </padding>
-                  </Label>
-                  <ComboBox fx:id="cbAnios" layoutX="62.0" layoutY="25.0" prefWidth="150.0">
-                     <HBox.margin>
-                        <Insets left="25.0" />
-                     </HBox.margin>
-                  </ComboBox>
-                  <ImageView fx:id="imBuscarAn" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/buscar.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <HBox.margin>
-                        <Insets left="55.0" />
-                     </HBox.margin>
-                  </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="15.0" top="15.0" />
-               </VBox.margin>
-            </HBox>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="500.0" prefWidth="825.0">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0">
-                     <children>
-                        <VBox fx:id="contenedorRecursos" />
-                     </children>
-                  </AnchorPane>
-              </content>
-               <VBox.margin>
+            <Label fx:id="Mes" text="Mes">
+               <padding>
                   <Insets left="15.0" />
-               </VBox.margin>
-            </ScrollPane>
-            <HBox alignment="TOP_RIGHT" prefWidth="200.0">
-               <children>
-                  <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/guardar.jpg" />
-                     </image>
-                     <HBox.margin>
-                        <Insets right="35.0" />
-                     </HBox.margin>
-                  </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets left="15.0" top="15.0" />
-               </VBox.margin>
-            </HBox>
+               </padding>
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="cbMeses" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </ComboBox>
+            <Label layoutX="10.0" layoutY="25.0" text="Año">
+               <padding>
+                  <Insets left="70.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="cbAnios" layoutX="62.0" layoutY="25.0" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </ComboBox>
+            <ImageView fx:id="imBuscarAn" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/buscar.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <HBox.margin>
+                  <Insets left="55.0" />
+               </HBox.margin>
+            </ImageView>
          </children>
-      </VBox>
-   </children>
-</AnchorPane>
+         <BorderPane.margin>
+            <Insets bottom="15.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+   <center>
+      <ScrollPane fx:id="scrollRecursos" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="700.0" BorderPane.alignment="CENTER">
+        <content>
+            <VBox fx:id="contenedorRecursos" />
+        </content>
+      </ScrollPane>
+   </center>
+   <bottom>
+      <HBox alignment="TOP_RIGHT" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/guardar.jpg" />
+               </image>
+               <HBox.margin>
+                  <Insets right="35.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <BorderPane.margin>
+            <Insets top="15.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</BorderPane>

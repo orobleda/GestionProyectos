@@ -6,6 +6,7 @@ import java.util.Iterator;
 import controller.AnalizadorPresupuesto;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
@@ -38,6 +39,11 @@ public class DetalleRecurso implements ControladorPantalla {
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+	
+	@Override
+	public void resize(Scene escena) {
+		
 	}
 	
 	public void initialize(){

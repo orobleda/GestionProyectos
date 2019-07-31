@@ -8,6 +8,7 @@ import java.util.Iterator;
 import controller.AnalizadorPresupuesto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -43,6 +44,11 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 	
 	@FXML
 	private AnchorPane anchor;
+	
+	@Override
+	public void resize(Scene escena) {
+		
+	}
 	
 	public EdicionCertificacion (Object claseRetorno, String metodoRetorno){
 		EdicionCertificacion.objetoThis = this;

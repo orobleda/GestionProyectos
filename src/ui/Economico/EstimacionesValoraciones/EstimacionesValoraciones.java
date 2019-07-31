@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -101,6 +102,11 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	public static Proyecto proyConsultado = null;
 	public static Presupuesto presupuesto = null;
 	
+	@Override
+	public void resize(Scene escena) {
+		
+	}
+		
 	public void fotoInicial(){
 		Proyecto p = new Proyecto();
 		try { cbProyectos.getItems().removeAll(cbProyectos.getItems()); } catch (Exception e) {}

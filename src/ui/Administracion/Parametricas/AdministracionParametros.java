@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -44,6 +45,11 @@ public class AdministracionParametros implements ControladorPantalla {
 
 	@FXML
 	private AnchorPane anchor;
+	
+	@Override
+	public void resize(Scene escena) {
+		
+	}
 	
 	
 	public void initialize(){

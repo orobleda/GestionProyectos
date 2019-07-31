@@ -38,7 +38,8 @@ public class ConsultaBD {
 		     }
 		 }catch (SQLException ex) {
 			 try {
-			     connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\EN31714\\Downloads\\eclipse-java-neon-2-win32\\workspace\\Repositorio\\GestionProyectos\\gProyectos.s3db");
+			     //connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\EN31714\\Downloads\\eclipse-java-neon-2-win32\\workspace\\Repositorio\\GestionProyectos\\gProyectos.s3db");
+				 connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\Oscar\\git\\GestionProyectos\\gProyectos.s3db");
 			     if (connect!=null) {
 			         ////System.out.println("Conectado");
 			     }

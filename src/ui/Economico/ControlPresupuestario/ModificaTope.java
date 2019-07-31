@@ -7,6 +7,7 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -69,6 +70,11 @@ public class ModificaTope implements ControladorPantalla, PopUp {
 	@Override
 	public AnchorPane getAnchor() {
 		return anchor;
+	}
+	
+	@Override
+	public void resize(Scene escena) {
+		
 	}
 
 	@Override

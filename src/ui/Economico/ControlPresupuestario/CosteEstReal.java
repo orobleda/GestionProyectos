@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
@@ -47,6 +48,11 @@ public class CosteEstReal implements ControladorPantalla {
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+	
+	@Override
+	public void resize(Scene escena) {
+		
 	}
 	
 	public void initialize(){

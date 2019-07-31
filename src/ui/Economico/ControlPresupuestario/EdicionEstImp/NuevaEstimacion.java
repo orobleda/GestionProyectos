@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -128,6 +129,11 @@ public class NuevaEstimacion implements ControladorPantalla {
     public HashMap<String, Object> variablesPaso = null;
     
     public boolean inhibirCombos = false;
+    
+    @Override
+	public void resize(Scene escena) {
+		
+	}
 
 	public NuevaEstimacion() {
 		super();

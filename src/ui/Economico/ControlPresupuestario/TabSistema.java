@@ -8,6 +8,7 @@ import java.util.Iterator;
 import controller.AnalizadorPresupuesto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -51,6 +52,11 @@ public class TabSistema implements ControladorPantalla {
 	}
 	
 	public void initialize(){
+		
+	}
+	
+	@Override
+	public void resize(Scene escena) {
 		
 	}
 	

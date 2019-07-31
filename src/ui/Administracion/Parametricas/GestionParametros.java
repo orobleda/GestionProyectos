@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -65,6 +66,11 @@ public class GestionParametros implements ControladorPantalla, PopUp {
     @Override
 	public AnchorPane getAnchor() {
 		return null;
+	}
+    
+    @Override
+	public void resize(Scene escena) {
+		
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.controlsfx.control.PopOver;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
@@ -103,6 +104,10 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	boolean nuevaVersion = false;
 	
+	@Override
+	public void resize(Scene escena) {
+		
+	}
 	
 	public void initialize(){
 		tablaDemandas = new Tabla(tDemandas,new DesgloseDemandasAsocidasTabla());
