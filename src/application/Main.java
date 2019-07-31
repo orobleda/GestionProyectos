@@ -8,19 +8,18 @@ import java.util.Iterator;
 import org.controlsfx.control.HiddenSidesPane;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Node;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,11 +27,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
 import ui.GestionBotones;
-import ui.Persiana;
 import ui.Administracion.Festivos.GestionFestivos;
 import ui.Administracion.Parametricas.AdministracionParametros;
 import ui.Economico.CargaImputaciones.CargaImputaciones;
@@ -52,6 +51,7 @@ import ui.planificacion.Faseado.Faseado;
 public class Main extends Application {
 	
 	public static final String PANTALLA_ACTIVA = "pantalla_Activa"; 
+	static final Point2D WINDOW_UPPER_LEFT_CORNER  =  new  Point2D( 210, 50 ) ;
 	
 	public static int SOLICITUDES = 0;
 	public static int RECURSOS = 1;
@@ -60,7 +60,11 @@ public class Main extends Application {
 	public static int REPORTES = 4;
 	public static int AJUSTES = 5;
 	
+	public static Rectangle curtain = null;
+	public static ImageView imLoading = null;
+	
 	public HashMap<Integer, HashMap<String, ControladorPantalla>> listaMenu = null;
+	public HashMap<String, String> listaImgsPeque = null;
 	
 	public static HashMap<String, Object> sesion = null;
 	public HiddenSidesPane pane = null;
@@ -102,10 +106,10 @@ public class Main extends Application {
             loader.setLocation(new URL(c.getFXML()));
             	        
 	        pane = new HiddenSidesPane();
-	        pane.setPadding(new Insets(0, 0, 0, 0));
-	        pane.setContent(loader.load());
-	        mostrarMenu (pane);
+	        pane.setPadding(new Insets(0, 0, 0, 0));	        
+	        pane.getStyleClass().add("body");
 	        
+	        mostrarMenu (pane);
 	        panelBase.setCenter(pane);
 	        
 	        primaryStage.setMaximized(true);	        
@@ -113,9 +117,21 @@ public class Main extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			
+			click(c);
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void cortinaON () {
+		curtain.setVisible(true);
+		imLoading.setVisible(true);
+	}
+	
+	public static void cortinaOFF () {
+		curtain.setVisible(false);
+		imLoading.setVisible(false);
 	}
 	
 	public static void main(String[] args) {
@@ -291,7 +307,12 @@ public class Main extends Application {
 		
 	}
 	
-	private Label dameOpcionMenu(int idSeleccion, String opcion){
+	private HBox dameOpcionMenu(int idSeleccion, String opcion){
+		HBox salida = new HBox();
+		
+		ImageView iv = new ImageView();
+		iv.setImage(new Image(this.listaImgsPeque.get(opcion)));
+		
 		Label l = new Label(opcion);
 		l.getStyleClass().add("elementoMenu");
 		l.getProperties().put("CTRLPANTALLA", this.listaMenu.get(idSeleccion).get(opcion));
@@ -306,14 +327,19 @@ public class Main extends Application {
             }
         });
 		
-		return l;
+		salida.getChildren().add(iv);
+		HBox.setMargin(iv, new Insets(0,25,0,0));
+		salida.getChildren().add(l);
+		salida.setAlignment(Pos.CENTER_LEFT);
+		
+		return salida;
 	}
 	
 	private VBox getContenedorMenu() {
 		VBox vb = new VBox();
 		vb.getStyleClass().add("elementosMenu");
 		vb.prefWidthProperty().bind(hb.widthProperty().multiply(1));
-		vb.setPadding(new Insets(15,15,15,70));
+		vb.setPadding(new Insets(15,15,15,40));
 		return vb;
 	}
 	
@@ -335,6 +361,7 @@ public class Main extends Application {
 	
 	private void pueblaMenu() {
 		listaMenu = new HashMap<Integer, HashMap<String, ControladorPantalla>>();
+		listaImgsPeque = new HashMap<String, String> ();
 		
 		HashMap<String, ControladorPantalla> opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.SOLICITUDES, opcionMenu);
@@ -366,7 +393,22 @@ public class Main extends Application {
 		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
-		listaMenu.put(Main.REPORTES, opcionMenu);		
+		listaMenu.put(Main.REPORTES, opcionMenu);	
+		
+		listaImgsPeque.put("Gestión solicitudes", "PequeGestionSolicitudes.png"); 
+		listaImgsPeque.put("Gestión Recursos", "PequeConsultaRecurso.png");
+		listaImgsPeque.put("Gestión Proveedores", "PequeConsultaProveedor.png");
+		listaImgsPeque.put("Asignación Tarifas", "PequeAsignacionTarifaUsuario.png");
+		listaImgsPeque.put("Gestión horas trabajadas", "PequeGestionHoras.png");
+		listaImgsPeque.put("Gestión Estimaciones", "PequeGestionEstimacion.png"); 
+		listaImgsPeque.put("Gestión Presupuestos", "PequeGestionPresupuestos.png");
+		listaImgsPeque.put("Planificación Económica", "PequePlanificacionEconomica.png");
+		listaImgsPeque.put("Estimaciones Por Horas", "PequeEstimacionesHoras.png"); 
+		listaImgsPeque.put("Gestión Tarifas", "PequeGestionTarifas.png"); 
+		listaImgsPeque.put("Alta de Imputaciones", "PequeCargaImputaciones.png"); 
+		listaImgsPeque.put("Faseado Proyectos", "PequeFaseadoProyectos.png"); 
+		listaImgsPeque.put("Gestión Festivos", "PequeCalendario.png"); 
+		listaImgsPeque.put("Gestión paramétricas", "PequeAjustes.png"); 
 	}
 	
 	private void click(ControladorPantalla ctl) {
@@ -379,12 +421,58 @@ public class Main extends Application {
 	        		        
 	        if (controlPantalla!=null){
 	        	loader.setLocation(new URL(controlPantalla.getFXML()));
-	        	pane.setContent(loader.load());
+	        	
+	        	VBox vbContenedorGlobal = new VBox();
+		        HBox hbContenidoAplicacion = new HBox();
+		        hbContenidoAplicacion.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+		        vbContenedorGlobal.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);	        
+		        
+		        vbContenedorGlobal.getChildren().add(creaCortina(hbContenidoAplicacion));
+		        
+		        Main.cortinaON();
+		        
+		        pane.setContent(vbContenedorGlobal);
+		        
+		             
+		        Platform.runLater(() -> {
+                    try {
+                    	hbContenidoAplicacion.getChildren().add(loader.load());
+                		
+                		Main.cortinaOFF();
+            	        //c.start();
+                    } catch (Exception ex) {
+                    	ex.printStackTrace();
+                    }
+		        }
+                );
+		        
+		        //hbContenidoAplicacion.getChildren().add(loader.load());
+		        
+		        //c = new Cortina(false);
+		        //c.start();
 	        }
 	        
         } catch (Exception e) {
         	e.printStackTrace();
         }
+	}
+	
+	public Group creaCortina(HBox contenidoAplicacion) {
+		curtain = new Rectangle( Screen.getPrimary().getBounds().getMinX()
+        		,Screen.getPrimary().getBounds().getMinY(),Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX(),
+        		Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY()) ;
+        curtain.getStyleClass().add("cortina");
+        
+        imLoading = new ImageView();
+        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2)-imLoading.get.getWidth()/2);
+        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/2)-imLoading.getBoundsInLocal().getHeight()/2);
+        imLoading.setImage(new Image("loading.gif"));
+        
+        Group group_for_curtains_etc = new Group() ;
+        group_for_curtains_etc.setManaged( false ) ;
+        group_for_curtains_etc.getChildren().addAll( contenidoAplicacion,curtain,imLoading ) ;
+        
+        return group_for_curtains_etc;
 	}
 	
 }

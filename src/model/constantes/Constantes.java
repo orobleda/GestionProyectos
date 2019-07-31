@@ -19,7 +19,7 @@ public class Constantes {
 	
 	public static final int USUARIORESPONSABLE = 3;
 	
-	public static final String COLOR_ROJO = "Red";
+	public static final String COLOR_ROJO = "rgba(255,155,140,1)";
 	public static final String COLOR_AMARILLO = "Yellow";
 	public static final String COLOR_VERDE = "Green";
 	public static final String COLOR_GRIS = "Silver";

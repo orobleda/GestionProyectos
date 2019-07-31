@@ -1,3 +1,7 @@
+.body {
+    -fx-background-color: rgba(236,249,255,1) ;
+}
+
 .label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -25,7 +29,7 @@
 }
 
 .elementosMenu {
-    -fx-background-color: rgba(0,8,45,.75) ;
+    -fx-background-color: rgba(0,8,255,.35) ;
 }
 
 .elementoMenu {
@@ -33,4 +37,35 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+.combo-box {
+    -fx-background-color: rgba(234,240,255,1);    
+    -fx-border-radius: 9;
+    -fx-border-color: rgba(4,10,230,1);
+}
+
+.text-field{
+    -fx-background-color: rgba(234,240,255,1);    
+    -fx-border-radius: 9;
+    -fx-border-color: rgba(4,10,230,1);
+    -fx-font-family: "Quicksand";
+    -fx-text-fill:  rgba(128,136,240,1);
+}
+
+.scroll-pane {
+    -fx-background-color: rgba(236,249,255,1) ;
+}
+
+.table-view .column-header .label{
+    -fx-text-fill: rgba(236,236,255,1);
+    -fx-background-color: rgba(16,24,135,1) ;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(234,240,255,1); 
+}
+
+.cortina {
+	-fx-fill: rgba(234,240,255,.7);
 }
