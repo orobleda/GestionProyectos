@@ -22,6 +22,7 @@ public class Tarifa implements Cargable{
 	public boolean esDesarrollo = false;
 	public boolean esMantenimiento = false;
 	public Proveedor proveedor = null;
+	public boolean modificado = false;
 	
 	public static final String filtro_ID = "id";
 	public static final String filtro_PROVEEDOR = "proveedor";

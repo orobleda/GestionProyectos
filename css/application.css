@@ -2,6 +2,18 @@
     -fx-background-color: rgba(236,249,255,1) ;
 }
 
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent ;    
+}
+
+.titled-pane > *.content  {
+    -fx-background-color: rgba(245,236,255,0.9) ;    
+}
+
 .label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -43,6 +55,7 @@
     -fx-background-color: rgba(234,240,255,1);    
     -fx-border-radius: 9;
     -fx-border-color: rgba(4,10,230,1);
+    -fx-text-fill:  rgba(128,136,240,1);
 }
 
 .text-field{
@@ -51,10 +64,6 @@
     -fx-border-color: rgba(4,10,230,1);
     -fx-font-family: "Quicksand";
     -fx-text-fill:  rgba(128,136,240,1);
-}
-
-.scroll-pane {
-    -fx-background-color: rgba(236,249,255,1) ;
 }
 
 .table-view .column-header .label{

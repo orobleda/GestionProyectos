@@ -3,6 +3,7 @@ package ui.Economico.Tarifas;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
@@ -25,6 +26,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.TipoDato;
 import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Economico.CargaImputaciones.DetalleImputacion;
 import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
@@ -133,6 +135,11 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 		
 		tsDesarrollo.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 modificaEsDesarrollo(); }	});
 		tTarifa.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try { tTarifa.setText(FormateadorDatos.formateaDato(tTarifa.getText(), FormateadorDatos.FORMATO_MONEDA)); } catch (Exception e) {tTarifa.setText("");}   }  });
+		
+		if (!esPopUp) {	
+			gbGuardar.activarBoton();
+			gbEliminar.activarBoton();
+		}
 	}
 	
 	public void modificaTarifa () {
@@ -141,8 +148,8 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 			
 			if (!esPopUp) {	
 				tar = t.t;
-				t.set(t.t);
 				t.modificado = true;
+				tar.modificado = true;
 			} else
 				tar = new Tarifa();
 			
@@ -167,12 +174,8 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 			}			
 						
 			if (!esPopUp) {	
-				expander.toggleExpanded();
-				
-				expander.getTableRow().getTableView().refresh();
-				
-				GestionTarifas.botonGuardar.getStyleClass().remove("iconoDisabled");
-				GestionTarifas.botonGuardar.getStyleClass().add("iconoEnabled");
+				ParamTable.po.hide();
+				((GestionTarifas) GestionTarifas.objetoThis).valorModificado();
 			} else {
 				tar.insertTarifa();
 				Tarifa.forzarRecargaTarifas();
@@ -188,15 +191,9 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	
 	public void borraTarifa() {
 		try {
-			expander.toggleExpanded();
-			
 			GestionTarifas.listaBorrados.add(t);
-			expander.getTableRow().getTableView().getItems().remove(t);
-			
-			expander.getTableRow().getTableView().refresh();
-			
-			GestionTarifas.botonGuardar.getStyleClass().remove("iconoDisabled");
-			GestionTarifas.botonGuardar.getStyleClass().add("iconoEnabled");
+			ParamTable.po.hide();
+			((GestionTarifas) GestionTarifas.objetoThis).valorModificado();
 		} catch (Exception e) {
 			
 		}
@@ -239,24 +236,29 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		esPopUp = true;
-		this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
-		this.di = (DetalleImputacion)  variablesPaso.get("padre");
-		
-		this.tsDesarrollo.setDisable(true);
-		this.tsMantenimiento.setDisable(true);
-		this.gbGuardar.activarBoton();
-		
-		try {
-			this.tTarifa.setText(FormateadorDatos.formateaDato(this.imputacion.fTarifa, TipoDato.FORMATO_MONEDA));
+		if (this.imputacion!=null){
+			this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
+			this.di = (DetalleImputacion)  variablesPaso.get("padre");
 			
-			if (this.imputacion.prov!=null) {
-				this.cbProveedor.setValue(this.imputacion.prov);
+			this.tsDesarrollo.setDisable(true);
+			this.tsMantenimiento.setDisable(true);
+			this.gbGuardar.activarBoton();
+			
+			try {
+				this.tTarifa.setText(FormateadorDatos.formateaDato(this.imputacion.fTarifa, TipoDato.FORMATO_MONEDA));
+				
+				if (this.imputacion.prov!=null) {
+					this.cbProveedor.setValue(this.imputacion.prov);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		} else {
+			esPopUp = false;
+			TarifaTabla tt = (TarifaTabla) variablesPaso.get("filaDatos");
+			this.t = tt;
+		}		
 	}
 
 	@Override

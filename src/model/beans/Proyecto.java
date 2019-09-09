@@ -31,6 +31,8 @@ public class Proyecto implements Cargable{
 	public static final int MODIFICAR = 2;
 	public static final int ELIMINAR = 3;
 	
+	public int modoFiltro = 0;
+	
 	public int modo = 0;
 	
 	public boolean apunteContable = false;

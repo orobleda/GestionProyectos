@@ -466,12 +466,13 @@ public class Main extends Application {
 		        Main.cortinaON();
 		        
 		        pane.setContent(vbContenedorGlobal);
-		        
+		        		        
 		             
 		        Platform.runLater(() -> {
                     try {
                     	hbContenidoAplicacion.getChildren().add(loader.load()); 
                     	ControladorPantalla c = loader.getController();
+                    	c.resize(scene);
         		        Main.sesion.put(Main.PANTALLA_ACTIVA, c);
                 		
                 		Main.cortinaOFF();
@@ -481,13 +482,7 @@ public class Main extends Application {
                     }
 		        }
                 );
-		        
-		        
-		        
-		        //hbContenidoAplicacion.getChildren().add(loader.load());
-		        
-		        //c = new Cortina(false);
-		        //c.start();
+		        		        
 	        }
 	        
         } catch (Exception e) {

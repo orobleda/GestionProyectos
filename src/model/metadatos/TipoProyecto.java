@@ -14,6 +14,8 @@ public class TipoProyecto implements Cargable, Loadable {
 	public String descripcion = "";
 	public int codigo = 0;
 	
+	public static int ID_PROYEVOLS = -1;
+	public static int ID_TODO = 0;
 	public static int ID_DEMANDA = 1;
 	public static int ID_PROYECTO = 2;
 	public static int ID_EVOLUTIVO = 3;
@@ -22,6 +24,25 @@ public class TipoProyecto implements Cargable, Loadable {
 	public static HashMap<Integer, TipoProyecto> listado = null;
 	
 	public ArrayList<EstadoProyecto> estados = null;
+	
+	public static ArrayList<TipoProyecto> tiposCompleta() {
+		ArrayList<TipoProyecto> salida = new ArrayList<TipoProyecto>();
+		salida.addAll(TipoProyecto.listado.values());
+		
+		TipoProyecto tp = new TipoProyecto();
+		tp.codigo = TipoProyecto.ID_TODO;
+		tp.descripcion = "Todos los elementos";
+		tp.id = tp.codigo;
+		salida.add(tp);
+		
+		tp = new TipoProyecto();
+		tp.codigo = TipoProyecto.ID_PROYEVOLS;
+		tp.descripcion = "Proyectos y evolutivos";
+		tp.id = tp.codigo;
+		salida.add(tp);
+		
+		return salida;
+	}
 
 	public static ArrayList<TipoProyecto> tiposNoDemanda() {
 		ArrayList<TipoProyecto> salida = new ArrayList<TipoProyecto>();

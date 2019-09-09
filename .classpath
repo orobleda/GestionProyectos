@@ -7,8 +7,8 @@
 	<classpathentry kind="src" path="css"/>
 	<classpathentry kind="src" path="plantillas"/>
 	<classpathentry excluding="iconos/|iconos/menuPpal/|Menu/|Menu/" kind="src" path="imgs"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry exported="true" kind="lib" path="lib/controlsfx-8.40.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-contrib.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.6-javadoc.jar"/>
@@ -32,5 +32,15 @@
 	<classpathentry exported="true" kind="lib" path="lib/poi-scratchpad-4.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/curvesapi-1.05.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-3.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/lib/ant-javafx.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/lib/javafx-mx.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.base.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.controls.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.fxml.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.graphics.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.media.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.swing.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.web.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx-swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +27,7 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
+import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
 
 public class GestionVacaciones implements ControladorPantalla {
@@ -47,8 +49,10 @@ public class GestionVacaciones implements ControladorPantalla {
 	
     @FXML
     private ImageView imGuardar;
+    private GestionBotones gbGuardar;
     @FXML
     private ImageView imBuscarAn;
+    private GestionBotones gbBuscarAn;
     
     @FXML
     private ScrollPane scrollRecursos;
@@ -76,7 +80,7 @@ public class GestionVacaciones implements ControladorPantalla {
 		scrollRecursos.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 	}
 	
-	public void initialize(){
+	public void initialize(){ 
 		Date d = Constantes.fechaActual();
 		Calendar c = Calendar.getInstance();
 		c.setTime(d);
@@ -124,8 +128,31 @@ public class GestionVacaciones implements ControladorPantalla {
 				}
 			}
 			
-			imGuardar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	guardarDatos(); }	});
-			imBuscarAn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	consulta(); }	});
+			gbBuscarAn = new GestionBotones(imBuscarAn, "Buscar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					try {
+						consulta();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	            } }, "Buscar Mes", this);	
+			gbBuscarAn.activarBoton();
+			
+			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					try {
+						guardarDatos();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	            } }, "Guardar asignación Mes", this);	
+			gbGuardar.activarBoton();
+			
+			resize(Main.scene);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

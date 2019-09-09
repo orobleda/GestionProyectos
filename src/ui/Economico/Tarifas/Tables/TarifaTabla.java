@@ -13,6 +13,8 @@ import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.EdicionCert.EdicionCertificacion;
+import ui.Economico.Tarifas.GestionTarifas;
 import ui.Economico.Tarifas.InformaTarifa;
 import ui.interfaces.Tableable;
 
@@ -66,7 +68,14 @@ public class TarifaTabla extends ParamTable implements Tableable  {
         } catch (Exception e) {
         }
         
-        this.proveedor = new SimpleStringProperty(t.proveedor.toString());
+        
+        if (t.proveedor!=null) {
+        	this.proveedor = new SimpleStringProperty(t.proveedor.toString());
+        } else {
+        	this.proveedor = new SimpleStringProperty("ENAGAS");
+        }
+        
+        
 
         setConfig();
     }
@@ -84,13 +93,15 @@ public class TarifaTabla extends ParamTable implements Tableable  {
     
     public void setConfig() {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
-    	configuracionTabla.put(TarifaTabla.ID, new ConfigTabla( "Id", TarifaTabla.ID,false, 0, true));
-    	configuracionTabla.put(TarifaTabla.PROVEEDOR, new ConfigTabla("Proveedor", TarifaTabla.PROVEEDOR, false, 2));
-    	configuracionTabla.put(TarifaTabla.COSTE, new ConfigTabla("€/Hora", TarifaTabla.COSTE,  false, 3));
-    	configuracionTabla.put(TarifaTabla.INI_VIGENCIA, new ConfigTabla("Inicio Vigencia", TarifaTabla.INI_VIGENCIA, false, 4));
-    	configuracionTabla.put(TarifaTabla.FIN_VIGENCIA, new ConfigTabla( "Inicio Vigencia",TarifaTabla.FIN_VIGENCIA, false, 5));
-    	configuracionTabla.put(TarifaTabla.ES_DESARROLLO, new ConfigTabla("Desarrollo",  TarifaTabla.ES_DESARROLLO, false, 6));
-    	configuracionTabla.put(TarifaTabla.ES_MANTENIMIENTO, new ConfigTabla("Mantenimiento",TarifaTabla.ES_MANTENIMIENTO,  false, 7));
+    	configuracionTabla.put(TarifaTabla.ID, new ConfigTabla( "Id", TarifaTabla.ID,true, 0, false));
+    	configuracionTabla.put(TarifaTabla.PROVEEDOR, new ConfigTabla("Proveedor", TarifaTabla.PROVEEDOR, true, 2));
+    	configuracionTabla.put(TarifaTabla.COSTE, new ConfigTabla("€/Hora", TarifaTabla.COSTE,  true, 3));
+    	configuracionTabla.put(TarifaTabla.INI_VIGENCIA, new ConfigTabla("Inicio Vigencia", TarifaTabla.INI_VIGENCIA, true, 4));
+    	configuracionTabla.put(TarifaTabla.FIN_VIGENCIA, new ConfigTabla( "Inicio Vigencia",TarifaTabla.FIN_VIGENCIA, true, 5));
+    	configuracionTabla.put(TarifaTabla.ES_DESARROLLO, new ConfigTabla("Desarrollo",  TarifaTabla.ES_DESARROLLO, true, 6));
+    	configuracionTabla.put(TarifaTabla.ES_MANTENIMIENTO, new ConfigTabla("Mantenimiento",TarifaTabla.ES_MANTENIMIENTO,  true, 7));
+    	
+    	this.controlPantalla =  new InformaTarifa();
     }
     
     @Override
@@ -164,6 +175,11 @@ public class TarifaTabla extends ParamTable implements Tableable  {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	@Override
+	public Object muestraSelector() {
+		return this;
 	}
 	
 }

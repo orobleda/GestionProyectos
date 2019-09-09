@@ -3,7 +3,6 @@ package ui.Economico.EstimacionesValoraciones;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -19,7 +18,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -38,11 +36,15 @@ import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoEnumerado;
+import model.metadatos.TipoProyecto;
 import ui.ConfigTabla;
 import ui.Dialogo;
+import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
+import ui.popUps.ConsultaAvanzadaProyectos;
 import ui.popUps.SeleccionElemento;
 
 public class EstimacionesValoraciones implements ControladorPantalla {
@@ -52,11 +54,16 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	PopOver popUp = null;
 	
+	private Proyecto proySeleccionado;
+	
 	@FXML
 	private AnchorPane anchor;
 	
 	@FXML
-	private ComboBox<Proyecto> cbProyectos = null;
+	private TextField tProyecto = null;
+    @FXML
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;	
 	@FXML
 	private ComboBox<TipoEnumerado> cbTipoPrep = null;
 	@FXML
@@ -70,60 +77,69 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	@FXML
 	private TextField tFxAlta = null;
 	@FXML
-	private TitledPane tpConsulta = null;
-	@FXML
-	private TitledPane tpResultados = null;
-	@FXML
-	private AnchorPane aResultados = null;
-	@FXML
-	private ImageView imEditDesc = null;
-	@FXML
-	private ImageView imEditTipoPres = null;
-	@FXML
 	private ImageView imAniadirSistma = null;
+    private GestionBotones gbAniadirSistma;
 	@FXML
 	private ImageView imVersionarPres = null;
+    private GestionBotones gbVersionarPres;
 	@FXML
 	private ImageView imGuardarPresupuesto = null;
+    private GestionBotones gbGuardarPresupuesto;
 	@FXML
 	private ImageView imEliminarPres = null;
+    private GestionBotones gbEliminarPres;
 	@FXML
 	private ImageView imAniadirPresupuesto = null;
+    private GestionBotones gbAniadirPresupuesto;
 	@FXML
 	private ImageView imBuscarPresupuesto = null;
+    private GestionBotones gbBuscarPresupuesto;
 	@FXML
 	private TableView<Tableable> tLineasCoste = null;
 	@FXML
 	private TableView<Tableable> tResumenCoste = null;
-	
-	public static boolean cambiaDescripcion = false;
-	public static boolean cambiaTipo = false;
 	
 	public static Proyecto proyConsultado = null;
 	public static Presupuesto presupuesto = null;
 	
 	@Override
 	public void resize(Scene escena) {
+		tProyecto.setPrefWidth(escena.getWidth()*0.65);
+		tLineasCoste.setPrefWidth(escena.getWidth()*0.65);
+		tResumenCoste.setPrefWidth(escena.getWidth()*0.65);
+		taDesc.setPrefWidth(escena.getWidth()*0.65);
 		
+		tLineasCoste.setPrefHeight(escena.getHeight()*0.30);
+		tResumenCoste.setPrefHeight(escena.getHeight()*0.1);
+		taDesc.setPrefHeight(escena.getWidth()*0.025);
+	}
+	
+	private void consultaAvanzadaProyectos() throws Exception{		
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_DEMANDA, this.tProyecto);
+	}
+	
+	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
+		if (listaProyecto!=null && listaProyecto.size()==1) {
+			this.proySeleccionado = listaProyecto.get(0);
+			this.tProyecto.setText(this.proySeleccionado.nombre);
+			ParamTable.po.hide();
+			buscaPresupuestos (this.proySeleccionado);
+		}
 	}
 		
 	public void fotoInicial(){
 		Proyecto p = new Proyecto();
-		try { cbProyectos.getItems().removeAll(cbProyectos.getItems()); } catch (Exception e) {}
-		cbProyectos.getItems().addAll(p.listadoDemandas());
+		this.tProyecto.setText("");
+		this.proySeleccionado = null;
 		cbVsPresupuesto.getItems().removeAll(cbVsPresupuesto.getItems());
 		
-		cambiaEstadoBoton(false, imGuardarPresupuesto);
-		cambiaEstadoBoton(false, imEliminarPres);
-		cambiaEstadoBoton(false, imVersionarPres);
-		cambiaEstadoBoton(false, imAniadirSistma);
-		cambiaEstadoBoton(false, imEditTipoPres);
-		cambiaEstadoBoton(false, imEditDesc);
-		cambiaEstadoBoton(false, imBuscarPresupuesto);
-		cambiaEstadoBoton(false, imAniadirPresupuesto);		
+		gbGuardarPresupuesto.desActivarBoton();
+		gbEliminarPres.desActivarBoton();
+		gbVersionarPres.desActivarBoton();
+		gbAniadirSistma.desActivarBoton();
+		gbBuscarPresupuesto.desActivarBoton();
+		gbAniadirPresupuesto.desActivarBoton();		
 		
-		tpConsulta.setExpanded(true);
-		tpResultados.setExpanded(false);
 		tFxAlta.setText("");
 		tId.setText("");
 		tVersion.setText("");
@@ -137,32 +153,86 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		tLineasCoste.getColumns().removeAll(tLineasCoste.getColumns());
 	}
 	
-	public void cambiaEstadoBoton(boolean activado, ImageView boton) {
-		if (activado) {
-			boton.setMouseTransparent(false);	
-			boton.getStyleClass().remove("iconoDisabled");
-			boton.getStyleClass().add("iconoEnabled");
-		} else {
-			boton.setMouseTransparent(true);	
-			boton.getStyleClass().remove("iconoEnabled");
-			boton.getStyleClass().add("iconoDisabled");
-		}
-	}
-	
 	public void initialize(){
+		
+		
+		tProyecto.setDisable(true);
+		
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					consultaAvanzadaProyectos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Nueva Demanda");
+		gbAniadirSistma = new GestionBotones(imAniadirSistma, "NuevaFila3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					eligeSistema();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Añadir Sistema");
+		gbAniadirPresupuesto = new GestionBotones(imAniadirPresupuesto, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					nuevoPresupuesto();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Nuevo Presupuesto");
+		gbVersionarPres = new GestionBotones(imVersionarPres, "GuardarAniadir3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardarNuevaVsPresupuesto(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Versionar presupuesto");
+		gbGuardarPresupuesto = new GestionBotones(imGuardarPresupuesto, "Guardar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardarNuevaVsPresupuesto(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Actualizar presupuesto");
+		gbBuscarPresupuesto = new GestionBotones(imBuscarPresupuesto, "Buscar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					buscarPresupuesto();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Buscar presupuesto");
+		gbEliminarPres = new GestionBotones(imEliminarPres, "Eliminar3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					borrarPresupuesto();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Borrar presupuesto");
 		
 		fotoInicial();
 				
-		cbProyectos.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { buscaPresupuestos (newValue);  	}   ); 
-		cbVsPresupuesto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {	cambiaEstadoBoton(true, imBuscarPresupuesto); 	}  ); 
-		imEditDesc.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 editarDescripcion(); }	});
-		imEditTipoPres.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 editarTipo(); }	});
-		imAniadirSistma.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 eligeSistema(); }	});
-		imAniadirPresupuesto.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 nuevoPresupuesto(); }	});
-		imVersionarPres.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardarNuevaVsPresupuesto(false); }	});
-		imGuardarPresupuesto.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardarNuevaVsPresupuesto(true); }	});
-		imBuscarPresupuesto.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 buscarPresupuesto(); }	});
-		imEliminarPres.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	borrarPresupuesto(); }	});
+		cbVsPresupuesto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {	gbBuscarPresupuesto.activarBoton(); 	}  );
+		
 	}
 	
 	private void buscaPresupuestos(Proyecto p) {
@@ -174,8 +244,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		ArrayList<Presupuesto> listado = pres.buscaPresupuestos(p.id);
 		
 		cbVsPresupuesto.getItems().addAll(listado);
-		
-		cambiaEstadoBoton(true, imAniadirPresupuesto);
+
+		gbAniadirPresupuesto.activarBoton();
 	}
 	
 	private void eligeSistema(){
@@ -353,35 +423,10 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	private void nuevoPresupuesto() {
 		
-		cambiaDescripcion = false;
-		cambiaTipo = false;
-		
-		imEditDesc.setMouseTransparent(false);		
-		imEditDesc.getStyleClass().remove("iconoDisabled");
-		imEditDesc.getStyleClass().add("iconoEnabled");
-		
-		imEditTipoPres.setMouseTransparent(false);		
-		imEditTipoPres.getStyleClass().remove("iconoDisabled");
-		imEditTipoPres.getStyleClass().add("iconoEnabled");
-		
-		imAniadirSistma.setMouseTransparent(false);		
-		imAniadirSistma.getStyleClass().remove("iconoDisabled");
-		imAniadirSistma.getStyleClass().add("iconoEnabled");
-		
-		imVersionarPres.setMouseTransparent(false);		
-		imVersionarPres.getStyleClass().remove("iconoDisabled");
-		imVersionarPres.getStyleClass().add("iconoEnabled");
-		
-		imGuardarPresupuesto.setMouseTransparent(false);		
-		imGuardarPresupuesto.getStyleClass().remove("iconoDisabled");
-		imGuardarPresupuesto.getStyleClass().add("iconoEnabled");
-
-		imEliminarPres.setMouseTransparent(false);		
-		imEliminarPres.getStyleClass().remove("iconoDisabled");
-		imEliminarPres.getStyleClass().add("iconoEnabled");
-		
-		tpConsulta.setExpanded(false);
-		tpResultados.setExpanded(true);
+		gbAniadirSistma.activarBoton();
+		gbVersionarPres.activarBoton();
+		gbGuardarPresupuesto.activarBoton();		
+		gbEliminarPres.activarBoton();		
 		
 		try {
 			EstimacionesValoraciones.presupuesto = new Presupuesto();
@@ -389,9 +434,9 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			int id = presupuesto.maxIdPresupuesto();
 			
 			EstimacionesValoraciones.presupuesto.id = new Integer(id);
-			EstimacionesValoraciones.presupuesto.p = cbProyectos.getValue();
+			EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
 			
-			EstimacionesValoraciones.proyConsultado= cbProyectos.getValue();
+			EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
 			EstimacionesValoraciones.proyConsultado.cargaProyecto();
 			
 			tFxAlta.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(), FormateadorDatos.FORMATO_FECHA));
@@ -416,43 +461,18 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	}
 	
 	private void buscarPresupuesto() {
-		cambiaDescripcion = false;
-		cambiaTipo = false;
-		
-		imEditDesc.setMouseTransparent(false);		
-		imEditDesc.getStyleClass().remove("iconoDisabled");
-		imEditDesc.getStyleClass().add("iconoEnabled");
-		
-		imEditTipoPres.setMouseTransparent(false);		
-		imEditTipoPres.getStyleClass().remove("iconoDisabled");
-		imEditTipoPres.getStyleClass().add("iconoEnabled");
-		
-		imAniadirSistma.setMouseTransparent(false);		
-		imAniadirSistma.getStyleClass().remove("iconoDisabled");
-		imAniadirSistma.getStyleClass().add("iconoEnabled");
-		
-		imVersionarPres.setMouseTransparent(false);		
-		imVersionarPres.getStyleClass().remove("iconoDisabled");
-		imVersionarPres.getStyleClass().add("iconoEnabled");
-		
-		imGuardarPresupuesto.setMouseTransparent(false);		
-		imGuardarPresupuesto.getStyleClass().remove("iconoDisabled");
-		imGuardarPresupuesto.getStyleClass().add("iconoEnabled");
-
-		imEliminarPres.setMouseTransparent(false);		
-		imEliminarPres.getStyleClass().remove("iconoDisabled");
-		imEliminarPres.getStyleClass().add("iconoEnabled");
-		
-		tpConsulta.setExpanded(false);
-		tpResultados.setExpanded(true);
+		gbAniadirSistma.activarBoton();
+		gbVersionarPres.activarBoton();
+		gbGuardarPresupuesto.activarBoton();		
+		gbEliminarPres.activarBoton();	
 		
 		try {
 			EstimacionesValoraciones.presupuesto = this.cbVsPresupuesto.getValue();
 			
 			EstimacionesValoraciones.presupuesto.cargaCostes();
-			EstimacionesValoraciones.presupuesto.p = cbProyectos.getValue();
+			EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
 			
-			EstimacionesValoraciones.proyConsultado= cbProyectos.getValue();
+			EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
 			EstimacionesValoraciones.proyConsultado.cargaProyecto();
 			
 			tFxAlta.setText(FormateadorDatos.formateaDato(EstimacionesValoraciones.presupuesto.fxAlta, FormateadorDatos.FORMATO_FECHA));
@@ -530,27 +550,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void editarDescripcion() {
-		imEditDesc.setMouseTransparent(true);		
-		imEditDesc.getStyleClass().remove("iconoEnabled");
-		imEditDesc.getStyleClass().add("iconoDisabled");
-		
-	    taDesc.setEditable(true);
-	    taDesc.setDisable(false);
-	    
-	    EstimacionesValoraciones.cambiaDescripcion = true;
-	}
-	
-	private void editarTipo() {
-		imEditTipoPres.setMouseTransparent(true);		
-		imEditTipoPres.getStyleClass().remove("iconoEnabled");
-		imEditTipoPres.getStyleClass().add("iconoDisabled");
-		
-	    cbTipoPrep.setDisable(false);
-	    
-	    EstimacionesValoraciones.cambiaTipo = true;
 	}
 	
 	private void guardarNuevaVsPresupuesto(boolean actualiza) {

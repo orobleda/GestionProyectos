@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.Parametro;
+import model.constantes.CargaInicial;
 import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
 import ui.GestionBotones;
@@ -54,7 +56,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
     @FXML
     private VBox vbContenedor;
     
-    private TablaPropiedades tp;
+    public TablaPropiedades tp;
     
     public HashMap<String,Parametro> listaParametros;
 
@@ -100,6 +102,8 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 					
 					ConsultaBD cbd = new ConsultaBD(); 
 					cbd.ejecutaTransaccion(idTransaccion);
+					
+					
 					
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.interfaces.Loadable;
+import ui.GestionBotones;
 import ui.interfaces.ControladorPantalla;
 
 public class SeleccionElemento implements ControladorPantalla, PopUp {
@@ -29,6 +30,7 @@ public class SeleccionElemento implements ControladorPantalla, PopUp {
 	private ComboBox<Object> cbSistema = null;
 	@FXML
 	private ImageView imElegirSistema = null;
+	private GestionBotones gbElegirSistema = null;
 	
 	@FXML
 	private AnchorPane anchor;
@@ -45,7 +47,18 @@ public class SeleccionElemento implements ControladorPantalla, PopUp {
 			cbSistema.getItems().removeAll(filtro);
 		}
 		
-		imElegirSistema.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 seleccionado(); }	});
+		gbElegirSistema = new GestionBotones(imElegirSistema, "Tick3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					seleccionado();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Seleccionar");
+		gbElegirSistema.activarBoton();
+		
 	}
 	
 	public void seleccionado(){

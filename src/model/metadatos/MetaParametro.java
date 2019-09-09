@@ -31,6 +31,7 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PROYECTO_TIPO_PROYECTO = "PROY.tpProyecto";
 	public static final String PROYECTO_FX_INICIO = "PROY.fxInicio";
 	public static final String PROYECTO_FX_FIN = "PROY.fxFin";
+	public static final String PROYECTO_FX_FIN_IMPL = "PROY.fxFinImpl";
 	public static final String PROYECTO_CERRADO = "PROY.CERRADO";
 	public static final String PROYECTO_NOMPPM = "PROY.NOMPPM";
 	

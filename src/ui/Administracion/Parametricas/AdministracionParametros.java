@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.beans.Parametro;
 import model.beans.Proyecto;
+import model.constantes.CargaInicial;
 import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
@@ -141,7 +143,14 @@ public class AdministracionParametros implements ControladorPantalla {
 			ConsultaBD cbd = new ConsultaBD(); 
 			cbd.ejecutaTransaccion(idTransaccion);
 			
+			Main.cortinaON();
+			
 			Dialogo.alert("Éxito al guardar", "Se ha guardado correctamente", "Se han actualizado correctamente " + contador + " parámetros");
+						
+			Parametro p = new Parametro();
+			Parametro.listadoParametros=null;
+			
+			Main.cortinaOFF();
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

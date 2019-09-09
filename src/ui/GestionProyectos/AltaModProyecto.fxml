@@ -1,58 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GestionProyectos.AltaModProyecto">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GestionProyectos.AltaModProyecto">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
             <HBox>
                <children>
-                  <Label text="Elemento">
+                  <Label prefWidth="200.0" text="Elemento">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                      <HBox.margin>
-                        <Insets left="15.0" right="50.0" />
+                        <Insets left="15.0" />
                      </HBox.margin>
-                     <padding>
-                        <Insets left="15.0" right="15.0" />
-                     </padding>
                   </Label>
-                  <ComboBox fx:id="cbListaProy" prefWidth="450.0">
-                     <opaqueInsets>
-                        <Insets left="15.0" />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets left="15.0" />
-                     </padding>
-                  </ComboBox>
+                  <TextField fx:id="tListaProy" prefWidth="800.0" />
+                  <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imgs/iconos/Buscar3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
                </children>
-               <padding>
-                  <Insets bottom="15.0" />
-               </padding>
             </HBox>
-            <HBox>
+            <HBox alignment="TOP_RIGHT">
                <children>
                   <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -69,7 +51,7 @@
                   </ImageView>
                </children>
                <VBox.margin>
-                  <Insets bottom="25.0" left="650.0" />
+                  <Insets bottom="25.0" right="15.0" top="15.0" />
                </VBox.margin>
             </HBox>
          </children>
@@ -81,33 +63,30 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <HBox prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Id">
+                  <Label prefWidth="200.0" text="Id">
                      <HBox.margin>
-                        <Insets left="15.0" right="50.0" />
+                        <Insets left="15.0" />
                      </HBox.margin>
-                     <padding>
-                        <Insets right="38.0" />
-                     </padding>
                   </Label>
-                  <TextField fx:id="tID" disable="true" editable="false" />
+                  <TextField fx:id="tID" disable="true" editable="false" prefWidth="200.0" />
                </children>
             </HBox>
-            <HBox prefHeight="0.0" prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Nombre">
+                  <Label prefWidth="200.0" text="Nombre">
                      <HBox.margin>
-                        <Insets left="15.0" right="55.0" />
+                        <Insets left="15.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="tNombreProy" maxWidth="700.0" prefWidth="600.0" />
+                  <TextField fx:id="tNombreProy" prefWidth="900.0" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" top="15.0" />
                </VBox.margin>
             </HBox>
-            <HBox fx:id="hbPropiedades" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox fx:id="hbPropiedades" alignment="TOP_CENTER">
                <VBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </VBox.margin></HBox>

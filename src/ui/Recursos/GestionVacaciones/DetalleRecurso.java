@@ -102,7 +102,7 @@ public class DetalleRecurso implements ControladorPantalla {
 	
 	public void initialize(){
 		 GestionVacaciones.adscribirDetalleRecurso(this);
-		
+		 
 		 vacasAusencias = new VacacionesAusencias();
 		 vacasAusencias.listado(recursoObject, mes, anio);
 		
@@ -225,7 +225,7 @@ public class DetalleRecurso implements ControladorPantalla {
 		lista.add(hj);
 		ObservableList<Tableable> dataTable = hj.toListTableable(lista);
 		tJornada.setItems(dataTable);
-
+		
 		hj.fijaColumnas(tJornada);	
 		
 		ObservableList<TableColumn<Tableable,?>> columnas = tJornada.getColumns(); 

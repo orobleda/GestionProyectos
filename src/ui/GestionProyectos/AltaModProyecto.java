@@ -1,16 +1,16 @@
 package ui.GestionProyectos;
 
 import java.net.URL;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -25,8 +25,10 @@ import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Administracion.Parametricas.GestionParametros;
 import ui.interfaces.ControladorPantalla;
+import ui.popUps.ConsultaAvanzadaProyectos;
 
 public class AltaModProyecto implements ControladorPantalla {
 
@@ -35,6 +37,8 @@ public class AltaModProyecto implements ControladorPantalla {
 	GestionParametros gestPar = null;
 	
 	private AnchorPane anchor;
+	
+	private Proyecto proySeleccionado;
 	
     @FXML
     private ImageView imBuscar;
@@ -48,7 +52,7 @@ public class AltaModProyecto implements ControladorPantalla {
     private GestionBotones gbAniadir;
 
     @FXML
-    private ComboBox<Proyecto> cbListaProy;
+    private TextField tListaProy;
 
     @FXML
     private TextField tNombreProy;
@@ -60,19 +64,32 @@ public class AltaModProyecto implements ControladorPantalla {
     @FXML
     private ImageView imGuardar;
     private GestionBotones gbGuardar;
+    
+    @FXML
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;
 
     @FXML
     private TextField tID;
+    
+    public GestionParametros gp = null;
 	
 	public AltaModProyecto(){
 	}
 	
 	@Override
 	public void resize(Scene escena) {
+		tListaProy.setPrefWidth(escena.getWidth()*0.65);
+		tNombreProy.setPrefWidth(escena.getWidth()*0.65);	
 		
+		if (gestPar!=null) {
+			gestPar.tp.setPrefHeight(escena.getHeight()*0.5);
+			gestPar.tp.setPrefWidth(escena.getWidth()*0.65);
+		}
 	}
 	
 	public void initialize(){
+		tListaProy.setDisable(true);
 		gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
@@ -84,6 +101,18 @@ public class AltaModProyecto implements ControladorPantalla {
 				}
             } }, "Nueva Demanda");
 		gbAniadir.activarBoton();
+		
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					consultaAvanzadaProyectos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Nueva Demanda");
+		gbConsultaAvanzada.activarBoton();
 	
 		gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -121,9 +150,20 @@ public class AltaModProyecto implements ControladorPantalla {
             } }, "Busca Solicitud");
 		gbEliminar.desActivarBoton();
 									
-		Proyecto p = new Proyecto();
-		cbListaProy.getItems().addAll(p.listadoProyectos());		
+	
     }
+	
+	private void consultaAvanzadaProyectos() throws Exception{		
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_TODO, this.tListaProy);
+	}
+	
+	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
+		if (listaProyecto!=null && listaProyecto.size()==1) {
+			this.proySeleccionado = listaProyecto.get(0);
+			this.tListaProy.setText(this.proySeleccionado.nombre);
+			ParamTable.po.hide();
+		}
+	}
 	
 	private void nuevoProyecto() throws Exception{		
 		gbGuardar.activarBoton();
@@ -143,6 +183,8 @@ public class AltaModProyecto implements ControladorPantalla {
 		
 		GestionParametros c = new GestionParametros();
 		
+		gp = c;
+		
 		FXMLLoader loader = new FXMLLoader();
         loader.setLocation(new URL(c.getFXML()));
         	        
@@ -153,7 +195,7 @@ public class AltaModProyecto implements ControladorPantalla {
         variablesPaso.put("entidadBuscar", Proyecto.class.getSimpleName());
         variablesPaso.put("subventana", new Boolean(true));
         variablesPaso.put("idEntidadBuscar", idProyecto);
-        variablesPaso.put("ancho", new Double(800));
+        variablesPaso.put("ancho", new Double(1200));
         variablesPaso.put("alto", new Double(400));
         variablesPaso.put("readOnlyProps",readOnlyProps);
 		variablesPaso.put("filtro",filtro);
@@ -169,17 +211,18 @@ public class AltaModProyecto implements ControladorPantalla {
 
 		hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
 		
-		cbListaProy.getItems().clear();
-		Proyecto.getProyectoEstaticoCargaForzada(1);
-		cbListaProy.getItems().addAll(Proyecto.listaProyecto.values());
+		tListaProy.setText("");
 	}
 	
-	private void guardarProyecto(){		
+	private void guardarProyecto(){	
+		Main.cortinaON();
+		
 		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el proyecto?", "Se almacenará tanto el proyecto como sus parámetros informados.");
 		
 		if (resultado == ButtonType.OK){
 			if (!gestPar.validaObligatoriedades()) {
 				Dialogo.error("Error al guardar", "No se ha podido guardar", "Alguno de los parámetros obligatorios no está informado.");
+				Main.cortinaOFF();
 				return;
 			}			
 			
@@ -195,7 +238,7 @@ public class AltaModProyecto implements ControladorPantalla {
 					p.altaProyecto(p,idTransaccion);
 				}
 				else {
-					p.id = this.cbListaProy.getValue().id;
+					p.id = this.proySeleccionado.id;
 					p.actualizaProyecto(idTransaccion);
 				}
 				
@@ -217,61 +260,83 @@ public class AltaModProyecto implements ControladorPantalla {
 				Dialogo.alert("Proceso Finalizado", "Guardado de proyecto completado", "Se ha guardado el proyecto y sus parámetros modificados.");
 				
 				limpiarFormulario();
+				
+				Proyecto.getProyectoEstaticoCargaForzada(-1);
 
 			} catch (Exception e) {
 				e.printStackTrace();
-			}				
+			}
 		} else {
 		}
+		
+		Main.cortinaOFF();
 	}
 	
 	private void eliminaProyecto() throws Exception{
-		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
-			String idTransaccion = "eliminaProyecto" + Constantes.fechaActual().getTime();
+		try {
+			Main.cortinaON();
 			
-			gbGuardar.desActivarBoton();
-			gbEliminar.desActivarBoton();
+			ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
 			
-			Proyecto p = cbListaProy.getValue();
-			
-			p.bajaProyecto(idTransaccion);
-			
-			ConsultaBD cbd = new ConsultaBD(); 
-			cbd.ejecutaTransaccion(idTransaccion);
-			
-			this.tID.setText("");
-			this.tNombreProy.setText("");
-			
-			hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
+			if (resultado == ButtonType.OK){
+				String idTransaccion = "eliminaProyecto" + Constantes.fechaActual().getTime();
 				
-			Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
-			
-			p = new Proyecto();
-			cbListaProy.getItems().clear();
-			cbListaProy.getItems().addAll(p.listadoProyectos());
-			
-		} else {
+				gbGuardar.desActivarBoton();
+				gbEliminar.desActivarBoton();
+				
+				Proyecto p = this.proySeleccionado;
+				
+				p.bajaProyecto(idTransaccion);
+				
+				ConsultaBD cbd = new ConsultaBD(); 
+				cbd.ejecutaTransaccion(idTransaccion);
+				
+				this.tID.setText("");
+				this.tNombreProy.setText("");
+				
+				hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
+					
+				Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
+				
+				this.tListaProy.setText("");
+				limpiarFormulario();
+				
+				Proyecto.getProyectoEstaticoCargaForzada(-1);
+				
+			} else {
+			}
+		} catch (Exception e) {			
+			throw e;
+		}finally {
+			Main.cortinaOFF();
 		}
 	}
 	
 	private void cargaProyecto() throws Exception{
-	    gbGuardar.activarBoton();
-		gbEliminar.activarBoton();
-		
-		Proyecto p = cbListaProy.getValue();
-		
-		p.cargaProyecto();
-		
-		this.tID.setText(new Integer(p.id).toString());
-		this.tNombreProy.setText(p.nombre);
-		
-		HashMap<String,Boolean> readOnlyProps = new HashMap<String,Boolean>();
-		readOnlyProps.put(MetaParametro.PROYECTO_TIPO_PROYECTO, Constantes.FALSE);
-		
-		cargaPropiedades(p.id,null,readOnlyProps);
+		try {
+			Main.cortinaON();
+			if (tListaProy.getText().equals("")) {
+				Dialogo.error("Campos de entrada mal informados", "Seleccione un proyecto", "Es necesario seleccionar un proyecto");
+				return;
+			}
+			
+		    gbGuardar.activarBoton();
+			gbEliminar.activarBoton();
+			
+			Proyecto p = this.proySeleccionado;
+			
+			p.cargaProyecto();
+			
+			this.tID.setText(new Integer(p.id).toString());
+			this.tNombreProy.setText(p.nombre);
+			
+			HashMap<String,Boolean> readOnlyProps = new HashMap<String,Boolean>();
+			readOnlyProps.put(MetaParametro.PROYECTO_TIPO_PROYECTO, Constantes.FALSE);
+			
+			cargaPropiedades(p.id,null,readOnlyProps);	
+		}finally {
+			Main.cortinaOFF();
+		}
 	}
 	
 	@Override
