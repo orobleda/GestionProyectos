@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -21,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import model.beans.BaseCalculoConcepto;
 import model.beans.Concepto;
 import model.beans.Coste;
@@ -41,6 +43,7 @@ import ui.ConfigTabla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
+import ui.Tabla;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -96,8 +99,13 @@ public class EstimacionesValoraciones implements ControladorPantalla {
     private GestionBotones gbBuscarPresupuesto;
 	@FXML
 	private TableView<Tableable> tLineasCoste = null;
+	public Tabla tablaLineasCoste = null;
 	@FXML
 	private TableView<Tableable> tResumenCoste = null;
+	public Tabla tablaResumenCoste = null;
+	
+    @FXML
+    private VBox vbResultados;
 	
 	public static Proyecto proyConsultado = null;
 	public static Presupuesto presupuesto = null;
@@ -115,7 +123,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	}
 	
 	private void consultaAvanzadaProyectos() throws Exception{		
-		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_DEMANDA, this.tProyecto);
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_TODO, this.tProyecto);
 	}
 	
 	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
@@ -124,6 +132,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			this.tProyecto.setText(this.proySeleccionado.nombre);
 			ParamTable.po.hide();
 			buscaPresupuestos (this.proySeleccionado);
+
+			vbResultados.setVisible(false);
 		}
 	}
 		
@@ -146,17 +156,19 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		taDesc.setText("");
 		cbTipoPrep.getItems().removeAll(cbTipoPrep.getItems());
 		
-		tResumenCoste.getItems().removeAll(tResumenCoste.getItems());
-		tLineasCoste.getItems().removeAll(tLineasCoste.getItems());
+		//tablaResumenCoste.limpiaTabla();
+		//tablaLineasCoste.limpiaTabla();
 		
-		tResumenCoste.getColumns().removeAll(tResumenCoste.getColumns());
-		tLineasCoste.getColumns().removeAll(tLineasCoste.getColumns());
 	}
 	
 	public void initialize(){
-		
-		
+		vbResultados.setVisible(false);
 		tProyecto.setDisable(true);
+		
+		tablaLineasCoste = new Tabla(tLineasCoste, new LineaCostePresupuesto(),this);
+		tablaLineasCoste.altoLibre = true;
+		
+		tablaResumenCoste = new Tabla(tResumenCoste, new LineaCostePresupuesto(),this);
 		
 		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -246,6 +258,13 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		cbVsPresupuesto.getItems().addAll(listado);
 
 		gbAniadirPresupuesto.activarBoton();
+		
+		if (cbVsPresupuesto.getItems().size()==0) {
+			gbBuscarPresupuesto.desActivarBoton();
+		} else {
+			gbBuscarPresupuesto.activarBoton();
+		}
+		
 	}
 	
 	private void eligeSistema(){
@@ -275,9 +294,14 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	public void borrarPresupuesto(){
 		try {
-			EstimacionesValoraciones.presupuesto.borrarPresupuesto(null);
+			ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea borrar la estimación?", "Se eliminará la estimación y todos sus conceptos asociados");
 			
-			fotoInicial();
+			if (resultado == ButtonType.OK){
+				EstimacionesValoraciones.presupuesto.borrarPresupuesto(null);
+				
+				fotoInicial();
+				vbResultados.setVisible(false);
+			}
 			
 		} catch (Exception e) {
 			Dialogo.error("Borrar Presupuesto", "Error al borrar", "Se produjo un error al borrar el presupuesto");
@@ -333,16 +357,13 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(EstimacionesValoraciones.presupuesto.costes.values());
 		
-		ObservableList<Tableable> dataTable = tLineasCoste.getItems();
-		dataTable = lcp.toListTableable(lista);
-		tLineasCoste.setItems(dataTable);
-		tLineasCoste.getProperties().put("EstimacionValoracion", this);
-		
 		try {
-			lcp = new LineaCostePresupuesto((Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
-			lcp.fijaColumnas(tLineasCoste);	
-		
-			tLineasCoste.refresh();
+			HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+			pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+			this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
+
+			this.tablaLineasCoste.pintaTabla(lista);
+			
 		} catch (Exception e) {}
 		
 		popUp.hide();
@@ -350,7 +371,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	public void actualizaResumen() {
 		EstimacionesValoraciones.presupuesto.calculaTotales();
-		tResumenCoste.refresh();
+		tablaResumenCoste.refrescaTabla();
+		tablaLineasCoste.refrescaTabla();
 	}
 	
 	public void resumenCoste() {
@@ -397,26 +419,12 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(EstimacionesValoraciones.presupuesto.costesTotal.values());
 		
-		ObservableList<Tableable> dataTable = tResumenCoste.getItems();
-		if (dataTable==null) dataTable = lcp.toListTableable(lista);
-		else dataTable.addAll(lcp.toListTableable(lista));
-		tResumenCoste.setItems(dataTable);
+		HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+		pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+		pasoPrimitiva.put("RESUMEN", Constantes.TRUE);
+		this.tablaResumenCoste.setPasoPrimitiva(pasoPrimitiva);
 
-		HashMap<String, ConfigTabla> configTabla = tResumenCoste.getItems().get(0).getConfigTabla();
-		ArrayList<ConfigTabla> listaOrdenada = new ArrayList<ConfigTabla>();
-		listaOrdenada.addAll(configTabla.values());
-		Collections.sort(listaOrdenada);
-		listaOrdenada.get(0).desplegable = false;	
-		listaOrdenada.get(0).idColumna = "Resumen Coste";	
-				
-		try {
-			lcp = new LineaCostePresupuesto((Coste) EstimacionesValoraciones.presupuesto.costesTotal.values().toArray()[0]);
-			lcp.limpiarColumnas(tResumenCoste);
-			lcp.fijaColumnas(tResumenCoste);
-			
-		
-			tResumenCoste.refresh();
-		} catch (Exception e) {}
+		this.tablaResumenCoste.pintaTabla(lista);
 		
 		if (popUp!=null) popUp.hide();
 	}
@@ -426,7 +434,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		gbAniadirSistma.activarBoton();
 		gbVersionarPres.activarBoton();
 		gbGuardarPresupuesto.activarBoton();		
-		gbEliminarPres.activarBoton();		
+		gbEliminarPres.activarBoton();
+		vbResultados.setVisible(true);
 		
 		try {
 			EstimacionesValoraciones.presupuesto = new Presupuesto();
@@ -447,11 +456,11 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
 			cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
 			
-			LineaCostePresupuesto lcp = new LineaCostePresupuesto();
-			lcp.limpiarColumnas(tLineasCoste);
-			tLineasCoste.setItems(FXCollections.observableArrayList());
-			lcp.limpiarColumnas(tResumenCoste);	
-			tResumenCoste.setItems(FXCollections.observableArrayList());
+			HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+			pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+			this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
+
+			this.tablaLineasCoste.pintaTabla(new ArrayList<Object>());
 			
 			resumenCoste();
 						
@@ -465,6 +474,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		gbVersionarPres.activarBoton();
 		gbGuardarPresupuesto.activarBoton();		
 		gbEliminarPres.activarBoton();	
+
+		vbResultados.setVisible(true);
 		
 		try {
 			EstimacionesValoraciones.presupuesto = this.cbVsPresupuesto.getValue();
@@ -523,22 +534,15 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 				
 				cst.calculaConceptos();				
 			}
-				
+			
 			lista.addAll(EstimacionesValoraciones.presupuesto.costes.values());
-			ObservableList<Tableable> dataTable = tLineasCoste.getItems();
-			dataTable = lcp.toListTableable(lista);
-			tLineasCoste.setItems(dataTable);
-			tLineasCoste.getProperties().put("EstimacionValoracion", this);
 			
 			try {
-				lcp = new LineaCostePresupuesto((Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
-				lcp.limpiarColumnas(tLineasCoste);
-				
-				lcp.fijaColumnas(tLineasCoste);	
-				lcp.limpiarColumnas(tResumenCoste);	
-				tResumenCoste.setItems(FXCollections.observableArrayList());
-			
-				tLineasCoste.refresh();
+				HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+				pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+				this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
+
+				this.tablaLineasCoste.pintaTabla(lista);
 			} catch (Exception e) {}
 			
 			if (popUp!=null) popUp.hide();

@@ -398,32 +398,32 @@ public class Main extends Application {
 		
 		HashMap<String, ControladorPantalla> opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.SOLICITUDES, opcionMenu);
-		opcionMenu.put("Gestión solicitudes", new AltaModProyecto());
+		opcionMenu.put("Gestión solicitudes", new AltaModProyecto());            
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.RECURSOS, opcionMenu);
-		opcionMenu.put("Gestión Recursos", new AltaModRecurso());
-		opcionMenu.put("Gestión Proveedores", new AltaModProveedor());
-		opcionMenu.put("Asignación Tarifas", new AsignacionTarifas());
-		opcionMenu.put("Gestión horas trabajadas", new GestionVacaciones());
+		opcionMenu.put("Gestión Recursos", new AltaModRecurso());            /* OPTIMIZAR */
+		opcionMenu.put("Gestión Proveedores", new AltaModProveedor());            /* OPTIMIZAR */
+		opcionMenu.put("Asignación Tarifas", new AsignacionTarifas());            /* OPTIMIZAR */
+		opcionMenu.put("Gestión horas trabajadas", new GestionVacaciones());            /* OPTIMIZAR */
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.ECONOMICO, opcionMenu);
-		opcionMenu.put("Gestión Estimaciones", new EstimacionesValoraciones());
-		opcionMenu.put("Gestión Presupuestos", new GestionPresupuestos());
-		opcionMenu.put("Planificación Económica", new ControlPresupuestario());
-		opcionMenu.put("Estimaciones Por Horas", new EstimacionesInternas());
-		opcionMenu.put("Gestión Tarifas", new ui.Economico.Tarifas.GestionTarifas());
-		opcionMenu.put("Alta de Imputaciones", new CargaImputaciones());
+		opcionMenu.put("Gestión Estimaciones", new EstimacionesValoraciones());            
+		opcionMenu.put("Gestión Presupuestos", new GestionPresupuestos());            /* OPTIMIZAR */
+		opcionMenu.put("Planificación Económica", new ControlPresupuestario());            /* OPTIMIZAR */
+		opcionMenu.put("Estimaciones Por Horas", new EstimacionesInternas());            /* OPTIMIZAR */
+		opcionMenu.put("Gestión Tarifas", new ui.Economico.Tarifas.GestionTarifas());            /* OPTIMIZAR */
+		opcionMenu.put("Alta de Imputaciones", new CargaImputaciones());            /* OPTIMIZAR */
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.PLANIFICACION, opcionMenu);
-		opcionMenu.put("Faseado Proyectos", new Faseado());
+		opcionMenu.put("Faseado Proyectos", new Faseado());            /* OPTIMIZAR */
 
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.AJUSTES, opcionMenu);
-		opcionMenu.put("Gestión Festivos", new GestionFestivos());
-		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());
+		opcionMenu.put("Gestión Festivos", new GestionFestivos());            /* OPTIMIZAR */
+		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());            /* OPTIMIZAR */
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.REPORTES, opcionMenu);	

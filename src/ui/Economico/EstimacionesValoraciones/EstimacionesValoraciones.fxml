@@ -16,7 +16,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.EstimacionesValoraciones.EstimacionesValoraciones">
    <center>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox fx:id="vbResultados" BorderPane.alignment="CENTER">
          <children>
             <HBox>
                <children>
@@ -45,7 +45,7 @@
                </VBox.margin>
                <children>
                   <Label prefWidth="175.0" text="Descripción Presupuesto" />
-                  <TextArea fx:id="taDesc" editable="false" prefWidth="680.0" />
+                  <TextArea fx:id="taDesc" prefWidth="680.0" />
                </children>
             </HBox>
             <HBox>

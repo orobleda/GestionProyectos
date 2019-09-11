@@ -18,6 +18,7 @@ import model.metadatos.TipoParamProyecto;
 import ui.ConfigTabla;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.Economico.EstimacionesValoraciones.InformaConcepto;
 import ui.interfaces.Tableable;
@@ -29,6 +30,8 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
     public Sistema sistema;
     public float totalCoste = 0;
     public boolean modificado = false;
+    public Coste coste = null;
+    public boolean resumen = false;
     
     public static final String SISTEMA = "Sistema";
     public static final String TOTAL = "Total"; 
@@ -42,14 +45,28 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
     }
     
     public LineaCostePresupuesto() {
+    	setConfig();
     }
+    
+	public void fijaMetaDatos(HashMap<String,Object> variablesPaso){
+		coste = (Coste) variablesPaso.get("COSTE");
+		
+		if (variablesPaso.get("RESUMEN")!=null) {
+			resumen = (Boolean) variablesPaso.get("RESUMEN");
+		}
+	}
+	
+	public void setConfig() {
+		setConfig(coste);
+	}
     
     public void setConfig(Coste coste) {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
     	configuracionTabla.put(LineaCostePresupuesto.SISTEMA, new ConfigTabla(LineaCostePresupuesto.SISTEMA, LineaCostePresupuesto.SISTEMA, false,0, true));
-    	
-    	if (coste.conceptosCoste!=null){
+    	    	
+    	if (coste!=null && coste.conceptosCoste!=null){
     		Iterator<Concepto> itCon = coste.conceptosCoste.values().iterator();
+    		anchoColumnas = new HashMap<String, Integer>();
     		
     		while(itCon.hasNext()) {
     			Concepto c = itCon.next();
@@ -58,10 +75,18 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
     				configuracionTabla.put(c.tipoConcepto.codigo, new ConfigTabla(c.tipoConcepto.codigo, c.tipoConcepto.codigo, false,32000+1));
     			} else {
     				configuracionTabla.put(c.tipoConcepto.codigo, new ConfigTabla(c.tipoConcepto.codigo, c.tipoConcepto.codigo, false,c.tipoConcepto.id+1));
-    			}	
+    			}
+    			
+    			anchoColumnas.put(c.tipoConcepto.codigo, new Integer(100));
     			
     		}
     	}
+    	
+    	if (resumen) {
+			ConfigTabla cf = configuracionTabla.get(LineaCostePresupuesto.SISTEMA);
+			cf.desplegable = false;
+			cf.idColumna = "Resumen Coste";
+		}
     }
     
 	@Override
@@ -75,7 +100,16 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
 	public Tableable toTableable(Object o) {
     	try {
 			Coste coste = (Coste) o;
-			return new LineaCostePresupuesto(coste);
+			
+			if (this.resumen) {
+				LineaCostePresupuesto lcp = new LineaCostePresupuesto(coste);
+				ConfigTabla cf = lcp.configuracionTabla.get(LineaCostePresupuesto.SISTEMA);
+				cf.desplegable = false;
+				cf.idColumna = "Resumen Coste";
+				return lcp;
+			}
+			else 			
+				return new LineaCostePresupuesto(coste);
     	} catch (Exception e){
     		return null;
     	}

@@ -119,6 +119,8 @@ public class Tabla {
 		
 		ArrayList<ConfigTabla> lcf = new ArrayList<ConfigTabla>();
 		
+		if (this.primitiva.getConfigTabla()== null) this.primitiva.setConfig();
+		
 		Iterator<ConfigTabla> itCf = this.primitiva.getConfigTabla().values().iterator();
 		while (itCf.hasNext()) {
 			ConfigTabla cf = itCf.next();
@@ -175,7 +177,6 @@ public class Tabla {
 	
 	public void pintaTabla(ArrayList<Object> lista) {
 		if (componenteTabla== null) return;
-		
 		listaDatosEnBruto = lista;
 		listaDatos = primitiva.toListTableable(lista);
 		

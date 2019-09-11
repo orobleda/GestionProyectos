@@ -10,7 +10,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.EstimacionesValoraciones.InformaConcepto">
+
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.EstimacionesValoraciones.InformaConcepto">
    <children>
       <VBox>
          <children>
@@ -122,7 +123,7 @@
             </HBox>
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoDisabled">
+                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/guardar.jpg" />
                      </image>

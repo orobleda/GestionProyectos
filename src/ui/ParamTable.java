@@ -76,6 +76,9 @@ public class ParamTable implements Tableable {
 				configTabla = tParametros.getItems().get(0).getConfigTabla();
 			else 
 				configTabla = this.getConfigTabla();
+			if (configTabla==null) {
+				return;
+			}
 			ArrayList<ConfigTabla> listaOrdenada = new ArrayList<ConfigTabla>();
 			listaOrdenada.addAll(configTabla.values());
 			Collections.sort(listaOrdenada);

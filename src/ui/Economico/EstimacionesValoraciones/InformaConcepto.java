@@ -17,6 +17,7 @@ import model.beans.Coste;
 import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
+import ui.GestionBotones;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -45,6 +46,7 @@ public class InformaConcepto implements ControladorPantalla {
 	private TextField teCantidadEst = null;
 	@FXML
 	private ImageView imGuardarConcepto = null;
+	private GestionBotones gbGuardarConcepto = null;
 	@FXML
 	private HBox hbHoras = null;
 	@FXML
@@ -77,8 +79,18 @@ public class InformaConcepto implements ControladorPantalla {
 		MetaConcepto mc = new MetaConcepto();
 		cbPorcentaje.getItems().addAll(mc.aPorcentaje());
 		
-		imGuardarConcepto.setMouseTransparent(true);
-		imGuardarConcepto.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() { public void handle(MouseEvent event) {	 guardaElemento(); }	});
+		gbGuardarConcepto = new GestionBotones(imGuardarConcepto, "Tick3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					guardaElemento();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Versionar presupuesto");
+		gbGuardarConcepto.desActivarBoton();
+		
 		teCantidad.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { calculaBaseCoste();  }  });
 		teHoras.focusedProperty().addListener((ov, oldV, newV) -> {    if (!newV) { calculaBaseHoras();  }  });
 		cbTarifa.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { calculaBaseHoras();   	});
@@ -108,9 +120,7 @@ public class InformaConcepto implements ControladorPantalla {
 				hbPorcentaje.setVisible(true);	
 			}
 			
-			imGuardarConcepto.setMouseTransparent(false);
-			imGuardarConcepto.getStyleClass().remove("iconoDisabled");
-			imGuardarConcepto.getStyleClass().add("iconoEnabled");
+			gbGuardarConcepto.activarBoton();
 			
 			teCantidadEst.setText("");
 						
@@ -229,12 +239,11 @@ public class InformaConcepto implements ControladorPantalla {
 			coste.conceptosCoste = lcp.conceptos;
 			coste.calculaConceptos(); 
 			
-			EstimacionesValoraciones ev = (EstimacionesValoraciones ) expander.getTableRow().getTableView().getProperties().get("EstimacionValoracion");
+			EstimacionesValoraciones ev = (EstimacionesValoraciones ) expander.getTableRow().getTableView().getProperties().get("controlador");
 			ev.actualizaResumen();
 						
-			expander.getTableRow().getTableView().refresh();
 		} catch (Exception e){
-			
+			e.printStackTrace();
 		}
 		
 	}
