@@ -397,9 +397,9 @@ public class Presupuesto implements Cargable {
 	public String toString() {
 		if (!calculado) {
 			if (enCurso)
-				return this.descripcion + " - Versión en curso";
+				return this.version + " - " + this.descripcion + " (en curso)";
 			else
-				return this.descripcion + " - Versión " + this.version;
+				return this.version + " - " + this.descripcion;
 		}
 		else 
 			return this.descripcion;

@@ -113,6 +113,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	@Override
 	public void resize(Scene escena) {
 		tProyecto.setPrefWidth(escena.getWidth()*0.65);
+		cbVsPresupuesto.setPrefWidth(escena.getWidth()*0.65);
 		tLineasCoste.setPrefWidth(escena.getWidth()*0.65);
 		tResumenCoste.setPrefWidth(escena.getWidth()*0.65);
 		taDesc.setPrefWidth(escena.getWidth()*0.65);
