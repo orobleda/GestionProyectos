@@ -56,14 +56,14 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	public static final String fxml = "file:src/ui/Economico/EstimacionesValoraciones/EstimacionesValoraciones.fxml";
 	
 	PopOver popUp = null;
-	
-	private Proyecto proySeleccionado;
+
 	
 	@FXML
 	private AnchorPane anchor;
 	
 	@FXML
-	private TextField tProyecto = null;
+	private TextField tProyecto = null;	
+	private Proyecto proySeleccionado;
     @FXML
     private ImageView imConsultaAvanzada;
     private GestionBotones gbConsultaAvanzada;	
@@ -180,7 +180,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Nueva Demanda");
+            } }, "Consulta elementos");
 		gbAniadirSistma = new GestionBotones(imAniadirSistma, "NuevaFila3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)

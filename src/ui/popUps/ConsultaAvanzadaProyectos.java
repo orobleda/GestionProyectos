@@ -546,15 +546,26 @@ public class ConsultaAvanzadaProyectos implements ControladorPantalla, PopUp {
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
      	this.ventanaPadre = (ControladorPantalla) variablesPaso.get("ventanaPadre");
      	
-     	int tipoElementos = (Integer) variablesPaso.get("tipoElemento");
-     	
      	this.lFiltrados.getItems().addAll(Proyecto.getProyectosEstatico().values());
      	filtraProyectos();
      	
      	this.maxElementos = (Integer) variablesPaso.get("maxElementos");
      	
-     	if (tipoElementos != 0) {
+     	if ((Integer) variablesPaso.get("tipoElemento") != null) {
+     		int tipoElementos = (Integer) variablesPaso.get("tipoElemento");
+     		
      		this.cbTipo.setVisible(false);
+     		Iterator<TipoProyecto> itTipo = this.cbTipo.getItems().iterator();
+     		TipoProyecto tpAux = null;
+     		while (itTipo.hasNext()) {
+     			TipoProyecto tp = itTipo.next();
+     			if (tp.codigo == tipoElementos){
+     				tpAux = tp;
+     				break;
+     			}
+     		}
+     		if (tpAux!=null)
+     			cbTipo.setValue(tpAux);
      	}
      	
 		gestionarControles();

@@ -20,6 +20,7 @@ import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.beans.RelProyectoDemanda;
 import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
@@ -43,6 +44,13 @@ public class AniadeDemanda implements ControladorPantalla {
     @FXML
     private TableView<Tableable> tTablaConceptos;
     public Tabla tablaCoste;
+    
+    @FXML
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;
+    
+    @FXML
+    private TextField tNomProyecto;
 
     @FXML
     private ImageView imGuardarConcepto;
@@ -117,6 +125,7 @@ public class AniadeDemanda implements ControladorPantalla {
 	
 	public void initialize(){
 		tablaCoste = new Tabla(tTablaConceptos,new LineaCosteDesglosado());
+		tablaCoste.altoLibre = true;
 		
 		this.cbVersionPres.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada ();  	}   );
 		this.cbEstimacion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { buscaPresupuestos (newValue);  	}   );
@@ -591,8 +600,8 @@ public class AniadeDemanda implements ControladorPantalla {
 		AniadeDemanda.variablesPaso = variablesPaso;
 		listaDemandasAsociadas = new ArrayList<Proyecto>();
 		
-		Proyecto p = new Proyecto();
-		ArrayList<Proyecto> listaProyectos = p.listadoDemandas();
+		RelProyectoDemanda p = new RelProyectoDemanda();
+		ArrayList<Proyecto> listaProyectos = p.buscaDemandasSinProyecto();
 		
 		this.gp = (GestionPresupuestos) variablesPaso.get("gestionPresupuestos");
 		
@@ -605,6 +614,20 @@ public class AniadeDemanda implements ControladorPantalla {
 								
 				if (pAux.apunteContable) {
 					listaProyectos.add(pAux);
+				} else {
+					Iterator<Proyecto> itDemandas = listaProyectos.iterator();
+					boolean encontrado = false;
+					while (itDemandas.hasNext()) {
+						Proyecto pAux2 = itDemandas.next();
+						if (pAux.id == pAux2.id) {
+							encontrado = true;
+							break;
+						}
+					}
+					
+					if (!encontrado) {
+						listaProyectos.add(pAux);
+					}
 				}
 				
 			}

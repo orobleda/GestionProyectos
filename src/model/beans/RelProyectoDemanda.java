@@ -7,6 +7,7 @@ import java.util.List;
 
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
+import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
@@ -24,6 +25,40 @@ public class RelProyectoDemanda implements Cargable{
 
 	public RelProyectoDemanda() {
 		listaDemandas = new ArrayList<Proyecto>();
+	}
+	
+	public ArrayList<Proyecto> buscaDemandasSinProyecto() {
+		ArrayList<Proyecto> demandas = Proyecto.getProyectosEstaticoTipo(TipoProyecto.ID_DEMANDA);
+		ArrayList<Proyecto> salida = new ArrayList<Proyecto>();
+		
+		ConsultaBD consulta = new ConsultaBD();
+		
+		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		
+		ArrayList<Cargable> relProyectoDemanda = consulta.ejecutaSQL("cDemandasVinculadas", listaParms, new GenericoConsulta());
+		
+		Iterator<Proyecto> itDemandasExistentes = demandas.iterator();
+		while (itDemandasExistentes.hasNext()) {
+			Proyecto p = itDemandasExistentes.next();
+			
+			Iterator<Cargable> itDemandasRelacionadas = relProyectoDemanda.iterator();
+			boolean encontrado = false;
+			while (itDemandasRelacionadas.hasNext()) {
+				GenericoConsulta iAux = (GenericoConsulta) itDemandasRelacionadas.next();
+				Proyecto pAux = Proyecto.getProyectoEstatico((Integer) iAux.elementos.get("ID"));
+				
+				if (p.id == pAux.id) {
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (!encontrado) {
+				salida.add(p);
+			}
+		}
+		
+		return salida;
 	}
 
 	public ArrayList<RelProyectoDemanda> buscaRelacion() { 	

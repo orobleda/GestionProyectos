@@ -1151,5 +1151,12 @@
 		<parametro id="2" tipo="int"></parametro>
 		<parametro id="3" tipo="str"></parametro>
 	</parametros>
+</acceso>
+<acceso>
+	<query>select p.id as ID from proyecto p , REL_PROYECTO_DEMANDA rpd where  p.id in (select pp.idElemento from parametro_proyecto pp where pp.cod_parm = 'PROY.tpProyecto' and pp.valorEntero = 1) and p.id = rpd.idDemanda</query>
+	<id tipo="C">cDemandasVinculadas</id>
+	<tabla>REL_PROYECTO_DEMANDA</tabla>
+	<parametros>
+	</parametros>
 </acceso>	
 </accesoBD>

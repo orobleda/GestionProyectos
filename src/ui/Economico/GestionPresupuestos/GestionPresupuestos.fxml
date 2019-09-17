@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.GestionPresupuestos">
+<Pane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.GestionPresupuestos">
    <children>
       <VBox>
          <children>
@@ -15,17 +21,25 @@
                <children>
                   <HBox>
                      <children>
-                        <Label prefWidth="150.0" text="Proyecto" />
-                        <ComboBox fx:id="cbProyecto" prefWidth="300.0" />
+                        <Label layoutX="1.0" layoutY="1.0" prefWidth="150.0" text="Proyecto" />
+                        <TextField fx:id="tProyecto" prefWidth="700.0" />
+                        <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../imgs/iconos/aniadir.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </ImageView>
                      </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
                   </HBox>
                   <HBox>
                      <children>
                         <Label prefWidth="150.0" text="Versión" />
-                        <ComboBox fx:id="cbVersion" prefWidth="185.0" />
+                        <ComboBox fx:id="cbVersion" prefWidth="700.0" />
                      </children>
                      <VBox.margin>
                         <Insets top="10.0" />

@@ -87,6 +87,47 @@ public class Proyecto implements Cargable{
 			return listaProyecto.get(idProyecto);
 	}
 	
+	public static ArrayList<Proyecto> getProyectosEstaticoTipo(int tipoProyecto) {
+		ArrayList<Proyecto> salida = new ArrayList<Proyecto>();
+		
+		listaProyecto = Proyecto.getProyectosEstatico();
+		ParametroProyecto pp = null;
+		TipoProyecto tp = null;
+		
+		Iterator<Proyecto> itProy = listaProyecto.values().iterator();
+		
+		while (itProy.hasNext()) {
+			Proyecto p = (Proyecto) itProy.next();
+			try {
+				try {
+					pp = p.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+					tp = (TipoProyecto) pp.getValor();
+				} catch (Exception e) {				
+					p.cargaProyecto();
+					pp = p.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+					tp = (TipoProyecto) pp.getValor();
+				}
+				
+				if (tp!=null) {
+					if (tipoProyecto == TipoProyecto.ID_TODO)
+						salida.add(p);
+					else
+						if (tipoProyecto == TipoProyecto.ID_PROYEVOLS) {
+							if (tp.codigo == TipoProyecto.ID_EVOLUTIVO || tp.codigo == TipoProyecto.ID_PROYECTO){
+								salida.add(p);					
+							}
+						} else {
+							if (tipoProyecto == tp.codigo) salida.add(p);
+						}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return salida;
+	}
+	
 	public static HashMap<Integer,Proyecto> getProyectosEstatico() {
 		if (listaProyecto==null) {
 			listaProyecto = new HashMap<Integer, Proyecto>();

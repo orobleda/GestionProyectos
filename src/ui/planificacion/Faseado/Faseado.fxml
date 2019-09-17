@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.Faseado">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.planificacion.Faseado.Faseado">
    <top>
       <VBox>
          <children>
-            <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+            <HBox>
                <children>
-                  <Label text="Proyecto" />
-                  <ComboBox fx:id="cbProyecto" prefWidth="250.0">
+                  <Label layoutX="1.0" layoutY="1.0" prefHeight="17.0" prefWidth="175.0" text="Proyecto" />
+                  <TextField fx:id="tProyecto" prefWidth="700.0" />
+                  <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/aniadir.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                      <HBox.margin>
-                        <Insets left="25.0" />
+                        <Insets left="10.0" />
                      </HBox.margin>
-                  </ComboBox>
+                  </ImageView>
                </children>
-               <BorderPane.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </BorderPane.margin>
             </HBox>
             <HBox alignment="TOP_CENTER">
                <children>

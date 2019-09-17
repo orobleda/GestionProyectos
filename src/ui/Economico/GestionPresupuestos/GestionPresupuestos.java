@@ -2,7 +2,6 @@ package ui.Economico.GestionPresupuestos;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -43,6 +42,7 @@ import ui.Economico.GestionPresupuestos.Tables.DesgloseDemandasAsocidasTabla;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
+import ui.popUps.ConsultaAvanzadaProyectos;
 
 public class GestionPresupuestos implements ControladorPantalla {
 	
@@ -60,8 +60,12 @@ public class GestionPresupuestos implements ControladorPantalla {
     private TableView<Tableable> tDemandas;
     public Tabla tablaDemandas;
 
+	@FXML
+	private TextField tProyecto = null;	
+	private Proyecto proySeleccionado;
     @FXML
-    public ComboBox<Proyecto> cbProyecto;
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;
 
     @FXML
     private ImageView imGuardarNuevaVersion;
@@ -106,7 +110,16 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
+		tProyecto.setPrefWidth(escena.getWidth()*0.65);
+		this.cbVersion.setPrefWidth(escena.getWidth()*0.65);
+		tCoste.setPrefWidth(escena.getWidth()*0.65);
+		tNomProyecto.setPrefWidth(escena.getWidth()*0.65);
 		
+		
+	}
+	
+	private void consultaAvanzadaProyectos() throws Exception{		
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_PROYEVOLS, this.tProyecto);
 	}
 	
 	public void initialize(){
@@ -115,11 +128,16 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		scrDatos.setDisable(true);
 		
-		Proyecto p = new Proyecto();
-		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
-		
-		cbProyecto.getItems().addAll(listaProyectos);
-		cbProyecto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { buscaPresupuestos (newValue);  	}   );
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					consultaAvanzadaProyectos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Consulta elementos");
 		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada (true);  	}   );
@@ -194,19 +212,13 @@ public class GestionPresupuestos implements ControladorPantalla {
 	}
 	
 	public void nuevoProyecto() {
-		cbProyecto.getItems().removeAll(cbProyecto.getItems());
-		cbVersion.getItems().removeAll(cbVersion.getItems());
-		cbVersion.setDisable(true);
+		this.tProyecto.setText("");
+		tProyecto.setDisable(true);
 		
 		this.tNomProyecto.setText("");
 		this.tVsProyecto.setText("");
 		this.cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
 		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
-		
-		Proyecto p = new Proyecto();
-		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
-		
-		cbProyecto.getItems().addAll(listaProyectos);
 		
 		cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
 		cbTipoProy.getItems().addAll(TipoProyecto.tiposNoDemanda());
@@ -214,6 +226,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		scrDatos.setDisable(false);
 		
 		this.tNomProyecto.setText("");
+		this.proySeleccionado = null;
 		tNomProyecto.setDisable(false);
 		this.tVsProyecto.setText("");
 		
@@ -290,7 +303,8 @@ public class GestionPresupuestos implements ControladorPantalla {
 		ConsultaBD cbd = new ConsultaBD(); 
 		cbd.ejecutaTransaccion(idTransaccion);
 		
-		cbProyecto.getItems().removeAll(cbProyecto.getItems());
+		tProyecto.setText("");
+		this.proySeleccionado = null;
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		
 		this.tNomProyecto.setText("");
@@ -300,8 +314,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		Proyecto p = new Proyecto();
 		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
-		
-		cbProyecto.getItems().addAll(listaProyectos);
 		
 		tablaCoste.limpiaTabla();
 		tablaDemandas.limpiaTabla();
@@ -399,19 +411,15 @@ public class GestionPresupuestos implements ControladorPantalla {
 		
 		Proyecto.getProyectoEstatico(1);
 		
-		cbProyecto.getItems().removeAll(cbProyecto.getItems());
+		tProyecto.setText("");
+		this.proySeleccionado = null;
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		
 		this.tNomProyecto.setText("");
 		this.tVsProyecto.setText("");
 		this.cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
 		cbTipoProy.getItems().addAll(TipoProyecto.listado.values());
-		
-		Proyecto p = new Proyecto();
-		ArrayList<Proyecto> listaProyectos = p.listadoProyectosGGP();
-		
-		cbProyecto.getItems().addAll(listaProyectos);
-		
+				
 		tablaCoste.limpiaTabla();
 		tablaDemandas.limpiaTabla();
 		scrDatos.setDisable(true);
@@ -693,23 +701,26 @@ public class GestionPresupuestos implements ControladorPantalla {
 		}
 	}
 	
-	private void buscaPresupuestos(Proyecto p) {
+	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
+		if (listaProyecto!=null && listaProyecto.size()==1) {
+			this.proySeleccionado = listaProyecto.get(0);
+			this.tProyecto.setText(this.proySeleccionado.nombre);
+			ParamTable.po.hide();
 		
-		if (p==null) return;
-		
-		cbVersion.getItems().removeAll(cbVersion.getItems());
-		
-		Presupuesto pres = new Presupuesto();		
-		ArrayList<Presupuesto> listado = pres.buscaPresupuestos(p.id);
-		
-		cbVersion.getItems().addAll(listado);
-		
-		this.proyOperado = this.cbProyecto.getValue();
-		this.proyOperado.modo = Proyecto.MODIFICAR;
-		
-		this.presOperado = null;
-		cbVersion.setDisable(false);
-		scrDatos.setDisable(true);
+			cbVersion.getItems().removeAll(cbVersion.getItems());
+			
+			Presupuesto pres = new Presupuesto();		
+			ArrayList<Presupuesto> listado = pres.buscaPresupuestos(proySeleccionado.id);
+			
+			cbVersion.getItems().addAll(listado);
+			
+			this.proyOperado = this.proySeleccionado;
+			this.proyOperado.modo = Proyecto.MODIFICAR;
+			
+			this.presOperado = null;
+			cbVersion.setDisable(false);
+			scrDatos.setDisable(true);
+		}
 	}
 	
 	public void aniadirEstimacion() {

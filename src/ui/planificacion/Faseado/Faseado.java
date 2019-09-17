@@ -10,9 +10,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -25,13 +25,16 @@ import model.beans.Parametro;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.metadatos.Sistema;
+import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Tabla;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
+import ui.popUps.ConsultaAvanzadaProyectos;
 
 public class Faseado implements ControladorPantalla {
 	
@@ -47,7 +50,13 @@ public class Faseado implements ControladorPantalla {
     public Tabla tablaDemandas;
 
     @FXML
-    private ComboBox<Proyecto> cbProyecto;
+    private TextField tProyecto;
+    
+    private Proyecto proySeleccionado;
+
+    @FXML
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;
 
     @FXML
     private ImageView imGuardar;
@@ -73,16 +82,16 @@ public class Faseado implements ControladorPantalla {
 		
 		tablaDemandas = new Tabla(tDemandas,new DemandasAsociadasTabla(),this);
 		
-		ArrayList<Proyecto> listaProyectos = (new Proyecto()).listadoProyectosGGP();
-		cbProyecto.getItems().addAll(listaProyectos);
-		
-		cbProyecto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			try {
-				cargaProyecto();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} );
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					consultaAvanzadaProyectos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Consulta elementos");
 		
 		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -97,49 +106,60 @@ public class Faseado implements ControladorPantalla {
 		this.gbGuardar.desActivarBoton();
 	}
 	
-	private void cargaProyecto() throws Exception {
-		pActual = this.cbProyecto.getValue();
-		
-		HashMap<String, Sistema> lSistemas = new HashMap<String, Sistema>();
-		
-		ArrayList<Proyecto> demandas = pActual.getDemandasAsociadas();
-		Iterator<Proyecto> itDemanda = demandas.iterator();
-		while (itDemanda.hasNext()) {
-			Proyecto demanda = itDemanda.next();
-			Presupuesto pres = new Presupuesto();
-			
-			if (demanda.apunteContable) {
-				pres.idApunteContable = demanda.id;
-				demanda.presupuestoActual = pres.buscaPresupuestosAPunteContable().get(0);
-				
-			} else {
-				demanda.presupuestoActual = pres.dameUltimaVersionPresupuesto(demanda);
-			}
-			
-			demanda.presupuestoActual.cargaCostes();
-			
-			Iterator<Coste> itCoste = demanda.presupuestoActual.costes.values().iterator();
-			while (itCoste.hasNext()) {
-				Coste c = itCoste.next();
-				lSistemas.put(c.sistema.codigo, c.sistema);
-			}
-		}
-		
-		HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
-		pasoPrimitiva.put("sistemas", lSistemas.values());
-		pasoPrimitiva.put("controlPadre", this);
-		
-		ArrayList<Object> listaPintable = new ArrayList<Object>();
-		listaPintable.addAll(demandas);	
-		
-		tablaDemandas.setPasoPrimitiva(pasoPrimitiva);
-		
-		tablaDemandas.pintaTabla(listaPintable);
-		
-		pActual.cargaFasesProyecto();
-		pintaFases() ;		
 
-		this.gbGuardar.activarBoton();
+	private void consultaAvanzadaProyectos() throws Exception{		
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_PROYEVOLS, this.tProyecto);
+	}
+	
+	private void fijaProyecto(ArrayList<Proyecto> listaProyecto) throws Exception{
+		if (listaProyecto!=null && listaProyecto.size()==1) {
+			this.proySeleccionado = listaProyecto.get(0);
+			this.tProyecto.setText(this.proySeleccionado.nombre);
+			ParamTable.po.hide();
+			
+			pActual = this.proySeleccionado;
+			
+			HashMap<String, Sistema> lSistemas = new HashMap<String, Sistema>();
+			
+			ArrayList<Proyecto> demandas = pActual.getDemandasAsociadas();
+			Iterator<Proyecto> itDemanda = demandas.iterator();
+			while (itDemanda.hasNext()) {
+				Proyecto demanda = itDemanda.next();
+				Presupuesto pres = new Presupuesto();
+				
+				if (demanda.apunteContable) {
+					pres.idApunteContable = demanda.id;
+					demanda.presupuestoActual = pres.buscaPresupuestosAPunteContable().get(0);
+					
+				} else {
+					demanda.presupuestoActual = pres.dameUltimaVersionPresupuesto(demanda);
+				}
+				
+				demanda.presupuestoActual.cargaCostes();
+				
+				Iterator<Coste> itCoste = demanda.presupuestoActual.costes.values().iterator();
+				while (itCoste.hasNext()) {
+					Coste c = itCoste.next();
+					lSistemas.put(c.sistema.codigo, c.sistema);
+				}
+			}
+			
+			HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+			pasoPrimitiva.put("sistemas", lSistemas.values());
+			pasoPrimitiva.put("controlPadre", this);
+			
+			ArrayList<Object> listaPintable = new ArrayList<Object>();
+			listaPintable.addAll(demandas);	
+			
+			tablaDemandas.setPasoPrimitiva(pasoPrimitiva);
+			
+			tablaDemandas.pintaTabla(listaPintable);
+			
+			pActual.cargaFasesProyecto();
+			pintaFases() ;		
+	
+			this.gbGuardar.activarBoton();
+		}
 	}
 	
 	public void pintaFases() {
