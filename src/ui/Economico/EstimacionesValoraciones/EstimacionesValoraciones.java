@@ -354,7 +354,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		conc.id = 32000;
 		c.conceptosCoste.put(mc.codigo, conc);
 		
-		LineaCostePresupuesto lcp = new LineaCostePresupuesto();
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(EstimacionesValoraciones.presupuesto.costes.values());
 		

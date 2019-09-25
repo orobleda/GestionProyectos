@@ -7,14 +7,14 @@
 		<columnas>
 			<columna id="Usuario" columna="0" tipoDato="1"></columna>
 			<columna id="NombreUsuario" columna="1" tipoDato="1"></columna>
-			<columna id="Gerencia" columna="2" tipoDato="1"></columna>
-			<columna id="Periodo" columna="4" tipoDato="1"></columna>
-			<columna id="Horas" columna="5" tipoDato="2"></columna>
-			<columna id="Tarifa" columna="6" tipoDato="3"></columna>
-			<columna id="Importe" columna="7" tipoDato="3"></columna>
-			<columna id="Proyecto" columna="8" tipoDato="1"></columna>
-			<columna id="Estado" columna="11" tipoDato="1"></columna>
-			<columna id="Proveedor" columna="13" tipoDato="1"></columna>
+			<columna id="Gerencia" columna="4" tipoDato="1"></columna>
+			<columna id="Periodo" columna="5" tipoDato="1"></columna>
+			<columna id="Horas" columna="6" tipoDato="2"></columna>
+			<columna id="Tarifa" columna="7" tipoDato="3"></columna>
+			<columna id="Importe" columna="8" tipoDato="3"></columna>
+			<columna id="Proyecto" columna="12" tipoDato="1"></columna>
+			<columna id="Estado" columna="13" tipoDato="1"></columna>
+			<columna id="Proveedor" columna="15" tipoDato="1"></columna>
 		</columnas>
 	</plantilla>
 </accesoXLS>

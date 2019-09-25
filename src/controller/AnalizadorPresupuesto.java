@@ -704,6 +704,7 @@ public class AnalizadorPresupuesto {
 		
 		Calendar cFin = Calendar.getInstance();
 		cFin.setTime(fFin);
+		cFin.add(Calendar.MONTH, 1);
 		
 		EstimacionAnio eA = null;
 		EstimacionMes eM = null;
@@ -887,6 +888,7 @@ public class AnalizadorPresupuesto {
 					}
 					
 					if (incluirDes) {
+						if (this.certificaciones == null) this.certificaciones = new ArrayList<Certificacion>();
 						Iterator<Certificacion> itCertificacion = this.certificaciones.iterator();
 						while (itCertificacion.hasNext()) {
 							Certificacion cert = itCertificacion.next();

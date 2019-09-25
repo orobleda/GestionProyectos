@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import controller.AnalizadorPresupuesto;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +28,7 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import ui.GestionBotones;
+import ui.Tabla;
 import ui.Economico.ControlPresupuestario.Tables.LineaCoste;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosado;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosadoSumario;
@@ -82,24 +82,30 @@ public class ControlPresupuestario implements ControladorPantalla {
 
     @FXML
     private TableView<Tableable> tbResumenIzqda;
+    private Tabla tablaResumenIzqda;
 
     @FXML
     private TableView<Tableable> tbIzqda;
+    private Tabla tablaIzqda;
 
     @FXML
     private ComboBox<Presupuesto> cbDrcha;
 
     @FXML
     public TableView<Tableable> tbResumenDcha;
+    private Tabla tablaResumenDcha;
 
     @FXML
     private TableView<Tableable> tbDrcha;
+    private Tabla tablaDrcha;
 
     @FXML
     private TableView<Tableable> tbResumenDiferencia;
+    private Tabla tablaResumenDiferencia;
 
     @FXML
     private TableView<Tableable> tbDiferencia;
+    private Tabla tablaDiferencia;
     
     @FXML
     private ComboBox<Proyecto> cbProyectos;
@@ -157,6 +163,14 @@ public class ControlPresupuestario implements ControladorPantalla {
 	}
 	
 	public void initialize(){
+		tablaResumenIzqda = new Tabla(tbResumenIzqda, new LineaCoste(),this);
+		tablaResumenDcha = new Tabla(tbResumenDcha, new LineaCoste(),this);
+		tablaResumenDiferencia = new Tabla(tbResumenDiferencia, new LineaCosteSumario(),this);
+
+		tablaIzqda = new Tabla(tbIzqda, new LineaCosteDesglosado(),this);
+		tablaDrcha = new Tabla(tbDrcha, new LineaCosteDesglosado(),this);
+		tablaDiferencia = new Tabla(tbDiferencia, new LineaCosteDesglosadoSumario(),this);
+		
 		ControlPresupuestario.elementoThis = this;
 		
 		Proyecto p = new Proyecto();
@@ -170,12 +184,12 @@ public class ControlPresupuestario implements ControladorPantalla {
 	    ); 
 		
 		cbIzquda.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			presupuestoSeleccionado(newValue,tbResumenIzqda,ControlPresupuestario.COLUMNA_I);
+			presupuestoSeleccionado(newValue,tablaResumenIzqda,ControlPresupuestario.COLUMNA_I);
 	    	}
 	    );
 		
 		cbDrcha.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			presupuestoSeleccionado(newValue,tbResumenDcha,ControlPresupuestario.COLUMNA_D);
+			presupuestoSeleccionado(newValue,tablaResumenDcha,ControlPresupuestario.COLUMNA_D);
 	    	}
 	    );
 		
@@ -386,7 +400,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 		cbDrcha.getItems().addAll(listaPresupuestos);
 	}
 	
-	public void presupuestoSeleccionado(Presupuesto p,TableView<Tableable> tabla, String lado) {
+	public void presupuestoSeleccionado(Presupuesto p, Tabla tabla, String lado) {
 		if (lado==ControlPresupuestario.COLUMNA_I) {
 			if (p==null) return;
 			p.cargaCostes();
@@ -430,26 +444,33 @@ public class ControlPresupuestario implements ControladorPantalla {
 		} else {
 				if (p==null) return;
 				if (p.id>20000){
-					p = this.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ANIO,p.id/10,false);
+					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ANIO,p.id/10,false);
 				}
 				if (p.id==-10) {
-					p = this.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADO,p.id/10,false);
+					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADO,p.id/10,false);
 				}
 				if (p.id==-20) {
-					p = this.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_REAL,p.id/10,false);
+					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_REAL,p.id/10,false);
 				}
 				if (p.id==-30) {
-					p = this.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADOREAL,0,false);
+					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADOREAL,0,false);
 				}
 				presDrcha = p;
 				cargaPresupuesto(p,tabla, lado);
 		}
-				
+		
+		Tabla tablaDesglosada = null;
+		if (ControlPresupuestario.COLUMNA_I.equals(lado)) {
+			tablaDesglosada = tablaIzqda;
+		} else {
+			tablaDesglosada = tablaDrcha;
+		}
+		
 		cargaSumario(p, tabla);
-		cargaSumarioDesglosado(p, tabla);		
+		cargaSumarioDesglosado(p, tablaDesglosada);		
 	}
 	
-	public void cargaPresupuesto(Presupuesto p, TableView<Tableable> tabla, String lado) {
+	public void cargaPresupuesto(Presupuesto p, Tabla tabla, String lado) {
 		HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();
 		HashMap<String,Concepto> listaConceptosDesglosado = null;
 		ArrayList<Object> listaConceptosDesglosada = new ArrayList<Object>();
@@ -508,47 +529,26 @@ public class ControlPresupuestario implements ControladorPantalla {
 		caux.valorEstimado = acumulado;
 		listaConceptos.put(caux.tipoConcepto.codigo,caux);
 		
-		TableView<Tableable> tablaDesglosada = null;
-		
+		Tabla tablaDesglosada = null;
+				
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.add(new LineaCoste(listaConceptos));
-		ObservableList<Tableable> dataTable = (new LineaCoste()).toListTableable(lista);
-		tabla.setItems(dataTable);
+		tabla.pintaTabla(lista);
 		
 		if (ControlPresupuestario.COLUMNA_I.equals(lado)) {
 			listaIzqdaResumen = lista;
 			listaIzqda = listaConceptosDesglosada;
-			tablaDesglosada = tbIzqda;
+			tablaDesglosada = tablaIzqda;
 		} else {
 			listaDrchaResumen = lista;
 			listaDrcha = listaConceptosDesglosada;
-			tablaDesglosada = tbDrcha;
+			tablaDesglosada = tablaDrcha;
 		}
-
-		(new LineaCoste()).fijaColumnas(tabla);
 		
-		dataTable = (new LineaCosteDesglosado()).toListTableable(listaConceptosDesglosada);
-		tablaDesglosada.setItems(dataTable);
-		(new LineaCosteDesglosado()).fijaColumnas(tablaDesglosada);
-		
-		if (listaIzqda!=null) {
-			tbIzqda.setPrefHeight(40*listaIzqda.size());
-			tbDiferencia.setPrefHeight(40*listaIzqda.size()); 
-			tbResumenDiferencia.setPrefHeight(40*listaIzqda.size());
-		}
-		else{
-			tbIzqda.setPrefHeight(30);
-			tbDiferencia.setPrefHeight(30);
-			tbResumenDiferencia.setPrefHeight(30);
-		} 		
-		if (listaDrcha!=null){
-			tbDrcha.setPrefHeight(40*listaDrcha.size());
-			tbDiferencia.setPrefHeight(40*listaDrcha.size());
-			tbResumenDiferencia.setPrefHeight(40*listaDrcha.size());
-		}  else tbDrcha.setPrefHeight(30);
+		tablaDesglosada.pintaTabla(listaConceptosDesglosada);
 	}
 	
-	public void cargaSumario(Presupuesto p, TableView<Tableable> tabla) {
+	public void cargaSumario(Presupuesto p, Tabla tabla) {
 			if (listaIzqda!=null && listaDrcha!=null) {
 				HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();
 				
@@ -578,16 +578,12 @@ public class ControlPresupuestario implements ControladorPantalla {
 				
 				ArrayList<Object> lista = new ArrayList<Object>();
 				lista.add(new LineaCosteSumario(listaConceptos));
-				ObservableList<Tableable> dataTable = (new LineaCosteSumario()).toListTableable(lista);
-				tbResumenDiferencia.setItems(dataTable);
+				tablaResumenDiferencia.pintaTabla(lista);
 				
-				(new LineaCosteSumario()).fijaColumnas(tbResumenDiferencia);
-				
-				//tbResumenDiferencia.setPrefHeight(40*lista.size());
 			}	
 	}
 	
-	public void cargaSumarioDesglosado(Presupuesto p, TableView<Tableable> tabla) {
+	public void cargaSumarioDesglosado(Presupuesto p, Tabla tabla) {
 		if (listaIzqdaResumen!=null && listaDrchaResumen!=null) {
 			HashMap<String,ArrayList<Float>> listaResumen = new HashMap<String,ArrayList<Float>>();
 			HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();
@@ -714,10 +710,8 @@ public class ControlPresupuestario implements ControladorPantalla {
 				}							
 			}
 			
-			ObservableList<Tableable> dataTable = (new LineaCosteDesglosadoSumario()).toListTableable(lista);
-			tbDiferencia.setItems(dataTable);
+			tablaDiferencia.pintaTabla(lista);
 			
-			(new LineaCosteDesglosadoSumario()).fijaColumnas(tbDiferencia);
 			listaSumario = lista;
 		}
 				

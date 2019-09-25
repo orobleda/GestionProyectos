@@ -236,7 +236,7 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		esPopUp = true;
-		if (this.imputacion!=null){
+		if (this.imputacion==null){
 			this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
 			this.di = (DetalleImputacion)  variablesPaso.get("padre");
 			

@@ -11,7 +11,7 @@
 }
 
 .titled-pane > *.content  {
-    -fx-background-color: rgba(245,236,255,0.9) ;    
+    -fx-background-color: rgba(189,218,253,0.9) ;    
 }
 
 .label {
@@ -81,7 +81,7 @@
 
 .titled-pane  
 {
-	-fx-background-color: rgba(134,139,219,1);
+	-fx-background-color: rgba(14,119,248,1);
 	-fx-text-fill:  rgba(255,255,255,1);
 	-fx-border-radius: 9;
 }

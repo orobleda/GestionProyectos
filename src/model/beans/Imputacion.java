@@ -154,7 +154,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 		String proyecto = (String) imput.get("Proyecto");
 		if (proyecto == null || "".equals(proyecto))
 			return null;
-
+		
 		Proyecto p = new Proyecto();
 		p = p.getProyectoPPM(proyecto, true);
 
@@ -578,9 +578,23 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 			
 			boolean insertar = false;
 			
-			if (rrt==null) insertar=true;
+			if (rrt==null){
+				insertar=true;
+				rrt = new RelRecursoTarifa();
+			}
 			else 
 				if (rrt.tarifa.costeHora!=this.tarifa.costeHora) insertar = true;
+			
+			if (rrt!=null && rrt.tarifa!=null && this.tarifa!=null) {
+				Calendar cRRT = Calendar.getInstance();
+				cRRT.setTime(rrt.tarifa.fFinVig);
+				
+				Calendar cThis = Calendar.getInstance();
+				cThis.setTime(this.tarifa.fFinVig);
+				
+				if (cRRT.after(cThis)) insertar = false;
+				else insertar = true;
+			}
 			
 			if (insertar) {
 				Calendar c = Calendar.getInstance();

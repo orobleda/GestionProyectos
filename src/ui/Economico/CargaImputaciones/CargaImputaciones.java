@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -407,6 +408,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 	}
 	
 	public void analizaFichero () throws Exception {
+		Main.cortinaON();
 		listaImputacionesAsignadasProyecto = new HashMap<Integer,ArrayList<Imputacion>>(); 
 		listaImputacionesProyecto = new HashMap<Integer,ArrayList<Imputacion>>();
 		this.cbProyectos.getItems().removeAll(this.cbProyectos.getItems());
@@ -442,6 +444,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 		vbImputacionesGeneral.setVisible(false);
 		chkResumen.setSelected(false);		
 		chkResumen.setDisable(true);
+		Main.cortinaOFF();		
 	}
 	
 	public void buscaFichero() {

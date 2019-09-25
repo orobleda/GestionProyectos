@@ -230,12 +230,12 @@ public class TopeImputaciones implements ControladorPantalla {
 				}
 			}
 			
-			if (mapTopes.containsKey(ti.sistema.codigo)) {
-				Float suma = new Float((Float) mapTopes.get(ti.sistema.codigo) + ti.porcentaje);
-				mapTopes.remove(ti.sistema.codigo);
-				mapTopes.put(ti.sistema.codigo, suma);					
+			if (mapTopes.containsKey(ti.sistema.codigo+ti.mConcepto.codigo)) {
+				Float suma = new Float((Float) mapTopes.get(ti.sistema.codigo+ti.mConcepto.codigo) + ti.porcentaje);
+				mapTopes.remove(ti.sistema.codigo+ti.mConcepto.codigo);
+				mapTopes.put(ti.sistema.codigo+ti.mConcepto.codigo, suma);					
 			} else {
-				mapTopes.put(ti.sistema.codigo, new Float(ti.porcentaje));
+				mapTopes.put(ti.sistema.codigo+ti.mConcepto.codigo, new Float(ti.porcentaje));
 			}
 		}
 		

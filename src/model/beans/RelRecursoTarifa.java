@@ -77,7 +77,10 @@ public class RelRecursoTarifa implements Cargable{
 		if (this.usuario)
 			listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,this.recurso.id));
 		else
-			listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,this.proveedor.id));
+			if (this.proveedor!=null)
+				listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,this.proveedor.id));
+			else 
+				listaParms.add(new ParametroBD(6,ConstantesBD.PARAMBD_INT,-1));
 		
 		listaParms.add(new ParametroBD(3,ConstantesBD.PARAMBD_INT,this.tarifa.idTarifa));
 		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_INT,this.mes));

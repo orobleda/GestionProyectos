@@ -111,7 +111,7 @@ public class Faseado implements ControladorPantalla {
 		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_PROYEVOLS, this.tProyecto);
 	}
 	
-	private void fijaProyecto(ArrayList<Proyecto> listaProyecto) throws Exception{
+	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) throws Exception{
 		if (listaProyecto!=null && listaProyecto.size()==1) {
 			this.proySeleccionado = listaProyecto.get(0);
 			this.tProyecto.setText(this.proySeleccionado.nombre);

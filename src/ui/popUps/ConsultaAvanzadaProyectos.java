@@ -554,7 +554,7 @@ public class ConsultaAvanzadaProyectos implements ControladorPantalla, PopUp {
      	if ((Integer) variablesPaso.get("tipoElemento") != null) {
      		int tipoElementos = (Integer) variablesPaso.get("tipoElemento");
      		
-     		this.cbTipo.setVisible(false);
+     		//this.cbTipo.setVisible(false);
      		Iterator<TipoProyecto> itTipo = this.cbTipo.getItems().iterator();
      		TipoProyecto tpAux = null;
      		while (itTipo.hasNext()) {

@@ -68,6 +68,7 @@ public class ConsultaImputaciones implements LectorXLS {
 					
 						Object leido = colPlantilla.getValorCelda(cell);
 						imputacion.put(colPlantilla.id, leido);	
+						System.out.println(colPlantilla.id + " - " + leido);
 					}
 
 					salida.add(imputacion);
