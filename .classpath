@@ -42,5 +42,7 @@
 	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx.web.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_211/javafx-sdk-11.0.2/lib/javafx-swt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/pdfbox-2.0.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/fontbox-2.0.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
