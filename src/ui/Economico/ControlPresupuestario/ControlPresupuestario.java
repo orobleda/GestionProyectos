@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,7 +28,9 @@ import model.beans.Proyecto;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoProyecto;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.Tabla;
 import ui.Economico.ControlPresupuestario.Tables.LineaCoste;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosado;
@@ -35,6 +38,7 @@ import ui.Economico.ControlPresupuestario.Tables.LineaCosteDesglosadoSumario;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteSumario;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
+import ui.popUps.ConsultaAvanzadaProyectos;
 
 public class ControlPresupuestario implements ControladorPantalla {
 
@@ -108,7 +112,12 @@ public class ControlPresupuestario implements ControladorPantalla {
     private Tabla tablaDiferencia;
     
     @FXML
-    private ComboBox<Proyecto> cbProyectos;
+	private TextField tProyecto = null;	
+	private static Proyecto proySeleccionado;
+	
+    @FXML
+    private ImageView imConsultaAvanzada;
+    private GestionBotones gbConsultaAvanzada;
     
     @FXML
     private TitledPane tpIzqda;
@@ -156,10 +165,24 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public void resize(Scene escena) {
 		
 	}
+	
+	private void consultaAvanzadaProyectos() throws Exception{		
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_PROYEVOLS, this.tProyecto);
+	}
 
 	@Override
 	public String getFXML() {
 		return fxml;
+	}
+	
+	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
+		if (listaProyecto!=null && listaProyecto.size()==1) {
+			ControlPresupuestario.proySeleccionado = listaProyecto.get(0);
+			this.tProyecto.setText(ControlPresupuestario.proySeleccionado.nombre);
+			ParamTable.po.hide();
+		
+			proyectoSeleccionado(ControlPresupuestario.proySeleccionado);
+		}
 	}
 	
 	public void initialize(){
@@ -172,16 +195,18 @@ public class ControlPresupuestario implements ControladorPantalla {
 		tablaDiferencia = new Tabla(tbDiferencia, new LineaCosteDesglosadoSumario(),this);
 		
 		ControlPresupuestario.elementoThis = this;
-		
-		Proyecto p = new Proyecto();
-		ArrayList<Proyecto> proyectos = p.listadoProyectos();
-		
-		cbProyectos.getItems().addAll(proyectos);
-		
-		cbProyectos.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			proyectoSeleccionado (newValue);
-	    	}
-	    ); 
+				
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				try {	
+					consultaAvanzadaProyectos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            } }, "Consulta elementos");
+		gbConsultaAvanzada.activarBoton();
 		
 		cbIzquda.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 			presupuestoSeleccionado(newValue,tablaResumenIzqda,ControlPresupuestario.COLUMNA_I);
@@ -230,7 +255,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public static void salvaPosicionActual() {
 		ControlPresupuestario.migas = new HashMap<String,Object>();
 		
-		migas.put("Proyecto", ControlPresupuestario.elementoThis.cbProyectos.getValue());
+		migas.put("Proyecto", ControlPresupuestario.proySeleccionado);
 		migas.put("Presupuesto", ControlPresupuestario.elementoThis.cbIzquda.getValue());
 		
 		if (ControlPresupuestario.elementoThis.gbJerarquia.presionado) {
@@ -248,8 +273,10 @@ public class ControlPresupuestario implements ControladorPantalla {
 	
 	public static void cargaPosicionActual() {
 		if (migas == null) return;
-		
-		ControlPresupuestario.elementoThis.proyectoSeleccionado((Proyecto) migas.get("Proyecto"));
+		ArrayList<Proyecto> listaProyecto = new ArrayList<Proyecto>();
+		listaProyecto.add((Proyecto) migas.get("Proyecto"));
+	
+		ControlPresupuestario.elementoThis.fijaProyecto(listaProyecto);
 		
 		Presupuesto p = (Presupuesto) migas.get("Presupuesto");
 		

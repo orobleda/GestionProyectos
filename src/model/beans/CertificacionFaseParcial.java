@@ -280,4 +280,16 @@ public class CertificacionFaseParcial implements Cargable{
 		return this.valEstimado;
 	}
 	
+	public String toString() {
+		try {
+			return this.certificacionFase.certificacion.s.codigo + " - Total: " + 
+					FormateadorDatos.formateaDato(this.certificacionFase.certificacion.calculaCoste(),TipoDato.FORMATO_MONEDA) + " - Fase: " +
+					this.certificacionFase.fase.nombre + " - Porcentaje: " + 
+					FormateadorDatos.formateaDato(this.porcentaje,TipoDato.FORMATO_PORC) + " - Estimado: " +
+					FormateadorDatos.formateaDato(this.valEstimado,TipoDato.FORMATO_MONEDA) ;
+		} catch (Exception ex) {
+			return this.nombre;
+		}
+	}
+	
 }

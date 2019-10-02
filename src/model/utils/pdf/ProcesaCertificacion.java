@@ -30,7 +30,7 @@ public class ProcesaCertificacion {
 	public static final String CERTIFICACION_IMPORTE = "horas";
 	public static final String CERTIFICACION_HORAS = "importe";
 
-	public static final String HITOS = "hitos";
+		public static final String HITOS = "hitos";
 	public static final String FECHA_CONSULTA = "fechaInicio";
 	public static final String SOLICITUD = "numSolicitud";
 	public static final String DESCRIPCION = "descripcion";

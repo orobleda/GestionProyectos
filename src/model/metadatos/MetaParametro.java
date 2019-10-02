@@ -40,6 +40,7 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String RECURSO_COD_USUARIO = "REC.codUsuario";
 	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
 	public static final String RECURSO_NOMBRE_REAL = "REC.PERSONA";
+	public static final String RECURSO_COD_PPM = "REC.NOMPPM";
 	
 
 	

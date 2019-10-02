@@ -165,6 +165,26 @@ public class Recurso implements Cargable{
 		return modificacion;
 	}
 	
+	public boolean identificaPorPPM(String valor){
+		try {
+			String valorParam = ((ParametroRecurso) this.getValorParametro(MetaParametro.RECURSO_COD_PPM)).valorTexto;
+			
+			String [] cortada = valorParam.split(";");
+			for (int i=0;i<cortada.length;i++) {
+				String codigo = cortada[i];
+				if (codigo.trim().toUpperCase().equals(valor.trim().toUpperCase())) {
+					return true;
+				}
+			}
+			
+			return false;
+			
+		} catch (Exception e) {
+			return false;
+		}
+		
+	}
+	
 	public void bajaRecurso(String idTransaccion) throws Exception{		
 		cargaRecurso(); 
 		

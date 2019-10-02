@@ -159,7 +159,8 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		EdicionCertificacion.variablesPaso = variablesPaso;	
 		certificacionFaseParcial = ((ui.Economico.ControlPresupuestario.Tables.LineaCosteCertificacion)variablesPaso.get("filaDatos")).cfp;
-		pintaCertificaciones(certificacionFaseParcial.certificacionFase.certificacion);
+		if (this.tCertificaciones!=null)
+			pintaCertificaciones(certificacionFaseParcial.certificacionFase.certificacion);
 	}
 
 	@Override

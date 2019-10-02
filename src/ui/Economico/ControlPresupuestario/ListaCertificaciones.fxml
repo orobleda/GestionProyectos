@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ListaCertificaciones">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ListaCertificaciones">
    <children>
+      <HBox>
+         <padding>
+            <Insets left="25.0" />
+         </padding>
+         <children>
+            <Label fx:id="lCertificaciones" styleClass="mano" text="Ver certificaciones guardadas" textFill="#1404f2" underline="true" />
+         </children>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </HBox>
       <HBox>
          <children>
             <TableView fx:id="tCertificaciones" />
@@ -35,6 +48,14 @@
             <Label prefWidth="250.0" text="Añadir Certificación Adicional" />
             <ComboBox fx:id="cbSistema" prefWidth="250.0" />
             <ImageView fx:id="imNuevaCertAdicional" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imCargaCertificacion" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
                </image>
