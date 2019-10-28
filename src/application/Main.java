@@ -82,7 +82,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			new Log("file");
+			new Log("DEBUG");
 			
 			Log.t("Hola");
 			
