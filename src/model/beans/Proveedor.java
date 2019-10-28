@@ -110,17 +110,12 @@ public class Proveedor implements Cargable, Loadable {
 	}
 	
 	public ArrayList<Tarifa> listaTarifas() {
-		RelRecursoTarifa rrt = new RelRecursoTarifa();
-		Iterator<RelRecursoTarifa> itRel = rrt.buscaRelacion(this.id, true).iterator();
+		HashMap<String,Object> filtros = new HashMap<String,Object>();
+		filtros.put(Tarifa.filtro_PROVEEDOR,this);
 		
-		ArrayList<Tarifa> salida = new ArrayList<Tarifa>();
-		
-		while (itRel.hasNext()) {
-			rrt = itRel.next();
-			salida.add(rrt.tarifa);
-		}
-		
-		return salida;
+		ArrayList<Tarifa> lTar = new Tarifa().listado(filtros);  
+				
+		return lTar;
 	}
 	
 	public boolean guardaProveedor(String idTransaccion) {

@@ -128,7 +128,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 			}
 		}
 		
-		if (parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_REAL ||
+		if (
 				parametrosPaso.get("columna")== LineaCosteCertificacion.FECHA || 
 				parametrosPaso.get("columna")== LineaCosteCertificacion.TIPO_ESTIMACION || 
 				parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_ESTIMADO) {
@@ -143,6 +143,23 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        editarCertificacion = loader.getController();
 		        editarCertificacion.variablesPaso = this.variablesPaso;	
 		        editarCertificacion.pintaValores(cf);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (parametrosPaso.get("columna")== LineaCosteCertificacion.VALOR_REAL) {
+			try {
+				CertificacionFaseParcial cf = (CertificacionFaseParcial) (((LineaCosteCertificacion) parametrosPaso.get("filaDatos")).cfp);
+				
+				ImportaCertificacion importCertificacion = new ImportaCertificacion();
+		        FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(new URL(importCertificacion.getFXML()));
+		        hbDetalle.getChildren().removeAll(hbDetalle.getChildren());
+		        hbDetalle.getChildren().add(loader.load());
+		        importCertificacion = loader.getController();
+		        parametrosPaso.put(ImportaCertificacion.MODO, ImportaCertificacion.MODO_DETALLE);
+		        importCertificacion.setParametrosPaso(parametrosPaso);	
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

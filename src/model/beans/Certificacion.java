@@ -150,8 +150,47 @@ public class Certificacion implements Cargable{
 				
 		return salida;
 	}
+		
+	public void gestionCertificacionesReales(Proyecto p) throws Exception {
+		if (CertificacionReal.copiadas==null) return;
+					
+		Iterator<CertificacionReal> itcertReal = CertificacionReal.copiadas.iterator();
+		HashMap<String,String> tratadas = new HashMap<String,String>();
+		
+		while (itcertReal.hasNext()) {
+			CertificacionReal cr = itcertReal.next();
+			
+			if (!tratadas.containsKey(cr.nSolicitud)) {
+				if (CertificacionReal.ACCION_CREAR == cr.modo) {
+					cr.copiarCertificacion(p);
+				}
+				if (CertificacionReal.ACCION_ELIMINAR == cr.modo) {
+					cr.borrarCertificacion(p);
+				}
+				if (CertificacionReal.ACCION_SUBSTITUIR == cr.modo) {
+					cr.substituirCertificacion(p, cr.versionPrevia);
+				}
+				tratadas.put(cr.nSolicitud,cr.nSolicitud);
+			}
+					
+			
+		}
+		
+		CertificacionReal.copiadas = new ArrayList<CertificacionReal>();
+	}
 	
-	public void borraCertificacion(String idTransaccion)  throws Exception{
+	public void borrarCertificacion () throws Exception{
+		String idTransaccion = ConsultaBD.getTicket();
+		
+		this.borraCertificacion(idTransaccion);
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+		
+		gestionCertificacionesReales(this.p);
+	} 
+	
+	
+	private void borraCertificacion(String idTransaccion)  throws Exception{
 		
 		Iterator<CertificacionFase> itFps = this.certificacionesFases.iterator();
 		while (itFps.hasNext()) {
@@ -174,9 +213,11 @@ public class Certificacion implements Cargable{
 	
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraCertificacion", listaParms, this, idTransaccion);
+		
+		
 	}
 	
-	public void insertCertificacion(String idTransaccion)  throws Exception{
+	private void insertCertificacion(String idTransaccion)  throws Exception{
 		
 		ConsultaBD consulta = new ConsultaBD();
 		
@@ -207,8 +248,9 @@ public class Certificacion implements Cargable{
 
 		}
 	}
+
 		
-	public void updateCertificacion( String idTransaccion)  throws Exception{
+	private void updateCertificacion( String idTransaccion)  throws Exception{
 
 		ConsultaBD consulta = new ConsultaBD();
 		
@@ -318,14 +360,18 @@ public class Certificacion implements Cargable{
 					parGen.valorObjeto = tpVCT;
 					
 					Date fechaAnterior =  cf.fase.getFechaImplantacion();
-							
-					for (int i=(tpVCT.porcentajes.size()-1);i>=0;i--) {
-						double porcentaje = tpVCT.porcentajes.get(i);
+					
+					Iterator<TipoCobroVCT> itPorc = tpVCT.lPorcentajes.iterator();
+					
+					while (itPorc.hasNext()) {
+						TipoCobroVCT porc = itPorc.next();
+						
+						double porcentaje = porc.porcentaje;
 						double valorParcial = porcentaje*valorFase/100;
 						
 						CertificacionFaseParcial cfp = new CertificacionFaseParcial();
 						cfp.certificacionFase = cf;
-						if (i==(tpVCT.porcentajes.size()-1)) {
+						if (itPorc.hasNext()) {
 							cfp.fxCertificacion = fechaAnterior;
 						} else {
 							cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
@@ -333,7 +379,7 @@ public class Certificacion implements Cargable{
 						fechaAnterior = cfp.fxCertificacion;
 						
 						cfp.id = -1;
-						cfp.nombre = tpVCT.nombres.get(i);
+						cfp.nombre = porc.nombre;
 						cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
 						cfp.porcentaje = new Float(porcentaje);
 						cfp.tsCertificacion = fechaAnterior.getTime();
@@ -386,14 +432,18 @@ public class Certificacion implements Cargable{
 		parGen.valorObjeto = tpVCT;
 					
 		Date fechaAnterior =  cf.fase.getFechaImplantacion();
+		
+		Iterator<TipoCobroVCT> itPorc = tpVCT.lPorcentajes.iterator();
 							
-		for (int i=(tpVCT.porcentajes.size()-1);i>=0;i--) {
-			double porcentaje = tpVCT.porcentajes.get(i);
+		while (itPorc.hasNext()) {
+			TipoCobroVCT porc = itPorc.next();
+			
+			double porcentaje = porc.porcentaje;
 			double valorParcial = 0*porcentaje;
 			
 			CertificacionFaseParcial cfp = new CertificacionFaseParcial();
 			cfp.certificacionFase = cf;
-			if (i==(tpVCT.porcentajes.size()-1)) {
+			if (itPorc.hasNext()) {
 				cfp.fxCertificacion = fechaAnterior;
 			} else {
 				cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
@@ -401,7 +451,7 @@ public class Certificacion implements Cargable{
 			fechaAnterior = cfp.fxCertificacion;
 			
 			cfp.id = -1;
-			cfp.nombre = tpVCT.nombres.get(i);
+			cfp.nombre = porc.nombre;
 			cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
 			cfp.porcentaje = new Float(porcentaje);
 			cfp.tsCertificacion = fechaAnterior.getTime();
@@ -465,14 +515,18 @@ public class Certificacion implements Cargable{
 		parGen.valorObjeto = tpVCT;
 		
 		Date fechaAnterior =  cf.fase.getFechaImplantacion();
-				
-		for (int i=(tpVCT.porcentajes.size()-1);i>=0;i--) {
-			double porcentaje = tpVCT.porcentajes.get(i);
+		
+		Iterator<TipoCobroVCT> itPorc = tpVCT.lPorcentajes.iterator();
+		
+		while (itPorc.hasNext()) {
+			TipoCobroVCT porc = itPorc.next();
+			
+			double porcentaje = porc.porcentaje;
 			double valorParcial = porcentaje*0/100;
 			
 			CertificacionFaseParcial cfp = new CertificacionFaseParcial();
 			cfp.certificacionFase = cf;
-			if (i==(tpVCT.porcentajes.size()-1)) {
+			if (itPorc.hasNext()) {
 				cfp.fxCertificacion = fechaAnterior;
 			} else {
 				cfp.fxCertificacion = calcularFechaPrevia(fechaAnterior);
@@ -480,7 +534,7 @@ public class Certificacion implements Cargable{
 			fechaAnterior = cfp.fxCertificacion;
 			
 			cfp.id = -1;
-			cfp.nombre = tpVCT.nombres.get(i);
+			cfp.nombre = porc.nombre;
 			cfp.paramCertificacionFaseParcial = par.dameParametros(cfp.getClass().getSimpleName(), Parametro.SOLO_METAPARAMETROS);
 			cfp.porcentaje = new Float(porcentaje);
 			cfp.tsCertificacion = fechaAnterior.getTime();
@@ -536,10 +590,23 @@ public class Certificacion implements Cargable{
 	}
 	
 	public void guardarCertificacion(String idTransaccion) throws Exception{
-		if (this.id==-1)
-			insertCertificacion(idTransaccion);
-		else 
-			updateCertificacion(idTransaccion);
+
+		if (null == idTransaccion)
+			idTransaccion = ConsultaBD.getTicket();
+		
+		
+		if (this.certificacionesFases.size()==0){
+			this.borraCertificacion(idTransaccion);
+		} else {
+			if (this.id==-1)
+					insertCertificacion(idTransaccion);
+			else 
+				updateCertificacion(idTransaccion);
+		}
+		
+		ConsultaBD.ejecutaTicket(idTransaccion);
+			
+		gestionCertificacionesReales(this.p);
 	}
 	
 	public Float calculaCoste() {

@@ -15,8 +15,10 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 	public static int ID_NINGUNO = -2;
 	public static int ID_PORC = -3;
 	public static int ID_DIFF = -4;
+	public static int ID_TREI_GDT = -5;
 	
 	public static String COD_TOTAL = "TOTAL";
+	public static String COD_TREI_GDT = "TREI GDT";
 	
 	public static int TREI = 1;
 	public static int SATAD = 2;
@@ -31,6 +33,8 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 	public String codigo = "";
 	public Coste costeAuxiliar = null;
 	public int tipoGestionEconomica = 0;
+	
+	public ArrayList<MetaGerencia> gerencias;
 		
 	public static HashMap<Integer, MetaConcepto> listado = null;
 	
@@ -68,6 +72,19 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 				
 		return null;
 	}
+	
+	public static MetaConcepto porCodigo(String codigo) {
+		Iterator<MetaConcepto> itMC = listado.values().iterator();
+		
+		while (itMC.hasNext()) {
+			MetaConcepto mc = itMC.next();
+			if (mc.codigo.equals(codigo)) {
+				return mc;
+			}
+		}
+				
+		return null;
+	}
 
 	@Override
 	public void load() {
@@ -81,6 +98,9 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 			MetaConcepto est = (MetaConcepto) it.next();
 			listado.put(est.id, est);
 		}
+		
+		RelBloqueConcepto rbc = new RelBloqueConcepto();
+		rbc.buscaRelacion();
 	}
 	
 	public static MetaConcepto getTotal() {
@@ -90,6 +110,14 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 		mc.id = MetaConcepto.ID_TOTAL;
 		return mc;
 	} 
+	
+	public static MetaConcepto getTREIGDT() {
+		MetaConcepto mc = new MetaConcepto();
+		mc.codigo = COD_TOTAL;
+		mc.descripcion = COD_TOTAL;
+		mc.id = MetaConcepto.ID_TOTAL;
+		return mc;
+	}
 	
 	public ArrayList<MetaConcepto> aPorcentaje() {
 		ArrayList<MetaConcepto> listadoSalida = new ArrayList<MetaConcepto>();
@@ -111,6 +139,22 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 		listadoSalida.add(0, mc);
 		
 		return listadoSalida;
+	}
+	
+	public ArrayList<MetaConcepto> getMetaConceptos(MetaGerencia g) {
+		ArrayList<MetaConcepto> salida = new ArrayList<MetaConcepto>();
+		
+		if (MetaGerencia.GDT == g.id) {
+			salida.add(MetaConcepto.listado.get(MetaConcepto.CC));
+			salida.add(MetaConcepto.listado.get(MetaConcepto.TREI));
+		}
+		
+		if (MetaGerencia.GGP == g.id){
+			salida.add(MetaConcepto.listado.get(MetaConcepto.SATAD));
+			salida.add(MetaConcepto.listado.get(MetaConcepto.TREI));
+		}
+		
+		return salida;
 	}
 	
 	@Override

@@ -108,6 +108,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	boolean nuevaVersion = false;
 	
+	
 	@Override
 	public void resize(Scene escena) {
 		tProyecto.setPrefWidth(escena.getWidth()*0.65);
@@ -267,7 +268,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 	}
 	
 	public void borrarVersion() throws Exception{
-		ArrayList<Presupuesto> listaPresupuestos = this.presOperado.buscaPresupuestos(this.proyOperado.id);
+		ArrayList<Presupuesto> listaPresupuestos = this.presOperado.buscaPresupuestos(this.proyOperado);
 		
 		if (listaPresupuestos.size()<2) {
 			Dialogo.error("No se pudo eliminar", "No se pudo eliminar el presupuesto", "Es el último presupuesto del proyecto y por tanto no se puede eliminar");
@@ -710,7 +711,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 			cbVersion.getItems().removeAll(cbVersion.getItems());
 			
 			Presupuesto pres = new Presupuesto();		
-			ArrayList<Presupuesto> listado = pres.buscaPresupuestos(proySeleccionado.id);
+			ArrayList<Presupuesto> listado = pres.buscaPresupuestos(proySeleccionado);
 			
 			cbVersion.getItems().addAll(listado);
 			

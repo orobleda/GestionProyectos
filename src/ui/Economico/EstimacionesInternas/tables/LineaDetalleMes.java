@@ -128,7 +128,7 @@ public class LineaDetalleMes extends ParamTable implements Tableable  {
 	public String resaltar(int fila, String columna, Tabla tabla) {
 		LineaDetalleMes ldm = (LineaDetalleMes) tabla.listaDatosFiltrada.get(fila);
 		if (LineaDetalleUsuario.CONCEPTO_HORAS_PENDIENTES.equals(ldm.concepto))
-			if (ldm.importe!=0) {
+			if (Math.abs(ldm.importe)>0.1) {
 				return "-fx-background-color: " + Constantes.COLOR_ROJO;
 			} else {
 				return "-fx-background-color: " + Constantes.COLOR_VERDE;

@@ -20,7 +20,6 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.EstimacionAnio;
-import model.beans.FraccionImputacion;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
@@ -32,7 +31,7 @@ import model.utils.db.ConsultaBD;
 import ui.ConfigTabla;
 import ui.Dialogo;
 import ui.GestionBotones;
-import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
+import ui.Tabla;
 import ui.Economico.ControlPresupuestario.Tables.LineaTopeImputacion;
 import ui.Economico.ControlPresupuestario.Tables.LineaTopePresupuesto;
 import ui.interfaces.ControladorPantalla;
@@ -58,12 +57,10 @@ public class TopeImputaciones implements ControladorPantalla {
 
     @FXML
     private TableView<Tableable> tbTopes;
+    private Tabla tablaTopes;
  
     @FXML
     private ComboBox<MetaConcepto> cbConceptos;
-
-    @FXML
-    private TableView<Tableable> tConceptos;
     
     @FXML
     private ImageView imGuardar;
@@ -79,7 +76,7 @@ public class TopeImputaciones implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		
+		tablaTopes.fijaAlto(cbComboSistemas.getScene().getHeight()*0.5);
 	}
 
 	@Override
@@ -88,6 +85,7 @@ public class TopeImputaciones implements ControladorPantalla {
 	}
 	
 	public void initialize(){
+		
 		TopeImputaciones.listadoTopes = new ArrayList<TopeImputacion>();
 		
 		try {
@@ -132,9 +130,7 @@ public class TopeImputaciones implements ControladorPantalla {
 						while (itTopes.hasNext()) {
 							TopeImputacion ti = itTopes.next();
 							
-							if (contador++==0) {
-								ti.deleteTopes(idTransaccion);
-							}
+							ti.deleteTopes(idTransaccion);							
 							
 							ti.insertTope(idTransaccion);
 						}
@@ -160,52 +156,6 @@ public class TopeImputaciones implements ControladorPantalla {
 		
 		cbComboSistemas.getItems().add(s);
 		cbComboSistemas.setValue(s);
-		
-		cbConceptos.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			Sistema sAux = cbComboSistemas.getValue();
-			
-			if (!sAux.codigo.equals(Sistema.getInstanceTotal().codigo)) {
-				muestraTopes();
-			}
-		}
-	    ); 
-		
-		cbComboSistemas.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			Sistema sAux = cbComboSistemas.getValue();
-			
-			ArrayList<Concepto> listaConceptos = null;
-			
-			if (!sAux.codigo.equals(Sistema.getInstanceTotal().codigo)) {
-				listaConceptos = getListaConceptos(sAux,p);
-			} else {
-				listaConceptos = getListaConceptos(null,p);
-				this.cbConceptos.getItems().removeAll(this.cbConceptos.getItems());				
-			}
-			
-			ArrayList<Object> lista = new ArrayList<Object>();
-			lista.addAll(listaConceptos);
-			ObservableList<Tableable> dataTable = (new LineaTopePresupuesto(listaConceptos.get(0))).toListTableable(lista);
-			tbTopes.setItems(dataTable);
-			
-			(new LineaTopePresupuesto()).fijaColumnas(tbTopes);
-			ConfigTabla.configuraAlto(tbTopes,lista.size());
-			
-			lista = new ArrayList<Object>();
-			dataTable = (new LineaTopeImputacion()).toListTableable(lista);
-			tConceptos.setItems(dataTable);
-			
-			(new LineaTopeImputacion()).fijaColumnas(tConceptos);
-			ConfigTabla.configuraAlto(tConceptos,lista.size()+2);
-		}
-	    );
-		
-		ArrayList<Object> lista = new ArrayList<Object>();
-		ObservableList<Tableable> dataTable = (new LineaTopeImputacion()).toListTableable(lista);
-		tConceptos.setItems(dataTable);
-		
-		(new LineaTopeImputacion()).fijaColumnas(tConceptos);
-		ConfigTabla.configuraAlto(tConceptos,lista.size()+2);
-		
 		TopeImputaciones.thisTope = this;
 	}
 	
@@ -238,7 +188,7 @@ public class TopeImputaciones implements ControladorPantalla {
 				mapTopes.put(ti.sistema.codigo+ti.mConcepto.codigo, new Float(ti.porcentaje));
 			}
 		}
-		
+		/*
 		Iterator<String> itPorcentajes = mapTopes.keySet().iterator();
 		
 		while (itPorcentajes.hasNext()) {
@@ -248,7 +198,7 @@ public class TopeImputaciones implements ControladorPantalla {
 				Dialogo.error("Actualización de Topes", "Problema al guardar", "No se puede parametrizar más de un 100% como suma de porcentajes ("+key+")");
 				return false;
 			}
-		}
+		}*/
 		
 		return true;
 	}
@@ -266,6 +216,7 @@ public class TopeImputaciones implements ControladorPantalla {
 		ap.construyePresupuestoMensualizado(pres,fechaPivote,null,null,null,null);	
 		
 		ControlPresupuestario.ap = ap;
+		this.p = ap.proyecto;
 	}
 	
 	public void recargaTopes () {
@@ -282,13 +233,6 @@ public class TopeImputaciones implements ControladorPantalla {
 		(new LineaTopePresupuesto()).fijaColumnas(tbTopes);
 		ConfigTabla.configuraAlto(tbTopes,lista.size());
 		
-		lista = new ArrayList<Object>();
-		dataTable = (new LineaTopeImputacion()).toListTableable(lista);
-		tConceptos.setItems(dataTable);
-		
-		(new LineaTopeImputacion()).fijaColumnas(tConceptos);
-		ConfigTabla.configuraAlto(tConceptos,lista.size()+2);
-				
 		Iterator<Sistema> itSistemas = this.cbComboSistemas.getItems().iterator();
 		Sistema s = null;
 		
@@ -301,6 +245,8 @@ public class TopeImputaciones implements ControladorPantalla {
 		}
 		
 		cbComboSistemas.setValue(s);
+		
+		resize(null);
 	}
 	
 	public void adscribir(ControlPresupuestario cp, Proyecto p) {
@@ -315,11 +261,14 @@ public class TopeImputaciones implements ControladorPantalla {
 				
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(listaConceptos);
-		ObservableList<Tableable> dataTable = (new LineaTopePresupuesto(listaConceptos.get(0))).toListTableable(lista);
-		tbTopes.setItems(dataTable);
 		
-		(new LineaTopePresupuesto()).fijaColumnas(tbTopes);
-		ConfigTabla.configuraAlto(tbTopes,lista.size());
+		ArrayList<Object> listaFiltros = new ArrayList<Object>();
+		listaFiltros.add(cbComboSistemas);
+		listaFiltros.add(cbConceptos);
+
+		tablaTopes = new Tabla(tbTopes, new LineaTopePresupuesto(listaConceptos.get(0)),listaFiltros,this);
+		tablaTopes.pintaTabla(lista);
+		resize(null);
 	}
 	
 	public ArrayList<Concepto> getListaConceptos(Sistema s, Proyecto p) {
@@ -359,9 +308,7 @@ public class TopeImputaciones implements ControladorPantalla {
 					Concepto cAux = c;
 					
 					if (!conceptosSistema.containsKey(c.tipoConcepto.codigo)) {
-						if (codSistema != Sistema.getInstanceTotal().codigo) {
-							cbConceptos.getItems().add(c.tipoConcepto);
-						}
+						cbConceptos.getItems().add(c.tipoConcepto);
 						conceptosSistema.put(c.tipoConcepto.codigo, c);
 						c.topeEstimacion = new ArrayList<EstimacionAnio>();
 					} else {
@@ -387,80 +334,91 @@ public class TopeImputaciones implements ControladorPantalla {
 					eA.fechaInicio = new Date(eA.anio,0,1);
 					eA.fechaFin = new Date(eA.anio+1,12,1);
 					cAux.topeEstimacion.add(eA);
+					cAux.s = Sistema.getInstanceTotal();
 				}						
 			}
 		}
 		
+		Iterator<Sistema> itSistema = cbComboSistemas.getItems().iterator();
+		
+		while (itSistema.hasNext()) {
+			s = itSistema.next();
+			codSistema = s.codigo;
+			itAnios = TopeImputaciones.ap.estimacionAnual.iterator();
+			
+			while (itAnios.hasNext()) {
+				EstimacionAnio ea = itAnios.next();
+				
+				HashMap<String, Concepto> listaConceptos = ea.acumuladoPorSistemaConcepto(s);
+				Iterator<Concepto> itConceptos = listaConceptos.values().iterator();
+				
+				while (itConceptos.hasNext()) {
+					Concepto c = itConceptos.next();
+					
+					
+					if (c.tipoConcepto.tipoGestionEconomica == MetaConcepto.GESTION_HORAS) {
+						
+						HashMap<String, Concepto> conceptosSistema = null;
+						
+						if (!lConceptos.containsKey(codSistema)) {
+							conceptosSistema = new HashMap<String, Concepto>();
+							lConceptos.put(codSistema, conceptosSistema);
+						} else {
+							conceptosSistema = lConceptos.get(codSistema);
+						}
+						
+						Concepto cAux = c;
+						
+						if (!conceptosSistema.containsKey(c.tipoConcepto.codigo)) {
+							conceptosSistema.put(c.tipoConcepto.codigo, c);
+							c.topeEstimacion = new ArrayList<EstimacionAnio>();
+						} else {
+							cAux = conceptosSistema.get(c.tipoConcepto.codigo);
+						}
+						
+						EstimacionAnio eA = new EstimacionAnio();
+						eA.anio = ea.anio;
+						
+						if (c.listaEstimaciones.size()>0) {
+							eA.cantidad = c.listaEstimaciones.get(0).importe;
+						} else {
+							eA.cantidad = 0;
+						}
+						
+						if (c.listaImputaciones.size()>0) {
+							eA.cantidadImputada = c.listaImputaciones.get(0).importe;
+						} else {
+							eA.cantidadImputada = 0;
+						}
+						
+						eA.concepto = cAux;
+						eA.fechaInicio = new Date(eA.anio,0,1);
+						eA.fechaFin = new Date(eA.anio+1,12,1);
+						cAux.topeEstimacion.add(eA);
+						cAux.s = s;
+					}						
+				}
+			}
+		}
+				
 		ArrayList<Concepto> salidaLista = new ArrayList<Concepto>();		
 				
 		if (lConceptos.size()>0) {
-			HashMap<String, Concepto> conceptosSistema = (HashMap<String, Concepto>) lConceptos.values().toArray()[0];
-			salidaLista.addAll(conceptosSistema.values());		
+			Iterator<HashMap<String, Concepto>> itLConceptos = lConceptos.values().iterator();
+			while (itLConceptos.hasNext()) {
+				HashMap<String, Concepto> sistema = itLConceptos.next();
+				salidaLista.addAll(sistema.values());	
+			}			
+			cbConceptos.getItems().add(MetaConcepto.getTotal());
+			
 			return salidaLista;
 		}
+		
 		
 		return 	null;	
 	}
 	
-	public void muestraTopes() {
-		
-		TopeImputacion tp = new TopeImputacion();
-		
-		Concepto c = new Concepto();
-		c.tipoConcepto = this.cbConceptos.getValue();
-		
-		if (this.cbConceptos.getValue() == null) return ;
-		
-		ArrayList<TopeImputacion> listaTopes = null;
-		
-		if (TopeImputaciones.listadoTopes==null || TopeImputaciones.listadoTopes.size()==0) {
-			listaTopes = tp.listadoTopes(this.p);
-		} else {
-			tp.topes = TopeImputaciones.listadoTopes;
-		}
-				
-		listaTopes = tp.dameTopes(this.cbComboSistemas.getValue(), c);
-		
-		Iterator<EstimacionAnio> itEA = TopeImputaciones.ap.estimacionAnual.iterator();
-		
-		while (itEA.hasNext()) {
-			EstimacionAnio eA = itEA.next();
-			
-			Iterator<TopeImputacion> itTp = listaTopes.iterator();
-			
-			boolean encontrado = false;
-			
-			while (itTp.hasNext()) {
-				TopeImputacion ti = itTp.next();
-				
-				if (ti.anio == eA.anio) {
-					encontrado = true;
-					break;
-				}
-			}
-			
-			if (!encontrado) {
-				TopeImputacion ti = new TopeImputacion();
-				ti.anio = eA.anio;
-				ti.cantidad = 0;
-				ti.resto = true;
-				ti.id =  -1;
-				ti.mConcepto =  this.cbConceptos.getValue();
-				ti.porcentaje = 0;
-				ti.proyecto = TopeImputaciones.ap.proyecto;
-				ti.sistema = this.cbComboSistemas.getValue();
-				listaTopes.add(ti);
-			}
-		}
-		
-		ArrayList<Object> lista = new ArrayList<Object>();
-		lista.addAll(listaTopes);
-		ObservableList<Tableable> dataTable = (new LineaTopeImputacion()).toListTableable(lista);
-		tConceptos.setItems(dataTable);
-		
-		(new LineaTopeImputacion()).fijaColumnas(tConceptos);
-		ConfigTabla.configuraAlto(tConceptos,lista.size());
-	}
+	
 	
 	
 

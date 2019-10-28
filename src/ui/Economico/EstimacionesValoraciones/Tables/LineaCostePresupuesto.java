@@ -35,6 +35,8 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
     
     public static final String SISTEMA = "Sistema";
     public static final String TOTAL = "Total"; 
+    public static final String COSTE = "COSTE";  
+    public static final String RESUMEN = "RESUMEN";
     
     public LineaCostePresupuesto(Coste coste) {
 
@@ -49,14 +51,20 @@ public class LineaCostePresupuesto extends ParamTable implements Tableable  {
     }
     
 	public void fijaMetaDatos(HashMap<String,Object> variablesPaso){
-		coste = (Coste) variablesPaso.get("COSTE");
+		coste = (Coste) variablesPaso.get(LineaCostePresupuesto.COSTE);
 		
-		if (variablesPaso.get("RESUMEN")!=null) {
-			resumen = (Boolean) variablesPaso.get("RESUMEN");
+		if (variablesPaso.get(LineaCostePresupuesto.RESUMEN)!=null) {
+			resumen = (Boolean) variablesPaso.get(LineaCostePresupuesto.RESUMEN);
 		}
 	}
 	
 	public void setConfig() {
+		if (coste==null) {
+			if (this.variablesMetaDatos!=null) {
+				coste = (Coste) variablesMetaDatos.get(LineaCostePresupuesto.COSTE);
+			}
+		}
+		
 		setConfig(coste);
 	}
     

@@ -1,5 +1,7 @@
 package ui.Economico.ControlPresupuestario;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -7,25 +9,23 @@ import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import model.beans.Concepto;
 import model.beans.EstimacionAnio;
-import model.beans.Proyecto;
-import model.beans.RelRecursoTarifa;
-import model.beans.Tarifa;
 import model.beans.TopeImputacion;
 import model.constantes.FormateadorDatos;
-import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
-import ui.Economico.ControlPresupuestario.Tables.LineaTopeImputacion;
+import ui.Economico.ControlPresupuestario.Tables.LineaTopePresupuesto;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 import ui.popUps.PopUp;
@@ -35,41 +35,29 @@ public class ModificaTope implements ControladorPantalla, PopUp {
 	public static final String fxml = "file:src/ui/Economico/ControlPresupuestario/ModificaTope.fxml"; 
 	
 	public static TableRowDataFeatures<Tableable> expander = null;
-	public static TopeImputacion ti = null;
+	public static TopeImputaciones ti = null;
 
 	public static Object claseRetorno = null;
 	public static String metodoRetorno = null;
 	
 	public boolean esPopUp = false;
 	
-	@FXML
-	private AnchorPane anchor;
-	
-	@FXML
-    private TextField tFxInicio;
+    @FXML
+    private Label lSistema;
 
     @FXML
-    private TextField tFxFin;
+    private VBox vbDetallesTopes;
 
     @FXML
-    private ComboBox<Integer> cbAnio;
-
-    @FXML
-    private CheckBox ckResto;
-
-    @FXML
-    private TextField tCantidad;
-
-    @FXML
-    private TextField tPorc;
-
-    @FXML
-    private ImageView imGuardarTope;
-    private GestionBotones gbGuardarTope;
+    private ImageView imGuardar;
+    private GestionBotones gbGuardar;
+    
+    public ArrayList<DetalleTope> listaDetalles = null;
+    public Concepto c = null;
 	
 	@Override
 	public AnchorPane getAnchor() {
-		return anchor;
+		return null;
 	}
 	
 	@Override
@@ -82,103 +70,29 @@ public class ModificaTope implements ControladorPantalla, PopUp {
 		return fxml;
 	}
 	
-	public void initialize(){		
-		try {
-			
-			gbGuardarTope = new GestionBotones(imGuardarTope, "Guardar3", false, new EventHandler<MouseEvent>() {        
-				@Override
-	            public void handle(MouseEvent t)
-	            {   
-					insertaTope();
-					TopeImputaciones.thisTope.recargaTopes();
-					ParamTable.po.hide();
-	            } }, "Guardar", this);
-			gbGuardarTope.activarBoton();
-			
-			Concepto c = getListaConceptos(TopeImputaciones.thisTope.cbComboSistemas.getValue(), TopeImputaciones.ap.proyecto,ti.anio, ti.mConcepto);
-			
-			Concepto total = TopeImputaciones.ap.presupuesto.getCosteConcepto(ti.sistema, ti.mConcepto);
-			
-			this.ckResto.setSelected(ModificaTope.ti.resto);
-			
-			if (ModificaTope.ti.resto) {
-				this.tCantidad.setDisable(true);
-				this.tPorc.setDisable(true);
-				this.tCantidad.setText(FormateadorDatos.formateaDato(c.valorEstimado,FormateadorDatos.FORMATO_MONEDA));
-				if (total==null) this.tPorc.setText(FormateadorDatos.formateaDato(100*c.valorEstimado/1,FormateadorDatos.FORMATO_PORC));
-				else this.tPorc.setText(FormateadorDatos.formateaDato(100*c.valorEstimado/total.valorEstimado,FormateadorDatos.FORMATO_PORC));
-			} else {
-				if (ti.cantidad!=0) {
-					this.tCantidad.setText(FormateadorDatos.formateaDato(ti.cantidad,FormateadorDatos.FORMATO_MONEDA));
-					if (total==null) this.tPorc.setText(FormateadorDatos.formateaDato(0,FormateadorDatos.FORMATO_PORC));
-					else this.tPorc.setText(FormateadorDatos.formateaDato(100*ti.cantidad/total.valorEstimado,FormateadorDatos.FORMATO_PORC));
-				} else {
-					if (total==null)  this.tCantidad.setText(FormateadorDatos.formateaDato(0,FormateadorDatos.FORMATO_MONEDA));
-					else this.tCantidad.setText(FormateadorDatos.formateaDato(ti.porcentaje*total.valorEstimado/100,FormateadorDatos.FORMATO_MONEDA));
-					this.tPorc.setText(FormateadorDatos.formateaDato(ti.porcentaje,FormateadorDatos.FORMATO_PORC));
-				}
-			}
-			
-			this.ckResto.selectedProperty().addListener((ov, oldV, newV) -> { 
-				if (newV) {
-					this.tCantidad.setDisable(true);
-					this.tPorc.setDisable(true);
-				}  else {
-					this.tCantidad.setDisable(false);
-					this.tPorc.setDisable(false);
-				}
-			});
-			
-			this.tPorc.focusedProperty().addListener((ov, oldV, newV) -> { 
-				if (!newV) {
-					try {
-						float porc = (Float) FormateadorDatos.parseaDato(this.tPorc.getText(), FormateadorDatos.FORMATO_MONEDA);
-						Concepto totalAux = TopeImputaciones.ap.presupuesto.getCosteConcepto(ti.sistema, ti.mConcepto);
-						this.tPorc.setText(FormateadorDatos.formateaDato(porc,FormateadorDatos.FORMATO_PORC));
-						this.tCantidad.setText(FormateadorDatos.formateaDato(porc*totalAux.valorEstimado/100,FormateadorDatos.FORMATO_MONEDA));
-					} catch (Exception e) {
-						this.tPorc.setText("0 %");
-						this.tCantidad.setText("0 €");
-					}
-				}	
-			});
-			
-			this.tCantidad.focusedProperty().addListener((ov, oldV, newV) -> { 
-				if (!newV) {
-					try {
-						float cantidad = (Float) FormateadorDatos.parseaDato(this.tCantidad.getText(), FormateadorDatos.FORMATO_MONEDA);
-						Concepto totalAux = TopeImputaciones.ap.presupuesto.getCosteConcepto(ti.sistema, ti.mConcepto);
-						this.tPorc.setText(FormateadorDatos.formateaDato(100*cantidad/totalAux.valorEstimado,FormateadorDatos.FORMATO_PORC));
-						this.tCantidad.setText(FormateadorDatos.formateaDato(cantidad,FormateadorDatos.FORMATO_MONEDA));
-					} catch (Exception e) {
-						this.tPorc.setText("0 %");
-						this.tCantidad.setText("0 €");
-					}
-				}	
-			}); 
-		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				this.tCantidad.setText(FormateadorDatos.formateaDato(0,FormateadorDatos.FORMATO_MONEDA));
-				this.tPorc.setText(FormateadorDatos.formateaDato(0,FormateadorDatos.FORMATO_PORC));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		this.cbAnio.setDisable(true);
-	}
-	
-	public ModificaTope (TableRowDataFeatures<Tableable> expander){
-		ModificaTope.expander = expander;
-	}
-	
 	public ModificaTope (Object claseRetorno, String metodoRetorno){
 		ModificaTope.claseRetorno = claseRetorno;
 		ModificaTope.metodoRetorno = metodoRetorno;
 	}
 	
 	public ModificaTope (){
+	}
+	
+	public void initialize(){		
+			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
+				@Override
+	            public void handle(MouseEvent t)
+	            {   
+					try {
+						insertaTope();
+						TopeImputaciones.thisTope.recargaTopes();
+						ParamTable.po.hide();
+					} catch (Exception e) {
+						Dialogo.error("Fallo al guardar", "Fallo al guardar", "Se produjo un error al guardar los elementos.");
+						e.printStackTrace();						
+					}
+	            } }, "Guardar", this);
+			gbGuardar.activarBoton();
 	}
 
 	@Override
@@ -188,75 +102,99 @@ public class ModificaTope implements ControladorPantalla, PopUp {
 
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
-		LineaTopeImputacion lti = (LineaTopeImputacion) variablesPaso.get("filaDatos");
-		ModificaTope.ti = lti.ti;			
-	}
+		if (lSistema!=null){
+			listaDetalles = new ArrayList<DetalleTope> ();
+			LineaTopePresupuesto ltp = 	(LineaTopePresupuesto) variablesPaso.get("filaDatos");	
+			ti = (TopeImputaciones) variablesPaso.get("controladorPantalla");
+			c = ltp.concepto;
+			
+			
+			ArrayList<TopeImputacion> listaTopes = muestraTopes(ti, ltp.concepto);
+			
+			lSistema.setText(ltp.concepto.s.toString() + " - " + ltp.concepto.tipoConcepto.descripcion);
+			
+			Iterator<EstimacionAnio> itEa = ltp.concepto.topeEstimacion.iterator();
+			while (itEa.hasNext()) {
+				EstimacionAnio ea = itEa.next();
+				
+				VBox vb = new VBox();
+				
+				HashMap<String, Object> parametrosPaso = new HashMap<String, Object>();
+				parametrosPaso.put(DetalleTope.ANIO, ea.anio);							        	
+    			parametrosPaso.put(DetalleTope.CONCEPTO, ea.concepto);
+    			parametrosPaso.put(DetalleTope.PADRE, this);
+    			
+    			try {
+					FXMLLoader loader = new FXMLLoader();
+		        	loader.setLocation(new URL(new DetalleTope().getFXML()));
+					vb.getChildren().add(loader.load());
+					DetalleTope controlPantalla = (DetalleTope) loader.getController();
+	    	        controlPantalla.setParametrosPaso(parametrosPaso);
 	
-	public Concepto getListaConceptos(Sistema s, Proyecto p, int anio, MetaConcepto mc) {
-		Concepto c = null;
-				
-		Iterator<EstimacionAnio> itAnios = TopeImputaciones.ap.estimacionAnual.iterator();
-		
-		while (itAnios.hasNext()) {
-			EstimacionAnio ea = itAnios.next();
-			
-			Integer aAux = new Integer(ea.anio);
-			this.cbAnio.getItems().add(aAux);
-			
-			if (anio == aAux.intValue()) {
-				this.cbAnio.setValue(aAux);
-				
-				HashMap<String, Concepto> listaConceptos = ea.totalPorConcepto(s);
-				
-				c = listaConceptos.get(mc.codigo);				
+	    	        listaDetalles.add(controlPantalla);
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			}
+    			
+    	        vbDetallesTopes.getChildren().add(vb);
 			}
-		}
-		
-		return 	c;	
+			
+			if (ltp.concepto.s.codigo.equals(Sistema.getInstanceTotal().codigo)) {
+				this.gbGuardar.desActivarBoton();
+			}
+		}		
 	}
 	
-	public void insertaTope() {		
-		boolean aResto = false;
-		float porcentaje = 0;
+	public void insertaTope() throws Exception {	
+		Iterator<DetalleTope> itDetalleTope = this.listaDetalles.iterator();
 		
-		if (this.ckResto.isSelected()) {
-			aResto = true;
-		} else {
-			aResto = false;
-			try { porcentaje = (Float) FormateadorDatos.parseaDato(this.tPorc.getText(), FormateadorDatos.FORMATO_PORC); } catch (Exception e) { porcentaje = 0;}
-		}
-				
-		String codConcepto = ModificaTope.ti.mConcepto.codigo;
-		String codSistema = TopeImputaciones.thisTope.cbComboSistemas.getValue().codigo;
-		int anio = this.cbAnio.getValue();
-		
-		boolean encontrado = false;
-		
-		Iterator<TopeImputacion> itTopes = TopeImputaciones.listadoTopes.iterator();
-		
-		while (itTopes.hasNext()) {
-			TopeImputacion tAux = itTopes.next();
-		
-			if (tAux.anio == anio && tAux.mConcepto.codigo.equals(codConcepto) && tAux.sistema.codigo.equals(codSistema)) {
-				tAux.porcentaje = porcentaje;
-				tAux.resto = aResto;
-				encontrado = true;
-				break;
-			}			
-		}
-		
-		if (!encontrado) {
-			TopeImputacion tAux = new TopeImputacion();
-			tAux.anio = anio;
-			tAux.cantidad = 0;
-			tAux.mConcepto = ModificaTope.ti.mConcepto;
-			tAux.porcentaje = porcentaje;
-			tAux.proyecto = TopeImputaciones.ap.proyecto;
-			tAux.resto = aResto;
-			tAux.sistema = TopeImputaciones.thisTope.cbComboSistemas.getValue();
+		while (itDetalleTope.hasNext()) {
+			DetalleTope dt = itDetalleTope.next();
 			
-			TopeImputaciones.listadoTopes.add(tAux);
-		}		
+			boolean aResto = false;
+			float porcentaje = 0;
+			
+			if (dt.ckResto.isSelected()) {
+				aResto = true;
+			} else {
+				aResto = false;
+				try { porcentaje = (Float) FormateadorDatos.parseaDato(dt.tPorc.getText(), FormateadorDatos.FORMATO_PORC); } catch (Exception e) { porcentaje = 0;}
+			}
+					
+			String codConcepto = this.c.tipoConcepto.codigo;
+			String codSistema = this.c.s.codigo;
+			int anio = (Integer) FormateadorDatos.parseaDato(dt.lConcepto.getText(),TipoDato.FORMATO_INT);
+			
+			boolean encontrado = false;
+			
+			Iterator<TopeImputacion> itTopes = TopeImputaciones.listadoTopes.iterator();
+			
+			while (itTopes.hasNext()) {
+				TopeImputacion tAux = itTopes.next();
+			
+				if (tAux.anio == anio && tAux.mConcepto.codigo.equals(codConcepto) && tAux.sistema.codigo.equals(codSistema)) {
+					tAux.porcentaje = porcentaje;
+					tAux.resto = aResto;
+					encontrado = true;
+					break;
+				}			
+			}
+			
+			if (!encontrado) {
+				TopeImputacion tAux = new TopeImputacion();
+				tAux.anio = anio;
+				tAux.cantidad = 0;
+				tAux.mConcepto = this.c.tipoConcepto;
+				tAux.porcentaje = porcentaje;
+				tAux.proyecto = TopeImputaciones.ap.proyecto;
+				tAux.resto = aResto;
+				tAux.sistema = this.c.s;
+				
+				TopeImputaciones.listadoTopes.add(tAux);
+			}	
+			
+		}
+		
 	}
 	
 
@@ -273,6 +211,55 @@ public class ModificaTope implements ControladorPantalla, PopUp {
 	@Override
 	public String getMetodoRetorno() {
 		return metodoRetorno;
+	}
+	
+	public ArrayList<TopeImputacion> muestraTopes(TopeImputaciones tpImp, Concepto c) {
+		
+		TopeImputacion tp = new TopeImputacion();
+		
+		ArrayList<TopeImputacion> listaTopes = null;
+		
+		if (tpImp.listadoTopes==null || tpImp.listadoTopes.size()==0) {
+			listaTopes = tp.listadoTopes(tpImp.p);
+		} else {
+			tp.topes = TopeImputaciones.listadoTopes;
+		}
+				
+		listaTopes = tp.dameTopes(c.s, c);
+		
+		Iterator<EstimacionAnio> itEA = TopeImputaciones.ap.estimacionAnual.iterator();
+		
+		while (itEA.hasNext()) {
+			EstimacionAnio eA = itEA.next();
+			
+			Iterator<TopeImputacion> itTp = listaTopes.iterator();
+			
+			boolean encontrado = false;
+			
+			while (itTp.hasNext()) {
+				TopeImputacion ti = itTp.next();
+				
+				if (ti.anio == eA.anio) {
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (!encontrado) {
+				TopeImputacion ti = new TopeImputacion();
+				ti.anio = eA.anio;
+				ti.cantidad = 0;
+				ti.resto = true;
+				ti.id =  -1;
+				ti.mConcepto =  c.tipoConcepto;
+				ti.porcentaje = 0;
+				ti.proyecto = TopeImputaciones.ap.proyecto;
+				ti.sistema = c.s;
+				listaTopes.add(ti);
+			}
+		}
+		
+		return listaTopes;
 	}
 
 }

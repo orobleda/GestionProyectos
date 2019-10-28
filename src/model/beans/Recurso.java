@@ -72,9 +72,19 @@ public class Recurso implements Cargable{
 			while (itProyecto.hasNext()) {
 				Recurso p = (Recurso) itProyecto.next();
 				Recurso.listaRecursos.put(new Integer(p.id),p);
+				p.recargaParametros ();
 			}
 		
         return Recurso.listaRecursos;
+	}
+	
+	public void recargaParametros () {
+		try {
+			this.listadoParametros = null;
+			this.getValorParametro("");
+		} catch (Exception ex) {
+			
+		}
 	}
 	
 	public static HashMap<Integer, Recurso> listadoRecursosEstatico() {

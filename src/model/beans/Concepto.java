@@ -12,7 +12,7 @@ import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
-public class Concepto implements Cargable {
+public class Concepto implements Cargable, Comparable<Concepto> {
 	
 	public int id=0;
 	public float valor;
@@ -27,6 +27,7 @@ public class Concepto implements Cargable {
 	public Tarifa tarifa;
 	public BaseCalculoConcepto baseCalculo;
 	public int idCoste;
+	public float porc_trei_ggp = 0;
 	
 	public Recurso r;
 	public Sistema s; 
@@ -212,6 +213,22 @@ public class Concepto implements Cargable {
 		c.coste = this.coste;
 		c.tarifa = this.tarifa;
 		c.baseCalculo = this.baseCalculo;
+		c.s = this.s;		
+		
+		return c;
+	}
+	
+	public Concepto cloneConListas() {
+		Concepto c = this.clone();
+		
+		c.listaEstimaciones = new ArrayList<Estimacion>();
+		c.listaImputaciones = new ArrayList<Imputacion>();
+		
+		c.listaEstimaciones.addAll(this.listaEstimaciones);
+		c.listaImputaciones.addAll(this.listaImputaciones);
+		
+		if (this.topeImputacion!=null)
+			c.topeImputacion = this.topeImputacion.clone();
 		
 		return c;
 	}
@@ -313,6 +330,14 @@ public class Concepto implements Cargable {
 		
 		return this;
 	}
+
+	@Override
+	public int compareTo(Concepto arg0) {
+		MetaConcepto mc = arg0.tipoConcepto;
+		return this.tipoConcepto.compareTo(mc);
+	}
+	
+	
 	
 	
 }

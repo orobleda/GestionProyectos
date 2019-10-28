@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.GestionesFoto">
+   <children>
+      <HBox alignment="CENTER_LEFT">
+      <children>
+      <Label fx:id="lSistema" prefWidth="100.0" text="Nombre Foto" />
+            <TextField fx:id="tNombreFoto" prefWidth="300.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </TextField>
+            <ImageView id="imGuardarTope" fx:id="imRenombrar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="null">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView id="imGuardarTope" fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="null">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView id="imGuardarTope" fx:id="imDescargar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="null">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+      </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <CheckBox fx:id="chkPersistir" mnemonicParsing="false" text="Persistir">
+         <VBox.margin>
+            <Insets left="130.0" />
+         </VBox.margin>
+      </CheckBox>
+      <HBox prefHeight="-1.0" prefWidth="-1.0">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+         <children>
+            <Label fx:id="lSistema1" prefWidth="100.0" text="Lista Fotos" />
+            <ComboBox fx:id="cbFotos" prefWidth="300.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
+            <ImageView id="imGuardarTope" fx:id="imComparar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="null">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

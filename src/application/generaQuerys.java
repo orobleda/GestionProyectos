@@ -5,11 +5,11 @@ import java.util.Iterator;
 
 public class generaQuerys {
 	public static void main(String[] args) {
-		String estructura = "CREATE TABLE [PROVEEDOR]\r\n" + 
-				"(\r\n" + 
-				"	[id] integer NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,\r\n" + 
-				"	[descripcion] text,\r\n" + 
-				"	[nombreCorto] text";
+		String estructura = "REL_BLOQUE_CONCEPTO]{"+
+							"[id] integer NOT NULL UNIQUE,"+
+							"[idBloque] integer NOT NULL,"+
+							"[codRel] text NOT NULL,"+
+							"[idConcepto] integer";
 		
 		String [] lineasAux = estructura.split("\\(");
 		String tabla = lineasAux[0].replaceAll("CREATE TABLE \\[", "").replaceAll("\\]", "").trim();
@@ -21,7 +21,7 @@ public class generaQuerys {
 		for (int i=1;i<lineas.length;i++) {
 			if (!lineas[i].equals("")) {
 				String [] campo = lineas[i].split("\\]");
-				String tipo = campo[1].trim().split(" ")[0];
+				String tipo = campo[0].trim().split(" ")[0];
 				if ("text".equals(tipo)) tipo = "String";
 				if ("integer".equals(tipo)) tipo = "int";
 				if ("real".equals(tipo)) tipo = "float";

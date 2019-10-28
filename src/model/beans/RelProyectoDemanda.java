@@ -95,7 +95,8 @@ public class RelProyectoDemanda implements Cargable{
 				
 				if (rec.demandaLinea!=null) {
 					recAux2 = rec.demandaLinea;
-					listaPres = p.buscaPresupuestos(recAux2.id);
+					Proyecto pAux = Proyecto.getProyectoEstatico(recAux2.id);
+					listaPres = p.buscaPresupuestos(pAux);
 				}
 				else {
 				    ApunteContable ap = new ApunteContable();

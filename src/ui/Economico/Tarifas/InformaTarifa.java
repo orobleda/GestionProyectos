@@ -64,6 +64,7 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	
 	public static TarifaTabla t = null;
 	public DetalleImputacion di = null;
+	public GestionTarifas gt = null;
 	public Imputacion imputacion = null;
 	
 	public boolean esPopUp = false;
@@ -146,7 +147,7 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 		try {
 			Tarifa tar = null;
 			
-			if (!esPopUp) {	
+			if (this.gt!=null) {	
 				tar = t.t;
 				t.modificado = true;
 				tar.modificado = true;
@@ -173,9 +174,9 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 				tar.fFinVig = c.getTime();
 			}			
 						
-			if (!esPopUp) {	
+			if (this.gt!=null) {	
 				ParamTable.po.hide();
-				((GestionTarifas) GestionTarifas.objetoThis).valorModificado();
+				this.gt.valorModificado();
 			} else {
 				tar.insertTarifa();
 				Tarifa.forzarRecargaTarifas();
@@ -236,29 +237,38 @@ public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.f
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		esPopUp = true;
-		if (this.imputacion==null){
-			this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
-			this.di = (DetalleImputacion)  variablesPaso.get("padre");
-			
-			this.tsDesarrollo.setDisable(true);
-			this.tsMantenimiento.setDisable(true);
-			this.gbGuardar.activarBoton();
-			
-			try {
-				this.tTarifa.setText(FormateadorDatos.formateaDato(this.imputacion.fTarifa, TipoDato.FORMATO_MONEDA));
+		if (variablesPaso.containsKey("filaDatos")) {
+			if (variablesPaso.get("filaDatos").getClass().getSimpleName().equals(TarifaTabla.class.getSimpleName())){
+				TarifaTabla tt = (TarifaTabla) variablesPaso.get("filaDatos");
+				InformaTarifa.t = tt;
 				
-				if (this.imputacion.prov!=null) {
-					this.cbProveedor.setValue(this.imputacion.prov);
+				if (variablesPaso.containsKey("controladorPantalla")) {
+					if (variablesPaso.get("controladorPantalla").getClass().getSimpleName().equals(GestionTarifas.class.getSimpleName())) {
+						this.gt = (GestionTarifas) variablesPaso.get("controladorPantalla");
+					}
 				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		} else {
-			esPopUp = false;
-			TarifaTabla tt = (TarifaTabla) variablesPaso.get("filaDatos");
-			this.t = tt;
-		}		
+			if (this.imputacion==null){
+				this.imputacion = (Imputacion) variablesPaso.get(LineaDetalleImputacion.IMPUTACION);
+				this.di = (DetalleImputacion)  variablesPaso.get("padre");
+				
+				this.tsDesarrollo.setDisable(true);
+				this.tsMantenimiento.setDisable(true);
+				this.gbGuardar.activarBoton();
+				
+				try {
+					this.tTarifa.setText(FormateadorDatos.formateaDato(this.imputacion.fTarifa, TipoDato.FORMATO_MONEDA));
+					
+					if (this.imputacion.prov!=null) {
+						this.cbProveedor.setValue(this.imputacion.prov);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} 
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +10,8 @@ import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
+import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
@@ -94,6 +97,8 @@ public class Tarifa implements Cargable{
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("iInsertaTarifa", listaParms, this);
+		
+		this.idTarifa = ParametroBD.ultimoId;
 	}
 	
 	public ArrayList<Tarifa> listado (HashMap<String, Object> filtros ) {		
@@ -186,6 +191,83 @@ public class Tarifa implements Cargable{
 		return listaTarifas;
 	}
 	
+	public static Tarifa tarifaPorDefecto(Recurso r, Proveedor p, boolean mantenimiento) throws Exception {
+		Tarifa salida = null;
+		if (r!=null) {
+			ParametroRecurso pr = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_TAR_DEF);
+			
+			if (pr!=null && pr.valorObjeto!=null) {
+				salida = (Tarifa) pr.getValor();
+				if (salida != null) return salida;
+			}
+			
+			pr = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_PROVEEDOR);
+			if (pr!=null && pr.valorObjeto!=null) {
+				Proveedor pAux = (Proveedor) pr.getValor();
+				
+				HashMap<String,Object> filtros = new HashMap<String,Object>();
+				filtros.put(Tarifa.filtro_PROVEEDOR, pAux);
+				ArrayList<Tarifa> lTarifas= new Tarifa().listado(filtros);
+				if (lTarifas!=null) {
+					Calendar fUltima = Calendar.getInstance();
+					fUltima.setTime(Constantes.fechaActual());
+					Iterator<Tarifa> itTarifas = lTarifas.iterator();
+					while (itTarifas.hasNext()) {
+						Tarifa tAux = itTarifas.next();
+						if (tAux.fFinVig==null) return tAux;
+						
+						Calendar fFin = Calendar.getInstance();
+						fFin.setTime(tAux.fFinVig);
+						
+						if (fFin.after(fUltima)) return tAux;
+					}
+				}
+			}
+			
+			pr = (ParametroRecurso) r.getValorParametro( MetaParametro.RECURSO_NAT_COSTE);
+			
+			if (pr!=null && pr.valorObjeto!=null) {
+				MetaConcepto mc = (MetaConcepto) pr.getValor();
+				
+				String parametro = "";
+				
+				if (MetaConcepto.TREI == mc.id) parametro = MetaParametro.PARAMETRO_TARIFA_DEFECTO_INTERNAS;
+				else if (MetaConcepto.SATAD == mc.id) parametro = MetaParametro.PARAMETRO_TARIFA_DEFECTO_SATAD;
+				else if (MetaConcepto.CC == mc.id) parametro = MetaParametro.PARAMETRO_TARIFA_DEFECTO_CC;
+				
+				Parametro par = (Parametro) Parametro.getParametro(Parametro.class.getSimpleName(), r.id, parametro);
+				
+				if (pr!=null && par.valorObjeto!=null) {
+					salida = (Tarifa) par.getValor();
+					if (salida != null) return salida;
+				}
+			} else {
+				Parametro par = (Parametro) Parametro.getParametro(Parametro.class.getSimpleName(), r.id, MetaParametro.PARAMETRO_TARIFA_DEFECTO_INTERNAS);
+				
+				if (pr!=null && par.valorObjeto!=null) {
+					salida = (Tarifa) par.getValor();
+					if (salida != null) return salida;
+				}
+			}
+		} else {
+			Parametro pr = (Parametro) Parametro.getParametro(Proveedor.class.getSimpleName(), p.id, MetaParametro.PROVEEDOR_TARIFA_DEFECTO);
+			
+			if (pr!=null && pr.valorObjeto!=null) {
+				salida = (Tarifa) pr.getValor();
+				if (salida != null) return salida;
+			}
+			
+			pr = (Parametro) Parametro.getParametro(Parametro.class.getSimpleName(), -1, MetaParametro.PARAMETRO_TARIFA_DEFECTO_DES);
+				
+			if (pr!=null && pr.valorObjeto!=null) {
+				salida = (Tarifa) pr.getValor();
+				if (salida != null) return salida;
+			}
+		}		
+		
+		return null;
+	}
+	
 	public Tarifa tarifaPorCoste(boolean desarrollo, float coste) {
 		HashMap<String, Object> filtros  = new HashMap<String, Object>();
 		filtros.put(Tarifa.filtro_DESARROLLO, Constantes.TRUE);
@@ -202,6 +284,7 @@ public class Tarifa implements Cargable{
 		}
 		
 		Tarifa t = new Tarifa();
+		t.idTarifa = -1;
 		t.costeHora = coste;
 		t.esDesarrollo = true;
 		t.fFinVig = Constantes.finMes(12, 2999);
@@ -218,7 +301,7 @@ public class Tarifa implements Cargable{
 	}
 	
 	public String toString() {
-		return nomTarifa;
+		return this.costeHora + " " + (proveedor==null?"ENAGAS":proveedor.nomCorto);
 	}
 	
 	@Override

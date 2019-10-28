@@ -161,7 +161,7 @@ public class ParamTable implements Tableable {
 									        	}
 								        		controlPantalla.setClaseContenida(selector);
 									        	controlPantalla.setParametrosPaso(parametrosPaso);
-							        	        loader.setLocation(new URL(controlPantalla.getControlFXML()));
+									        	loader.setLocation(new URL(controlPantalla.getControlFXML()));
 							        	        Pane pane = loader.load();
 							        	        controlPantalla = (PopUp) loader.getController();
 							        	        controlPantalla.setParametrosPaso(parametrosPaso);

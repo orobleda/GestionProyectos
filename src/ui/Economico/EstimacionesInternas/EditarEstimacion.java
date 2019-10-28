@@ -1,6 +1,5 @@
 package ui.Economico.EstimacionesInternas;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -15,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.beans.Proyecto;
 import model.beans.Recurso;
-import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
@@ -180,6 +178,7 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 			
 			cbSistema.getItems().removeAll(cbSistema.getItems());
 			cbSistema.getItems().addAll(eI.sistemasDisponibles.values());
+			cbSistema.getItems().addAll(Sistema.listado.values());
 			
 			cbProyecto.getItems().removeAll(cbProyecto.getItems());
 			cbProyecto.getItems().addAll(eI.proyectosDisponibles.values());
@@ -252,7 +251,7 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 	}
 	
 	public void cargaProyecto(Proyecto p) {
-		cbSistema.getItems().removeAll(cbSistema.getItems());
+		cbSistema.getItems().removeAll(cbSistema.getItems());/*
 		Iterator<Object> itdatos = eI.tablaResumen.listaDatosEnBruto.iterator();
 		
 		while (itdatos.hasNext()) {
@@ -261,7 +260,8 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 				Sistema s = lcpe.sistema;
 				cbSistema.getItems().add(s);
 			}
-		}
+		}*/
+		cbSistema.getItems().addAll(Sistema.listado.values());
 	}
 	
 	public void cargaSistema(Sistema s) {
@@ -286,18 +286,7 @@ public class EditarEstimacion implements ControladorPantalla, PopUp {
 		multiplicador = 0;
 		
 		try {
-			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			
-			Date fecha = null;
-			
-			try {
-				int mes = Constantes.numMes(this.cbMes.getValue());
-				int anio = this.cbAnio.getValue();
-				fecha = Constantes.finMes(mes, anio);
-			} catch (Exception e) {
-			}
-			
-			Tarifa t = rrt.tarifaVigente(r.id,false,fecha).tarifa;
+			Tarifa t = Tarifa.tarifaPorDefecto(r, null, false);
 			multiplicador = t.costeHora;
 		} catch (Exception e) {
 			multiplicador = 1;

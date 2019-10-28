@@ -378,16 +378,12 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		cert.p = this.certificacion.certificacion.p;
 				
 		this.certificacion.certificacion.generaCertificacionFaseVacia(this.certificacion.certificacion.s, this.certificacion.certificacion.p, this.certificacion.certificacion, fp);
-				
-		String idTransaccion = ConsultaBD.getTicket();
 		
 		Parametro par = this.listaParametros.get(MetaParametro.CERTIFICACION_FASE_TIPOVCT);
 		if (par.modificado)
 			par.modificado = false;
 				
-		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
-		
-		ConsultaBD.ejecutaTicket(idTransaccion);
+		this.certificacion.certificacion.guardarCertificacion(null);
 	}
 	
 	public void moverCertificacion() throws Exception{
@@ -447,22 +443,10 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		
 		this.certificacion.borraCertificacionFase(idTransaccion);
 		
-		ArrayList<CertificacionFase> lCf = new ArrayList<CertificacionFase>();
-				
-		itCf = this.certificacion.certificacion.certificacionesFases.iterator();
-		
-		while (itCf.hasNext()) {
-			CertificacionFase cfAux = itCf.next();
-			if (this.certificacion != cfAux) {
-				lCf.add(cfAux);
-			}
-		}
-		
-		this.certificacion.certificacion.certificacionesFases = lCf;
-		
 		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
 		
 		ConsultaBD.ejecutaTicket(idTransaccion);
+		
 	}
 	
 	public void guardarCertificacion() throws Exception{
@@ -488,10 +472,11 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		
 		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
 		
-		ConsultaBD.ejecutaTicket(idTransaccion);
 	}
 	
 	public void borraFase() throws Exception{
+		String idTransaccion = ConsultaBD.getTicket();
+		
 		float porcentajeTotal = 0;
 		
 		Iterator<CertificacionFase> itCf = this.certificacion.certificacion.certificacionesFases.iterator();
@@ -517,12 +502,9 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 		
 		this.certificacion.certificacion.certificacionesFases = listCf;
 		
-		String idTransaccion = ConsultaBD.getTicket();
-		
 		this.certificacion.borraCertificacionFase(idTransaccion);
-		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
 		
-		ConsultaBD.ejecutaTicket(idTransaccion);
+		this.certificacion.certificacion.guardarCertificacion(idTransaccion);
 		
 	}
 	

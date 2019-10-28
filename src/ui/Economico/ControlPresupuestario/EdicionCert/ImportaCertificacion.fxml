@@ -13,7 +13,7 @@
    <children>
       <HBox alignment="CENTER_LEFT">
          <children>
-            <Label fx:id="lNombreFichero" prefWidth="625.0" text="Label" />
+            <Label fx:id="lNombreFichero" prefWidth="625.0" text="Label" textFill="#3a2df2" underline="true" />
             <ImageView fx:id="imCargaCertificacion" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
@@ -146,6 +146,24 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </VBox>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label prefWidth="150.0" text="Tarifa" />
+            <ComboBox fx:id="cbTarifa" prefWidth="250.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ComboBox>
+            <ImageView fx:id="imAltaTarifa" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+      </HBox>
       <HBox alignment="TOP_RIGHT">
          <VBox.margin>
             <Insets top="15.0" />
@@ -158,6 +176,14 @@
                <image>
                   <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
                </image>
+            </ImageView>
+            <ImageView fx:id="imBorrar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../imgs/iconos/NuevaFila3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </ImageView>
          </children>
       </HBox>

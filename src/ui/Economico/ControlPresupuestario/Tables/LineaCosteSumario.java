@@ -28,7 +28,10 @@ public class LineaCosteSumario extends ParamTable implements Tableable  {
 	public void setConfig() {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
     	configuracionTabla.put("%", new ConfigTabla("%", "%", false,0, false));
-    	configuracionTabla.put("Diferencia", new ConfigTabla("Diferencia", "Diferencia", false,1, false));    	
+    	configuracionTabla.put("Diferencia", new ConfigTabla("Diferencia", "Diferencia", false,1, false));
+    	anchoColumnas = new HashMap<String, Integer>();
+    	anchoColumnas.put("%", new Integer(60));
+    	anchoColumnas.put("Diferencia", new Integer(85));
     }
     
    	public void set(String campo, String valor){

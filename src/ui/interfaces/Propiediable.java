@@ -16,6 +16,7 @@ import model.beans.ParametroRecurso;
 import model.beans.Proveedor;
 import model.beans.Proyecto;
 import model.beans.Recurso;
+import model.beans.Tarifa;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import ui.Propiedad;
@@ -96,6 +97,14 @@ public interface Propiediable {
 		}	
 		if (Recurso.class.getSimpleName().equals(entidad)) {
 			Recurso r = (Recurso) elemento;
+			return r.id;
+		}
+		if (Tarifa.class.getSimpleName().equals(entidad)) {
+			Tarifa r = (Tarifa) elemento;
+			return r.idTarifa;
+		}
+		if (Proveedor.class.getSimpleName().equals(entidad)) {
+			Proveedor r = (Proveedor) elemento;
 			return r.id;
 		}
 		return -1;

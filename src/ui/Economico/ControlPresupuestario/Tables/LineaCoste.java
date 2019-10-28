@@ -47,6 +47,13 @@ public class LineaCoste extends ParamTable implements Tableable  {
     	
     	configuracionTabla.put("TOTAL", new ConfigTabla("TOTAL", "TOTAL", false,contador, false));
     	
+    	anchoColumnas = new HashMap<String, Integer>();
+    	anchoColumnas.put("TREI", new Integer(65));
+    	anchoColumnas.put("CC", new Integer(65));
+    	anchoColumnas.put("SATAD", new Integer(65));
+    	anchoColumnas.put("Desarrollo", new Integer(70));
+    	anchoColumnas.put("GOSC", new Integer(65));
+    	anchoColumnas.put("TOTAL", new Integer(70));
     }
     
    	public void set(String campo, String valor){

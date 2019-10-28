@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.event.ChangeListener;
-
-import org.apache.xmlbeans.SchemaStringEnumEntry;
 import org.controlsfx.control.HiddenSidesPane;
 
+import controller.Log;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -45,10 +43,10 @@ import ui.Economico.GestionPresupuestos.GestionPresupuestos;
 import ui.GestionProyectos.AltaModProyecto;
 import ui.Recursos.GestionProveedores.AltaModProveedor;
 import ui.Recursos.GestionRecursos.AltaModRecurso;
-import ui.Recursos.GestionTarifas.AsignacionTarifas;
 import ui.Recursos.GestionVacaciones.GestionVacaciones;
 import ui.interfaces.ControladorPantalla;
 import ui.planificacion.Faseado.Faseado;
+import ui.reporting.ReportingInformes;
 
 
 public class Main extends Application {
@@ -84,6 +82,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			new Log("file");
+			
+			Log.t("Hola");
+			
 			imLoading = new ImageView();
 	        imLoading.setLayoutX(((Screen.getPrimary().getBounds().getMaxX() - Screen.getPrimary().getBounds().getMinX())/2.5)-imLoading.getBoundsInLocal().getWidth()/2.5);
 	        imLoading.setLayoutY(((Screen.getPrimary().getBounds().getMaxY() - Screen.getPrimary().getBounds().getMinY())/2.5)-imLoading.getBoundsInLocal().getHeight()/2.5);
@@ -398,7 +400,6 @@ public class Main extends Application {
 		listaMenu.put(Main.RECURSOS, opcionMenu);
 		opcionMenu.put("Gestión Recursos", new AltaModRecurso());            
 		opcionMenu.put("Gestión Proveedores", new AltaModProveedor());            
-		opcionMenu.put("Asignación Tarifas", new AsignacionTarifas());            
 		opcionMenu.put("Gestión horas trabajadas", new GestionVacaciones());            
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
@@ -421,11 +422,11 @@ public class Main extends Application {
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.REPORTES, opcionMenu);	
+		opcionMenu.put("Descarga Informes", new ReportingInformes()); 
 		
 		listaImgsPeque.put("Gestión solicitudes", "PequeGestionSolicitudes.png"); 
 		listaImgsPeque.put("Gestión Recursos", "PequeConsultaRecurso.png");
 		listaImgsPeque.put("Gestión Proveedores", "PequeConsultaProveedor.png");
-		listaImgsPeque.put("Asignación Tarifas", "PequeAsignacionTarifaUsuario.png");
 		listaImgsPeque.put("Gestión horas trabajadas", "PequeGestionHoras.png");
 		listaImgsPeque.put("Gestión Estimaciones", "PequeGestionEstimacion.png"); 
 		listaImgsPeque.put("Gestión Presupuestos", "PequeGestionPresupuestos.png");
@@ -435,7 +436,8 @@ public class Main extends Application {
 		listaImgsPeque.put("Alta de Imputaciones", "PequeCargaImputaciones.png"); 
 		listaImgsPeque.put("Faseado Proyectos", "PequeFaseadoProyectos.png"); 
 		listaImgsPeque.put("Gestión Festivos", "PequeCalendario.png"); 
-		listaImgsPeque.put("Gestión paramétricas", "PequeAjustes.png"); 
+		listaImgsPeque.put("Gestión paramétricas", "PequeAjustes.png");
+		listaImgsPeque.put("Descarga Informes", "PequeAjustes.png"); 
 	}
 	
 	private void click(ControladorPantalla ctl) {

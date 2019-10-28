@@ -185,7 +185,7 @@ public class Proyecto implements Cargable{
 			
 			if (pp!=null) {
 				
-				if ( descPPM.equals(pp.getValor())) {
+				if (descPPM.trim().equals(pp.getValor())) {
 					boolean insertar = true;
 					if (soloAbiertos) {
 						pp = p.getValorParametro(MetaParametro.PROYECTO_CERRADO);
@@ -198,6 +198,23 @@ public class Proyecto implements Cargable{
 		}
 		
 		return null;
+	}
+	
+	public String rutaCertificacion() throws Exception{
+		Parametro p = new Parametro();
+		p = p.getParametro(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
+		
+		String ruta = p.valorTexto;
+		
+		ParametroProyecto pp = this.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
+		TipoProyecto tp = (TipoProyecto) pp.getValor();
+		ruta += "\\"+tp.descripcion;
+		
+		pp = this.getValorParametro(MetaParametro.PROYECTO_ACRONPROY);
+		ruta+= "\\"+pp.getValor()+"\\Certificaciones\\";
+		
+		
+		return ruta;
 	}
 	
 	public ArrayList<Proyecto> listadoProyectosGGP(boolean cerrado) {

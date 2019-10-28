@@ -33,7 +33,6 @@ import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.Recurso;
-import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
@@ -74,6 +73,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 	public HashMap<String,Recurso> recursosDisponibles = null;
 	
 	public ArrayList<Estimacion> listaEstimacionesProvisionales = null; 
+	public ArrayList<Estimacion> listaEstimacionesExistentes = null;
 
     @FXML
     public ComboBox<Integer> cbAnio;
@@ -113,6 +113,9 @@ public class EstimacionesInternas implements ControladorPantalla {
     @FXML
     private ImageView imAniadir;
     private GestionBotones gbAniadir;
+    
+    @FXML
+    private HBox hbTablaInferior;
 	
 	@Override
 	public AnchorPane getAnchor() {
@@ -126,6 +129,16 @@ public class EstimacionesInternas implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
+		if (escena!=null) {
+			crMes.setMaxHeight(escena.getHeight()*0.5);
+			crUsuario.setMaxHeight(escena.getHeight()*0.5);
+			
+			crMes.setMaxWidth(escena.getWidth()*0.65);
+			crUsuario.setMaxWidth(escena.getWidth()*0.3);
+			
+			hbTablaInferior.setMaxWidth(escena.getWidth()*0.95);
+			hbTablaInferior.setMaxHeight(escena.getHeight()*0.20);
+		}
 		
 	}
 	
@@ -224,6 +237,8 @@ public class EstimacionesInternas implements ControladorPantalla {
 		
 		cargaUsuarios(true);
 		cargaProyectos();
+		
+		resize(crUsuario.getScene());
 
 	}
 	
@@ -360,6 +375,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 					
 					while (keyConcepto.hasNext()) {
 						String concepto = keyConcepto.next();
+						System.out.println(concepto);
 						
 						if (!this.conceptosEstaticos.containsKey(concepto)) {
 							HashMap<String,HashMap<String,Float>> proyecto = mes.get(concepto);
@@ -436,6 +452,8 @@ public class EstimacionesInternas implements ControladorPantalla {
 		
 		Iterator<Recurso> itRecursos = Recurso.listadoRecursosEstatico().values().iterator();
 		
+		listaEstimacionesExistentes = new ArrayList<Estimacion>();
+		
 		while (itRecursos.hasNext()) {
 			Recurso r = itRecursos.next();
 			
@@ -450,22 +468,24 @@ public class EstimacionesInternas implements ControladorPantalla {
 				this.listaEstimacionesProvisionales = new ArrayList<Estimacion>();
 				this.listaEstimacionesProvisionales.addAll(listaEstim);
 				
+				listaEstimacionesExistentes.addAll(listaEstim);
+				
 				Iterator<Estimacion> itEstimacion = listaEstim.iterator();
 				while (itEstimacion.hasNext()) {
 					est = itEstimacion.next();
 					
-					if (est.sistema.responsable == Constantes.getAdministradorSistema().id) {
+					//if (est.sistema.responsable == Constantes.getAdministradorSistema().id) {
 						HashMap<Integer,Estimacion> meses = null;
 						
-						if (listaEstimaciones.containsKey(est.proyecto.id)) {
-							meses = listaEstimaciones.get(est.proyecto.id);
+						if (listaEstimaciones.containsKey(new Integer(est.proyecto.id + "0" + est.sistema.id).intValue())) {
+							meses = listaEstimaciones.get(new Integer(est.proyecto.id + "0" + est.sistema.id).intValue());
 						} else {
 							meses = new HashMap<Integer,Estimacion>();
-							listaEstimaciones.put(est.proyecto.id, meses);
+							listaEstimaciones.put(new Integer(est.proyecto.id + "0" + est.sistema.id).intValue(), meses);
 						}
 						
 						meses.put(est.mes, est);
-					}
+					//}
 				}
 				
 				HashMap<Integer,HashMap<String,HashMap<String,HashMap<String,Float>>>> datosRecurso = new HashMap<Integer,HashMap<String,HashMap<String,HashMap<String,Float>>>>();
@@ -474,8 +494,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 				float multiplicador = 0;
 				
 				try {
-					RelRecursoTarifa rrt = new RelRecursoTarifa();
-					Tarifa t = rrt.tarifaVigente(r.id,false,null).tarifa;
+					Tarifa t = Tarifa.tarifaPorDefecto(r, null, false);
 					multiplicador = t.costeHora;
 				} catch (Exception e) {
 					multiplicador = 1;
@@ -497,7 +516,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 					concepto.put(EstimacionesInternas.IMPORTE, jd.horasAcumuladas*multiplicador);
 					
 					jd = listadoDatosRecurso.get(i+1).get(JornadasMes.VACACIONES);
-					JornadasMes jdAux = listadoDatosRecurso.get(i+1).get(JornadasMes.VACACIONES);
+					JornadasMes jdAux = listadoDatosRecurso.get(i+1).get(JornadasMes.AUSENCIAS);
 					sistema = new HashMap<String,HashMap<String,Float>>();
 					concepto = new HashMap<String,Float>();
 					sistema.put(EstimacionesInternas.SISTEMA, concepto);
@@ -512,32 +531,41 @@ public class EstimacionesInternas implements ControladorPantalla {
 					while (itEstim.hasNext()) {
 						HashMap<Integer,Estimacion> desgloseMeses = itEstim.next();
 						
-						if (desgloseMeses.containsKey(i+1)) {
-							est = desgloseMeses.get(i+1);
+						itEstimacion = desgloseMeses.values().iterator();
+						
+						while (itEstimacion.hasNext()) {
+							est = itEstimacion.next();
+							
+							
+							
+							if (datosMes.containsKey(est.proyecto.nombre)) {
+								sistema = datosMes.get(est.proyecto.nombre);
+							}else {
+								sistema = new HashMap<String,HashMap<String,Float>>();
+								datosMes.put(est.proyecto.nombre, sistema);
+							}
 							
 							concepto = new HashMap<String,Float>();
-							sistema = new HashMap<String,HashMap<String,Float>>();
-							concepto = new HashMap<String,Float>();
-							sistema.put(est.sistema.codigo, concepto);
-							datosMes.put(est.proyecto.nombre, sistema);
 							
-							concepto.put(EstimacionesInternas.HORAS, est.horas);
-							concepto.put(EstimacionesInternas.IMPORTE, est.horas*multiplicador);
-							concepto.put(EstimacionesInternas.SISTEMA, est.horas*multiplicador);
-							concepto.put(EstimacionesInternas.RECURSO, new Float(r.id));
+														
+							if (est.mes == i+1) {
+								concepto.put(EstimacionesInternas.HORAS, est.horas);
+								concepto.put(EstimacionesInternas.IMPORTE, est.horas*multiplicador);
+								concepto.put(EstimacionesInternas.SISTEMA, est.horas*multiplicador);
+								concepto.put(EstimacionesInternas.RECURSO, new Float(r.id));
+								sistema.put(est.sistema.codigo, concepto);
+								asignadas+= est.horas;
+							} else {
+								if (!sistema.containsKey(est.sistema.codigo)) {
+									concepto.put(EstimacionesInternas.HORAS, new Float(0));
+									concepto.put(EstimacionesInternas.IMPORTE, new Float(0));
+									concepto.put(EstimacionesInternas.SISTEMA, est.horas*multiplicador);
+									concepto.put(EstimacionesInternas.RECURSO, new Float(r.id));
+									sistema.put(est.sistema.codigo, concepto);
+								}
+							}
 							proyectosDisponibles.put(est.proyecto.nombre,est.proyecto);
 							sistemasDisponibles.put(est.sistema.codigo,est.sistema);
-							asignadas+= est.horas;
-						} else {
-							concepto = new HashMap<String,Float>();
-							sistema = new HashMap<String,HashMap<String,Float>>();
-							concepto = new HashMap<String,Float>();
-							sistema.put(EstimacionesInternas.SISTEMA, concepto);
-							datosMes.put(est.proyecto.nombre, sistema);
-							concepto.put(EstimacionesInternas.HORAS, new Float(0));
-							concepto.put(EstimacionesInternas.IMPORTE, new Float(0));
-							concepto.put(EstimacionesInternas.SISTEMA, est.horas*multiplicador);
-							concepto.put(EstimacionesInternas.RECURSO, new Float(r.id));
 						}
 					}
 					
@@ -708,12 +736,36 @@ public class EstimacionesInternas implements ControladorPantalla {
 		}
 		
 		if (!insertada) {
-			if (est.horas!=0) {
-				est.modo = EstimacionesInternas.MODO_INSERTAR;
-				procesados.add(est);
-				salida = est;
-				todasNeutras = false;
+			boolean existente = false;
+			Iterator<Estimacion> itEstim = this.listaEstimacionesExistentes.iterator();
+			while (itEstim.hasNext()) {
+				Estimacion estAux = itEstim.next();
+				
+				if (estAux.anio == est.anio &&
+					estAux.mes == est.mes &&
+					estAux.recurso.id == est.recurso.id &&
+					estAux.proyecto.id == est.proyecto.id &&
+					estAux.sistema.id == est.sistema.id){
+					procesados.add(estAux);
+					estAux.horas = est.horas;
+					estAux.importe = est.importe;
+
+					todasNeutras = false;
+					
+					if (estAux.horas==0) estAux.modo = EstimacionesInternas.MODO_BORRAR;
+					else estAux.modo = EstimacionesInternas.MODO_MODIFICAR;
+					
+					existente = true;
+				}
 			}
+			if (!existente) {
+				if (est.horas!=0) {
+					est.modo = EstimacionesInternas.MODO_INSERTAR;
+					procesados.add(est);
+					salida = est;
+					todasNeutras = false;
+				} 
+			}				
 		}
 		
 		this.listaEstimacionesProvisionales = procesados;

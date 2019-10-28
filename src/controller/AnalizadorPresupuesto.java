@@ -25,6 +25,7 @@ import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
@@ -99,10 +100,107 @@ public class AnalizadorPresupuesto {
 				}
 			}
 			
+			calculaDivisionTREI();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void calculaDivisionTREI(){
+		Parametro p = new Parametro().getParametro(MetaParametro.PARAMETRO_PORC_TREI_GGP);
+		
+		HashMap<String,Concepto> distrbSistemas = new HashMap<String,Concepto>();
+		
+		Iterator<EstimacionAnio> itEa = this.estimacionAnual.iterator();
+		while(itEa.hasNext()){
+			EstimacionAnio ea = itEa.next();
+			HashMap<String,Concepto> distSisTREI = ea.calculaRepartoTREI();
+			
+			Iterator<Concepto> itConceptos = distSisTREI.values().iterator();
+			while (itConceptos.hasNext()) {
+				Concepto c = itConceptos.next();
+				Concepto cAux = null; 
+				
+				if (distrbSistemas.containsKey(c.s.codigo)) {
+					cAux = distrbSistemas.get(c.s.codigo);
+					cAux.listaEstimaciones.addAll(c.listaEstimaciones);
+					cAux.listaImputaciones.addAll(c.listaImputaciones);
+				} else {
+					cAux = c;
+					distrbSistemas.put(c.s.codigo, c);
+				}
+			}
+		}
+				
+		Iterator<Concepto> itSistemas = distrbSistemas.values().iterator();
+		while (itSistemas.hasNext()) {
+			Concepto conc = itSistemas.next();
+			
+			float totalTREIEstimado = 0;
+			float totalTREIGGPImputado = 0;
+			float totalTREIGDTImputado = 0;
+			
+			Iterator<Estimacion> itEst = conc.listaEstimaciones.iterator();
+			while (itEst.hasNext()) {
+				Estimacion est = itEst.next();
+				totalTREIEstimado+= est.importe;
+			}
+			
+			if (conc.topeImputacion!=null) {
+				totalTREIEstimado+= conc.topeImputacion.cantidad;
+			}
+			
+			Iterator<Imputacion> itImp = conc.listaImputaciones.iterator();
+			while (itImp.hasNext()) {
+				Imputacion imp = itImp.next();
+				if (imp.gerencia.id == MetaGerencia.GGP) {
+					totalTREIGGPImputado += imp.importe;
+				}
+				if (imp.gerencia.id == MetaGerencia.GDT) {
+					totalTREIGDTImputado += imp.importe;
+				}				
+			}
+			
+			float totalTREIGGPEsperado = (new Float(p.valorEntero)/100*totalTREIEstimado);
+			float totalTREIGDTEsperado = ((100-new Float(p.valorEntero))/100*totalTREIEstimado);
+			
+			if (totalTREIEstimado<(totalTREIGGPImputado+totalTREIGDTImputado)) {
+				conc.porc_trei_ggp = 0;
+			} else {
+				if (totalTREIGGPEsperado<totalTREIGGPImputado) conc.porc_trei_ggp = 0;
+				else {
+					if (totalTREIGDTEsperado<totalTREIGDTImputado) conc.porc_trei_ggp = 100;
+					else {
+						float totalTREIGGPPorCargar = totalTREIGGPEsperado-totalTREIGGPImputado;
+						float totalTREIGDTPorCargar = totalTREIGDTEsperado-totalTREIGDTImputado;
+						if (totalTREIGGPPorCargar+totalTREIGDTPorCargar==0) conc.porc_trei_ggp = 0;
+						else conc.porc_trei_ggp = 100*totalTREIGGPPorCargar/(totalTREIGGPPorCargar+totalTREIGDTPorCargar);
+					}
+				}
+			}
+					
+			System.out.println(conc.s.codigo + " " + conc.porc_trei_ggp);
+		}
+		
+		itEa = this.estimacionAnual.iterator();
+		while (itEa.hasNext()) {
+			EstimacionAnio ea = itEa.next();
+			Iterator<EstimacionMes> itEm = ea.estimacionesMensuales.values().iterator();
+			while (itEm.hasNext()) {
+				EstimacionMes em = itEm.next();
+				Iterator<Sistema> itSist = em.estimacionesPorSistemas.values().iterator();
+				while (itSist.hasNext()) {
+					Sistema s = itSist.next();
+					Concepto c = s.listaConceptos.get(MetaConcepto.porId(MetaConcepto.TREI).codigo);
+					float porc = ((Concepto) distrbSistemas.get(s.codigo)).porc_trei_ggp;
+					c.porc_trei_ggp = porc;
+				}
+				
+			}
+		}
+		
 	}
 	
 	private void analizaConceptoSistema(Sistema s, MetaConcepto c, Presupuesto pres) {
@@ -376,7 +474,7 @@ public class AnalizadorPresupuesto {
 											valorEstimado += caux.valorEstimado*porc/100;
 										}
 									}	
-								}
+								} 
 								
 								cp.valor = valorEstimado;
 								cf.concepto = cp;
@@ -391,7 +489,7 @@ public class AnalizadorPresupuesto {
 							cert.concepto = c.conceptosCoste.get(mc.codigo);
 							certificaciones.add(cert);
 						}
-					}
+					} 
 					
 				}					
 			}				
@@ -582,9 +680,19 @@ public class AnalizadorPresupuesto {
 		
 	}
 	
-	public Imputacion getImputacion(Imputacion i) throws Exception {
+	public Imputacion getImputacion(Imputacion i, boolean obviarFracciones) throws Exception {
 		if (i.modo_fichero>-2) {
-			return i;
+			boolean inserta = true;			
+			
+			if (obviarFracciones && 
+				i.imputacionPrevia!=null && 
+				i.imputacionPrevia.tipoImputacion == Imputacion.FRACCION_IMPUTACION &&
+				i.imputacionPrevia.imputacionPadre != null &&
+				i.importe == i.imputacionPrevia.imputacionPadre.importe)
+				inserta=false;
+			
+			if (inserta)
+				return i;	
 		}
 		
 		if (i.recurso==null) {
@@ -599,6 +707,15 @@ public class AnalizadorPresupuesto {
 			
 			if (iAux.recurso.id == i.recurso.id && iAux.fxInicio.equals(i.fxInicio) && iAux.fxFin.equals(i.fxFin)) {
 				if (iAux.importe == i.importe) {
+					if (!obviarFracciones){
+						if (i.imputacionPrevia!=null && i.imputacionPrevia.tipoImputacion == Imputacion.IMPUTACION_FRACCIONADA) {
+							i.modo_fichero = NuevaEstimacion.MODO_MODIFICAR;
+							i.id = iAux.id;
+							if (i.sistema==null) i.sistema = iAux.sistema;
+							if (i.natCoste==null) i.natCoste = iAux.natCoste;
+							return i;
+						}
+					} 										
 					i.modo_fichero = -2;
 					return i;
 				} else {
@@ -833,8 +950,17 @@ public class AnalizadorPresupuesto {
 				while (itestAnio.hasNext()) {
 					EstimacionAnio eAux = itestAnio.next();
 					
-					if (tipoPres != ControlPresupuestario.VISTA_PRES_ANIO || (tipoPres == ControlPresupuestario.VISTA_PRES_ANIO && eAux.anio==anio)) 
-						acumulado+= eAux.calcularPresupuesto(mc, c.sistema, tipoPres);
+					Calendar cAux = Calendar.getInstance();
+					cAux.setTime(new Date());
+					
+					if ((tipoPres != ControlPresupuestario.VISTA_PRES_ANIO && tipoPres != ControlPresupuestario.VISTA_PRES_ESTIMADOREALAC) || 
+							(tipoPres == ControlPresupuestario.VISTA_PRES_ANIO && eAux.anio==anio)|| 
+							(tipoPres == ControlPresupuestario.VISTA_PRES_ESTIMADOREALAC && eAux.anio==cAux.get(Calendar.YEAR))) { 
+						if (tipoPres == ControlPresupuestario.VISTA_PRES_ESTIMADOREALAC)
+							acumulado+= eAux.calcularPresupuesto(mc, c.sistema, ControlPresupuestario.VISTA_PRES_ESTIMADOREAL);
+						else
+							acumulado+= eAux.calcularPresupuesto(mc, c.sistema, tipoPres);
+					}
 				}
 				
 				if (cNuevoPres==null) {

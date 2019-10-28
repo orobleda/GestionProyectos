@@ -28,6 +28,24 @@ public class TopeImputacion implements Cargable{
 	
 	public ArrayList<TopeImputacion> topes = null;
 	
+	public TopeImputacion clone() {
+		TopeImputacion ti = new TopeImputacion();
+		
+		ti.id = this.id;
+		ti.proyecto = this.proyecto;
+		ti.sistema = this.sistema;
+		ti.mConcepto = this.mConcepto;
+		ti.anio = this.anio;
+		ti.cantidad = this.cantidad;
+		ti.porcentaje = this.porcentaje;
+		ti.resto = this.resto;
+		ti.version = this.version;
+		ti.txtVersion = this.txtVersion;
+		ti.cantidadTrasRepartir = this.cantidadTrasRepartir;
+		
+		return ti;
+	}
+	
 	@Override
 	public Cargable cargar(Object o) {
 		@SuppressWarnings("unchecked")
@@ -94,7 +112,9 @@ public class TopeImputacion implements Cargable{
 	
 	public ArrayList<TopeImputacion> listadoTopes(Proyecto p) {			
 		ConsultaBD consulta = new ConsultaBD();
-		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaTopes", null, this);
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, p.id));
+		ArrayList<Cargable> proyectos = consulta.ejecutaSQL("cListaTopes", listaParms, this);
 		
 		Iterator<Cargable> itProyecto = proyectos.iterator();
 		ArrayList<TopeImputacion> salida = new ArrayList<TopeImputacion>();
@@ -116,6 +136,9 @@ public class TopeImputacion implements Cargable{
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.proyecto.id));
+		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.sistema.id));
+		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.mConcepto.id));
+		listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, this.anio));
 		
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraTopes", listaParms, this,idTransaccion);

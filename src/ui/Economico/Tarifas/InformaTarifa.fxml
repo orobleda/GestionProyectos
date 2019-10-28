@@ -90,7 +90,7 @@
             </HBox>
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <ImageView fx:id="imEliminar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoEnabled">
+                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="iconoEnabled">
                      <image>
                         <Image url="@../../../../imgs/iconos/eliminar.png" />
                      </image>
@@ -98,7 +98,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <ImageView fx:id="imGuardar" accessibleText="Añadir" fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardar"  fitHeight="25.0" fitWidth="25.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/guardar.jpg" />
                      </image>

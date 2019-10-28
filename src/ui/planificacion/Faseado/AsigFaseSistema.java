@@ -15,8 +15,6 @@ import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.ParametroFases;
 import model.beans.Proyecto;
-import model.beans.RelRecursoTarifa;
-import model.beans.Tarifa;
 import model.constantes.FormateadorDatos;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;

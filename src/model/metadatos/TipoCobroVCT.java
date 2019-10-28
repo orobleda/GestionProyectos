@@ -1,6 +1,7 @@
 package model.metadatos;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -14,11 +15,13 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 	public double porcentaje = 0;
 	public String codigo = "";
 	public String nombre = "";
+	public int orden = 0;
 	
 	public static int PAGO_UNICO = 6;
 	
-	public ArrayList<Double> porcentajes = null;
-	public ArrayList<String> nombres = null;
+	private ArrayList<Double> porcentajes = null;
+	private ArrayList<String> nombres = null;
+	public ArrayList<TipoCobroVCT> lPorcentajes = null;
 		
 	public static HashMap<String, TipoCobroVCT> listado = null;
 	public static HashMap<Integer, TipoCobroVCT> listadoIds = null;
@@ -28,6 +31,7 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> salida = (HashMap<String, Object>) o;
 		
+		lPorcentajes = new ArrayList<TipoCobroVCT>();
 		porcentajes = new ArrayList<Double>();
 		nombres = new ArrayList<String>();
 		
@@ -50,6 +54,13 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 		 		this.id = 0;
 			} else {
 		 		this.id = (Integer) salida.get("creId");
+			}
+		} catch (Exception ex) {}
+		try {
+		 	if (salida.get("creOrden")==null)  { 
+		 		this.orden = 0;
+			} else {
+		 		this.orden = (Integer) salida.get("creOrden");
 			}
 		} catch (Exception ex) {}
 		try {
@@ -83,10 +94,17 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 				est = estAux;
 			}
 			
+			est.lPorcentajes.add(estAux);		
 			est.porcentajes.add(estAux.porcentaje);
 			est.nombres.add(estAux.nombre);
 			
 			listadoIds.put(estAux.id, estAux);
+		}
+		
+		Iterator<TipoCobroVCT> it2 = listadoIds.values().iterator();
+		while (it2.hasNext()) {
+			TipoCobroVCT tcvct = it2.next();
+			Collections.sort(tcvct.lPorcentajes);
 		}
 	}
 	
@@ -117,7 +135,12 @@ public class TipoCobroVCT implements Cargable, Loadable, Comparable {
 
 	@Override
 	public int compareTo(Object arg0) {
-		return this.codigo.compareTo(((TipoCobroVCT)arg0).codigo);
+		TipoCobroVCT aux = (TipoCobroVCT)arg0;
+		if (!this.codigo.equals(aux.codigo))
+			return this.codigo.compareTo(aux.codigo);
+		else {
+			return -1*(this.orden-aux.orden);
+		}
 	}
 
 }

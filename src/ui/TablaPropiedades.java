@@ -135,9 +135,14 @@ public class TablaPropiedades extends PropertySheet{
 		    	}
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_TARIFA) {
-		    		Tarifa t = new Tarifa();
-		    		ArrayList<Tarifa> listado = t.listado(new HashMap<String, Object> () );
-		    		return Editors.createChoiceEditor(param, listado);
+		    		if (filtro!=null && filtro.containsKey(prop.tipo)) {
+		    			ArrayList<Tarifa> elementosFiltrados =  (ArrayList<Tarifa>) filtro.get(prop.tipo);
+		    			return Editors.createChoiceEditor(param, elementosFiltrados);
+		    		} else {
+		    			Tarifa t = new Tarifa();
+			    		ArrayList<Tarifa> listado = t.listado(new HashMap<String, Object> () );
+			    		return Editors.createChoiceEditor(param, listado);	
+		    		} 		    		
 		    	}
 		    	
 		    	if (prop.tipo == TipoDato.FORMATO_COBRO_VCT) {

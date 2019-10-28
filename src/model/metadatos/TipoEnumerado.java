@@ -21,7 +21,8 @@ public class TipoEnumerado implements Cargable, Loadable  {
 	public boolean persistir;
 	
 	public static int TIPO_PRESUPUESTO_EST = 1;
-	public static int TIPO_PRESUPUESTO_VCT = 2;
+	public static int TIPO_PRESUPUESTO_VCT = 2;	
+
 	
 	public static HashMap<Integer, HashMap<Integer,TipoEnumerado>> listado = null;
 	public static  HashMap<Integer,TipoEnumerado> listadoIds = null;

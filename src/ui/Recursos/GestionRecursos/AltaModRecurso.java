@@ -1,6 +1,7 @@
 package ui.Recursos.GestionRecursos;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -18,9 +19,12 @@ import javafx.scene.layout.VBox;
 import model.beans.Imputacion;
 import model.beans.Parametro;
 import model.beans.ParametroRecurso;
+import model.beans.Proveedor;
 import model.beans.Recurso;
+import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.metadatos.MetaParametro;
+import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
@@ -175,6 +179,23 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
         	
         	variablesPaso.put(GestionParametros.LISTA_PARAMETROS,listaParametros);
 		} 
+        
+        if (rActual.id!=-1) {
+        	HashMap<Integer,Object> filtro = new HashMap<Integer,Object>();
+        	ParametroRecurso pr = (ParametroRecurso) rActual.getValorParametro(MetaParametro.RECURSO_PROVEEDOR);
+			if (pr!=null && pr.valorObjeto!=null) {
+				Proveedor pAux = (Proveedor) pr.getValor();
+				
+				HashMap<String,Object> filtros = new HashMap<String,Object>();
+				filtros.put(Tarifa.filtro_PROVEEDOR, pAux);
+				
+				ArrayList<Tarifa> lTarifas= new Tarifa().listado(filtros);
+				if (lTarifas!=null) {
+					filtro.put(TipoDato.FORMATO_TARIFA, lTarifas);
+					variablesPaso.put("filtro", filtro);
+				}
+			}
+        }
         
         gestPar.setParametrosPaso(variablesPaso);
         

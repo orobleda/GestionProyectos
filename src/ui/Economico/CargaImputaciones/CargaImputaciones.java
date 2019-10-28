@@ -121,9 +121,13 @@ public class CargaImputaciones implements ControladorPantalla  {
     @FXML
     private VBox vbCriterios;
     
+    @FXML
+    private CheckBox chkObvFracciones;
+    
     public HashMap<Integer,ArrayList<Imputacion>> listaImputacionesProyecto = null;
     public HashMap<Integer,ArrayList<Imputacion>> listaImputacionesAsignadasProyecto = null;
     public HashMap<Integer,Integer> listaSemaforosProyecto = null;
+    public HashMap<Integer,AnalizadorPresupuesto> aps = null;
     
     public ArrayList<DetalleImputacion> lDetallesImputacion = null;
     
@@ -144,7 +148,8 @@ public class CargaImputaciones implements ControladorPantalla  {
 	
 	@Override
 	public void resize(Scene escena) {
-		
+		scrImputaciones.setMaxWidth(scrImputaciones.getScene().getWidth()*0.95);
+		scrImputaciones.setMaxHeight(scrImputaciones.getScene().getHeight()*0.40);
 	}
 
 	@Override
@@ -298,7 +303,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 		while (itImputacion.hasNext()) {
 			Imputacion i = itImputacion.next();
 			
-			i = this.ap.getImputacion(i);			
+			i = this.ap.getImputacion(i,this.chkObvFracciones.isSelected());			
 			
 			if (i.modo_fichero>=-1) {
 				DetalleImputacion nueEstimacion = new DetalleImputacion();
@@ -312,6 +317,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 		}
 		
 		refrescaPresupuesto(null, this.listaImputacionesAsignadas);
+		resize(null);
 	}
 	
 	private void asociaSistemaEstimacion(Imputacion i, ArrayList<Sistema> listaSistemas) throws Exception{
@@ -341,6 +347,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 										Estimacion estAux = itEstimacion.next();
 										if (estAux.recurso.id == i.recurso.id) {
 											i.estimacionAsociada = estAux;
+											i.imputacionPrevia = this.encuentraImputacion(estAux);
 										}
 									}
 								}
@@ -374,6 +381,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 											i.estimacionAsociada = estAux;
 											i.sistema = s;
 											i.natCoste = mc;
+											i.imputacionPrevia = this.encuentraImputacion(estAux);
 										}
 									}
 								}
@@ -473,11 +481,43 @@ public class CargaImputaciones implements ControladorPantalla  {
 		HashMap<String,Coste> lCosteTotal = ap.getRestante(true, -1,AnalizadorPresupuesto.MODO_RESTANTE,false);
 		this.tablaFotoInicial.pintaTabla(TipoDato.toListaObjetos(lCosteTotal.values()));
 		
+		if (aps==null) {
+			aps = new HashMap<Integer,AnalizadorPresupuesto>();
+		}
+		
+		aps.put(proyecto.id, ap);		
+	}
+	
+	private Imputacion encuentraImputacion(Estimacion est) {
+		try {
+			AnalizadorPresupuesto ap = this.aps.get(est.proyecto.id);
+			
+			Iterator<Imputacion> itImp = ap.listaImputaciones.iterator();
+			while (itImp.hasNext()) {
+				Imputacion imp = itImp.next();
+				if (imp.sistema.id == est.sistema.id && 
+					imp.recurso.id == est.recurso.id &&
+					imp.fxInicio.equals(est.fxInicio) &&
+					imp.fxFin.equals(est.fxFin))
+					return imp;
+			}
+			
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} 
+		return null;
 	}
 	
 	public void refrescaPresupuesto(ArrayList<Estimacion> lEstimaciones, ArrayList<Imputacion> lImputacion) {
 		ap = new AnalizadorPresupuesto();
 		ap.construyePresupuestoMensualizado(proyecto.presupuestoActual, Constantes.fechaActual(), lEstimaciones, lImputacion, null, null);
+		
+		if (aps==null) {
+			aps = new HashMap<Integer,AnalizadorPresupuesto>();
+		}
+		
+		aps.put(proyecto.id, ap);
 		
 		this.tablaRestanteAnio = new Tabla(tRestanteAnio,new LineaCosteEconomico());
 		this.tablaRestanteTotal = new Tabla(tRestanteTotal,new LineaCosteEconomico());

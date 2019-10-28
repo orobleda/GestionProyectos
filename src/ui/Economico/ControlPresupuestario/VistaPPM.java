@@ -12,8 +12,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import model.beans.Concepto;
@@ -71,6 +73,12 @@ public class VistaPPM implements ControladorPantalla {
     
     @FXML
     private ComboBox<Sistema> cbSistema;
+    
+    @FXML
+    private ScrollPane scrIterado;
+    
+    @FXML
+    private BorderPane bpVPPM;
 	
 	@Override
 	public AnchorPane getAnchor() {
@@ -79,7 +87,10 @@ public class VistaPPM implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		
+		if (bpVPPM!=null){
+			bpVPPM.setMaxWidth(bpVPPM.getScene().getWidth());
+			((ScrollPane) bpVPPM.getCenter()).setPrefWidth(bpVPPM.getScene().getWidth()*0.20);
+		}
 	}
 
 	@Override
@@ -90,7 +101,6 @@ public class VistaPPM implements ControladorPantalla {
 	public void initialize(){
 		
 		cbGranularidad.getItems().add("Anual");
-		cbGranularidad.getItems().add("Trimestral");
 		cbGranularidad.getItems().add("Mensual");
 		
 		cbGranularidad.setValue("Anual");
@@ -186,6 +196,8 @@ public class VistaPPM implements ControladorPantalla {
 				pintaDesgloseCostesMensual(ap, sSel);
 				lMeses.setText("Mes");
 			}
+			
+			resize(null);
 	        
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -234,10 +246,7 @@ public class VistaPPM implements ControladorPantalla {
 	        this.acumulaCostes(salida, iterado);
 		} 
 		
-		pintaColumnaResumen(salida);
-		
-		
-			
+		pintaColumnaResumen(salida);			
 	}
 	
 	public void pintaDesgloseCostesMensual(AnalizadorPresupuesto ap, Sistema sSel) throws Exception {

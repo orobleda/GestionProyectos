@@ -51,6 +51,7 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
 		
     	anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaCosteCertificacion.SISTEMA, new Integer(60));
+    	anchoColumnas.put(LineaCosteCertificacion.FASE, new Integer(150));
     	anchoColumnas.put(LineaCosteCertificacion.TOTAL, new Integer(100));
     	anchoColumnas.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new Integer(80));
     	anchoColumnas.put(LineaCosteCertificacion.TIPO_ESTIMACION, new Integer(80));
@@ -79,7 +80,13 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
    				return FormateadorDatos.formateaDato(0,TipoDato.FORMATO_MONEDA);
    			} 
    			if (LineaCosteCertificacion.TIPO_ESTIMACION.equals(campo))  return TipoEnumerado.listadoIds.get(this.cfp.tipoEstimacion).toString();
-   			if (LineaCosteCertificacion.PORCENTAJE_ESTIMADO.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.porcentaje,TipoDato.FORMATO_PORC);
+   			if (LineaCosteCertificacion.PORCENTAJE_ESTIMADO.equals(campo))  {
+   				try {
+   					return FormateadorDatos.formateaDato(this.cfp.certificacionFase.getPorcentaje(this.cfp),TipoDato.FORMATO_PORC); 
+   				} catch (Exception e) {
+   					return FormateadorDatos.formateaDato(this.cfp.porcentaje,TipoDato.FORMATO_PORC);
+   				}
+   			}
    			if (LineaCosteCertificacion.VALOR_ESTIMADO.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.valEstimado,TipoDato.FORMATO_MONEDA);
    			if (LineaCosteCertificacion.VALOR_REAL.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.valReal,TipoDato.FORMATO_MONEDA);
    				   			

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
 
 public class FormateadorDatos {
@@ -140,6 +141,13 @@ public class FormateadorDatos {
 		if (FormateadorDatos.FORMATO_TXT == formato){
 			return Dato.toString();
 		}
+		
+		if (TipoDato.FORMATO_BOOLEAN == formato){
+			boolean flag = (Boolean) Dato;
+			if (flag) return "SI";
+			else return "NO";
+		}
+		
 		if (FormateadorDatos.FORMATO_INT == formato){
 			DecimalFormat formatea = new DecimalFormat("###,###");
 
@@ -159,8 +167,13 @@ public class FormateadorDatos {
 			DecimalFormat formatea = new DecimalFormat("###,###.##");
 			
 			try {
-				String salida = formatea.format((Float) Dato);
-				return salida + " €";
+				try {
+					String salida = formatea.format((Float) Dato);
+					return salida + " €";
+				} catch (Exception e) {
+					String salida = formatea.format((Double) Dato);
+					return salida + " €";
+				}				
 			} catch (Exception e) {
 				String salida = formatea.format(formatea.parse((String) Dato));
 				return salida + " €";

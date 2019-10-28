@@ -23,10 +23,10 @@ public class AsignacionCertificacion implements ControladorPantalla {
 	
     @FXML
     private TableView<Tableable> tCertificaciones;
-    private Tabla tablaCertificaciones;
+    public Tabla tablaCertificaciones;
 
     @FXML
-    private ComboBox<CertificacionFaseParcial> cbCertificaciones;
+    public ComboBox<CertificacionFaseParcial> cbCertificaciones;
 	   
 	@FXML
 	private AnchorPane anchor;	
@@ -58,8 +58,16 @@ public class AsignacionCertificacion implements ControladorPantalla {
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		try {
 			CertificacionFaseParcial lcfr = new CertificacionFaseParcial();
-			lcfr.horReal = (Float) FormateadorDatos.parseaDato((String) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_HORAS),TipoDato.FORMATO_REAL);
-			lcfr.valReal = (Float) FormateadorDatos.parseaDato((String) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_IMPORTE),TipoDato.FORMATO_REAL);
+			try {
+				lcfr.horReal = (Float) FormateadorDatos.parseaDato((String) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_HORAS),TipoDato.FORMATO_REAL);
+			} catch (Exception e) {
+				lcfr.horReal = ((Double) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_HORAS)).floatValue();
+			}
+			try {
+				lcfr.valReal = (Float) FormateadorDatos.parseaDato((String) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_IMPORTE),TipoDato.FORMATO_REAL);
+			} catch (Exception e) {
+				lcfr.valReal = ((Double) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_IMPORTE)).floatValue();
+			}
 			lcfr.nombre = (String) variablesPaso.get(ProcesaCertificacion.CERTIFICACION_DESCRIPCION);
 			
 			ArrayList<Object> listado = new ArrayList<Object>();
@@ -67,9 +75,13 @@ public class AsignacionCertificacion implements ControladorPantalla {
 			
 			tablaCertificaciones.pintaTabla(listado);
 			
-			this.cbCertificaciones.getItems().addAll((ArrayList<CertificacionFaseParcial>) variablesPaso.get(ImportaCertificacion.CERTIFICACIONES));
+			if (variablesPaso.get(ImportaCertificacion.CERTIFICACIONES)!=null)
+				this.cbCertificaciones.getItems().addAll((ArrayList<CertificacionFaseParcial>) variablesPaso.get(ImportaCertificacion.CERTIFICACIONES));
+			else {
+				this.cbCertificaciones.setVisible(false);
+			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 

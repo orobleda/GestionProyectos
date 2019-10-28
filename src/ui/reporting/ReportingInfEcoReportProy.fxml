@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.reporting.ReportingInfEcoReportProy">
+   <top>
+      <VBox fx:id="vbCamposEntada" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label prefWidth="170.0" text="Proyectos">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
+                  </Label>
+                  <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imgs/iconos/aniadir.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" right="25.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" />
+               </padding>
+            </HBox>
+            <HBox>
+               <children>
+                  <ListView fx:id="lProyectos" prefHeight="300.0" prefWidth="600.0">
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </ListView>
+               </children>
+            </HBox>
+            <HBox alignment="TOP_RIGHT">
+               <children>
+                  <ImageView fx:id="imDescargar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imgs/iconos/aniadir.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <VBox fx:id="vbInforme" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import org.controlsfx.control.*?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane prefHeight="-Infinity" prefWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.EstimacionesInternas.EstimacionesInternas">
+  <bottom> 
+    <VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" BorderPane.margin="$x1">
+      <children>
+        <HBox alignment="TOP_RIGHT" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+          <children>
+            <Label text="Mostrar solo los proyectos con un resto mayor o igual  que " />
+            <TextField fx:id="tFiltroResumen" prefWidth="75.0">
+              <HBox.margin>
+                <Insets left="20.0" fx:id="x2" />
+              </HBox.margin>
+            </TextField>
+          </children>
+          <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" fx:id="x1" />
+          </VBox.margin>
+        </HBox>
+        <HBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <TableView fx:id="tResumen" prefHeight="-1.0" prefWidth="900.0" />
+          </children>
+        </HBox>
+            <HBox alignment="TOP_RIGHT">
+               <children>
+                  <ImageView id="imGuardar" fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+      </children>
+    </VBox> 
+  </bottom>
+  <left> 
+      <ScrollPane fx:id="crUsuario" hbarPolicy="ALWAYS" maxHeight="600.0" prefHeight="600.0" prefViewportHeight="420.0" prefViewportWidth="425.0">
+         <content>
+          <VBox prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="TOP_CENTER">
+            <children>
+              <TableView fx:id="tUsuario" prefHeight="-1.0" prefWidth="400.0">
+                     <VBox.margin>
+                        <Insets left="10.0" right="15.0" top="20.0" />
+                     </VBox.margin>
+                  </TableView>
+            </children>
+            <BorderPane.margin>
+              <Insets fx:id="x1" />
+            </BorderPane.margin>
+          </VBox>
+         </content>
+         <BorderPane.margin>
+            <Insets left="10.0" />
+         </BorderPane.margin>
+      </ScrollPane> 
+  </left>
+  <top> 
+    <VBox prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="TOP_CENTER">
+      <children>
+        <HBox prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+          <children>
+            <Label prefWidth="150.0" text="Naturaleza de Coste" />
+            <ComboBox fx:id="cbNatCoste" prefWidth="200.0">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+              <HBox.margin>
+                <Insets left="20.0" fx:id="x2" />
+              </HBox.margin>
+            </ComboBox>
+          </children>
+          <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" fx:id="x1" />
+          </VBox.margin>
+        </HBox>
+        <HBox prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <Label prefWidth="150.0" text="Año" />
+            <ComboBox fx:id="cbAnio" prefWidth="85.0" HBox.margin="$x2">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+            </ComboBox>
+          </children>
+          <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" fx:id="x1" />
+          </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER_RIGHT" prefHeight="-1.0" prefWidth="-1.0" VBox.margin="$x1">
+               <children>
+                  <Label text="Vista Colapsada" />
+                  <ToggleSwitch fx:id="tsColapsar" />
+                  <ImageView id="imGuardar" fx:id="imAniadir" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Nuevo3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="46.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+        </HBox>
+      </children>
+    </VBox> 
+  </top>
+   <center>
+      <ScrollPane fx:id="crMes" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+         <content>
+            <HBox fx:id="hbMeses" />
+         </content>
+         <BorderPane.margin>
+            <Insets left="10.0" right="10.0" />
+         </BorderPane.margin>
+      </ScrollPane>
+   </center>
+</BorderPane>

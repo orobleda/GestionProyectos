@@ -44,10 +44,10 @@ public class LineaCosteEconomico extends ParamTable implements Tableable  {
 		configuracionTabla.put(LineaCosteEconomico.CC, new ConfigTabla(LineaCosteEconomico.CC, LineaCosteEconomico.CC, false,3, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put(LineaCosteEconomico.SISTEMA, new Integer(100));
-    	anchoColumnas.put(LineaCosteEconomico.TREI, new Integer(100));
-    	anchoColumnas.put(LineaCosteEconomico.SATAD, new Integer(100));
-    	anchoColumnas.put(LineaCosteEconomico.CC, new Integer(100));
+    	anchoColumnas.put(LineaCosteEconomico.SISTEMA, new Integer(120));
+    	anchoColumnas.put(LineaCosteEconomico.TREI, new Integer(70));
+    	anchoColumnas.put(LineaCosteEconomico.SATAD, new Integer(70));
+    	anchoColumnas.put(LineaCosteEconomico.CC, new Integer(70));
 	}
     
    	public void set(String campo, String valor){

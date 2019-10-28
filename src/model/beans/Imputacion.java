@@ -12,6 +12,7 @@ import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoEnumerado;
@@ -35,6 +36,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 
 	public ArrayList<FraccionImputacion> listaFracciones = null;
 	public Imputacion imputacionPadre = null;
+	public Imputacion imputacionPrevia = null; //para la carga masiva de imputaciones
 	public FraccionImputacion imputacionFraccion = null;
 
 	public int tipoImputacion = 0;
@@ -537,7 +539,25 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 		rrs.sistema = this.sistema;
 		rrs.insertaRelacion(idTransaccion, null);
 		
-		actualizaTarifa(idTransaccion);
+		try {
+			Calendar calCertif = Calendar.getInstance();
+			calCertif.setTime(this.fxFin);
+			
+			ParametroProyecto pp = this.proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN); 
+			Date finProy = (Date) pp.getValor();
+			Calendar calProy = Calendar.getInstance();
+			calProy.setTime(finProy);
+			
+			if (calProy.before(calCertif)) {
+				pp.valorfecha = this.fxFin;
+				pp.actualizaParametro("", true);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		//actualizaTarifa(idTransaccion);
 	}
 
 	public void modificaImputacion(String idTransaccion)  throws Exception{
@@ -568,19 +588,37 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 		rrs.sistema = this.sistema;
 		rrs.insertaRelacion(idTransaccion, this.sistemaPrevio);
 		
-		actualizaTarifa(idTransaccion);
+		try {
+			Calendar calCertif = Calendar.getInstance();
+			calCertif.setTime(this.fxFin);
+			
+			ParametroProyecto pp = this.proyecto.getValorParametro(MetaParametro.PROYECTO_FX_FIN); 
+			Date finProy = (Date) pp.getValor();
+			Calendar calProy = Calendar.getInstance();
+			calProy.setTime(finProy);
+			
+			if (calProy.before(calCertif)) {
+				pp.valorfecha = this.fxFin;
+				pp.actualizaParametro("", true);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		
+		//actualizaTarifa(idTransaccion);
 	}
-	
+	/*
 	private void actualizaTarifa(String idTransaccion) throws Exception{
 		if (this.tarifa!=null) {
-			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			rrt = rrt.tarifaVigente(this.recurso.id, false, this.fxFin);
+			Tarifa t = Tarifa.tarifaPorDefecto(this.recurso, null, false);
 			
 			boolean insertar = false;
 			
-			if (rrt==null){
+			if (t==null){
 				insertar=true;
-				rrt = new RelRecursoTarifa();
+				t = new Tarifa();
 			}
 			else 
 				if (rrt.tarifa.costeHora!=this.tarifa.costeHora) insertar = true;
@@ -606,7 +644,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 				rrt.insertaRelacion(idTransaccion);
 			}
 		}
-	}
+	}*/
 
 	public void fraccionaImputacion(ArrayList<FraccionImputacion> listaImputaciones, Imputacion i) throws Exception {
 

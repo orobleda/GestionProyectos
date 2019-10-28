@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
+import model.beans.CertificacionReal;
 import model.beans.Parametro;
 import model.beans.Proveedor;
 import model.beans.Tarifa;
@@ -238,7 +239,7 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
         variablesPaso.put("entidadBuscar", claseMostrar.getClass().getSimpleName());
         variablesPaso.put("subventana", new Boolean(true));
         
-        if (idCertificacion==-1)
+        if (idCertificacion!=-1)
            variablesPaso.put("idEntidadBuscar", idCertificacion);
         else
            variablesPaso.put("idEntidadBuscar", Parametro.SOLO_METAPARAMETROS);
@@ -259,21 +260,16 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 			cf.reparteCoste(importe * cf.porcentaje/100, this.cbTarifas.getValue());
 		}
 		
-		String idTransaccion = ConsultaBD.getTicket();
-		
-		this.certificacion.guardarCertificacion(idTransaccion);
-		
-		ConsultaBD.ejecutaTicket(idTransaccion);
+		this.certificacion.parametrosCertificacion = this.listaParametros;
+				
+		this.certificacion.guardarCertificacion(null);
 	}
 	
 	public void borrarCertificacion() throws Exception{
 		if (this.certificacion.id==-1) return;
 				
-		String idTransaccion = ConsultaBD.getTicket();
+		this.certificacion.borrarCertificacion();
 		
-		this.certificacion.borraCertificacion(idTransaccion);
-		
-		ConsultaBD.ejecutaTicket(idTransaccion);
 	}
 	
 	@Override

@@ -46,7 +46,8 @@ public class ControlPresupuestario implements ControladorPantalla {
 	
 	public static final String ESTIMADO = "Estimado";
 	public static final String REAL = "Real";
-	public static final String COMBINADO = "Real/Estimado";
+	public static final String COMBINADO = "Estimado-Real";
+	public static final String COMBINADO_AC = "Estimado-Real AC";
 	public static final String COLUMNA_I = "I";
 	public static final String COLUMNA_D = "D";
 	
@@ -54,10 +55,12 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public static final int VISTA_PRES_REAL = 1;
 	public static final int VISTA_PRES_ESTIMADOREAL = 2;
 	public static final int VISTA_PRES_ANIO = 3;	
+	public static final int VISTA_PRES_ESTIMADOREALAC = 4;
 	
 	public static final int VISTA_PPM = 0;
 	public static final int VISTA_JERARQUIZADA = 1;
 	public static final int VISTA_BRUTO = 2;
+	public static final int VISTA_FOTO = 3;
 	
 	public static HashMap<String,Object> migas = null;
 	public static ControlPresupuestario elementoThis = null;
@@ -70,6 +73,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public ListaCertificaciones lc = null;
 	public VistaPPM vPPM = null;
 	public VistaJerarquizada vJer = null;
+	public VistaFoto vFoto = null;
 		
 	public static ArrayList<Object> listaIzqdaResumen = null;
 	public static ArrayList<Object> listaDrchaResumen = null;
@@ -147,6 +151,10 @@ public class ControlPresupuestario implements ControladorPantalla {
     private GestionBotones gbPPM;
     
     @FXML
+    private ImageView imFoto;
+    private GestionBotones gbFoto;
+    
+    @FXML
     private TitledPane panTopeImput;
 
     @FXML
@@ -154,7 +162,12 @@ public class ControlPresupuestario implements ControladorPantalla {
     
 
     @FXML
-    private HBox hbContJerarquia;
+    private HBox hbContJerarquia;    
+
+    @FXML
+    private Accordion acDetalles;
+    
+	ArrayList<ControladorPantalla> listaPantallas = null; 
 	
 	@Override
 	public AnchorPane getAnchor() {
@@ -163,6 +176,15 @@ public class ControlPresupuestario implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
+		acDetalles.setPrefWidth(escena.getWidth()*0.99);
+		
+		if (this.listaPantallas!=null) {
+			Iterator<ControladorPantalla> itCOntPan = this.listaPantallas.iterator();
+			while (itCOntPan.hasNext()) {
+				ControladorPantalla cp = itCOntPan.next();
+				cp.resize(escena);
+			}
+		}
 		
 	}
 	
@@ -269,6 +291,9 @@ public class ControlPresupuestario implements ControladorPantalla {
 		if (ControlPresupuestario.elementoThis.gbPPM.presionado) {
 			migas.put("Vista", ControlPresupuestario.VISTA_PPM);
 		}
+		if (ControlPresupuestario.elementoThis.gbPPM.presionado) {
+			migas.put("Vista", ControlPresupuestario.VISTA_FOTO);
+		}
 	}
 	
 	public static void cargaPosicionActual() {
@@ -295,12 +320,12 @@ public class ControlPresupuestario implements ControladorPantalla {
 		ControlPresupuestario.elementoThis.seleccionVista((Integer) migas.get("Vista"));
 		
 		if (ControlPresupuestario.VISTA_JERARQUIZADA == (Integer) migas.get("Vista")) {
-			ControlPresupuestario.elementoThis.selectorTipoPulsado(ControlPresupuestario.elementoThis.gbJerarquia, ControlPresupuestario.elementoThis.gbListado, ControlPresupuestario.elementoThis.gbPPM);
+			ControlPresupuestario.elementoThis.selectorTipoPulsado(ControlPresupuestario.elementoThis.gbJerarquia, ControlPresupuestario.elementoThis.gbListado, ControlPresupuestario.elementoThis.gbPPM,ControlPresupuestario.elementoThis.gbFoto);
 			ControlPresupuestario.elementoThis.vJer.cbMeses.setValue((String)migas.get("Mes"));	
 			ControlPresupuestario.elementoThis.vJer.selectTab((Integer)migas.get("Tab"));
 		}
 		
-		
+		ParamTable.po.hide();
 		migas = null;
 	}
 	
@@ -314,6 +339,9 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        panDetalleProyecto.setContent(loader.load());
 		        this.vPPM = loader.getController();
 		        this.vPPM.pintaDesgloseCostes(ControlPresupuestario.ap,VistaPPM.VISTA_ANUAL, null);
+		        if (!this.listaPantallas.contains(vPPM)) {
+		        	this.listaPantallas.add(vPPM);
+		        }
 			}
 			if (vista==ControlPresupuestario.VISTA_JERARQUIZADA) {
 				this.vJer = new VistaJerarquizada();
@@ -323,6 +351,9 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        panDetalleProyecto.setContent(loader.load());
 		        vJer = loader.getController();
 		        vJer.pintaPresupuesto(ControlPresupuestario.ap, false);
+		        if (!this.listaPantallas.contains(vJer)) {
+		        	this.listaPantallas.add(vJer);
+		        }
 			}
 			if (vista==ControlPresupuestario.VISTA_BRUTO) {
 				this.vJer = new VistaJerarquizada();
@@ -332,6 +363,21 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        panDetalleProyecto.setContent(loader.load());
 		        vJer = loader.getController();
 		        vJer.pintaPresupuestoGlobal(ControlPresupuestario.ap, false);
+		        if (!this.listaPantallas.contains(vJer)) {
+		        	this.listaPantallas.add(vJer);
+		        }
+			}
+			if (vista==ControlPresupuestario.VISTA_FOTO) {
+				this.vFoto = new VistaFoto();
+		        
+				FXMLLoader loader = new FXMLLoader();
+		        loader.setLocation(new URL(vFoto.getFXML()));
+		        panDetalleProyecto.setContent(loader.load());
+		        vFoto = loader.getController();
+
+		        if (!this.listaPantallas.contains(vFoto)) {
+		        	this.listaPantallas.add(vFoto);
+		        }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -343,7 +389,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 			@Override
             public void handle(MouseEvent t)
             {
-				selectorTipoPulsado(gbJerarquia, gbListado, gbPPM);
+				selectorTipoPulsado(gbJerarquia, gbListado, gbPPM,gbFoto);
 				seleccionVista(ControlPresupuestario.VISTA_JERARQUIZADA);
             }
         }, "Vista Jerarquía");
@@ -351,7 +397,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 			@Override
             public void handle(MouseEvent t)
             {
-				selectorTipoPulsado(gbListado, gbJerarquia, gbPPM);
+				selectorTipoPulsado(gbListado, gbJerarquia, gbPPM,gbFoto);
 				seleccionVista(ControlPresupuestario.VISTA_BRUTO);
             }
         }, "Vista Listado Plano");
@@ -359,22 +405,31 @@ public class ControlPresupuestario implements ControladorPantalla {
 			@Override
             public void handle(MouseEvent t)
             {
-				selectorTipoPulsado(gbPPM, gbListado, gbJerarquia);
+				selectorTipoPulsado(gbPPM, gbListado, gbJerarquia,gbFoto);
 				seleccionVista(ControlPresupuestario.VISTA_PPM);
             }
         }, "Vista PPM");
 		gbPPM.pulsarBoton();
+		gbFoto = new GestionBotones(imFoto, "PPM", true,new EventHandler<MouseEvent>() {        
+			@Override
+            public void handle(MouseEvent t)
+            {
+				selectorTipoPulsado(gbFoto,gbPPM, gbListado, gbJerarquia);
+				seleccionVista(ControlPresupuestario.VISTA_FOTO);
+            }
+        }, "Vista PPM");
 	}
 	
-	public void selectorTipoPulsado(GestionBotones activo, GestionBotones pasivo1, GestionBotones pasivo2) {
+	public void selectorTipoPulsado(GestionBotones activo, GestionBotones pasivo1, GestionBotones pasivo2, GestionBotones pasivo3) {
 		pasivo1.liberarBoton();
 		pasivo2.liberarBoton();
+		pasivo3.liberarBoton();
 		activo.pulsarBoton();
 	}
 	
 	public void proyectoSeleccionado(Proyecto p) {
 		Presupuesto prep = new Presupuesto();
-		ArrayList<Presupuesto> presupuestos = prep.buscaPresupuestos(p.id);
+		ArrayList<Presupuesto> presupuestos = prep.buscaPresupuestos(p);
 		ArrayList<Presupuesto> listaPresupuestos = new ArrayList<Presupuesto>();
 		
 		try {
@@ -419,6 +474,12 @@ public class ControlPresupuestario implements ControladorPantalla {
 		pAux3.calculado = true;
 		listaPresupuestos.add(pAux3);
 		
+		Presupuesto pAux4 = new Presupuesto();
+		pAux4.descripcion = ControlPresupuestario.COMBINADO_AC;
+		pAux4.id=-40;
+		pAux4.calculado = true;
+		listaPresupuestos.add(pAux4);
+		
 		cbIzquda.getItems().removeAll(cbIzquda.getItems());
 		cbIzquda.getItems().addAll(presupuestos);
 		
@@ -434,6 +495,8 @@ public class ControlPresupuestario implements ControladorPantalla {
 			cargaPresupuesto(p,tabla, lado);
 			presIzqda = p;
 			
+			listaPantallas = new ArrayList<ControladorPantalla>(); 
+			
 			try {
 				TopeImputaciones c = new TopeImputaciones();
 		        		        
@@ -442,6 +505,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        panTopeImput.setContent(loader.load());
 		        this.tp = loader.getController();
 		        this.tp.CalculaEstimacion(ControlPresupuestario.presIzqda);
+		        listaPantallas.add(this.tp);
 
 		        seleccionVista(ControlPresupuestario.VISTA_PPM);
 		        flujoBotoneraCambioTipoInfo();		        
@@ -454,6 +518,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 		        panCertificacion.setContent(loader.load());
 		        this.lc = loader.getController();
 		        this.lc.pintaCertificaciones(ControlPresupuestario.ap);
+		        listaPantallas.add(this.lc);
 		        
 		        Iterator<Presupuesto> itPres = cbDrcha.getItems().iterator();
 		        Presupuesto pAux = null;
@@ -481,6 +546,9 @@ public class ControlPresupuestario implements ControladorPantalla {
 				}
 				if (p.id==-30) {
 					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADOREAL,0,false);
+				}
+				if (p.id==-40) {
+					p = ControlPresupuestario.ap.toPresupuesto(ControlPresupuestario.VISTA_PRES_ESTIMADOREALAC,0,false);
 				}
 				presDrcha = p;
 				cargaPresupuesto(p,tabla, lado);

@@ -17,6 +17,8 @@ public class MetaGerencia implements Cargable, Loadable, Comparable<MetaGerencia
 	public String grupo ="";
 	public String descripcion = "";
 	public String codigo = "";
+	
+	public ArrayList<MetaConcepto> metaConceptos;
 		
 	public static HashMap<Integer, MetaGerencia> listado = null;
 	
@@ -26,7 +28,6 @@ public class MetaGerencia implements Cargable, Loadable, Comparable<MetaGerencia
 		HashMap<String, Object> salida = (HashMap<String, Object>) o;
 		
 		this.id = (Integer) salida.get("metbId");
-		this.grupo = (String) salida.get("metbGrupo");
 		this.descripcion = (String) salida.get("metbDesc");
 		this.codigo = (String) salida.get("metbCod");
 		
@@ -64,6 +65,21 @@ public class MetaGerencia implements Cargable, Loadable, Comparable<MetaGerencia
 		}
 		
 		return est;
+	}
+	
+	public static MetaGerencia getPorCodigo(String nombre) {
+		Iterator<MetaGerencia> it = MetaGerencia.listado.values().iterator();
+		
+		MetaGerencia est = null;
+		
+		while (it.hasNext()){
+			est = (MetaGerencia) it.next();
+			if (nombre.equals(est.codigo)) {
+				return est;
+			}
+		}
+		
+		return null;
 	}
 	
 	@Override

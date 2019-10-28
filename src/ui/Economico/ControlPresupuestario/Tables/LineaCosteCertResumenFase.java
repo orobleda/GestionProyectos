@@ -46,6 +46,7 @@ public class LineaCosteCertResumenFase extends ParamTable implements Tableable  
 		
 		anchoColumnas = new HashMap<String, Integer>();
     	anchoColumnas.put(LineaCosteCertResumenFase.PORC, new Integer(40));
+    	anchoColumnas.put(LineaCosteCertResumenFase.FASE, new Integer(150));
     	anchoColumnas.put(LineaCosteCertResumenFase.SISTEMA, new Integer(60));
     	anchoColumnas.put(LineaCosteCertResumenFase.TOTAL, new Integer(100));
     }

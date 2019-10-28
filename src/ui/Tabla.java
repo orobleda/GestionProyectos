@@ -4,7 +4,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +14,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
@@ -29,6 +29,7 @@ public class Tabla {
 	public TableView<Tableable> componenteTabla = null;
 	public TextField tefiltro = null;
 	public ToggleSwitch tsfiltro = null;
+	public ArrayList<Object> lfiltros = null;
 	public ArrayList<Object> listaDatosEnBruto  = null;
 	public ObservableList<Tableable> listaDatos  = null;
 	public ObservableList<Tableable> listaDatosFiltrada  = null;
@@ -72,6 +73,28 @@ public class Tabla {
 					
 				}
 		});
+		asignaConextual();
+	}
+	
+	public Tabla (TableView<Tableable> componenteTabla, Tableable primitiva, ArrayList<Object> lfiltros, ControladorPantalla ctrlPantalla) {
+		this.componenteTabla = componenteTabla;
+		this.lfiltros = lfiltros;
+		this.primitiva = primitiva;
+		
+		this.componenteTabla.getProperties().put("controlador", ctrlPantalla);
+		
+		Iterator<Object> itCombos = lfiltros.iterator();
+		while (itCombos.hasNext()) {
+			ComboBox<?> cb = (ComboBox<?>) itCombos.next();
+			cb.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+				try {
+					pintaTabla(this.listaDatosEnBruto);
+				} catch (Exception e) {
+					
+				}
+			});
+		}
+		
 		asignaConextual();
 	}
 	
@@ -186,7 +209,9 @@ public class Tabla {
 			if (tsfiltro != null)
 				listaDatosFiltrada = primitiva.filtrar(tsfiltro.isSelected(), listaDatos);
 			else
-				listaDatosFiltrada = listaDatos;
+				if (this.lfiltros != null)
+					listaDatosFiltrada = primitiva.filtrar(lfiltros, listaDatos);
+				else listaDatosFiltrada = listaDatos;
 		
 		componenteTabla.setItems(listaDatosFiltrada);
 		
@@ -211,7 +236,9 @@ public class Tabla {
 			if (tsfiltro != null)
 				listaDatosFiltrada = primitiva.filtrar(tsfiltro.isSelected(), listaDatos);
 			else
-				listaDatosFiltrada = listaDatos;
+				if (this.lfiltros != null)
+					listaDatosFiltrada = primitiva.filtrar(lfiltros, listaDatos);
+				else listaDatosFiltrada = listaDatos;
 		
 		componenteTabla.setItems(listaDatosFiltrada);
 		
@@ -223,6 +250,12 @@ public class Tabla {
 		
 		formateaTabla();
 		componenteTabla.refresh();
+	}
+	
+	public void fijaAlto(double altoPixeles) {
+		this.altoLibre = true;
+		if (this.componenteTabla!=null)
+			this.componenteTabla.setMaxHeight(altoPixeles);
 	}
 	
 	public void formateaTabla() {

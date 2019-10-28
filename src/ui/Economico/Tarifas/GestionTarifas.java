@@ -69,7 +69,7 @@ public class GestionTarifas  implements ControladorPantalla {
 	
 	public void initialize(){
 
-		tablaTarifas = new Tabla(tTarifas,new TarifaTabla());
+		tablaTarifas = new Tabla(tTarifas,new TarifaTabla(),this);
 		tablaTarifas.altoLibre = true;
 		
 		cbProveedores.getItems().addAll(Proveedor.listado.values());

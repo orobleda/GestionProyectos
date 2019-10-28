@@ -89,7 +89,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Accordion>
+            <Accordion fx:id="acDetalles">
               <panes>
                 <TitledPane fx:id="panTopeImput" animated="false" text="Patrón Imputaciones" />
                 <TitledPane fx:id="panDetalleProyecto" animated="false" text="Detalle Proyecto" />
@@ -147,10 +147,18 @@
                   <Insets left="15.0" right="15.0" />
                </HBox.margin>
             </ImageView>
+            <ImageView fx:id="imFoto" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/PPM_PAS.png" />
+               </image>
+            </ImageView>
          </children>
          <BorderPane.margin>
             <Insets top="10.0" />
          </BorderPane.margin>
       </HBox>
    </top>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
 </BorderPane>

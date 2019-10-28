@@ -13,7 +13,7 @@ public class JornadasMes {
 
 	public static final int JORNADAS = 1;
 	public static final int VACACIONES = 2;
-	public static final int AUSENCIAS = 4;
+	public static final int AUSENCIAS = 3;
 	public static final int TOTAL = 4;
 	
 	public ArrayList<Float> jornadas = null;
@@ -90,6 +90,10 @@ public class JornadasMes {
 			mesIterado.put(JornadasMes.JORNADAS, jd);
 			mesIterado.put(JornadasMes.AUSENCIAS, new JornadasMes(JornadasMes.AUSENCIAS, this.recurso, i+1, this.anio));
 			mesIterado.put(JornadasMes.VACACIONES, new JornadasMes(JornadasMes.VACACIONES, this.recurso, i+1, this.anio));
+			
+			jd = new JornadasMes(JornadasMes.JORNADAS, this.recurso, i+1, this.anio);
+			jd.cargaJornadas(JornadasMes.JORNADAS, recurso, i+1, this.anio);
+			
 			mesIterado.put(JornadasMes.TOTAL, jd);
 		}
 		

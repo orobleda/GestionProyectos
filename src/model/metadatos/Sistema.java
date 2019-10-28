@@ -13,7 +13,7 @@ import model.interfaces.Cargable;
 import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
 
-public class Sistema implements Cargable, Loadable {
+public class Sistema implements Cargable, Loadable, Comparable<Sistema> {
 
 	public int id =0;
 	public String descripcion = "";
@@ -121,6 +121,17 @@ public class Sistema implements Cargable, Loadable {
 		return null;
 	}
 	
+	public static Sistema getPorNombre(String nombre) {
+		Iterator<Sistema> itSistema = Sistema.listado.values().iterator();
+		
+		while (itSistema.hasNext()) {
+			Sistema s = itSistema.next();
+			if (nombre.equals(s.descripcion)) return s;
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public String toString() {
 		return descripcion;
@@ -134,6 +145,11 @@ public class Sistema implements Cargable, Loadable {
 	@Override
 	public int getId() {
 		return this.id;
+	}
+
+	@Override
+	public int compareTo(Sistema o) {
+		return this.codigo.compareTo(o.codigo);
 	}
 
 }

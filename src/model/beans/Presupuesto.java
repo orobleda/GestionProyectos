@@ -36,7 +36,14 @@ public class Presupuesto implements Cargable {
 	public static final int RESTAR = -1;
 	
 	public void calculaTotales() {
-		Coste costeTotal = (Coste) costesTotal.values().toArray()[0];
+		Coste costeTotal = null;
+	
+		if (costesTotal.values().size()>0) {
+			costeTotal = (Coste) costesTotal.values().toArray()[0];
+		} else {
+			costeTotal = new Coste();
+			costesTotal.put(Sistema.getInstanceTotal().id, costeTotal);
+		}
 		Iterator<Concepto> itConceptoAux = costeTotal.conceptosCoste.values().iterator();
 		
 		while(itConceptoAux.hasNext()) {
@@ -55,7 +62,12 @@ public class Presupuesto implements Cargable {
 				Concepto con = itConcepto.next();
 				Concepto conTotal = costeTotal.conceptosCoste.get(con.tipoConcepto.codigo);
 				
-				conTotal.valorEstimado += con.valorEstimado;
+				if (conTotal==null) {
+					costeTotal.conceptosCoste.put(con.tipoConcepto.codigo,con.clone());
+				} else {
+					conTotal.valorEstimado += con.valorEstimado;
+				}
+				
 			}
 		}
 	}
@@ -239,7 +251,7 @@ public class Presupuesto implements Cargable {
         }
         	
         else 
-        	presupuestos = prep.buscaPresupuestos(p.id);
+        	presupuestos = prep.buscaPresupuestos(p);
         
         Presupuesto salida = null;
         
@@ -279,11 +291,11 @@ public class Presupuesto implements Cargable {
 		return salida;
 }
 	
-	public ArrayList<Presupuesto> buscaPresupuestos(int idProyecto) {
+	public ArrayList<Presupuesto> buscaPresupuestos(Proyecto proyecto) {
 			ConsultaBD consulta = new ConsultaBD();
 			
 			List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,idProyecto));
+				listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_INT,proyecto.id));
 				
 			
 			ArrayList<Cargable> presupuestos = consulta.ejecutaSQL("cConsultaPresupuesto", listaParms, this);
@@ -293,6 +305,7 @@ public class Presupuesto implements Cargable {
 			
 			while (itCargable.hasNext()) {
 				Presupuesto prep = (Presupuesto) itCargable.next();
+				prep.p = proyecto;
 				salida.add(prep);
 			}
 			

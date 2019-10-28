@@ -246,11 +246,8 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 		
 		this.certificacion.certificacionFase.certificacion.concepto.valorEstimado = importeTotal;
 		
-		String idTransaccion = ConsultaBD.getTicket();
-		this.certificacion.certificacionFase.certificacion.guardarCertificacion(idTransaccion);
+		this.certificacion.certificacionFase.certificacion.guardarCertificacion(null);
 		
-		ConsultaBD.ejecutaTicket(idTransaccion);
-
 	}
 	
 	private void cargaPropiedades(int idCertificacion, Object claseMostrar) throws Exception {

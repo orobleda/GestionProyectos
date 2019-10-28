@@ -37,6 +37,23 @@ public class EstimacionMes {
 		cAux.topeImputacion = tp;
 	}
 	
+	public HashMap<String,Concepto> calculaRepartoTREI(){
+		HashMap<String,Concepto> salida = new HashMap<String,Concepto>();
+		
+		Iterator<Sistema> itS = this.estimacionesPorSistemas.values().iterator();
+		while(itS.hasNext()){
+			Sistema s = itS.next();
+			Concepto c = s.listaConceptos.get(MetaConcepto.porId(MetaConcepto.TREI).codigo);
+			if (c!=null) {
+				c.s = s;
+				
+				salida.put(c.s.codigo, c.cloneConListas());	
+			}		
+		}
+		
+		return salida;
+	}
+	
 	public void repartirCertificacion(Certificacion cert, EstimacionAnio ea) {
 		Date fInicioMes = Constantes.inicioMes(this.mes, ea.anio);
 		Calendar cFInicioMes = Calendar.getInstance();
@@ -84,41 +101,68 @@ public class EstimacionMes {
 				if (cAux!=null) {
 					HashMap<Integer,Integer> yaImputado = new HashMap<Integer, Integer>();
 					
-					if (tipoPres!=ControlPresupuestario.VISTA_PRES_REAL) {
+					if (tipoPres==ControlPresupuestario.VISTA_PRES_ESTIMADOREAL) {
 						if (cAux.topeImputacion!=null)
-							acumulado += cAux.topeImputacion.cantidad;
-					}
-					
-					if (tipoPres!=ControlPresupuestario.VISTA_PRES_ESTIMADO) {
+								acumulado += cAux.topeImputacion.cantidad;
+						
 						Iterator<Imputacion> itImp = cAux.listaImputaciones.iterator();
 						while (itImp.hasNext()) {
 							Imputacion iAux = itImp.next();
-							acumulado += iAux.getImporte();
-							yaImputado.put(iAux.recurso.id, iAux.recurso.id);
+							acumulado -= iAux.getImporte();
 						}
-						
+							
 						if (cAux.listaCertificaciones!=null) {
 							Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
 							while (itCert.hasNext()) {
 								CertificacionFaseParcial certAux = itCert.next();
-								acumulado += certAux.valReal;							
+								acumulado -= certAux.valReal;
+								acumulado += certAux.valEstimado;
 							}
 						}
-					}
-					
-					if (tipoPres!=ControlPresupuestario.VISTA_PRES_REAL) {
+						
 						Iterator<Estimacion> itEst = cAux.listaEstimaciones.iterator();
 						while (itEst.hasNext()) {
 							Estimacion eAux = itEst.next();
-							if (!yaImputado.containsKey(eAux.recurso.id))
-								acumulado += eAux.importe;
+							acumulado += eAux.importe;
+						}
+							
+					} else {					
+						if (tipoPres!=ControlPresupuestario.VISTA_PRES_REAL) {
+							if (cAux.topeImputacion!=null)
+								acumulado += cAux.topeImputacion.cantidad;
 						}
 						
-						if (cAux.listaCertificaciones!=null) {
-							Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
-							while (itCert.hasNext()) {
-								CertificacionFaseParcial certAux = itCert.next();
-								acumulado += certAux.valEstimado;							
+						if (tipoPres!=ControlPresupuestario.VISTA_PRES_ESTIMADO) {
+							Iterator<Imputacion> itImp = cAux.listaImputaciones.iterator();
+							while (itImp.hasNext()) {
+								Imputacion iAux = itImp.next();
+								acumulado += iAux.getImporte();
+								yaImputado.put(iAux.recurso.id, iAux.recurso.id);
+							}
+							
+							if (cAux.listaCertificaciones!=null) {
+								Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
+								while (itCert.hasNext()) {
+									CertificacionFaseParcial certAux = itCert.next();
+									acumulado += certAux.valReal;							
+								}
+							}
+						}
+						
+						if (tipoPres!=ControlPresupuestario.VISTA_PRES_REAL) {
+							Iterator<Estimacion> itEst = cAux.listaEstimaciones.iterator();
+							while (itEst.hasNext()) {
+								Estimacion eAux = itEst.next();
+								if (!yaImputado.containsKey(eAux.recurso.id))
+									acumulado += eAux.importe;
+							}
+							
+							if (cAux.listaCertificaciones!=null) {
+								Iterator<CertificacionFaseParcial> itCert = cAux.listaCertificaciones.iterator();
+								while (itCert.hasNext()) {
+									CertificacionFaseParcial certAux = itCert.next();
+									acumulado += certAux.valEstimado;							
+								}
 							}
 						}
 					}

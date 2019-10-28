@@ -254,7 +254,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		cbVsPresupuesto.getItems().removeAll(cbVsPresupuesto.getItems());
 		
 		Presupuesto pres = new Presupuesto();		
-		ArrayList<Presupuesto> listado = pres.buscaPresupuestos(p.id);
+		ArrayList<Presupuesto> listado = pres.buscaPresupuestos(p);
 		
 		cbVsPresupuesto.getItems().addAll(listado);
 
@@ -370,8 +370,12 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	}
 	
 	public void actualizaResumen() {
-		EstimacionesValoraciones.presupuesto.calculaTotales();
-		tablaResumenCoste.refrescaTabla();
+		EstimacionesValoraciones.presupuesto.calculaTotales();	
+		HashMap<String,Object> variablesPaso = new HashMap<String,Object>();
+		variablesPaso.put(LineaCostePresupuesto.COSTE, EstimacionesValoraciones.presupuesto.costesTotal.get(Sistema.getInstanceTotal().id));
+		variablesPaso.put("RESUMEN", Constantes.TRUE);
+		tablaResumenCoste.setPasoPrimitiva(variablesPaso);
+		tablaResumenCoste.pintaTabla(TipoDato.toListaObjetos(EstimacionesValoraciones.presupuesto.costesTotal.values()));
 		tablaLineasCoste.refrescaTabla();
 	}
 	
@@ -391,8 +395,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		}
 		
 		Coste c = new Coste();
-		c.id=9999;
-		c.sistema = null;
+		c.id=Sistema.getInstanceTotal().id;
+		c.sistema = Sistema.getInstanceTotal();
 		
 		for (int i = 0; i<mfp.conceptos.size();i++) {
 			MetaConcepto mcp = (MetaConcepto) mfp.conceptos.values().toArray()[i];

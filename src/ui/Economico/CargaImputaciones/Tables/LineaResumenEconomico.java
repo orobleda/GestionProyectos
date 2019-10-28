@@ -44,11 +44,11 @@ public class LineaResumenEconomico extends ParamTable implements Tableable  {
 		configuracionTabla.put(LineaResumenEconomico.DESVIO, new ConfigTabla(LineaResumenEconomico.DESVIO, LineaResumenEconomico.DESVIO, false,4, false));
 		
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put(LineaResumenEconomico.SISTEMA, new Integer(100));
-    	anchoColumnas.put(LineaResumenEconomico.PRESUPUESTADO, new Integer(100));
-    	anchoColumnas.put(LineaResumenEconomico.ESTIMADO, new Integer(100));
-    	anchoColumnas.put(LineaResumenEconomico.IMPUTADO, new Integer(100));
-    	anchoColumnas.put(LineaResumenEconomico.DESVIO, new Integer(100));
+    	anchoColumnas.put(LineaResumenEconomico.SISTEMA, new Integer(120));
+    	anchoColumnas.put(LineaResumenEconomico.PRESUPUESTADO, new Integer(70));
+    	anchoColumnas.put(LineaResumenEconomico.ESTIMADO, new Integer(70));
+    	anchoColumnas.put(LineaResumenEconomico.IMPUTADO, new Integer(70));
+    	anchoColumnas.put(LineaResumenEconomico.DESVIO, new Integer(70));
 	}
     
    	public void set(String campo, String valor){

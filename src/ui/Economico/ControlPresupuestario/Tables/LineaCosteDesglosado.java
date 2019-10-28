@@ -31,7 +31,7 @@ public class LineaCosteDesglosado extends ParamTable implements Tableable  {
     }
     
 	public void setConfig() {
-    	ArrayList<MetaConcepto> mcpL = new ArrayList<MetaConcepto>();
+		ArrayList<MetaConcepto> mcpL = new ArrayList<MetaConcepto>();
     	mcpL.addAll(MetaConcepto.listado.values());
     	Collections.sort(mcpL);
     	
@@ -48,6 +48,15 @@ public class LineaCosteDesglosado extends ParamTable implements Tableable  {
     	
     	configuracionTabla.put("TOTAL", new ConfigTabla("TOTAL", "TOTAL", false,contador++, false));
     	configuracionTabla.put("SISTEMA", new ConfigTabla("SISTEMA", "SISTEMA", false,contador, false));
+    	
+    	anchoColumnas = new HashMap<String, Integer>();
+    	anchoColumnas.put("TREI", new Integer(65));
+    	anchoColumnas.put("CC", new Integer(65));
+    	anchoColumnas.put("SATAD", new Integer(65));
+    	anchoColumnas.put("Desarrollo", new Integer(70));
+    	anchoColumnas.put("GOSC", new Integer(65));
+    	anchoColumnas.put("TOTAL", new Integer(70));
+    	anchoColumnas.put("SISTEMA", new Integer(80));
     	
     }
     

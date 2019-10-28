@@ -168,6 +168,7 @@ public class VacacionesAusencias  implements Cargable{
 			} else {
 				this.fxDia = (Date) FormateadorDatos.parseaDato((String) salida.get("vaFxDia"),FormateadorDatos.FORMATO_FECHA);
 				Calendar c = Calendar.getInstance();
+				c.setTime(this.fxDia);
 				this.mes = c.get(Calendar.MONTH)+1;
 				this.anio = c.get(Calendar.YEAR);
 				this.dia = c.get(Calendar.DAY_OF_MONTH);

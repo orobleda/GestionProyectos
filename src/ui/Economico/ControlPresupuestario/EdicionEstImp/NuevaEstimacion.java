@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import controller.AnalizadorPresupuesto;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,9 +25,11 @@ import model.beans.Estimacion;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
 import model.beans.Imputacion;
+import model.beans.Parametro;
+import model.beans.ParametroRecurso;
+import model.beans.Proveedor;
 import model.beans.Recurso;
 import model.beans.RelRecursoSistema;
-import model.beans.RelRecursoTarifa;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
@@ -68,7 +69,7 @@ public class NuevaEstimacion implements ControladorPantalla {
     private ComboBox<Recurso> cbRecurso;
 
     @FXML
-    private ComboBox<RelRecursoTarifa> cbTarifa;
+    private ComboBox<Tarifa> cbTarifa;
 
     @FXML
     private ComboBox<Sistema> cbSistema;
@@ -266,8 +267,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 		cbTarifa.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 			if (cbTarifa.getValue()!=null) {
 				if (!this.tfCoste.getText().equals("")) {
-					RelRecursoTarifa t  = this.cbTarifa.getValue();
-					Tarifa tar = t.tarifa;
+					Tarifa tar = this.cbTarifa.getValue();
 					try {
 						float horas = (Float)FormateadorDatos.parseaDato(this.tfCoste.getText(),FormateadorDatos.FORMATO_MONEDA)/tar.costeHora;
 						this.tfHoras.setText(FormateadorDatos.formateaDato(horas,FormateadorDatos.FORMATO_REAL));
@@ -275,8 +275,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 						
 					}
 				} else {
-					RelRecursoTarifa t  = this.cbTarifa.getValue();
-					Tarifa tar = t.tarifa;
+					Tarifa tar = this.cbTarifa.getValue();
 					try {
 						float coste = tar.costeHora*(Float)FormateadorDatos.parseaDato(this.tfHoras.getText(),FormateadorDatos.FORMATO_REAL);
 						this.tfCoste.setText(FormateadorDatos.formateaDato(coste,FormateadorDatos.FORMATO_MONEDA));
@@ -291,8 +290,29 @@ public class NuevaEstimacion implements ControladorPantalla {
 		});
 		
 		cbRecurso.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
-			RelRecursoTarifa rrt = new RelRecursoTarifa();
-			ArrayList<RelRecursoTarifa> listado = rrt.buscaRelacion(this.cbRecurso.getValue().id,true);
+			Tarifa t = new Tarifa();
+			ArrayList<Tarifa> lTarifas = new ArrayList<Tarifa>();
+			try {
+				ParametroRecurso pr = (ParametroRecurso) cbRecurso.getValue().getValorParametro(MetaParametro.RECURSO_PROVEEDOR);
+				if (pr!=null && pr.valorObjeto!=null) {
+					Proveedor pAux = (Proveedor) pr.getValor();
+					
+					HashMap<String,Object> filtros = new HashMap<String,Object>();
+					filtros.put(Tarifa.filtro_PROVEEDOR, pAux);
+					lTarifas = new Tarifa().listado(filtros);
+					
+				}
+				
+				cbTarifa.getItems().removeAll(cbTarifa.getItems());
+				cbTarifa.getItems().addAll(lTarifas);
+			
+			
+				Tarifa tAux = Tarifa.tarifaPorDefecto(cbRecurso.getValue(), null, false);
+				if (tAux!=null) 
+					cbTarifa.setValue(tAux);
+			} catch (Exception e) {
+				
+			}
 			
 			Recurso r = this.cbRecurso.getValue();
 			try {
@@ -312,18 +332,6 @@ public class NuevaEstimacion implements ControladorPantalla {
 					}
 				}
 			}catch (Exception e){}
-			
-			cbTarifa.getItems().removeAll(cbTarifa.getItems());
-			
-			ObservableList<RelRecursoTarifa> oListado = FXCollections.observableArrayList();
-			oListado.setAll(listado);
-			cbTarifa.setItems(oListado);
-			
-			Date fecha = this.calculaFecha();
-			
-			rrt = rrt.tarifaVigente(this.cbRecurso.getValue().id,true,fecha);
-			
-			if (rrt!=null) cbTarifa.setValue(rrt);
 			
 			actualizaSistemasPredeterminados (this.ckbIncNoPred.isSelected());
 	    	}
@@ -373,8 +381,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 					catch (Exception ex) {}
 				}
 				if (this.cbTarifa.getValue()!=null) {
-					RelRecursoTarifa t  = this.cbTarifa.getValue();
-					Tarifa tar = t.tarifa;
+					Tarifa tar = this.cbTarifa.getValue();
 					try {
 						float horas = (Float)FormateadorDatos.parseaDato(this.tfCoste.getText(),FormateadorDatos.FORMATO_MONEDA)/tar.costeHora;
 						this.tfHoras.setText(FormateadorDatos.formateaDato(horas,FormateadorDatos.FORMATO_REAL));
@@ -403,8 +410,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 					catch (Exception ex) {}
 				}
 				if (this.cbTarifa.getValue()!=null) {
-					RelRecursoTarifa t  = this.cbTarifa.getValue();
-					Tarifa tar = t.tarifa;
+					Tarifa tar = this.cbTarifa.getValue();
 					try {
 						float coste = tar.costeHora*(Float)FormateadorDatos.parseaDato(this.tfHoras.getText(),FormateadorDatos.FORMATO_REAL);
 						this.tfCoste.setText(FormateadorDatos.formateaDato(coste,FormateadorDatos.FORMATO_MONEDA));
@@ -685,7 +691,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 			i.proyecto = ControlPresupuestario.ap.proyecto;
 			i.recurso = this.cbRecurso.getValue();
 			i.sistema = this.cbSistema.getValue();
-			i.tarifa = this.cbTarifa.getValue().tarifa;
+			i.tarifa = this.cbTarifa.getValue();
 			i.modo = this.modo;
 			
 			lImputacion.add(i);
@@ -852,15 +858,7 @@ public class NuevaEstimacion implements ControladorPantalla {
 	}
 	
 	public void setValueComboTarifa(Tarifa t) {
-		Iterator<RelRecursoTarifa> itTarifa = this.cbTarifa.getItems().iterator();
-		RelRecursoTarifa taux = null;
-		while (itTarifa.hasNext()) {
-			taux = itTarifa.next();
-			if (taux.tarifa.idTarifa == t.idTarifa) {
-				break;
-			}
-		}
-		this.cbTarifa.setValue(taux);
+		this.cbTarifa.setValue(t);
 	}
 	
 	public void setValueComboSistema(Sistema s) {

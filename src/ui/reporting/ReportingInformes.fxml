@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.reporting.ReportingInformes">
+   <top>
+      <VBox fx:id="vbCamposEntada" BorderPane.alignment="CENTER">
+         <children>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Área">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets left="15.0" right="50.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
+                  </Label>
+                  <ComboBox fx:id="cbArea" prefWidth="450.0">
+                     <opaqueInsets>
+                        <Insets left="15.0" />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="15.0" />
+                     </padding>
+                  </ComboBox>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" />
+               </padding>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="100.0" text="Informe">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets left="15.0" right="50.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
+                  </Label>
+                  <ComboBox fx:id="cbInforme" prefWidth="450.0">
+                     <opaqueInsets>
+                        <Insets left="15.0" />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="15.0" />
+                     </padding>
+                  </ComboBox>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" />
+               </padding>
+            </HBox>
+            <HBox>
+               <children>
+                  <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imgs/iconos/aniadir.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="25.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="25.0" left="650.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <VBox fx:id="vbInforme" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>

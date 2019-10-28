@@ -153,6 +153,7 @@ public class CertificacionFase implements Cargable{
 		while (itFps.hasNext()) {
 			CertificacionFaseParcial fps = itFps.next();
 			fps.borraCertificacionFaseParcial(idTransaccion);
+			fps.id = -1;
 		}
 		
 		if (this.parametrosCertificacionFase!=null) {
@@ -170,6 +171,8 @@ public class CertificacionFase implements Cargable{
 	
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraCertificacion_fase", listaParms, this, idTransaccion);
+		
+		this.id = -1;
 	}
 	
 	public void insertCertificacionFase(String idTransaccion)  throws Exception{
@@ -249,11 +252,17 @@ public class CertificacionFase implements Cargable{
 		while (itcfp.hasNext()) {
 			CertificacionFaseParcial cfp = itcfp.next();
 			cfp.valEstimado = coste*cfp.porcentaje/100;
-			if (t.costeHora!=0)
-				cfp.horEstimadas = cfp.valEstimado/t.costeHora;
-			else 
+			if (t!=null) {
+				if (t.costeHora!=0)
+					cfp.horEstimadas = cfp.valEstimado/t.costeHora;
+				else 
+					cfp.horEstimadas = 0;
+				cfp.tarifaEstimada = t.idTarifa;
+			} else {
 				cfp.horEstimadas = 0;
-			cfp.tarifaEstimada = t.idTarifa;
+				cfp.tarifaEstimada = -1;
+			}			
+			
 		}
 	}
 	
@@ -284,10 +293,12 @@ public class CertificacionFase implements Cargable{
 				return;
 			}
 			
-			Iterator<Double> itPorc = tpcv.porcentajes.iterator();
+			Iterator<TipoCobroVCT> itPorc = tpcv.lPorcentajes.iterator();
 			boolean encontrado = false;
 			while (itPorc.hasNext()) {
-				Double porc = itPorc.next();
+				TipoCobroVCT tp = itPorc.next();
+				
+				Double porc = tp.porcentaje;
 				if (cfp.porcentaje - porc == 0) {
 					encontrado = true;
 					break;
@@ -305,7 +316,7 @@ public class CertificacionFase implements Cargable{
 		
 		ArrayList<CertificacionFaseParcial> aCFP = new ArrayList<CertificacionFaseParcial>();
 		
-		Iterator<Double> itPorc = tpcv.porcentajes.iterator();
+		Iterator<TipoCobroVCT> itPorc = tpcv.lPorcentajes.iterator();
 		Date fechaAnterior = null;
 		
 		if (this.fase!=null)
@@ -317,9 +328,9 @@ public class CertificacionFase implements Cargable{
 		int contador = 0;
 		
 		while (itPorc.hasNext()) {
-			Double porc = itPorc.next();
+			TipoCobroVCT porc = itPorc.next();
 			
-			double cantidadFase = porc * cantidadRepartir/100;
+			double cantidadFase = porc.porcentaje * cantidadRepartir/100;
 			
 			CertificacionFaseParcial cfp = new CertificacionFaseParcial();
 			cfp.certificacion_fase = this.id;
@@ -333,8 +344,8 @@ public class CertificacionFase implements Cargable{
 			}
 					
 			cfp.id = -1;
-			cfp.nombre = tpcv.nombres.get(contador++);
-			cfp.porcentaje = new Double(porc).floatValue();
+			cfp.nombre = porc.nombre;
+			cfp.porcentaje = new Double(porc.porcentaje).floatValue();
 			cfp.tipoEstimacion = TipoEnumerado.TIPO_PRESUPUESTO_EST;
 			cfp.valEstimado = new Double(cantidadFase).floatValue();
 			
@@ -351,6 +362,20 @@ public class CertificacionFase implements Cargable{
 		
 		this.certificacionesParciales = aCFP;		
 		
+	}
+	
+
+	public float getPorcentaje(CertificacionFaseParcial cfp) {
+		float total = 0;
+		
+		Iterator<CertificacionFaseParcial> itCfp = this.certificacionesParciales.iterator();
+		while (itCfp.hasNext()) {
+			CertificacionFaseParcial cfpAux = itCfp.next();
+			total += cfpAux.valEstimado;
+		}
+		
+		if (total==0) return 0;
+		else return 100*cfp.valEstimado/total;
 	}
 	
 }

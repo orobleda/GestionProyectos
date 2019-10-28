@@ -32,6 +32,8 @@ public class CertificacionFaseParcial implements Cargable{
 	public float horEstimadas;
 	public float porcentaje;
 	
+	public ArrayList<CertificacionReal> certReal = new ArrayList<CertificacionReal>();
+	
 	public HashMap<String,? extends Parametro> paramCertificacionFaseParcial = null;	
 	
 	public CertificacionFaseParcial clone() {
@@ -60,6 +62,8 @@ public class CertificacionFaseParcial implements Cargable{
 			
 			fp.paramCertificacionFaseParcial = mapAux;
 		}
+		
+		ArrayList<CertificacionReal> certReal = new ArrayList<CertificacionReal>();
 		
 		return fp;
 	}
@@ -160,7 +164,7 @@ public class CertificacionFaseParcial implements Cargable{
 		 		this.porcentaje = ((Double) salida.get("cerPorcentaje")).floatValue();
 			}
 		} catch (Exception ex) {}
-		
+				
 		return this;
 	}
 	
@@ -181,6 +185,10 @@ public class CertificacionFaseParcial implements Cargable{
 			
 			ParametroCertificacion pf = new ParametroCertificacion();
 			p.paramCertificacionFaseParcial = pf.dameParametros(this.getClass().getSimpleName(), p.id);
+			
+			CertificacionReal cfr = new CertificacionReal();
+			cfr.certiAsignada = this;
+			p.certReal = cfr.listado(CertificacionReal.CONSULTA_CERTIF, -1, null);
 			
 			salida.add(p);
 		}
@@ -205,6 +213,20 @@ public class CertificacionFaseParcial implements Cargable{
 	
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraCertificacion_fase_parcial", listaParms, this, idTransaccion);
+		
+		if (this.certReal!=null) {
+			if (this.certReal.size()==0) {
+				CertificacionReal cr = new CertificacionReal();
+				cr.certiAsignada = this;
+				this.certReal = cr.listado(CertificacionReal.CONSULTA_CERTIF, 0, "");
+			}
+			Iterator<CertificacionReal> itCertReal = this.certReal.iterator();
+			while (itCertReal.hasNext()) {
+				CertificacionReal cr = itCertReal.next(); 
+				cr.modo = CertificacionReal.ACCION_ELIMINAR;
+				cr.borraCertificacionReal(idTransaccion, CertificacionReal.CONSULTA_ID);
+			}
+		}
 	}
 	
 	public void insertCertificacionFaseParcial(String idTransaccion)  throws Exception{
@@ -239,6 +261,16 @@ public class CertificacionFaseParcial implements Cargable{
 				par.actualizaParametro(idTransaccion, false);
 			}
 		}
+		
+		
+		if (this.certReal!=null) {
+			Iterator<CertificacionReal> itCertReal = this.certReal.iterator();
+			while (itCertReal.hasNext()) {
+				CertificacionReal cr = itCertReal.next(); 
+				cr.modo = CertificacionReal.ACCION_CREAR;
+				cr.insertCertificacionReal(idTransaccion);
+			}
+		}
 	}
 		
 	public void updateCertificacionFaseParcial(String idTransaccion)  throws Exception{
@@ -271,6 +303,19 @@ public class CertificacionFaseParcial implements Cargable{
 				Parametro par = itpf.next();
 				par.idEntidadAsociada = this.id;
 				par.actualizaParametro(idTransaccion, false);
+			}
+		}
+		
+		if (this.certReal!=null) {
+			Iterator<CertificacionReal> itCertReal = this.certReal.iterator();
+			while (itCertReal.hasNext()) {
+				CertificacionReal cr = itCertReal.next(); 
+				if (cr.versionPrevia!=null){
+					cr.modo = CertificacionReal.ACCION_SUBSTITUIR;
+					cr.versionPrevia.borraCertificacionReal(idTransaccion,cr.versionPrevia.id);
+				} else cr.modo = CertificacionReal.ACCION_CREAR;
+				
+				cr.insertCertificacionReal(idTransaccion);
 			}
 		}
 				

@@ -21,11 +21,18 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PARAMETRO_FIJAR_FX_ACTUAL = "FX_ACTUAL_MOD";
 	public static final String PARAMETRO_FX_ACTUAL_FIJADA = "FX_ACTUAL_FIJA";
 	public static final String PARAMETRO_ECONOMICO_PERINTRACERT = "perIntraCert";	
-	public static final String PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT = "tipoCobroEstandVCT";	
+	public static final String PARAMETRO_ECONOMICO_TIPOCOBROESTANDARVCT = "tipoCobroEstandVCT";
+	public static final String PARAMETRO_RUTA_REPOSITORIO = "repoProy";	
+	public static final String PARAMETRO_PORC_TREI_GGP = "PORC_TREI_GGP";
+	public static final String PARAMETRO_TARIFA_DEFECTO_INTERNAS = "PAR_TAR_DEF_INT";	
+	public static final String PARAMETRO_TARIFA_DEFECTO_SATAD = "PAR_TAR_DEF_SATAD";
+	public static final String PARAMETRO_TARIFA_DEFECTO_CC = "PAR_TAR_DEF_CC";	
+	public static final String PARAMETRO_TARIFA_DEFECTO_DES = "PAR_TAR_DEF_DES";		
 	
 	public static final String PARAMETRO_SISTEMA_PROVEEDOR = "SIST.Proveedor";
 	
 	public static final String PROVEEDOR_CODPPM = "PROV.NOMPPM";
+	public static final String PROVEEDOR_TARIFA_DEFECTO = "PROV.TAR_DEF";
 	
 	public static final String PROYECTO_PERFIL_ECONOMICO = "PROY.perfEconomico";
 	public static final String PROYECTO_TIPO_PROYECTO = "PROY.tpProyecto";
@@ -34,6 +41,8 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PROYECTO_FX_FIN_IMPL = "PROY.fxFinImpl";
 	public static final String PROYECTO_CERRADO = "PROY.CERRADO";
 	public static final String PROYECTO_NOMPPM = "PROY.NOMPPM";
+	public static final String PROYECTO_ACRONPROY = "PROY.ACRON";
+	public static final String PROYECTO_CODPPM = "PROY.codPPM";
 	
 	public static final String RECURSO_JORNADA = "REC.jornada";
 	public static final String RECURSO_NAT_COSTE = "REC.natCoste";
@@ -41,6 +50,8 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String RECURSO_COD_GESTOR = "REC.codGestor";
 	public static final String RECURSO_NOMBRE_REAL = "REC.PERSONA";
 	public static final String RECURSO_COD_PPM = "REC.NOMPPM";
+	public static final String RECURSO_PROVEEDOR = "REC.PROVEEDOR";
+	public static final String RECURSO_TAR_DEF = "REC.TAR_DEF";
 	
 
 	

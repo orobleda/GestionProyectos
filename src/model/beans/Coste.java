@@ -178,7 +178,7 @@ public class Coste implements Cargable{
 				}
 			}
 			
-			if (todosCero) {
+			if (actualiza && todosCero) {
 				this.borrarCoste(idTransaccion);
 				return;
 			}

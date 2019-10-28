@@ -69,6 +69,40 @@ public class EstimacionAnio  implements Cargable {
 		return ea;
 	}
 	
+	public HashMap<String,Concepto> calculaRepartoTREI(){
+		HashMap<String,Concepto> salida = new HashMap<String,Concepto>();
+		
+		Iterator<EstimacionMes> itEm = this.estimacionesMensuales.values().iterator();
+		while(itEm.hasNext()){
+			EstimacionMes em = itEm.next();
+			HashMap<String,Concepto> distSisTREI = em.calculaRepartoTREI();
+			
+			Iterator<Concepto> itConceptos = distSisTREI.values().iterator();
+			while (itConceptos.hasNext()) {
+				Concepto c = itConceptos.next();
+				Concepto cAux = null; 
+				
+				if (salida.containsKey(c.s.codigo)) {
+					cAux = salida.get(c.s.codigo);
+					cAux.listaEstimaciones.addAll(c.listaEstimaciones);
+					cAux.listaImputaciones.addAll(c.listaImputaciones);
+					if (c.topeImputacion!=null){
+						if (cAux.topeImputacion!=null ){
+							cAux.topeImputacion.cantidad += c.topeImputacion.cantidad;
+						} else {
+							cAux.topeImputacion = c.topeImputacion;
+						}
+					}
+				} else {
+					cAux = c;
+					salida.put(c.s.codigo, c);
+				}
+			}
+		}
+		
+		return salida;
+	}
+	
 	public void repartirResto(Sistema s, MetaConcepto c, Date fechaPivote, AnalizadorPresupuesto ap, float repartoMensual) {
 		
 		Iterator<EstimacionMes> itEM = this.estimacionesMensuales.values().iterator();

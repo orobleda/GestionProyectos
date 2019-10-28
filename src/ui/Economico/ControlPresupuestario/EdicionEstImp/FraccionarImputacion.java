@@ -271,24 +271,26 @@ public class FraccionarImputacion implements ControladorPantalla {
 			
 			FraccionImputacion fI = new FraccionImputacion();
 			
-			if (FraccionarImputacion.A_PORCENTAJE.equals(this.tFraccion.getValue())) {
-				fI.tipo = FraccionImputacion.POR_PORCENTAJE;
-				fI.porc = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_PORC);
+			if (!"".equals(fui.tFraccion.getText())) {
+				if (FraccionarImputacion.A_PORCENTAJE.equals(this.tFraccion.getValue())) {
+					fI.tipo = FraccionImputacion.POR_PORCENTAJE;
+					fI.porc = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_PORC);
+				}
+				if (FraccionarImputacion.A_HORAS.equals(this.tFraccion.getValue())) {
+					fI.tipo = FraccionImputacion.POR_HORAS;
+					fI.horas = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_REAL);
+				}
+				if (FraccionarImputacion.A_IMPORTE.equals(this.tFraccion.getValue())) {
+					fI.tipo = FraccionImputacion.POR_IMPORTE;
+					fI.importe = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_MONEDA);
+				}
+				
+				fI.idPadre = this.imputRepresentada.id;
+				fI.id = -1;
+				fI.sistema = fui.cbSistema.getValue();
+				
+				salida.add(fI);
 			}
-			if (FraccionarImputacion.A_HORAS.equals(this.tFraccion.getValue())) {
-				fI.tipo = FraccionImputacion.POR_HORAS;
-				fI.horas = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_REAL);
-			}
-			if (FraccionarImputacion.A_IMPORTE.equals(this.tFraccion.getValue())) {
-				fI.tipo = FraccionImputacion.POR_IMPORTE;
-				fI.importe = (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_MONEDA);
-			}
-			
-			fI.idPadre = this.imputRepresentada.id;
-			fI.id = -1;
-			fI.sistema = fui.cbSistema.getValue();
-			
-			salida.add(fI);
 		}
 		
 		return salida;
@@ -302,7 +304,8 @@ public class FraccionarImputacion implements ControladorPantalla {
 			
 			while (itFUI.hasNext()) {
 				FraccionUnitariaImputacion fui = itFUI.next();
-				porcTotal += (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_PORC);
+				if ("".equals(fui.tFraccion.getText())) porcTotal += 0;
+				else porcTotal += (Float) FormateadorDatos.parseaDato(fui.tFraccion.getText(), FormateadorDatos.FORMATO_PORC);
 			}
 			
 			if (porcTotal!=100) {

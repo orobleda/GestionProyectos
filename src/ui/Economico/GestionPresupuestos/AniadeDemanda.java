@@ -590,7 +590,7 @@ public class AniadeDemanda implements ControladorPantalla {
 			listado.addAll(pres.buscaPresupuestosAPunteContable());
 		}
 		else 
-			listado = pres.buscaPresupuestos(p.id);
+			listado = pres.buscaPresupuestos(p);
 		
 		cbVersionPres.getItems().addAll(listado);
 	}

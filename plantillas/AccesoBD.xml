@@ -238,6 +238,14 @@
 		</parametros>
 	</acceso>
 	<acceso>
+		<query>select idConcepto relIdconcepto ,idBloque relIdbloque ,id relId ,codRel relCodrel	from  REL_BLOQUE_CONCEPTO where 1=1 $B$and id=||1||$E$</query>
+		<id tipo="C">cConsultaRel_bloque_concepto</id>
+		<tabla>REL_BLOQUE_CONCEPTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
 		<query>select id metcId, codigo metcCod, descripcion metcDesc, gestEco metGesEco from META_CONCEPTO where 1=1 $B$and codigo=||1||$E$</query>
 		<id tipo="C">cConsultaMetaConceptos</id>
 		<tabla>META_CONCEPTO</tabla>
@@ -822,11 +830,14 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>DELETE FROM TOPE_IMPUTACION WHERE  idProyecto=$B$||1||$E$</query>
+		<query>DELETE FROM TOPE_IMPUTACION WHERE  idProyecto=$B$||1||$E$ $B$and idSistema=||2||$E$ $B$and idConcepto=||3||$E$ $B$and anio=||4||$E$</query>
 		<id tipo="D">dBorraTopes</id>
 		<tabla>TOPE_IMPUTACION</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>
@@ -1117,7 +1128,7 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select codigo creCodigo ,id creId ,porcentaje crePorcentaje ,nombre creNombre from TIPO_COBRO_VCT  where 1=1 $B$and id=||1||$E$</query>
+		<query>select codigo creCodigo ,id creId ,porcentaje crePorcentaje ,nombre creNombre ,orden creOrden from TIPO_COBRO_VCT  where 1=1 $B$and id=||1||$E$</query>
 		<id tipo="C">cConsultatipo_cobro_vct</id>
 		<tabla>TIPO_COBRO_VCT</tabla>
 		<parametros>
@@ -1159,4 +1170,122 @@
 	<parametros>
 	</parametros>
 </acceso>	
+<acceso>
+	<query>select descripcion creDescripcion ,descripcionHito creDescripcionhito ,estado creEstado ,tipo creTipo ,nSolicitud creNsolicitud ,ruta creRuta ,horasHito creHorashito ,importeHito creImportehito ,fxCertificacion creFxcertificacion ,pedido crePedido ,proveedor creProveedor ,usuario creUsuario ,id creId ,fxConsulta creFxconsulta,idCert creIdCert	from  CERTIFICACION_REAL where 1=1 $B$and id=||1||$E$ $B$and nSolicitud=||2||$E$ $B$and idCert=||3||$E$</query>
+	<id tipo="C">cConsultaCertificacionReal</id>
+	<tabla>CERTIFICACION_REAL</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into CERTIFICACION_REAL (descripcion ,descripcionHito ,estado ,tipo ,nSolicitud ,ruta ,horasHito ,importeHito ,fxCertificacion ,pedido ,proveedor ,usuario ,id ,fxConsulta,idCert) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$ ,$B$||7||$E$ ,$B$||8||$E$ ,$B$||9||$E$ ,$B$||10||$E$ ,$B$||11||$E$ ,$B$||12||$E$ ,$B$||13||$E$ ,$B$||14||$E$,$B$||15||$E$)</query>
+	<id tipo="I">iInsertaCertificacionReal</id>
+	<tabla>CERTIFICACION_REAL</tabla>
+	<parametros>
+		<parametro id="1" tipo="str"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="str"></parametro>
+		<parametro id="4" tipo="str"></parametro>
+		<parametro id="5" tipo="str"></parametro>
+		<parametro id="6" tipo="str"></parametro>
+		<parametro id="7" tipo="rea"></parametro>
+		<parametro id="8" tipo="rea"></parametro>
+		<parametro id="9" tipo="dat"></parametro>
+		<parametro id="10" tipo="str"></parametro>
+		<parametro id="11" tipo="int"></parametro>
+		<parametro id="12" tipo="int"></parametro>
+		<parametro id="13" tipo="id"></parametro>
+		<parametro id="14" tipo="dat"></parametro>
+		<parametro id="15" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from CERTIFICACION_REAL where 1=1 $B$and id=||1||$E$ $B$and nSolicitud=||2||$E$ $B$and idCert=||3||$E$</query>
+	<id tipo="D">dBorraCertificacionReal</id>
+	<tabla>CERTIFICACION_REAL</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>select idFoto detIdfoto ,idSistema detIdsistema ,valor detValor ,mes detMes ,id detId ,anio detAnio ,tipoConcepto detTipoconcepto, fase detFase, nomCertificacion detNomCertificacion, fxCertificacion detFxCertificacion	from  DETALLE_FOTO where 1=1 $B$and idFoto=||1||$E$</query>
+	<id tipo="C">cConsultaDetalle_foto</id>
+	<tabla>DETALLE_FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into DETALLE_FOTO (idFoto ,idSistema ,valor ,mes ,id ,anio ,tipoConcepto, fase, nomCertificacion, fxCertificacion) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$ ,$B$||7||$E$ ,$B$||8||$E$ ,$B$||9||$E$ ,$B$||10||$E$)</query>
+	<id tipo="I">iInsertaDetalle_foto</id>
+	<tabla>DETALLE_FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+		<parametro id="3" tipo="rea"></parametro>
+		<parametro id="4" tipo="int"></parametro>
+		<parametro id="5" tipo="id"></parametro>
+		<parametro id="6" tipo="int"></parametro>
+		<parametro id="7" tipo="int"></parametro>
+		<parametro id="8" tipo="int"></parametro>
+		<parametro id="9" tipo="str"></parametro>
+		<parametro id="10" tipo="dat"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from DETALLE_FOTO where 1=1 $B$and id=||1||$E$</query>
+	<id tipo="D">dBorraDetalle_foto</id>
+	<tabla>DETALLE_FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>select idProyecto fotIdproyecto ,tipo fotTipo ,persistir fotPersistir ,fxCreacion fotFxcreacion ,id fotId ,nombreFoto fotNombrefoto, valAnioCurso fotValAnioCurso, valTotal fotValTotal	from  FOTO where 1=1 $B$and id=||1||$E$ $B$and idProyecto=||2||$E$</query>
+	<id tipo="C">cConsultaFoto</id>
+	<tabla>FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into FOTO (idProyecto ,tipo ,persistir ,fxCreacion ,id ,nombreFoto,valAnioCurso,valTotal) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$ ,$B$||7||$E$ ,$B$||8||$E$)</query>
+	<id tipo="I">iInsertaFoto</id>
+	<tabla>FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+		<parametro id="4" tipo="dat"></parametro>
+		<parametro id="5" tipo="id"></parametro>
+		<parametro id="6" tipo="str"></parametro>
+		<parametro id="7" tipo="rea"></parametro>
+		<parametro id="8" tipo="rea"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from FOTO where 1=1 $B$and id=||1||$E$</query>
+	<id tipo="D">dBorraFoto</id>
+	<tabla>FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>UPDATE FOTO SET persistir= $B$||3||$E$, nombreFoto= $B$||2||$E$ where id = $B$||1||$E$</query>
+	<id tipo="U">uActualizaFoto</id>
+	<tabla>FOTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="int"></parametro>
+	</parametros>
+</acceso>
+
 </accesoBD>

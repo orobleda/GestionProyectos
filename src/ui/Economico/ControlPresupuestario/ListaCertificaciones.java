@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
 import model.beans.CertificacionFaseParcial;
@@ -73,6 +74,9 @@ public class ListaCertificaciones implements ControladorPantalla {
 	@FXML
 	private AnchorPane anchor;
 	
+	@FXML
+    private VBox vbCertificaciones;
+	
     @FXML
     private Label lCertificaciones;
 	
@@ -83,7 +87,13 @@ public class ListaCertificaciones implements ControladorPantalla {
    
    @Override
 	public void resize(Scene escena) {
-		
+	   if (tablaCertificaciones!=null) {
+		    vbCertificaciones.setPrefHeight(vbCertificaciones.getScene().getHeight()*0.65);
+		    vbCertificaciones.setPrefWidth(vbCertificaciones.getScene().getWidth()*0.75);
+			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
+			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
+			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
+	   }
 	}
 
 	@Override
@@ -110,6 +120,7 @@ public class ListaCertificaciones implements ControladorPantalla {
 				variablesPaso.put(ImportaCertificacion.SISTEMA,cbSistema.getValue());
 				variablesPaso.put(ImportaCertificacion.PROYECTO,this.ap.proyecto);
 				variablesPaso.put(ImportaCertificacion.CERTIFICACIONES,getCertificaciones());
+				variablesPaso.put(ImportaCertificacion.MODO,ImportaCertificacion.MODO_CARGA);
 				
 				ImportaCertificacion importarCertificacion = new ImportaCertificacion();
 		        FXMLLoader loader = new FXMLLoader();
@@ -134,12 +145,7 @@ public class ListaCertificaciones implements ControladorPantalla {
             { 
 				try {
 					String idTransaccion = ConsultaBD.getTicket();
-					procesaArchivo();
-										/*
-					ConsultaBD.ejecutaTicket(idTransaccion);
-					ControlPresupuestario.salvaPosicionActual();
-	            	Dialogo.alert("Certificación añadida", "Certificación añadida", "Certificación añadida correctamente");
-	            	ControlPresupuestario.cargaPosicionActual();*/
+					procesaArchivo();					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -152,6 +158,7 @@ public class ListaCertificaciones implements ControladorPantalla {
             { 
 				try {
 					Certificacion cert = new Certificacion();
+					cert.p = ap.proyecto;
 					cert = cert.generaCertificacionVacia(cbSistema.getValue(), ap.proyecto );
 					String idTransaccion = ConsultaBD.getTicket();
 					cert.guardarCertificacion(idTransaccion);
@@ -171,8 +178,8 @@ public class ListaCertificaciones implements ControladorPantalla {
             @Override
             public void handle(MouseEvent t)
             {
-            	try {
-	            	File file = new File ("C:\\Users\\Oscar\\OneDrive - Enagás, S.A\\Repositorio\\Evolutivo\\2.5PROTEMP\\Certificaciones\\");
+            	try {//
+	            	File file = new File (ap.proyecto.rutaCertificacion());
 	            	Desktop desktop = Desktop.getDesktop();
 	            	desktop.open(file);
             	} catch (Exception e) {
@@ -201,50 +208,19 @@ public class ListaCertificaciones implements ControladorPantalla {
 					}
 				}
 			}
-			/*
-			itCert = ap.certificaciones.iterator();
-			while (itCert.hasNext()) {
-				Certificacion cert = itCert.next();
-				
-				if (cert.isAdicional()) {
-					Iterator<Object> itCAux = cList.iterator();
-					while (itCAux.hasNext()) {
-						Certificacion cAux = (Certificacion) itCAux.next();
-						
-						if (cAux.s.codigo.equals(cert.s.codigo)) {
-							Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
-							while (itCFase.hasNext()) {
-								CertificacionFase certF = itCFase.next();
-								
-								Iterator<CertificacionFase> itCFaseAux = cAux.certificacionesFases.iterator();
-								while (itCFaseAux.hasNext()) {
-									CertificacionFase certFAux = itCFaseAux.next();
-									
-									if (certFAux.fase == certF.fase) {
-										Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
-										while (itCfp.hasNext()) {
-											CertificacionFaseParcial cfp = itCfp.next();
-											certFAux.concAdicional.valorEstimado += cfp.valEstimado;
-											certFAux.concAdicional.valor += cfp.valReal;
-											cAux.conceptoAdicional.valorEstimado += cfp.valEstimado;
-											cAux.conceptoAdicional.valor += cfp.valReal;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}*/
 		}
 		
 		return salida;
 	}
 	
 	public void pintaCertificaciones(AnalizadorPresupuesto ap) {
-		tablaCertificaciones = new Tabla(tCertificaciones,new LineaCosteCertificacion());
+		
+	   tablaCertificaciones = new Tabla(tCertificaciones,new LineaCosteCertificacion());
+	   tablaCertificaciones.altoLibre = true;
 		tablaResumenFases = new Tabla(tResumenFases,new LineaCosteCertResumenFase());
+		tablaResumenFases.altoLibre = true;
 		tablaResumenSistemas = new Tabla(tResumenSistemas,new LineaCosteCertResumenSistema());
+		tablaResumenSistemas.altoLibre = true;
 		
 		this.ap = ap;
 		
@@ -284,15 +260,20 @@ public class ListaCertificaciones implements ControladorPantalla {
 			}
 			
 			itCert = ap.certificaciones.iterator();
+			boolean encontrado = false;
+			
 			while (itCert.hasNext()) {
 				Certificacion cert = itCert.next();
+				encontrado = false;
 				
 				if (cert.isAdicional()) {
 					Iterator<Object> itCAux = cList.iterator();
+					
 					while (itCAux.hasNext()) {
 						Certificacion cAux = (Certificacion) itCAux.next();
 						
 						if (cAux.s.codigo.equals(cert.s.codigo)) {
+							encontrado = true;
 							Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
 							while (itCFase.hasNext()) {
 								CertificacionFase certF = itCFase.next();
@@ -315,13 +296,32 @@ public class ListaCertificaciones implements ControladorPantalla {
 							}
 						}
 					}
+				} else encontrado = true;
+				
+				if (!encontrado) {
+					cList.add(cert);
+					cert.conceptoAdicional = new Concepto();
+					
+					Iterator<CertificacionFase> itCFase = cert.certificacionesFases.iterator();
+					while (itCFase.hasNext()) {
+						CertificacionFase certF = itCFase.next();
+						cfList.add(certF);
+						
+						Iterator<CertificacionFaseParcial> itCfp = certF.certificacionesParciales.iterator();
+						while (itCfp.hasNext()) {
+							CertificacionFaseParcial cfp = itCfp.next();
+							cfpList.add(cfp);
+						}
+					}
 				}
-			}
+			}			
 		}
 		
 		tablaCertificaciones.pintaTabla(cfpList);
 		tablaResumenFases.pintaTabla(cfList);
 		tablaResumenSistemas.pintaTabla(cList);
+		
+		this.resize(null);
 	}
 	
 }
