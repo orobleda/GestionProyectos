@@ -155,11 +155,24 @@ public class AnalizadorPresupuesto {
 			Iterator<Imputacion> itImp = conc.listaImputaciones.iterator();
 			while (itImp.hasNext()) {
 				Imputacion imp = itImp.next();
+				
+				float importe = 0;
+				
+				if (imp.tipoImputacion == Imputacion.IMPUTACION_NO_FRACCIONADA) {
+					importe = imp.importe;
+				}
+				if (imp.tipoImputacion == Imputacion.IMPUTACION_FRACCIONADA) {
+					importe = imp.imputacionFraccion.getImporte();
+				}
+				if (imp.tipoImputacion == Imputacion.FRACCION_IMPUTACION) {
+					importe = imp.imputacionFraccion.getImporte();
+				}
+				
 				if (imp.gerencia.id == MetaGerencia.GGP) {
-					totalTREIGGPImputado += imp.importe;
+					totalTREIGGPImputado += importe;
 				}
 				if (imp.gerencia.id == MetaGerencia.GDT) {
-					totalTREIGDTImputado += imp.importe;
+					totalTREIGDTImputado += importe;
 				}				
 			}
 			

@@ -83,7 +83,7 @@ public class VistaFoto implements ControladorPantalla {
 	public void pintaFotos() {
 		Foto f = new Foto();
 		f.proyecto = ControlPresupuestario.ap.proyecto;
-		ArrayList<Foto> listaFotos = f.buscaFotos();
+		ArrayList<Foto> listaFotos = f.buscaFotos(null);
 		
 		ArrayList<Object> listado = new ArrayList<Object>();
 		listado.addAll(listaFotos);

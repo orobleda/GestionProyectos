@@ -74,6 +74,8 @@ public class MetaConcepto implements Cargable, Loadable, Comparable<MetaConcepto
 	}
 	
 	public static MetaConcepto porCodigo(String codigo) {
+		if (codigo.equals(MetaConcepto.getTotal().codigo)) return MetaConcepto.getTotal();
+		
 		Iterator<MetaConcepto> itMC = listado.values().iterator();
 		
 		while (itMC.hasNext()) {

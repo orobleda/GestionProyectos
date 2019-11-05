@@ -51,12 +51,11 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String RECURSO_NOMBRE_REAL = "REC.PERSONA";
 	public static final String RECURSO_COD_PPM = "REC.NOMPPM";
 	public static final String RECURSO_PROVEEDOR = "REC.PROVEEDOR";
-	public static final String RECURSO_TAR_DEF = "REC.TAR_DEF";
-	
+	public static final String RECURSO_TAR_DEF = "REC.TAR_DEF";	
 
-	
-	
-	
+	public static final String FOTO_COD_PORFOLIO = "FOTO.COD_PORFOLIO";
+	public static final String FOTO_FX_PPM = "FOTO.EN_PPM";
+		
 	public int id =0;
 	public String entidad = "";
 	public String codParametro = "";

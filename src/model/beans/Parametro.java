@@ -53,14 +53,14 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 	private static void cargaListadoTipoDatosObjetos() {
 		listadoTipoDatosObjetos = new HashMap<Integer,Integer>();
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_FORMATO_PROYECTO, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_PROYECTO, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_PROVEEDOR, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_METAJORNADA, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_PROYECTO, TipoDato.FORMATO_TIPO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_PROVEEDOR, TipoDato.FORMATO_PROVEEDOR);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_METAJORNADA, TipoDato.FORMATO_METAJORNADA);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_NAT_COSTE, TipoDato.FORMATO_NAT_COSTE);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_RECURSO, TipoDato.FORMATO_RECURSO);
 		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TIPO_VCT, TipoDato.FORMATO_TIPO_VCT);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TARIFA, TipoDato.FORMATO_FORMATO_PROYECTO);
-		listadoTipoDatosObjetos.put(TipoDato.FORMATO_COBRO_VCT, TipoDato.FORMATO_FORMATO_PROYECTO);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_TARIFA, TipoDato.FORMATO_TARIFA);
+		listadoTipoDatosObjetos.put(TipoDato.FORMATO_COBRO_VCT, TipoDato.FORMATO_COBRO_VCT);
 	}
 	
 	public static Object getParametro(String entidad, int idElemento, String codParametro) {
@@ -235,6 +235,28 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		}
 		
 		return Parametro.listadoParametros.get(codParametro);
+	}
+	
+	public ArrayList<Parametro> getParametro(String codParametro, Object valorParametro) {
+		ConsultaBD consulta = new ConsultaBD();
+		
+		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		
+		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_STR,codParametro));
+		listaParms.add(new ParametroBD(4,ConstantesBD.PARAMBD_STR,valorParametro.toString()));
+		
+		ArrayList<Cargable> parametros = consulta.ejecutaSQL("cConsultaParametro", listaParms, this);
+		
+		ArrayList<Parametro> salida = new ArrayList<Parametro>();
+				
+		Iterator<Cargable> itParams = parametros.iterator();
+		while (itParams.hasNext()) {
+			Parametro par = (Parametro) itParams.next();
+			
+			salida.add(par);
+		}
+		
+		return salida;
 	}
 	
 	public HashMap<String,Parametro> dameParametros(String entidad, int idElemento) {

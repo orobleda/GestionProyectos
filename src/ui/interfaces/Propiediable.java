@@ -8,6 +8,7 @@ import model.beans.CertificacionFaseParcial;
 import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
+import model.beans.Foto;
 import model.beans.Parametro;
 import model.beans.ParametroCertificacion;
 import model.beans.ParametroFases;
@@ -64,7 +65,9 @@ public interface Propiediable {
 		if (CertificacionFase.class.getSimpleName().equals(entidad))
 			return new ParametroCertificacion();	
 		if (CertificacionFaseParcial.class.getSimpleName().equals(entidad))
-			return new ParametroCertificacion();		
+			return new ParametroCertificacion();
+		if (Foto.class.getSimpleName().equals(entidad))
+			return new Parametro();
 		return null;
 	}
 	

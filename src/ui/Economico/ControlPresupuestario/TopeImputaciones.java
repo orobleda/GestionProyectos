@@ -76,7 +76,8 @@ public class TopeImputaciones implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		tablaTopes.fijaAlto(cbComboSistemas.getScene().getHeight()*0.5);
+		tablaTopes.fijaAlto(cbComboSistemas.getScene().getHeight()*0.4);
+		tablaTopes.componenteTabla.setMaxWidth(cbComboSistemas.getScene().getWidth()*0.8);
 	}
 
 	@Override

@@ -27,7 +27,9 @@ import model.beans.Coste;
 import model.beans.Estimacion;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
+import model.beans.Foto;
 import model.beans.Imputacion;
+import model.beans.Parametro;
 import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
@@ -38,6 +40,7 @@ import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
+import model.utils.db.ConsultaBD;
 
 public class ReporteEconomicoProyectos extends InformeGenerico{
 
@@ -46,17 +49,26 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 	HojaExcel hojaResumen = null;
 	
 	public static final String LISTA_PROYECTOS = "lProyectos";
+	public static final String HACER_FOTO_GLOBAL = "hFotoGlobal";
+	public static final String NOMBRE_FOTO_GLOBAL = "nFotoGlobal";
+	public static final String EN_PPM = "enPPM";
+	public static final String FX_PPM = "FX_PPM";
+	public static final String COMPARAR = "COMPARAR";
+	public static final String FOTO_COMPARAR = "FOTO_COMPARAR";
 	
 	public static final String ANCLA_RESUMEN = "ANCLA_RESUMEN";
 	public static final String ANCLA_DETALLE = "ANCLA_DETALLE";
 	public static final String ANCLA_CERTIF = "ANCLA_CERTIF";
 	public static final String ANCLA_TOTAL_FECHAS = "ANCLA_TOTAL_FECHAS";
 	public static final String ANCLA_PUNTERO_RESUMEN = "ANCLA_PUNTERO_RESUMEN";
+	public static final String ANCLA_PUNTERO_COMPARACION = "ANCLA_PUNTERO_COMPARACION";
 	public static final String ANCLA_CERTIFICACIONES = "ANCLA_CERTIFICACIONES";
 	public static final String ANCLA_IMPUTACIONES = "ANCLA_IMPUTACIONES";
+	public static final String ANCLA_MARGEN_ERROR = "ANCLA_MARGEN_ERROR";
 	
 	HashMap<Integer,HashMap<String,PosicionExcel>> anclas = null;
 	
+	ArrayList<AnalizadorPresupuesto> listaAps = null;
 	AnalizadorPresupuesto ap = null;
 	ArrayList<Sistema> lSistemas;
 	ArrayList<Concepto> lConceptos;
@@ -64,6 +76,8 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 	@Override
 	public void escribeFichero(HashMap<String, Object> datos) throws Exception {
 		if (newExcelFile==null) return;
+		
+		listaAps = new ArrayList<AnalizadorPresupuesto>();
 		
 		anclas = new HashMap<Integer,HashMap<String,PosicionExcel>>();
 		
@@ -79,7 +93,15 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         pintaHojaResumen(xssfSheetResumen);
         
         sheets = new HashMap<String, HojaExcel>();
+        
+        boolean hazFoto = (Boolean) datos.get(ReporteEconomicoProyectos.HACER_FOTO_GLOBAL);
+        String nomFoto = (String) datos.get(ReporteEconomicoProyectos.NOMBRE_FOTO_GLOBAL);
+        boolean enPPM = (Boolean) datos.get(ReporteEconomicoProyectos.EN_PPM);
+        Date fecha = (Date) datos.get(ReporteEconomicoProyectos.FX_PPM);
+        boolean comparar = (Boolean) datos.get(ReporteEconomicoProyectos.COMPARAR);
+        String codFotoComparar = (String) datos.get(ReporteEconomicoProyectos.FOTO_COMPARAR);
 		
+        
         Iterator<Proyecto> itProyecto = lProyectos.iterator();
         while (itProyecto.hasNext()) {
         	Proyecto p = itProyecto.next();
@@ -92,6 +114,142 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         	pintaProyecto(p,xssfSheetNew); 
         	
         	rellenaDatosHojaResumen(p, xssfSheetResumen, xssfSheetNew);
+        	
+        	if (hazFoto) {
+        		Foto f = new Foto();
+        		f = f.hacerFoto(this.ap);
+        		f.listaParametros.get(MetaParametro.FOTO_COD_PORFOLIO).valorTexto = nomFoto;
+        		f.nombreFoto = nomFoto;
+        		
+        		if (enPPM)
+        			f.listaParametros.get(MetaParametro.FOTO_FX_PPM).valorfecha = fecha;
+        		
+        		String idTransaccion = ConsultaBD.getTicket();
+        		f.updateFoto(idTransaccion);
+        		ConsultaBD.ejecutaTicket(idTransaccion);        		
+        	}
+        }
+        
+        if (comparar) {
+        	Foto f = new Foto();
+        	HashMap<Integer,Foto> fotos = f.buscaFotosPorfolio(codFotoComparar);   
+        	Iterator<Foto> itFotos = fotos.values().iterator();
+        	
+        	HojaExcel xssfSheetNew = new HojaExcel(worbook, "Control Cambios");
+        	
+        	HashMap<String,PosicionExcel> anclasHojaResumen = new HashMap<String,PosicionExcel>();
+    		anclasHojaResumen.put(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION,new PosicionExcel(2,0,ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION));
+    		anclas.put(-1,anclasHojaResumen);
+        	
+        	pintaHojaComparacion(xssfSheetNew);
+        	
+        	while (itFotos.hasNext()) {
+        		Foto fAux = itFotos.next();
+        		rellenaDatosHojaComparacion(fAux, xssfSheetNew);
+        	}
+        	
+        	PosicionExcel posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+        	posIni.fila = posIni.fila+1;
+    		posIni.columna = 0;
+    		
+        	XSSFCell celdaInicio = xssfSheetNew.get(posIni);
+        	celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue("Detalle Foto => "+codFotoComparar);
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-1, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+			
+			CellRangeAddress cellRangeAddress = new CellRangeAddress(celdaInicio.getRowIndex(), celdaInicio.getRowIndex(), celdaInicio.getColumnIndex(), celdaInicio.getColumnIndex()+4*(1+MetaConcepto.listado.size()));
+			xssfSheetNew.hoja.addMergedRegion(cellRangeAddress);
+			
+			xssfSheetNew.hoja.groupRow(1, celdaInicio.getRowIndex()-1);
+			xssfSheetNew.hoja.setRowGroupCollapsed(celdaInicio.getRowIndex()-1, true);
+        	
+        	posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+    		posIni.fila = posIni.fila+5;
+    		posIni.columna = 0;
+    		
+    		XSSFCell celdaAux = xssfSheetNew.get(posIni);
+    		celdaAux.setCellType(CellType.STRING);
+    		celdaAux.setCellValue("Margen Error Admitido");
+			celdaAux.setCellStyle(EstiloCelda.getEstiloCelda(-1, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+			celdaAux = xssfSheetNew.offset(celdaAux, 0, 1);
+			celdaAux.setCellValue(50);
+			celdaAux.setCellStyle(EstiloCelda.getEstiloCelda(-1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+			
+			int posMargen = celdaAux.getRowIndex();
+			
+			anclasHojaResumen.put(ReporteEconomicoProyectos.ANCLA_MARGEN_ERROR,new PosicionExcel(celdaAux.getRowIndex()+1,celdaAux.getColumnIndex(),ReporteEconomicoProyectos.ANCLA_MARGEN_ERROR));
+    					
+			posIni.fila = posIni.fila+5;
+    		
+        	pintaHojaComparacion(xssfSheetNew);
+        	
+        	HashMap<Integer, HashMap<String, Sistema>> listaConjuntaSistemas = new HashMap<Integer, HashMap<String, Sistema>>();
+        	
+        	itFotos = fotos.values().iterator();
+        	int contador=0;
+        	
+        	while (itFotos.hasNext()) {
+        		Foto fAux = itFotos.next();
+
+        		if (!listaConjuntaSistemas.containsKey(fAux.idProyecto)) {
+        			listaConjuntaSistemas.put(fAux.idProyecto, new HashMap<String, Sistema>());  
+        			contador++;
+        		}
+        		
+        		HashMap<String, Sistema> sistemas = listaConjuntaSistemas.get(fAux.idProyecto);
+        		
+        		Iterator<Sistema> itSistemas = fAux.getSistemas().iterator();
+        		while (itSistemas.hasNext()) {
+        			Sistema s = itSistemas.next();
+        			if (!sistemas.containsKey(s.codigo)) {
+        				sistemas.put(s.codigo, s);
+        				contador++;
+        			}
+        		}
+        	}
+        	
+        	Iterator<AnalizadorPresupuesto> itAps = this.listaAps.iterator();
+        	
+        	
+        	while (itAps.hasNext()) {
+        		AnalizadorPresupuesto ap = itAps.next();
+        		
+
+        		if (!listaConjuntaSistemas.containsKey(ap.proyecto.id)) {
+        			listaConjuntaSistemas.put(ap.proyecto.id, new HashMap<String, Sistema>());
+        			contador++;
+        		}
+        		
+        		HashMap<String, Sistema> sistemas = listaConjuntaSistemas.get(ap.proyecto.id);
+        		
+        		Iterator<Coste> itSistemas = ap.presupuesto.costes.values().iterator();
+        		while (itSistemas.hasNext()) {
+        			Coste s = itSistemas.next();
+        			if (!sistemas.containsKey(s.sistema.codigo)) {
+        				sistemas.put(s.sistema.codigo, s.sistema);
+        				contador++;
+        			}
+        		}
+        		
+        	}
+        	
+        	rellenaComparativa(xssfSheetNew,xssfSheetResumen,listaConjuntaSistemas);
+        	
+        	posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_MARGEN_ERROR);
+        	posIni.fila = posIni.fila-1;
+    		posIni.columna = 0;
+    		
+        	celdaInicio = xssfSheetNew.get(posIni.fila+5+contador+2,0);
+        	celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue("Comparativa Foto => Foto Actual - "+codFotoComparar);
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-1, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+			
+			cellRangeAddress = new CellRangeAddress(celdaInicio.getRowIndex(), celdaInicio.getRowIndex(), celdaInicio.getColumnIndex(), celdaInicio.getColumnIndex()+1+4*(1+MetaConcepto.listado.size()));
+			xssfSheetNew.hoja.addMergedRegion(cellRangeAddress);
+			
+			xssfSheetNew.hoja.groupRow(posMargen,celdaInicio.getRowIndex()-1);
+			xssfSheetNew.hoja.setRowGroupCollapsed(celdaInicio.getRowIndex()-2, true);
+        	
         }
         
         xssfSheetResumen.hoja.setColumnGroupCollapsed(3, true);
@@ -100,6 +258,235 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         worbook.write(excelNewOutputStream);
         
         excelNewOutputStream.close();
+	}
+	
+	private void rellenaComparativa(HojaExcel hojaCompara, HojaExcel hojaResumen, HashMap<Integer, HashMap<String, Sistema>> proyectos) {
+		PosicionExcel posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+		PosicionExcel posMargen = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_MARGEN_ERROR);
+		
+		XSSFCell celdaInicio = hojaCompara.get(posIni);
+		
+		Iterator<Integer> itIdsProy = proyectos.keySet().iterator();
+		while (itIdsProy.hasNext()) {
+			int idProyecto = itIdsProy.next();
+			Proyecto proyecto = Proyecto.getProyectoEstatico(idProyecto);
+			
+			String acronProy = proyecto.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).valorTexto;
+			
+			XSSFCell celdaConcepto = hojaCompara.get(posIni.fila-1,posIni.columna);
+			
+			Iterator<Sistema> itSistemas = proyectos.get(idProyecto).values().iterator();
+			
+			while (itSistemas.hasNext()) {
+				Sistema s = itSistemas.next();
+				
+				int color = celdaInicio.getRowIndex()%2==0?EstiloCelda.BLANCO:EstiloCelda.GRIS;
+
+				celdaInicio.setCellType(CellType.STRING);
+				celdaInicio.setCellValue(acronProy);
+				celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
+				celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+				celdaConcepto = hojaCompara.offset(celdaConcepto, 0, 1);
+				
+				celdaInicio.setCellType(CellType.STRING);
+				celdaInicio.setCellValue(s.codigo);
+				celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
+				celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+				celdaConcepto = hojaCompara.get(posIni.fila-1,posIni.columna+2);
+				
+				String bloque = "";
+				
+				while (!celdaConcepto.getStringCellValue().equals("")){
+					String bloqueAux = hojaCompara.offset(celdaConcepto, -1, 0).getStringCellValue();
+					String mConcepto = celdaConcepto.getStringCellValue();
+					MetaConcepto mc = MetaConcepto.porCodigo(mConcepto);
+					
+					if (!"".equals(bloqueAux)){
+						bloque = bloqueAux;
+					}
+					
+					if ("Estimado TOTAL".equals(bloque)) {
+						String celdaComparar = buscaConceptoSistemaProyecto(Foto.TODO, proyecto, s, mc, hojaCompara, "comparacion");
+						String celdaResumen = buscaConceptoSistemaProyecto(Foto.TODO, proyecto, s, mc, hojaResumen, "estimado");
+						
+						if (!"0".equals(celdaComparar)) celdaComparar = "'Control Cambios'!" + celdaComparar;
+						if (!"0".equals(celdaResumen)) celdaResumen = "'Resumen'!" + celdaResumen;
+						
+						celdaInicio.setCellType(CellType.FORMULA);
+						celdaInicio.setCellFormula("IF(ABS("+celdaResumen + " - " + celdaComparar+")>=" + InformeGenerico.valorColumna(posMargen.columna) + posMargen.fila + ",ROUND("+celdaResumen + " - " + celdaComparar+",0),\"\")");
+						celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
+						hojaCompara.hoja.setColumnGroupCollapsed(celdaInicio.getColumnIndex()-1, true);
+					}
+					
+					if ("Estimado Años Anteriores".equals(bloque) ||  
+							"Estimado Año en curso".equals(bloque) ||
+							"Estimado Años Posteriores".equals(bloque)  ) {
+						
+						int anio = 0;
+						boolean estimado = false;
+						
+						if (bloque.contains("Anteriores")) anio = Foto.ANIOS_ANTERIORES;
+						if (bloque.contains("curso")) anio = Foto.ANIO_CURSO;
+						if (bloque.contains("Posteriores")) anio = Foto.ANIOS_SIGUIENTES;
+						
+						if (!mConcepto.equals("TOTAL")) {
+							String celdaComparar = buscaConceptoSistemaProyecto(anio, proyecto, s, mc, hojaCompara, "comparacion");
+							String celdaResumen = buscaConceptoSistemaProyecto(anio, proyecto, s, mc, hojaResumen, "estimado");
+							
+							if (!"0".equals(celdaComparar)) celdaComparar = "'Control Cambios'!" + celdaComparar;
+							if (!"0".equals(celdaResumen)) celdaResumen = "'Resumen'!" + celdaResumen;
+							
+							celdaInicio.setCellType(CellType.FORMULA);
+							celdaInicio.setCellFormula("IF(ABS("+celdaResumen + " - " + celdaComparar+")>=" + InformeGenerico.valorColumna(posMargen.columna) + posMargen.fila + ",ROUND("+celdaResumen + " - " + celdaComparar+",0),\"\")");
+							celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
+						} else {
+							String formula = "sum(" + InformeGenerico.valorColumna(celdaInicio.getColumnIndex()-MetaConcepto.listado.size())+(celdaInicio.getRowIndex()+1)+":"+InformeGenerico.valorColumna(celdaInicio.getColumnIndex()-1)+(celdaInicio.getRowIndex()+1)+")";
+							celdaInicio.setCellType(CellType.FORMULA);
+							celdaInicio.setCellFormula(formula);
+							celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
+							
+							hojaResumen.hoja.setColumnGroupCollapsed(celdaInicio.getColumnIndex()-1, true);
+						}
+					}
+					
+					celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+					celdaConcepto = hojaCompara.offset(celdaConcepto, 0, 1);
+				}
+				
+				celdaInicio = hojaCompara.get(celdaInicio.getRowIndex()+1,posIni.columna);
+			}
+			
+			celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue(acronProy);
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+			celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+			celdaConcepto = hojaCompara.offset(celdaConcepto, 0, 1);
+			
+			celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue("TOTAL");
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+			celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+			celdaConcepto = hojaCompara.offset(celdaConcepto, 0, 1);
+			
+			for (int i=0;i<(4*(1+MetaConcepto.listado.size()));i++) {
+				celdaInicio.setCellType(CellType.FORMULA);
+				celdaInicio.setCellFormula("sum("+ InformeGenerico.valorColumna(celdaInicio.getColumnIndex()) + (celdaInicio.getRowIndex()+1-proyectos.get(idProyecto).values().size()) + ":" + InformeGenerico.valorColumna(celdaInicio.getColumnIndex()) + celdaInicio.getRowIndex() + ")");
+				celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA));
+				celdaInicio = hojaCompara.offset(celdaInicio, 0, 1);
+			}
+			
+			celdaInicio = hojaCompara.get(celdaInicio.getRowIndex()+1,posIni.columna);
+			
+		}
+	}
+	
+	private String buscaConceptoSistemaProyecto(int indAnio, Proyecto p, Sistema s, MetaConcepto c, HojaExcel hoja, String selector) {
+		XSSFCell celdaInicio = null;
+		XSSFCell celdaConceptos = null;
+		XSSFCell celdaConceptosIterada = null;
+		
+		if ("estimado".equals(selector)){
+			celdaInicio = hoja.get(3,1);
+			if (indAnio == Foto.TODO) celdaConceptos = hoja.get(2,9);
+			if (indAnio == Foto.ANIOS_ANTERIORES) celdaConceptos = hoja.get(2,27);
+			if (indAnio == Foto.ANIO_CURSO) celdaConceptos = hoja.get(2,45);
+			if (indAnio == Foto.ANIOS_SIGUIENTES) celdaConceptos = hoja.get(2,63);
+		}
+		else{
+			celdaInicio = hoja.get(3,0);
+			if (indAnio == Foto.TODO) celdaConceptos = hoja.get(2,2);
+			if (indAnio == Foto.ANIOS_ANTERIORES) celdaConceptos = hoja.get(2,8);
+			if (indAnio == Foto.ANIO_CURSO) celdaConceptos = hoja.get(2,14);
+			if (indAnio == Foto.ANIOS_SIGUIENTES) celdaConceptos = hoja.get(2,20);
+		}
+		
+		String acronProy = p.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).valorTexto;
+		
+		String proyecto = celdaInicio.getStringCellValue();
+		
+		while (!proyecto.equals("")) {
+						
+			if (acronProy.equals(proyecto)) {
+				String sistema = hoja.offset(celdaInicio, 0, 1).getStringCellValue();
+				if (sistema.equals(s.codigo)) {
+					celdaConceptosIterada = celdaConceptos;
+					
+					while (!celdaConceptosIterada.getStringCellValue().equals(c.codigo)) {
+						celdaConceptosIterada = hoja.offset(celdaConceptosIterada,0,1);
+					}
+					
+					return InformeGenerico.valorColumna(celdaConceptosIterada.getColumnIndex()) + "" + (celdaInicio.getRowIndex()+1);
+					
+				}
+			}
+			
+			celdaInicio = hoja.offset(celdaInicio, 1, 0);
+			proyecto = celdaInicio.getStringCellValue();
+		}		
+		
+		return "0";
+	}
+	
+	private void pintaHojaComparacion(HojaExcel xssfSheetResumen) {
+		PosicionExcel posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+		
+		XSSFCell celdaInicio = xssfSheetResumen.get(posIni);
+		
+		CellRangeAddress cellRangeAddress = null;
+		
+		celdaInicio.setCellType(CellType.STRING);
+		celdaInicio.setCellValue("Proyecto");
+		celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(6, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+		xssfSheetResumen.hoja.setColumnWidth( celdaInicio.getColumnIndex(), 7040);
+		
+		celdaInicio = xssfSheetResumen.offset(celdaInicio, 0, 1);
+		celdaInicio.setCellType(CellType.STRING);
+		celdaInicio.setCellValue("Sistema");
+		celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(6, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+		
+		ArrayList<String> listaBloques = new ArrayList<String>();
+		listaBloques.add("Estimado TOTAL");
+		listaBloques.add("Estimado Años Anteriores");
+		listaBloques.add("Estimado Año en curso");
+		listaBloques.add("Estimado Años Posteriores");
+		
+		Iterator<String> itListaBloques = listaBloques.iterator();
+		
+		while (itListaBloques.hasNext()) {
+			String bloque = itListaBloques.next();
+			
+			celdaInicio = xssfSheetResumen.offset(celdaInicio, -1, 1);
+			celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue(bloque);
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(5, EstiloCelda.AZUL, TipoDato.FORMATO_TXT, EstiloCelda.CENTRO, EstiloCelda.CENTRO));
+			
+			cellRangeAddress = new CellRangeAddress(celdaInicio.getRowIndex(), celdaInicio.getRowIndex(), celdaInicio.getColumnIndex(), celdaInicio.getColumnIndex()+MetaConcepto.listado.size());
+			xssfSheetResumen.hoja.addMergedRegion(cellRangeAddress);
+			
+			xssfSheetResumen.hoja.groupColumn(celdaInicio.getColumnIndex(), celdaInicio.getColumnIndex()+MetaConcepto.listado.size()-1);
+			
+			celdaInicio = xssfSheetResumen.offset(celdaInicio, 1, 0);
+			
+			Iterator<MetaConcepto> imc = MetaConcepto.listado.values().iterator();
+			while (imc.hasNext()){
+				MetaConcepto mc = imc.next();
+				celdaInicio.setCellType(CellType.STRING);
+				celdaInicio.setCellValue(mc.codigo);
+				celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(5, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+				celdaInicio = xssfSheetResumen.offset(celdaInicio, 0, 1);
+			}
+			
+			celdaInicio.setCellType(CellType.STRING);
+			celdaInicio.setCellValue("TOTAL");
+			celdaInicio.setCellStyle(EstiloCelda.getEstiloCelda(6, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+			if (bloque.contains("Restante") || bloque.contains("Presupuestado")){
+				xssfSheetResumen.hoja.setColumnWidth( celdaInicio.getColumnIndex(), 7040);
+			}
+		}
+		
+		posIni = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+		posIni.fila = xssfSheetResumen.offset(celdaInicio,1,0).getRowIndex();
+		posIni.columna = 0;		
 	}
 	
 	private void pintaHojaResumen(HojaExcel xssfSheetResumen) {
@@ -309,47 +696,47 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		cellNew = xssfSheetNew.get(contador, 1);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Código");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 
         cellNew = xssfSheetNew.get(contador, 2);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Nombre");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 
         cellNew = xssfSheetNew.get(contador, 3);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Sistema");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
         cellNew = xssfSheetNew.get(contador, 4);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Periodo");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
         cellNew = xssfSheetNew.get(contador, 5);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Tarifa");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
         
         cellNew = xssfSheetNew.get(contador, 6);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Horas");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
         
         cellNew = xssfSheetNew.get(contador, 7);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Importe");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
         
         cellNew = xssfSheetNew.get(contador, 8);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Fraccionada");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
         
         cellNew = xssfSheetNew.get(contador, 9);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Total Imputación");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
         
         return contador;	
 	}
@@ -366,43 +753,43 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		cellNew = xssfSheetNew.get(contador, 1);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Sistema");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 
         cellNew = xssfSheetNew.get(contador, 2);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Fase");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 
         cellNew = xssfSheetNew.get(contador, 3);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Fecha");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
         cellNew = xssfSheetNew.get(contador, 4);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Concepto");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
         cellNew = xssfSheetNew.get(contador, 5);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Valor Estimado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));   
         
         cellNew = xssfSheetNew.get(contador, 6);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Porcentaje Estimado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));    
         
         cellNew = xssfSheetNew.get(contador, 7);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Importe Imputado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));     
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));     
          
         
         cellNew = xssfSheetNew.get(contador, 8);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Certificacion");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
 		return contador;	
 	}
@@ -567,37 +954,37 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         				cellCertif = hoja.offset(cellCertif, 0, 0);
         				cellCertif.setCellType(CellType.STRING);
         				cellCertif.setCellValue(c.s.codigo);
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.STRING);
         				cellCertif.setCellValue(cf.fase.nombre);
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
         				
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.STRING);
         				cellCertif.setCellValue(FormateadorDatos.formateaDato(cfp.fxCertificacion,TipoDato.FORMATO_FECHA));
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
         				
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.STRING);
         				cellCertif.setCellValue(cfp.nombre);
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
         				
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.NUMERIC);
         				cellCertif.setCellValue(cfp.valEstimado);
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
         				
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.NUMERIC);
         				cellCertif.setCellValue(cf.getPorcentaje(cfp));
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
         				
         				cellCertif = hoja.offset(cellCertif, 0, 1);
         				cellCertif.setCellType(CellType.NUMERIC);
         				cellCertif.setCellValue(cfp.valReal);
-        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+        				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
         				        		        
         				if (cfp.valEstimado!=0 && cfp.certReal==null || cfp.certReal.size()==0) {
         					CertificacionReal cr = new CertificacionReal();
@@ -616,7 +1003,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         					cellCertif = hoja.offset(cellCertif, 0, 1);
             				cellCertif.setCellType(CellType.STRING);
             				cellCertif.setCellValue(certif);
-            				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+            				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
         				}
         			}
         		}
@@ -643,70 +1030,70 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 			cellCertif = hoja.offset(cellCertif, 0, 0);
 			cellCertif.setCellType(CellType.STRING);
 			cellCertif.setCellValue(((ParametroRecurso) cfp.recurso.getValorParametro(MetaParametro.RECURSO_COD_USUARIO)).valorTexto);
-			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 			
 			cellCertif = hoja.offset(cellCertif, 0, 1);
 			cellCertif.setCellType(CellType.STRING);
 			cellCertif.setCellValue(cfp.recurso.nombre);
-			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 
 			cellCertif = hoja.offset(cellCertif, 0, 1);
 			cellCertif.setCellType(CellType.STRING);
 			cellCertif.setCellValue(cfp.sistema.codigo);
-			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 
 			cellCertif = hoja.offset(cellCertif, 0, 1);
 			cellCertif.setCellType(CellType.STRING);
 			cellCertif.setCellValue(FormateadorDatos.formateaDato(cfp.fxInicio,TipoDato.FORMATO_FECHA)+" - "+FormateadorDatos.formateaDato(cfp.fxFin,TipoDato.FORMATO_FECHA));
-			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 	        
 			cellCertif = hoja.offset(cellCertif, 0, 1);
 			cellCertif.setCellType(CellType.STRING);
 			cellCertif.setCellValue(cfp.tarifa.costeHora);
-			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+			cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
 	        
 			if (cfp.tipoImputacion == Imputacion.IMPUTACION_NO_FRACCIONADA) {
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.horas);
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));  
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));  
 				
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.importe);
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));				
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));				
 				
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue("NO");
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.importe);
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
 			}
 			
 			if (cfp.tipoImputacion == Imputacion.FRACCION_IMPUTACION || cfp.tipoImputacion == Imputacion.IMPUTACION_FRACCIONADA) {
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.imputacionFraccion.getHoras());
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));  
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));  
 				
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.imputacionFraccion.getImporte());
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
 				
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue("SI");
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_TXT));
 
 				cellCertif = hoja.offset(cellCertif, 0, 1);
 				cellCertif.setCellType(CellType.STRING);
 				cellCertif.setCellValue(cfp.importe);
-				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
+				cellCertif.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.BLANCO, TipoDato.FORMATO_MONEDA));
 			}
 
 			
@@ -714,6 +1101,109 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         }
 		
 		return contador+nFilas;
+	}
+	
+	private void rellenaDatosHojaComparacion(Foto f, HojaExcel hojaResumen) throws Exception{
+		PosicionExcel puntero = anclas.get(-1).get(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION);
+		XSSFCell filaDatos = hojaResumen.get(puntero);
+		XSSFCell celdaPuntero = filaDatos;
+		XSSFCell celdaConcepto = null;
+		XSSFCell celdaArranque = celdaPuntero;
+		
+		Iterator<Sistema> lSistema = f.getSistemas().iterator();
+		String acronProy = f.proyecto.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).valorTexto;
+		
+		while (lSistema.hasNext()) {
+			String bloque = "";
+			celdaConcepto = hojaResumen.get(2,0);
+			
+			Sistema s = lSistema.next();
+			
+			int color = celdaPuntero.getRowIndex()%2==0?EstiloCelda.BLANCO:EstiloCelda.GRIS;
+			
+			celdaPuntero.setCellType(CellType.STRING);
+			celdaPuntero.setCellValue(acronProy);
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
+			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+			celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
+			
+			celdaPuntero.setCellType(CellType.STRING);
+			celdaPuntero.setCellValue(s.codigo);
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
+			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+			celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
+			
+			while (!celdaConcepto.getStringCellValue().equals("")){
+				String bloqueAux = hojaResumen.offset(celdaConcepto, -1, 0).getStringCellValue();
+				String mConcepto = celdaConcepto.getStringCellValue();
+				MetaConcepto mc = MetaConcepto.porCodigo(mConcepto);
+				
+				if (!"".equals(bloqueAux)){
+					bloque = bloqueAux;
+				}
+				
+				if ("Estimado TOTAL".equals(bloque)) {
+					celdaPuntero.setCellValue(f.getAcumulado(Foto.TODO, mc, s));
+					celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
+					hojaResumen.hoja.setColumnGroupCollapsed(celdaPuntero.getColumnIndex()-1, true);
+				}
+				
+				if ("Estimado Años Anteriores".equals(bloque) ||  
+						"Estimado Año en curso".equals(bloque) ||
+						"Estimado Años Posteriores".equals(bloque)  ) {
+					
+					int anio = 0;
+					boolean estimado = false;
+					
+					if (bloque.contains("Anteriores")) anio = Foto.ANIOS_ANTERIORES;
+					if (bloque.contains("curso")) anio = Foto.ANIO_CURSO;
+					if (bloque.contains("Posteriores")) anio = Foto.ANIOS_SIGUIENTES;
+					
+					if (!mConcepto.equals("TOTAL")) {
+						//celdaPuntero.setCellType(CellType.FORMULA);
+						celdaPuntero.setCellValue(f.getAcumulado(anio, mc, s));
+						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
+					} else {
+						String formula = "sum(" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-MetaConcepto.listado.size())+(celdaPuntero.getRowIndex()+1)+":"+InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-1)+(celdaPuntero.getRowIndex()+1)+")";
+						celdaPuntero.setCellType(CellType.FORMULA);
+						celdaPuntero.setCellFormula(formula);
+						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
+						
+						hojaResumen.hoja.setColumnGroupCollapsed(celdaPuntero.getColumnIndex()-1, true);
+					}
+				}
+				
+				celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+				celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
+			}
+			
+			filaDatos = hojaResumen.offset(filaDatos, 1, 0);
+			celdaPuntero = filaDatos;
+		}
+
+		celdaPuntero.setCellType(CellType.STRING);
+		celdaPuntero.setCellValue(acronProy);
+		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+		celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+		celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
+		
+		celdaPuntero.setCellType(CellType.STRING);
+		celdaPuntero.setCellValue("TOTAL");
+		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+		celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+		celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
+		
+		for (int i=0;i<(4*(1+MetaConcepto.listado.size()));i++) {
+			celdaPuntero.setCellType(CellType.FORMULA);
+			celdaPuntero.setCellFormula("sum("+ InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()) + (celdaPuntero.getRowIndex()+1-f.getSistemas().size()) + ":" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()) + celdaPuntero.getRowIndex() + ")");
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA));
+			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
+		}
+		
+		filaDatos = hojaResumen.offset(filaDatos, 1, 0);
+		HashMap<String,PosicionExcel> anclasProy = anclas.get(-1);
+		anclasProy.put(ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION, new PosicionExcel(filaDatos.getRowIndex(),filaDatos.getColumnIndex(),ReporteEconomicoProyectos.ANCLA_PUNTERO_COMPARACION));
+			
 	}
 	
 	
@@ -737,19 +1227,19 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 			
 			celdaPuntero.setCellType(CellType.STRING);
 			celdaPuntero.setCellValue(FormateadorDatos.formateaDato(Constantes.toNumBoolean(p.getValorParametro(MetaParametro.PROYECTO_CERRADO).valorEntero),TipoDato.FORMATO_BOOLEAN));
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_TXT));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 			
 			celdaPuntero.setCellType(CellType.STRING);
 			celdaPuntero.setCellValue(acronProy);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_TXT));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 			
 			celdaPuntero.setCellType(CellType.STRING);
 			celdaPuntero.setCellValue(s.codigo);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_TXT));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_TXT));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 			
@@ -774,7 +1264,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 					}
 					celdaPuntero.setCellType(CellType.FORMULA);
 					celdaPuntero.setCellFormula("'"+acronProy+"'!"+InformeGenerico.valorColumna(celdaEquivProy.getColumnIndex())+(celdaEquivProy.getRowIndex()+1));
-					celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));	
+					celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
 					hojaResumen.hoja.setColumnGroupCollapsed(celdaPuntero.getColumnIndex()-1, true);
 				}
 				
@@ -785,7 +1275,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 					String formula = "" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-12)+(celdaPuntero.getRowIndex()+1)+"-"+InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-6)+(celdaPuntero.getRowIndex()+1);
 					celdaPuntero.setCellType(CellType.FORMULA);
 					celdaPuntero.setCellFormula(formula);
-					celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));	
+					celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
 					hojaResumen.hoja.setColumnGroupCollapsed(celdaPuntero.getColumnIndex()-1, true);
 				}
 				
@@ -816,12 +1306,12 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 						
 						celdaPuntero.setCellType(CellType.FORMULA);
 						celdaPuntero.setCellFormula(formula);
-						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));	
+						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));	
 					} else {
 						String formula = "sum(" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-MetaConcepto.listado.size())+(celdaPuntero.getRowIndex()+1)+":"+InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-1)+(celdaPuntero.getRowIndex()+1)+")";
 						celdaPuntero.setCellType(CellType.FORMULA);
 						celdaPuntero.setCellFormula(formula);
-						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+						celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 						
 						hojaResumen.hoja.setColumnGroupCollapsed(celdaPuntero.getColumnIndex()-1, true);
 					}
@@ -835,37 +1325,37 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 			String formula = this.getFormulaSumaAnio(0, p, hoja, s, MetaConcepto.porId(MetaConcepto.TREI), MetaGerencia.porId(MetaGerencia.GGP), true);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			
 			formula = this.getFormulaSumaAnio(0, p, hoja, s, MetaConcepto.porId(MetaConcepto.TREI), MetaGerencia.porId(MetaGerencia.GGP), false);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			
 			formula = "" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-2)+(celdaPuntero.getRowIndex()+1)+"-"+InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-1)+(celdaPuntero.getRowIndex()+1);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			
 			formula = this.getFormulaSumaAnio(0, p, hoja, s, MetaConcepto.porId(MetaConcepto.TREI), MetaGerencia.porId(MetaGerencia.GDT), true);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			
 			formula = this.getFormulaSumaAnio(0, p, hoja, s, MetaConcepto.porId(MetaConcepto.TREI), MetaGerencia.porId(MetaGerencia.GDT), false);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 			
 			formula = "" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-2)+(celdaPuntero.getRowIndex()+1)+"-"+InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()-1)+(celdaPuntero.getRowIndex()+1);
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula(formula);
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(-2, color, TipoDato.FORMATO_MONEDA));
 
 			
 			filaDatos = hojaResumen.offset(filaDatos, 1, 0);
@@ -876,26 +1366,26 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 				
 		celdaPuntero.setCellType(CellType.STRING);
 		celdaPuntero.setCellValue(FormateadorDatos.formateaDato(Constantes.toNumBoolean(p.getValorParametro(MetaParametro.PROYECTO_CERRADO).valorEntero),TipoDato.FORMATO_BOOLEAN));
-		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
 		celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 		celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 		
 		celdaPuntero.setCellType(CellType.STRING);
 		celdaPuntero.setCellValue(acronProy);
-		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
 		celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 		celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 		
 		celdaPuntero.setCellType(CellType.STRING);
 		celdaPuntero.setCellValue("TOTAL");
-		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
+		celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_TXT));
 		celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 		celdaConcepto = hojaResumen.offset(celdaConcepto, 0, 1);
 		
 		for (int i=0;i<(6+13*(1+MetaConcepto.listado.size()));i++) {
 			celdaPuntero.setCellType(CellType.FORMULA);
 			celdaPuntero.setCellFormula("sum("+ InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()) + (celdaPuntero.getRowIndex()+1-lSistemas.size()) + ":" + InformeGenerico.valorColumna(celdaPuntero.getColumnIndex()) + celdaPuntero.getRowIndex() + ")");
-			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA));
+			celdaPuntero.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA));
 			celdaPuntero = hojaResumen.offset(celdaPuntero, 0, 1);
 		}
 		
@@ -1095,11 +1585,11 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
             	}
         		
         		cellNew = xssfSheetNew.getRow(cellMetaC.getRowIndex()).createCell(cellFecha.getColumnIndex());
-            	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+            	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
             	cellNew.setCellFormula(totalEstimado);
             	cellNew.setCellType(CellType.FORMULA);
             	cellNew = xssfSheetNew.getRow(cellMetaC.getRowIndex()).createCell(cellFecha.getColumnIndex()+1);
-            	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+            	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(-2, EstiloCelda.GRIS, TipoDato.FORMATO_MONEDA,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
             	cellNew.setCellFormula(totalReal);
             	cellNew.setCellType(CellType.FORMULA);
         	}
@@ -1233,19 +1723,19 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 				cellNew = xssfRowNew.createCell(contadorColumna);
 		        cellNew.setCellType(CellType.STRING);
 		        cellNew.setCellValue(Constantes.nomMes(em.mes-1) + "'" + ea.anio);
-		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 		        CellRangeAddress cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum(), cellNew.getColumnIndex(), cellNew.getColumnIndex()+1);
 				xssfSheetNew.addMergedRegion(cellRangeAddress);
 				
 				cellNew = xssfRowNewAux.createCell(contadorColumna);
 		        cellNew.setCellType(CellType.STRING);
 		        cellNew.setCellValue("Estimado");
-		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 		        
 				cellNew = xssfRowNewAux.createCell(contadorColumna+1);
 		        cellNew.setCellType(CellType.STRING);
 		        cellNew.setCellValue("Real");
-		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+		        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 		        
 		        contadorColumna = contadorColumna+2;
 			}
@@ -1254,19 +1744,19 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		cellNew = xssfRowNew.createCell(contadorColumna);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("TOTAL");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         CellRangeAddress cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum(), cellNew.getColumnIndex(), cellNew.getColumnIndex()+1);
 		xssfSheetNew.addMergedRegion(cellRangeAddress);
 		
 		cellNew = xssfRowNewAux.createCell(contadorColumna);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Estimado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
 		cellNew = xssfRowNewAux.createCell(contadorColumna+1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Real");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.GRIS, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         
         int finalCuadro = cellNew.getColumnIndex();
         
@@ -1280,15 +1770,15 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		cellNew = xssfRowNew.createCell(1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Sistema");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         cellNew = xssfRowNew.createCell(2);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Área");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         cellNew = xssfRowNew.createCell(3);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Concepto");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 		
 		Iterator<Sistema> itSistemas = lSistemas.iterator();
 		while (itSistemas.hasNext()) {
@@ -1297,7 +1787,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 			cellNew = xssfRowNew.createCell(contadorColumna);
 	        cellNew.setCellType(CellType.STRING);
 	        cellNew.setCellValue(s.codigo);
-	        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+	        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 	        cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum()+lConceptos.size(), cellNew.getColumnIndex(), cellNew.getColumnIndex());
 			xssfSheetNew.addMergedRegion(cellRangeAddress);
 			
@@ -1324,7 +1814,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 					cellNew = xssfRowNew.createCell(contadorColumna+1);
 			        cellNew.setCellType(CellType.STRING);
 			        cellNew.setCellValue(g.codigo);
-			        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+			        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 			        if (listaConceptosPintar.size()-1>0){
 			        	cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum()+listaConceptosPintar.size()-1, cellNew.getColumnIndex(), cellNew.getColumnIndex());
 						xssfSheetNew.addMergedRegion(cellRangeAddress);
@@ -1337,7 +1827,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 						cellNew = xssfRowNew.createCell(contadorColumna+2);
 				        cellNew.setCellType(CellType.STRING);
 				        cellNew.setCellValue(mc.codigo);
-				        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+				        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
 				        contador++;
 						xssfRowNew = xssfSheetNew.createRow(contador);
 					}
@@ -1454,21 +1944,21 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 							cellNew = xssfRowNew.createCell(contadorColumna++);
 					        cellNew.setCellType(CellType.STRING);
 					        cellNew.setCellValue(c.tipoConcepto.codigo);
-					        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+					        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
 					        
 					        for (int j=0;j<lSistemas.size()+1;j++) {
 								xssfRowNewAux = xssfSheetNew.getRow(contador+j);
 								cellNew = xssfRowNewAux.createCell(contadorColumna-1);
 						        cellNew.setCellType(CellType.NUMERIC);
 						        cellNew.setCellValue(0);
-						        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
+						        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(-1, color, TipoDato.FORMATO_MONEDA));
 					        }
 						}
 						
 						cellNew = xssfRowNew.createCell(contadorColumna++);
 				        cellNew.setCellType(CellType.STRING);
 				        cellNew.setCellValue(Sistema.getInstanceTotal().codigo);
-				        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+				        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
 				        
 				        for (int j=0;j<lSistemas.size()+1;j++) {
 							xssfRowNewAux = xssfSheetNew.getRow(contador+j);
@@ -1476,9 +1966,9 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 					        cellNew.setCellType(CellType.NUMERIC);
 					        cellNew.setCellValue(0);
 					        if (j!=lSistemas.size())
-					        	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, color, TipoDato.FORMATO_MONEDA));
+					        	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(1, color, TipoDato.FORMATO_MONEDA));
 					        else
-					        	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, color, TipoDato.FORMATO_MONEDA));
+					        	cellNew.setCellStyle(EstiloCelda.getEstiloCelda(2, color, TipoDato.FORMATO_MONEDA));
 				        }
 				        
 					}
@@ -1493,19 +1983,19 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		cellNew = xssfRowNew.createCell(2);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Presentado CDSI");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         CellRangeAddress cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum(), cellNew.getColumnIndex(), cellNew.getColumnIndex()+nConceptos-1);
 		xssfSheetNew.addMergedRegion(cellRangeAddress);
 		cellNew = xssfRowNew.createCell(2+nConceptos);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Estimado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum(), cellNew.getColumnIndex(), cellNew.getColumnIndex()+nConceptos-1);
 		xssfSheetNew.addMergedRegion(cellRangeAddress);
 		cellNew = xssfRowNew.createCell(2+nConceptos*2);
 		cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Imputado/Certificado");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT,EstiloCelda.CENTRO,EstiloCelda.CENTRO));
         cellRangeAddress = new CellRangeAddress(xssfRowNew.getRowNum(), xssfRowNew.getRowNum(), cellNew.getColumnIndex(), cellNew.getColumnIndex()+nConceptos-1);
 		xssfSheetNew.addMergedRegion(cellRangeAddress);
 		
@@ -1518,14 +2008,14 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 	        cellNew = xssfRowNew.createCell(1);
 	        cellNew.setCellType(CellType.STRING);
 	        cellNew.setCellValue(s.descripcion);
-	        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));			        
+	        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));			        
 		}
 		
 		xssfRowNew = xssfSheetNew.getRow(contador++); 
         cellNew = xssfRowNew.createCell(1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("TOTAL");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
         		
 		return contador;
 	}
@@ -1540,8 +2030,9 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
 		fechaPivote = Constantes.fechaActual();
 		
 	    ap = new AnalizadorPresupuesto();
-		ap.construyePresupuestoMensualizado(pres,fechaPivote,null,null,null,null);	
+		ap.construyePresupuestoMensualizado(pres,fechaPivote,null,null,null,null);
 		
+		listaAps.add(ap);
 	}
 	
 	private int pintaCabeceraProyecto(Proyecto p, int contador, HojaExcel xssfSheetNew) {
@@ -1550,7 +2041,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         cellNew = xssfSheetNew.get(contador,1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Proyecto");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
         
         cellNew = xssfSheetNew.get(contador,2);
         cellNew.setCellType(CellType.STRING);
@@ -1561,7 +2052,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         cellNew = xssfSheetNew.get(contador,1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Acrónimo");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
         
         cellNew = xssfSheetNew.get(contador,2);
         cellNew.setCellType(CellType.STRING);
@@ -1572,7 +2063,7 @@ public class ReporteEconomicoProyectos extends InformeGenerico{
         cellNew = xssfSheetNew.get(contador,1);
         cellNew.setCellType(CellType.STRING);
         cellNew.setCellValue("Código PPM");
-        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(4, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
+        cellNew.setCellStyle(EstiloCelda.getEstiloCelda(3, EstiloCelda.AZUL, TipoDato.FORMATO_TXT));
         
         cellNew = xssfSheetNew.get(contador,2);
         cellNew.setCellType(CellType.STRING);

@@ -53,13 +53,14 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and cod_parm=||2||$E$</query>
+		<query>select p.id parId, p.idElemento parIdElemento, p.valorTexto parVlTexto, p.valorEntero parVlEntero, p.valorReal parVlReal, p.valorFecha parVlFx, p.cod_parm parVlCodParm from PARAMETRO p, META_PARAMETRO pp where 1=1 and p.cod_parm = pp.cod_parm $B$and pp.entidad = ||3||$E$ $B$and idElemento=||1||$E$ $B$and p.cod_parm=||2||$E$ $B$and p.valorTexto=||4||$E$</query>
 		<id tipo="C">cConsultaParametro</id>
 		<tabla>PARAMETRO</tabla>
 		<parametros>
 			<parametro id="1" tipo="int"></parametro>
 			<parametro id="2" tipo="str"></parametro>
 			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="str"></parametro>
 		</parametros>
 	</acceso>
 	<acceso>

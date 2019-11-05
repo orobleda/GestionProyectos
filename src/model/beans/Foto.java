@@ -13,6 +13,7 @@ import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoEnumerado;
@@ -30,8 +31,15 @@ public class Foto implements Cargable{
 	public ArrayList<FotoDetalle> lDetalles = null;	
 	public double valorTotal;
 	public double valorAnioCurso;
+	
+	public HashMap<String,Parametro> listaParametros = null;
 
 	public static int TIPO_FOTO_PLANI = 14;	
+	
+	public static int ANIOS_ANTERIORES = -1;
+	public static int ANIO_CURSO = 0;
+	public static int ANIOS_SIGUIENTES = 1;
+	public static int TODO = 2;
 	
 	@Override
 	public Cargable cargar(Object o) {
@@ -72,6 +80,8 @@ public class Foto implements Cargable{
 		 		this.id = -1;
 			} else {
 		 		this.id = (Integer) salida.get("fotId");
+		 		Parametro p = new Parametro();
+		 		this.listaParametros = p.dameParametros(this.getClass().getSimpleName(), this.id);
 			}
 		} catch (Exception ex) {}
 		try {
@@ -100,12 +110,15 @@ public class Foto implements Cargable{
 		return this;
 	}
 	
-	public ArrayList<Foto> buscaFotos() {			
+	public ArrayList<Foto> buscaFotos(Integer idFoto) {			
 		ConsultaBD consulta = new ConsultaBD();
 		ArrayList<Foto> salida = new ArrayList<Foto>();
 
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.proyecto.id));
+		if (this.proyecto!=null)
+			listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.proyecto.id));
+		if (idFoto!=null)
+			listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, idFoto));
 		
 		ArrayList<Cargable> conceptos = consulta.ejecutaSQL("cConsultaFoto", listaParms, this);
 		
@@ -113,16 +126,77 @@ public class Foto implements Cargable{
 		
 		while (itCOnceptos.hasNext()) {
 			Foto ft = (Foto) itCOnceptos.next();
-			salida.add(ft);
+			
 			FotoDetalle fd = new FotoDetalle();
 			fd.foto = ft;
 			ft.lDetalles = fd.buscaDetalle();
+			
+			salida.add(ft);
 		}
 		
 		return salida;
 	}
 	
-	public void updateFoto(String idTransaccion) {			
+	public HashMap<Integer,Foto> buscaFotosPorfolio(String porfolio) {			
+		HashMap<Integer,Foto> salida = new HashMap<Integer,Foto>();
+
+		Parametro p = new Parametro();
+    	ArrayList<Parametro> lParametros = p.getParametro(MetaParametro.FOTO_COD_PORFOLIO, porfolio);
+    	
+    	Iterator<Parametro> itParametros = lParametros.iterator();
+    	while (itParametros.hasNext()) {
+    		p = itParametros.next();
+    		
+    		ArrayList<Foto> foto = this.buscaFotos(p.idEntidadAsociada);
+    		if (foto!=null && foto.size()>0) {
+    			salida.put(new Integer(foto.get(0).idProyecto), foto.get(0));
+    		}
+    	}
+		
+		return salida;
+	}
+	
+	public ArrayList<Sistema> getSistemas() {
+		HashMap<String, Sistema> sistemas = new HashMap<String, Sistema>();
+		
+		Iterator<FotoDetalle> itDetalles = this.lDetalles.iterator();
+		while (itDetalles.hasNext()) {
+			FotoDetalle ft = itDetalles.next();
+			if (!sistemas.containsKey(ft.sistema.codigo)) {
+				sistemas.put(ft.sistema.codigo, ft.sistema);
+			}
+		}
+		
+		ArrayList<Sistema> salida = new ArrayList<Sistema>();
+		salida.addAll(sistemas.values());
+		
+		return salida;
+	}
+	
+	public double getAcumulado(int indAnios, MetaConcepto mc, Sistema s) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(Constantes.fechaActual());
+		
+		double acumulado = 0;
+		
+		Iterator<FotoDetalle> itDetalles = this.lDetalles.iterator();
+		while (itDetalles.hasNext()) {
+			FotoDetalle ft = itDetalles.next();
+			
+			if (s.codigo.equals(ft.sistema.codigo) &&
+					(mc.id == MetaConcepto.ID_TOTAL || ft.tipoConcepto.id == mc.id)) {
+				if ((c.get(Calendar.YEAR)> ft.anio && indAnios == Foto.ANIOS_ANTERIORES) ||
+						(c.get(Calendar.YEAR)== ft.anio && indAnios == Foto.ANIO_CURSO) ||
+						(c.get(Calendar.YEAR)< ft.anio && indAnios == Foto.ANIOS_SIGUIENTES)||
+						(indAnios == Foto.TODO))
+					acumulado += ft.valor;
+			}
+		}
+		
+		return acumulado;
+	}
+	
+	public void updateFoto(String idTransaccion) throws Exception{			
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
 		listaParms.add(new ParametroBD(2,ConstantesBD.PARAMBD_STR,this.nombreFoto));
@@ -131,9 +205,15 @@ public class Foto implements Cargable{
 		ConsultaBD consulta = new ConsultaBD();
 		consulta.ejecutaSQL("uActualizaFoto", listaParms, this, idTransaccion);	
 		
+		Iterator<Parametro> itParam = this.listaParametros.values().iterator();
+		while (itParam.hasNext()) {
+			Parametro param = itParam.next();
+			param.actualizaParametro(idTransaccion, false);
+		}
+		
 	}
 	
-	public void borrarFoto(String idTransaccion) {			
+	public void borrarFoto(String idTransaccion) throws Exception{			
 		List<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1,ConstantesBD.PARAMBD_INT,this.id));
 		
@@ -144,6 +224,12 @@ public class Foto implements Cargable{
 		while(ifd.hasNext()) {
 			FotoDetalle fd = ifd.next();
 			fd.borrarDetalle(idTransaccion);
+		}
+		
+		Iterator<Parametro> itParam = this.listaParametros.values().iterator();
+		while (itParam.hasNext()) {
+			Parametro param = itParam.next();
+			param.bajaParametro(idTransaccion);
 		}
 	}
 	
@@ -171,13 +257,21 @@ public class Foto implements Cargable{
 			fd.foto = this;
 			fd.insertFotoDetalle(idTransaccion);
 		}
+		
+		Iterator<Parametro> itParam = this.listaParametros.values().iterator();
+		while (itParam.hasNext()) {
+			Parametro param = itParam.next();
+			param.actualizaParametro(idTransaccion, false);
+		}		
 	}
     
-    public void hacerFoto(AnalizadorPresupuesto ap) throws Exception{
+    public Foto hacerFoto(AnalizadorPresupuesto ap) throws Exception{
     	float acumuladoAnio= 0;
     	float acumulado = 0;
     	
-		Foto f = new Foto();
+    	Foto f = new Foto();
+		Parametro p = new Parametro();
+		f.listaParametros = p.dameParametros(f.getClass().getSimpleName(), -1);
 		f.fxCreacion = new Date();
 		f.id = -1;
 		f.idProyecto = ap.proyecto.id;
@@ -284,6 +378,7 @@ public class Foto implements Cargable{
 		f.insertFotoDetalle(idTransaccion);
 		ConsultaBD.ejecutaTicket(idTransaccion);
 		
+		return f;
 	}
     
     public HashMap<Integer,HashMap<Integer,HashMap<String,HashMap<String,Concepto>>>> construyeArbol() {

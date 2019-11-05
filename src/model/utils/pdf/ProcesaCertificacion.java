@@ -25,6 +25,7 @@ public class ProcesaCertificacion {
 	COSDocument cosDoc;
 	PDDocumentInformation pdDocInfo;
 	HashMap<String,String> Ers = null;
+	HashMap<String,ArrayList<String>> ErsAux = null;
 	
 	String totalAux = "";
 	
@@ -50,14 +51,22 @@ public class ProcesaCertificacion {
 		Ers.put(ProcesaCertificacion.FECHA_CONSULTA,"([0-9]{1,2}/[0-9]{1,2}/[0-9]{2,4})");
 		Ers.put(ProcesaCertificacion.SOLICITUD," Solicitud nº([0-9]+): Detalles");
 		Ers.put(ProcesaCertificacion.DESCRIPCION,"\r\nDescripción:([a-zA-Z0-9ñÑáéíóúÁÉÍÓÚÜü -_]*)\r\nProyecto");
-		Ers.put(ProcesaCertificacion.PROYECTO,"\r\nProyecto:([a-zA-Z0-9ñÑáéíóúÁÉÍÓÚÜü -_\r\n]*) Responsable");
-		Ers.put(ProcesaCertificacion.ESTADO,"Estado de solicitud:([a-zA-ZñÑáéíóúÁÉÍÓÚÜü ]*)\r\nNº:");
+		Ers.put(ProcesaCertificacion.PROYECTO,"\r\nProyecto:([a-zA-Z0-9ñÑáéíóú:ÁÉÍÓÚÜü -_\r\n]*)[ \t]*Responsable ");
+		Ers.put(ProcesaCertificacion.ESTADO,"Estado de solicitud:([a-zA-ZñÑáéíóúÁÉÍÓÚÜ\\.ü ]*)[ \t\r\n]*Nº:");
 		Ers.put(ProcesaCertificacion.TIPO," Tipo: ([a-zA-ZñÑáéíóúÁÉÍÓÚÜü ]*)\r\nCreado por:");
 		Ers.put(ProcesaCertificacion.FECHA_CERTIFICACION,"Fecha Certificación: ([a-zA-Z0-9 \r\n]*)\r\nDetalles ");
-		Ers.put(ProcesaCertificacion.PEDIDO,"Número de Pedido:  ([0-9 ]*) Proveedor: ");
+		Ers.put(ProcesaCertificacion.PEDIDO,"Número de Pedido:[  ]*([0-9 ]*) Proveedor: ");
 		Ers.put(ProcesaCertificacion.PROVEEDOR," Proveedor:  ([a-zA-Z0-9ñÑáéíóúÁÉÍÓÚÜü -_\r\n]*)\r\nNaturaleza coste: ");
 		Ers.put(ProcesaCertificacion.CREADOR,"Creado por:  ([a-zA-Z0-9ñÑáéíóúÁÉÍÓÚÜü -_]*) Creado el");
 		Ers.put(ProcesaCertificacion.HITOS," Hito Cantidad Importe    \r\n([a-zA-Z0-9ñÑáéíóúÁÉÍÓÚÜü -_\r\n\t,]*)\r\nTotal:([0-9 \t,]*)");
+		
+
+		ErsAux = new HashMap<String,ArrayList<String>>();
+		
+		ArrayList<String> lAux = new ArrayList<String>();
+		ErsAux.put(ProcesaCertificacion.ESTADO,lAux);
+		lAux.add("Estado:([a-zA-ZñÑáéíóúÁÉÍÓÚÜ\\.ü ]*)[ \t\r\n]*Descripci");
+		
 	}
 	
 	public HashMap<String,Object> procesa(String ruta) {
@@ -93,18 +102,45 @@ public class ProcesaCertificacion {
 	}
 	
 	public String aplicarER(String codigo, String texto) throws Exception{
-		String er = this.Ers.get(codigo);
-		
-		Pattern p = Pattern.compile(er);
-	    Matcher m = p.matcher(texto);
-	    boolean resultado = m.find();
-
-	    if (!resultado || (m.groupCount()>1 && !codigo.equals(ProcesaCertificacion.HITOS)) || (m.groupCount()>2 && codigo.equals(ProcesaCertificacion.HITOS))) 
-	    	throw new Exception("Campo no encontrado: " + codigo);
-	    
-	    if (codigo.equals(ProcesaCertificacion.HITOS)) this.totalAux = m.group(2);
-	    
-	    return m.group(1);
+		try {
+			String er = this.Ers.get(codigo);
+			
+			Pattern p = Pattern.compile(er);
+		    Matcher m = p.matcher(texto);
+		    boolean resultado = m.find();
+	
+		    if (!resultado || (m.groupCount()>1 && !codigo.equals(ProcesaCertificacion.HITOS)) || (m.groupCount()>2 && codigo.equals(ProcesaCertificacion.HITOS))) 
+		    	throw new Exception("Campo no encontrado: " + codigo);
+		    
+		    if (codigo.equals(ProcesaCertificacion.HITOS)) this.totalAux = m.group(2);
+		    
+		    return m.group(1);
+		} catch (Exception ex) {
+			if (this.ErsAux.containsKey(codigo)){
+				Iterator<String> itAux = this.ErsAux.get(codigo).iterator();
+				while (itAux.hasNext()) {
+					String er = itAux.next();
+					
+					Pattern p = Pattern.compile(er);
+				    Matcher m = p.matcher(texto);
+				    boolean resultado = m.find();
+			
+				    if (!resultado || (m.groupCount()>1 && !codigo.equals(ProcesaCertificacion.HITOS)) || (m.groupCount()>2 && codigo.equals(ProcesaCertificacion.HITOS))) { 
+				    	//"No se encuentra";
+					}else {
+						if (codigo.equals(ProcesaCertificacion.HITOS)) this.totalAux = m.group(2);
+					    
+					    return m.group(1);
+				    }
+				 }
+				
+				throw ex;
+			}
+			else 
+				throw ex;
+			
+			
+		}
 	}
 	
 	public HashMap<String, HashMap<String,String>> certificaciones(String certificaciones) throws Exception{
@@ -217,16 +253,23 @@ public class ProcesaCertificacion {
 	}
 	
 	private HashMap<String,Object> estandarizaFecha(HashMap<String,Object> certificacion) {
-		String fecha = (String) certificacion.get(ProcesaCertificacion.FECHA_CERTIFICACION);
-		String [] corteFecha = fecha.split(" de ");
+		try{
+			String fecha = (String) certificacion.get(ProcesaCertificacion.FECHA_CERTIFICACION);
+			String [] corteFecha = fecha.split(" de ");
+			
+			String nomMes = corteFecha[1].trim().charAt(0) + "";
+			nomMes = nomMes.toUpperCase() + corteFecha[1].trim().substring(1);
+			int contador = Constantes.numMes(nomMes);
+			
+			certificacion.remove(ProcesaCertificacion.FECHA_CERTIFICACION);
+			String mesNum = (contador>9?"":"0")+contador;
+			certificacion.put(ProcesaCertificacion.FECHA_CERTIFICACION,corteFecha[0].trim()+"/"+mesNum+"/"+corteFecha[2].trim());	
+			
+		} catch (Exception e) {
+			certificacion.remove(ProcesaCertificacion.FECHA_CERTIFICACION);
+			certificacion.put(ProcesaCertificacion.FECHA_CERTIFICACION,(String) certificacion.get(ProcesaCertificacion.FECHA_CONSULTA));
+		}
 		
-		String nomMes = corteFecha[1].trim().charAt(0) + "";
-		nomMes = nomMes.toUpperCase() + corteFecha[1].trim().substring(1);
-		int contador = Constantes.numMes(nomMes);
-		
-		certificacion.remove(ProcesaCertificacion.FECHA_CERTIFICACION);
-		String mesNum = (contador>9?"":"0")+contador;
-		certificacion.put(ProcesaCertificacion.FECHA_CERTIFICACION,corteFecha[0].trim()+"/"+mesNum+"/"+corteFecha[2].trim());	
 		return certificacion;
  	}
 }

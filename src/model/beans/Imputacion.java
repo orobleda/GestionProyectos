@@ -257,16 +257,16 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 	}
 
 	public float getHoras() {
-		if (this.tipoImputacion == IMPUTACION_FRACCIONADA || this.tipoImputacion == FRACCION_IMPUTACION)
+		if (this.tipoImputacion == FRACCION_IMPUTACION || this.tipoImputacion == IMPUTACION_FRACCIONADA )
 			return this.imputacionFraccion.getHoras();
-
+			
 		return horas;
 	}
 
 	public float getImporte() {
-		if (this.tipoImputacion == IMPUTACION_FRACCIONADA || this.tipoImputacion == FRACCION_IMPUTACION)
+		if (this.tipoImputacion == FRACCION_IMPUTACION || this.tipoImputacion == IMPUTACION_FRACCIONADA)
 			return this.imputacionFraccion.getImporte();
-
+			
 		return importe;
 	}
 

@@ -1,9 +1,11 @@
 package ui.Economico.ControlPresupuestario;
 
+import java.net.URL;
 import java.util.HashMap;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -11,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import model.beans.Foto;
 import model.beans.Parametro;
 import model.constantes.Constantes;
@@ -21,6 +24,7 @@ import model.utils.xls.informes.InformeGenerico;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
+import ui.Administracion.Parametricas.GestionParametros;
 import ui.Economico.ControlPresupuestario.Tables.LineaFoto;
 import ui.interfaces.ControladorPantalla;
 import ui.popUps.PopUp;
@@ -58,6 +62,9 @@ public class GestionesFoto implements ControladorPantalla, PopUp {
 
     @FXML
     private CheckBox chkPersistir;
+    
+    @FXML
+    private HBox hbPropiedades;
     
     public Foto foto = null;
     public VistaFoto vf = null;
@@ -143,6 +150,42 @@ public class GestionesFoto implements ControladorPantalla, PopUp {
 			gbComparar.activarBoton();
 	}
 	
+	private void cargaPropiedades(int idGestiones, Object claseMostrar) throws Exception {
+		this.hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
+		
+		GestionParametros gestPar = new GestionParametros();
+		
+		FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(new URL(gestPar.getFXML()));
+        	        
+        hbPropiedades.getChildren().add(loader.load());
+        gestPar = loader.getController();
+        
+        HashMap<String, Object> variablesPaso = new HashMap<String, Object>();
+        variablesPaso.put("entidadBuscar", claseMostrar.getClass().getSimpleName());
+        variablesPaso.put("subventana", new Boolean(true));
+        
+        if (idGestiones!=-1)
+           variablesPaso.put("idEntidadBuscar", idGestiones);
+        else
+           variablesPaso.put("idEntidadBuscar", Parametro.SOLO_METAPARAMETROS);
+        
+        variablesPaso.put("ancho", new Double(800));
+        variablesPaso.put("alto", new Double(200));
+        
+        if (this.foto.listaParametros == null) {
+        	Parametro p = new Parametro();
+        	this.foto.listaParametros = p.dameParametros(this.foto.getClass().getSimpleName(), this.foto.id);
+        }
+        
+        variablesPaso.put(GestionParametros.PARAMETROS_DIRECTOS,Constantes.TRUE);
+		variablesPaso.put(GestionParametros.LISTA_PARAMETROS,this.foto.listaParametros);
+        
+        gestPar.setParametrosPaso(variablesPaso);
+        
+        this.foto.listaParametros = gestPar.listaParametros;
+	}
+	
 	public void descargar() throws Exception{
 		HashMap<String,Object> valores = new HashMap<String,Object>();
 		String nomArchivo = "InfoFoto" + (String) (foto.proyecto.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).getValor()) + "_" + Constantes.fechaActual().getTime() + ".xlsx";
@@ -190,14 +233,18 @@ public class GestionesFoto implements ControladorPantalla, PopUp {
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
 		if (this.tNombreFoto!=null) {
-			LineaFoto lf = (LineaFoto) variablesPaso.get("filaDatos");
-			vf = (VistaFoto) variablesPaso.get("controladorPantalla");
-			this.foto = lf.f;
-						
-			this.tNombreFoto.setText(lf.f.nombreFoto);
-			this.cbFotos.getItems().addAll(vf.tablaListaFotos.listaDatosEnBruto);
-			this.chkPersistir.setSelected(foto.persistir);
-			
+			try {
+				LineaFoto lf = (LineaFoto) variablesPaso.get("filaDatos");
+				vf = (VistaFoto) variablesPaso.get("controladorPantalla");
+				this.foto = lf.f;
+							
+				this.tNombreFoto.setText(lf.f.nombreFoto);
+				this.cbFotos.getItems().addAll(vf.tablaListaFotos.listaDatosEnBruto);
+				this.chkPersistir.setSelected(foto.persistir);
+				cargaPropiedades(this.foto.id, this.foto.getClass().getSimpleName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}		
 	}
 	
