@@ -32,7 +32,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.constantes.CargaInicial;
+import model.utils.db.ReplicaBD;
 import ui.GestionBotones;
+import ui.Administracion.BackupBD.BackupBD;
 import ui.Administracion.Festivos.GestionFestivos;
 import ui.Administracion.Parametricas.AdministracionParametros;
 import ui.Economico.CargaImputaciones.CargaImputaciones;
@@ -97,6 +99,8 @@ public class Main extends Application {
 			Main.sesion = new HashMap<String, Object>();
 			
 			new CargaInicial().load();
+			
+			ReplicaBD.fuerzaGuardado(null); 
 	        
 			BorderPane panelBase = new BorderPane();
 			
@@ -418,7 +422,8 @@ public class Main extends Application {
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.AJUSTES, opcionMenu);
 		opcionMenu.put("Gestión Festivos", new GestionFestivos());            
-		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());            
+		opcionMenu.put("Gestión paramétricas", new AdministracionParametros());   
+		opcionMenu.put("Copias Seguridad", new BackupBD());           
 		
 		opcionMenu = new HashMap<String, ControladorPantalla>();
 		listaMenu.put(Main.REPORTES, opcionMenu);	
@@ -438,6 +443,7 @@ public class Main extends Application {
 		listaImgsPeque.put("Gestión Festivos", "PequeCalendario.png"); 
 		listaImgsPeque.put("Gestión paramétricas", "PequeAjustes.png");
 		listaImgsPeque.put("Descarga Informes", "PequeAjustes.png"); 
+		listaImgsPeque.put("Copias Seguridad", "PequeAjustes.png"); 
 	}
 	
 	private void click(ControladorPantalla ctl) {

@@ -116,7 +116,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tCoste.setPrefWidth(escena.getWidth()*0.65);
 		tNomProyecto.setPrefWidth(escena.getWidth()*0.65);
 		
-		
+		this.tablaCoste.fijaAlto(escena.getHeight()*0.40);
 	}
 	
 	private void consultaAvanzadaProyectos() throws Exception{		

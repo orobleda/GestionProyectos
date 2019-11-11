@@ -21,6 +21,7 @@ public class TipoDato {
 	public static final int FORMATO_RECURSO = 14;
 	public static final int FORMATO_TARIFA = 16;
 	public static final int FORMATO_COBRO_VCT = 17;
+	public static final int FORMATO_FECHAHORA = 18;
 	
 	public static final int FORMATO_TIPO_VCT = 1000;
 	public static final int FORMATO_ESTADO_IMPUTACION = 1001;

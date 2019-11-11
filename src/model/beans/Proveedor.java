@@ -61,7 +61,7 @@ public class Proveedor implements Cargable, Loadable {
 		try {
 			String valorParam = (String) this.getParametro(MetaParametro.PROVEEDOR_CODPPM).getValor();
 			
-			String [] cortada = valorParam.split(";");
+			String [] cortada = valorParam.trim().split(";");
 			for (int i=0;i<cortada.length;i++) {
 				String codigo = cortada[i];
 				if (codigo.trim().toUpperCase().equals(valor.trim().toUpperCase())) {

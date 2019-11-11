@@ -10,14 +10,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import model.beans.Parametro;
-import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
-import model.metadatos.MetaParametro;
 
-public class ConsultaBD {
+public class ConsultaBDReplica {
 	
 	public static HashMap<String, ArrayList<String>> transacciones = null;
 	public static HashMap<String, HashMap<String,Integer>> idsAcumulados = null;
@@ -37,21 +34,9 @@ public class ConsultaBD {
 		 if (connect!=null) return;
 		 try {
 		     connect = DriverManager.getConnection("jdbc:sqlite:"+url);
-		     if (connect!=null) {
-		         ////System.out.println("Conectado");
-		     }
 		 }catch (SQLException ex) {
-			 try {
-			     //connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\EN31714\\Downloads\\eclipse-java-neon-2-win32\\workspace\\Repositorio\\GestionProyectos\\gProyectos.s3db");
-				 connect = DriverManager.getConnection("jdbc:sqlite:"+"C:\\Users\\Oscar\\git\\GestionProyectos\\gProyectos.s3db");
-			     if (connect!=null) {
-			         ////System.out.println("Conectado");
-			     }
-			 }catch (SQLException ex2) {
-				 ex.printStackTrace();
-			     System.err.println("No se ha podido conectar a la base de datos\n"+ex2.getMessage());
-			 }
-		     //System.err.println("No se ha podido conectar a la base de datos\n"+ex.getMessage());
+			 	 ex.printStackTrace();
+			     System.err.println("No se ha podido conectar a la base de datos\n"+ex.getMessage());
 		 }
 		 finally {
 			 if (conexiones==null) {
@@ -60,30 +45,6 @@ public class ConsultaBD {
 			 conexiones.add(connect);
 		 }
 		}
-	
-	public String copiaBackup() {
-		Statement stmt = null;
-	    this.connect();
-	    
-	    Parametro pAux = (Parametro) Parametro.getParametro(new Parametro().getClass().getSimpleName(), -1, MetaParametro.PARAMETRO_REPO_BD_SEG);
-	    String nomFichero = (String)pAux.getValor()+"\\BD_"+Constantes.fechaActual().getTime();
-	   
-	    try {
-	      String query = "backup to '" + nomFichero+".s3db'";
-	      System.out.println(query);
-	       	
-	      stmt = connect.createStatement();
-	      stmt.execute(query );
-	      stmt.close();
-	      
-	    } catch ( Exception e ) {
-	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-	    } 
-	    finally {
-	    	this.close();			    
-	    }	
-	    return nomFichero+".s3db";
-	}
 	
 	 public void close(){
 	        try {
@@ -101,11 +62,11 @@ public class ConsultaBD {
 		 
 		 ArrayList<String> querys = null;
 		 
-		 if ( ConsultaBD.transacciones.containsKey(idTransaccion)) {
-			 querys = ConsultaBD.transacciones.get(idTransaccion);
+		 if ( ConsultaBDReplica.transacciones.containsKey(idTransaccion)) {
+			 querys = ConsultaBDReplica.transacciones.get(idTransaccion);
 		 } else {
 			 querys = new ArrayList<String>();
-			 ConsultaBD.transacciones.put(idTransaccion, querys);
+			 ConsultaBDReplica.transacciones.put(idTransaccion, querys);
 		 }
 		 
 		 String query = this.preparaQuery(QuerysBD.querys.get(codQuery), filtros, idTransaccion);
@@ -221,13 +182,12 @@ public class ConsultaBD {
 	      return null;
 	    } 
 	    finally {
-	    	this.close();
-			ReplicaBD.replicaBD(null);	    	
+	    	this.close();    	
 	    }
 	  }
 
 	 public void ejecutaTransaccion(String idTransaccion) throws Exception {
-		 ArrayList<String> querys = ConsultaBD.transacciones.get(idTransaccion);
+		 ArrayList<String> querys = ConsultaBDReplica.transacciones.get(idTransaccion);
 		 Statement stmt = null;
 		 
 		 if (querys==null) {
@@ -249,8 +209,8 @@ public class ConsultaBD {
 			 connect.commit();
 			 connect.setAutoCommit(true);
 			 
-			 ConsultaBD.transacciones.remove(idTransaccion);
-			 ConsultaBD.idsAcumulados.remove(idTransaccion);
+			 ConsultaBDReplica.transacciones.remove(idTransaccion);
+			 ConsultaBDReplica.idsAcumulados.remove(idTransaccion);
 		 } catch (Exception e) {
 			 System.out.println(e);
 			 connect.rollback();
@@ -258,7 +218,6 @@ public class ConsultaBD {
 			 
 		 } finally {
 			 this.close();
-			 ReplicaBD.replicaBD(null);
 		 }
 	 }
 	 
@@ -320,7 +279,7 @@ public class ConsultaBD {
 	 }
 	 
 	 public static void ejecutaTicket(String idTransaccion) throws Exception{
-		ConsultaBD cbd = new ConsultaBD(); 
+		ConsultaBDReplica cbd = new ConsultaBDReplica(); 
 		cbd.ejecutaTransaccion(idTransaccion);
 	 }
 	

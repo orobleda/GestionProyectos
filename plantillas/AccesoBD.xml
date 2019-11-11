@@ -73,6 +73,33 @@
 		<tabla>META_PARM_REC</tabla>
 	</acceso>
 	<acceso>
+		<query>delete from REPLICA_BD where id = $B$||1||$E$</query>
+		<id tipo="D">cBorraReplicaBD</id>
+		<tabla>REPLICA_BD</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>select id rbdId, fxReplica rbdFxCopia, nombreFichero rbdNomFichero, version rbdVersion from REPLICA_BD where 1=1 $B$and nombreFichero = ||1||$E$</query>
+		<id tipo="C">cConsultaReplicaBD</id>
+		<tabla>REPLICA_BD</tabla>
+		<parametros>
+			<parametro id="1" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>insert into REPLICA_BD (id,fxReplica,nombreFichero,version) values ($B$||1||$E$,$B$||2||$E$,$B$||3||$E$,$B$||4||$E$)</query>
+		<id tipo="I">iAltaReplicaBD</id>
+		<tabla>REPLICA_BD</tabla>
+		<parametros>
+			<parametro id="1" tipo="id"></parametro>
+			<parametro id="2" tipo="dat"></parametro>
+			<parametro id="3" tipo="str"></parametro>
+			<parametro id="4" tipo="str"></parametro>
+		</parametros>
+	</acceso>
+	<acceso>
 		<query>insert into PROYECTO (id,Nombre) values ($B$||1||$E$,$B$||2||$E$)</query>
 		<id tipo="I">iAltaProy</id>
 		<tabla>PROYECTO</tabla>

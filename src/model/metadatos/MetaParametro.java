@@ -3,15 +3,18 @@ package model.metadatos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import model.beans.Parametro;
 import model.constantes.Constantes;
+import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
 import model.utils.db.ConsultaBD;
+import model.utils.db.ParametroBD;
+import ui.interfaces.Propiediable;
 
 public class MetaParametro implements Cargable, Loadable {
-
-	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
 	
 	public static final String FASE_PROYECTO_FX_IMPLANTACION = "F.PR.fxImplantacion";
 	
@@ -27,7 +30,9 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PARAMETRO_TARIFA_DEFECTO_INTERNAS = "PAR_TAR_DEF_INT";	
 	public static final String PARAMETRO_TARIFA_DEFECTO_SATAD = "PAR_TAR_DEF_SATAD";
 	public static final String PARAMETRO_TARIFA_DEFECTO_CC = "PAR_TAR_DEF_CC";	
-	public static final String PARAMETRO_TARIFA_DEFECTO_DES = "PAR_TAR_DEF_DES";		
+	public static final String PARAMETRO_TARIFA_DEFECTO_DES = "PAR_TAR_DEF_DES";
+	public static final String PARAMETRO_REPO_BD_SEG = "PARM_REPO_BD_SEG";	
+	public static final String PARAMETRO_OCURR_COPIA_BD = "PARM.OCURR_COPIA_BD";
 	
 	public static final String PARAMETRO_SISTEMA_PROVEEDOR = "SIST.Proveedor";
 	
@@ -55,6 +60,10 @@ public class MetaParametro implements Cargable, Loadable {
 
 	public static final String FOTO_COD_PORFOLIO = "FOTO.COD_PORFOLIO";
 	public static final String FOTO_FX_PPM = "FOTO.EN_PPM";
+	
+
+	public static final String CERTIFICACION_DESCRIPCION = "CERT.desc";
+	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
 		
 	public int id =0;
 	public String entidad = "";
@@ -112,6 +121,22 @@ public class MetaParametro implements Cargable, Loadable {
 			MetaParametro est = (MetaParametro) it.next();
 			listado.put(est.codParametro, est);
 		}
+	}
+	
+	public static HashMap<String,Parametro> dameParametros(String entidad, int idElemento) {
+		HashMap<String, Parametro> salida = new HashMap<String, Parametro> ();
+		
+		Iterator<MetaParametro> itMetaParam = MetaParametro.listado.values().iterator();
+		while (itMetaParam.hasNext()) {
+			Parametro par = Propiediable.beanControlador(entidad);
+			par.metaParam = itMetaParam.next();
+			par.idEntidadAsociada = idElemento;
+			par.codParametro = par.metaParam.codParametro;
+			if (par.metaParam.entidad.equals(entidad)) 
+				salida.put(par.metaParam.codParametro, par);
+		}		
+				
+		return salida;
 	}
 	
 	@Override

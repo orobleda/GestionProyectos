@@ -155,8 +155,14 @@ public class ParametroBD{
 	}
 	
 	public int calculaMaxId(){
-		ConsultaBD consulta = new ConsultaBD();
-		ArrayList<Object> ids = consulta.ejecutaSQL("SELECT MAX(ID) id FROM "+this.tabla, ConstantesBD.QUERYCONSULTA);
+		ArrayList<Object> ids = null;
+		if ("REPLICA_BD".equals(this.tabla)) {
+			ConsultaBDReplica consulta = new ConsultaBDReplica();
+			ids = consulta.ejecutaSQL("SELECT MAX(ID) id FROM "+this.tabla, ConstantesBD.QUERYCONSULTA);
+		} else {
+			ConsultaBD consulta = new ConsultaBD();
+			ids = consulta.ejecutaSQL("SELECT MAX(ID) id FROM "+this.tabla, ConstantesBD.QUERYCONSULTA);
+		}
 		
 		@SuppressWarnings("unchecked")
 		HashMap<String,Object> id = (HashMap<String,Object>) ids.get(0);

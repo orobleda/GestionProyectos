@@ -66,6 +66,12 @@ public class ProcesaCertificacion {
 		ArrayList<String> lAux = new ArrayList<String>();
 		ErsAux.put(ProcesaCertificacion.ESTADO,lAux);
 		lAux.add("Estado:([a-zA-ZÒ—·ÈÌÛ˙¡…Õ”⁄‹\\.¸ ]*)[ \t\r\n]*Descripci");
+		lAux = new ArrayList<String>();
+		ErsAux.put(ProcesaCertificacion.SOLICITUD,lAux);
+		lAux.add("N∫:[ \t]*([0-9]+)[ \t]*Tipo");
+		lAux = new ArrayList<String>();
+		ErsAux.put(ProcesaCertificacion.HITOS,lAux);
+		lAux.add("[ \t]*Hito Cantidad Importe[ \t]*\r\n([a-zA-Z0-9Ò—·ÈÌÛ˙¡…Õ”⁄‹¸ -_\r\n\t,]*)\r\nTotal:([0-9 \t,]*)");
 		
 	}
 	
@@ -130,7 +136,7 @@ public class ProcesaCertificacion {
 					}else {
 						if (codigo.equals(ProcesaCertificacion.HITOS)) this.totalAux = m.group(2);
 					    
-					    return m.group(1);
+						return m.group(1);
 				    }
 				 }
 				

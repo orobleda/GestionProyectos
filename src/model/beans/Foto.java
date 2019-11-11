@@ -261,6 +261,7 @@ public class Foto implements Cargable{
 		Iterator<Parametro> itParam = this.listaParametros.values().iterator();
 		while (itParam.hasNext()) {
 			Parametro param = itParam.next();
+			param.idEntidadAsociada = this.id;
 			param.actualizaParametro(idTransaccion, false);
 		}		
 	}
@@ -271,7 +272,7 @@ public class Foto implements Cargable{
     	
     	Foto f = new Foto();
 		Parametro p = new Parametro();
-		f.listaParametros = p.dameParametros(f.getClass().getSimpleName(), -1);
+		f.listaParametros = MetaParametro.dameParametros(f.getClass().getSimpleName(), -1);
 		f.fxCreacion = new Date();
 		f.id = -1;
 		f.idProyecto = ap.proyecto.id;

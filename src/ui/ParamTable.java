@@ -154,33 +154,41 @@ public class ParamTable implements Tableable {
 						        			}
 						        			
 								        	PopUp controlPantalla = pP.controlPantalla;
-								        	if (!pP.controlPantalla.noEsPopUp()) {
-									        	if (po!=null){
-									        		po.hide();
-									        		po = null;
-									        	}
-								        		controlPantalla.setClaseContenida(selector);
-									        	controlPantalla.setParametrosPaso(parametrosPaso);
-									        	loader.setLocation(new URL(controlPantalla.getControlFXML()));
-							        	        Pane pane = loader.load();
-							        	        controlPantalla = (PopUp) loader.getController();
-							        	        controlPantalla.setParametrosPaso(parametrosPaso);
-							        	        po = new PopOver(pane);
-							        	        parametrosPaso.put("PopOver", po);
-							        	        po.setTitle("");
-							        			po.show(t.getTableView());
-							        			po.setAnimated(true);
-							        			po.setAutoHide(true);
-								        	} else {
+								        	if (controlPantalla==null) {
+								        		controlPantalla = (PopUp) t.getTableView().getProperties().get("controlador");
 								        		try {
 								        			Method metodo = controlPantalla.getClass().getDeclaredMethod(controlPantalla.getMetodoRetorno(), HashMap.class);
 								        			metodo.invoke(controlPantalla, parametrosPaso);
-								        			
-								        			
 								        		} catch (Exception e) {
 								        			e.printStackTrace();
 								        		}
-								        	}								        	
+								        	} else {
+									        	if (!pP.controlPantalla.noEsPopUp()) {
+										        	if (po!=null){
+										        		po.hide();
+										        		po = null;
+										        	}
+									        		controlPantalla.setClaseContenida(selector);
+										        	controlPantalla.setParametrosPaso(parametrosPaso);
+										        	loader.setLocation(new URL(controlPantalla.getControlFXML()));
+								        	        Pane pane = loader.load();
+								        	        controlPantalla = (PopUp) loader.getController();
+								        	        controlPantalla.setParametrosPaso(parametrosPaso);
+								        	        po = new PopOver(pane);
+								        	        parametrosPaso.put("PopOver", po);
+								        	        po.setTitle("");
+								        			po.show(t.getTableView());
+								        			po.setAnimated(true);
+								        			po.setAutoHide(true);
+									        	} else {
+									        		try {
+									        			Method metodo = controlPantalla.getClass().getDeclaredMethod(controlPantalla.getMetodoRetorno(), HashMap.class);
+									        			metodo.invoke(controlPantalla, parametrosPaso);
+									        		} catch (Exception e) {
+									        			e.printStackTrace();
+									        		}
+									        	}	
+								        	}
 						        		} catch (Exception e) {
 						        			e.printStackTrace();
 						        		}

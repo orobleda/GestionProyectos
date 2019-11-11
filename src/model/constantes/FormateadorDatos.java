@@ -100,6 +100,20 @@ public class FormateadorDatos {
 			
 			return salida;
 		}
+		if (TipoDato.FORMATO_FECHAHORA == formato){
+			String salida = "";
+			
+			try{
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				salida = sdf.format(sdf.parse(Dato));
+			} catch (Exception e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+				SimpleDateFormat salidadf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				salida = salidadf.format(sdf.parse(Dato));	
+			}
+			
+			return salida;
+		}
 		if (FormateadorDatos.FORMATO_PORC == formato){
 			Dato = Dato.replace(".", "");
 			Dato = Dato.replace("%", "");
@@ -215,6 +229,20 @@ public class FormateadorDatos {
 			
 			return salida;
 		}
+		if (TipoDato.FORMATO_FECHAHORA == formato){
+			String salida = "";
+			
+			try{
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				salida = sdf.format(sdf.parse(Dato.toString()));
+			} catch (Exception e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+				SimpleDateFormat salidadf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				salida = salidadf.format(sdf.parse(Dato.toString()));	
+			}
+			
+			return salida;
+		}
 		if (FormateadorDatos.FORMATO_FORMATO_PROYECTO == formato){
 			return Dato.toString();
 		}
@@ -266,6 +294,12 @@ public class FormateadorDatos {
 		
 		if (FormateadorDatos.FORMATO_FECHA == formato){
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			return sdf.parse(Dato);
+		}
+		
+		if (TipoDato.FORMATO_FECHAHORA == formato){
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			
 			return sdf.parse(Dato);
 		}
