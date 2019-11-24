@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
@@ -554,7 +555,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 			}
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Log.e(ex);
 		}
 		
 		//actualizaTarifa(idTransaccion);
@@ -603,7 +604,7 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 			}
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Log.e(ex);
 		}
 
 		

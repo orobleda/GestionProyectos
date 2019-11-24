@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -9,57 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GestionProyectos.AltaModProyecto">
-   <top>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <HBox>
-               <children>
-                  <Label prefWidth="200.0" text="Elemento">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <HBox.margin>
-                        <Insets left="15.0" />
-                     </HBox.margin>
-                  </Label>
-                  <TextField fx:id="tListaProy" prefWidth="800.0" />
-                  <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../imgs/iconos/Buscar3_PAS.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin>
-                  </ImageView>
-               </children>
-            </HBox>
-            <HBox alignment="TOP_RIGHT">
-               <children>
-                  <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../imgs/iconos/Nuevo3_PAS.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../imgs/iconos/Buscar3_PAS.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets left="15.0" />
-                     </HBox.margin>
-                  </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="25.0" right="15.0" top="15.0" />
-               </VBox.margin>
-            </HBox>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </BorderPane.margin>
-      </VBox>
-   </top>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GestionProyectos.AltaModProyecto">
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -88,27 +43,30 @@
             </HBox>
             <HBox fx:id="hbPropiedades" alignment="TOP_CENTER">
                <VBox.margin>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  <Insets left="20.0" right="20.0" top="20.0" />
                </VBox.margin></HBox>
-            <HBox alignment="TOP_RIGHT">
+            <HBox fx:id="hbBotones" alignment="TOP_RIGHT">
                <children>
-                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../imgs/iconos/Guardar3_PAS.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imEliminar" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../imgs/iconos/Eliminar3_PAS.png" />
                      </image>
                      <HBox.margin>
-                        <Insets left="10.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </ImageView>
                </children>
                <VBox.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="45.0" />
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="10.0" />
                </VBox.margin>
+               <padding>
+                  <Insets right="40.0" />
+               </padding>
             </HBox>
          </children>
          <BorderPane.margin>

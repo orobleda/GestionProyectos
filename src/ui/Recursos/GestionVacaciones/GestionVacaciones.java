@@ -1,13 +1,16 @@
 package ui.Recursos.GestionVacaciones;
 
-import java.awt.Dimension;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import org.controlsfx.control.PopOver;
+
 import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +31,7 @@ import model.metadatos.MetaParametro;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
+import ui.ParamTable;
 import ui.interfaces.ControladorPantalla;
 
 public class GestionVacaciones implements ControladorPantalla {
@@ -41,11 +45,9 @@ public class GestionVacaciones implements ControladorPantalla {
 	@FXML
     private VBox contenedorRecursos;
     
-	@FXML
-    private ComboBox<String> cbMeses;
+    private int mes;
 
-    @FXML
-    private ComboBox<Integer> cbAnios;
+    private int anio;
 	
     @FXML
     private ImageView imGuardar;
@@ -84,22 +86,11 @@ public class GestionVacaciones implements ControladorPantalla {
 		Date d = Constantes.fechaActual();
 		Calendar c = Calendar.getInstance();
 		c.setTime(d);
-		cbAnios.getItems().add(c.get(Calendar.YEAR)-1);
-		for (int i=c.get(Calendar.YEAR);i<c.get(Calendar.YEAR)+3;i++){
-			cbAnios.getItems().add(i);	
-		}
+				
+		mes = c.get(Calendar.MONTH)+1;
+		anio = c.get(Calendar.YEAR);
 		
-		new Constantes();
-		
-		for (int i=0;i<Constantes.meses.size();i++){
-			cbMeses.getItems().add(Constantes.meses.get(i));	
-		}
-		
-		cbAnios.setValue(c.get(Calendar.YEAR));
-		cbMeses.setValue(Constantes.meses.get(c.get(Calendar.MONTH)+1));
-		
-		int mes = Constantes.numMes(cbMeses.getValue());
-		int anio = cbAnios.getValue();
+		GestionVacaciones gv = this;
 		
 		tablas = new ArrayList<DetalleRecurso>();
 		HBox contenedorRecurso = null;
@@ -128,16 +119,30 @@ public class GestionVacaciones implements ControladorPantalla {
 				}
 			}
 			
-			gbBuscarAn = new GestionBotones(imBuscarAn, "Buscar3", false, new EventHandler<MouseEvent>() {        
+			ImageView im = new ImageView();
+			
+			gbBuscarAn = new GestionBotones(GestionBotones.IZQ, new ImageView(), "Buscar3", false, new EventHandler<MouseEvent>() {        
 				@Override
 	            public void handle(MouseEvent t)
 	            {   
 					try {
-						consulta();
+						FXMLLoader loader = new FXMLLoader();
+						FiltrosConsultaGV filtros = new FiltrosConsultaGV();
+				        loader.setLocation(new URL(filtros.getFXML()));
+				     	ParamTable.po = new PopOver(loader.load());
+				     	
+				     	HashMap<String,Object> mFiltros = new HashMap<String,Object>();
+				     	mFiltros.put("ventanaPadre", gv);
+				     	filtros = loader.getController();
+				     	filtros.setParametrosPaso(mFiltros);
+				     	
+				     	ParamTable.po.show(contenedorRecursos);
+				     	ParamTable.po.setAnimated(true);
+				     	
 					} catch (Exception e) {
-						e.printStackTrace();
+						Log.e(e);
 					}
-	            } }, "Buscar Mes", this);	
+	            } }, "Buscar Mes");	
 			gbBuscarAn.activarBoton();
 			
 			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
@@ -159,12 +164,12 @@ public class GestionVacaciones implements ControladorPantalla {
 		}
     }
 	
-	public void consulta() {
+	public void consulta(int mesB, int anioB) {
 		tablas = new ArrayList<DetalleRecurso>();
 		HBox contenedorRecurso = null;
 		
-		int mes = Constantes.numMes(cbMeses.getValue());
-		int anio = cbAnios.getValue();
+		mes = mesB;
+		anio = anioB;
 		
 		try {
 			contenedorRecursos.getChildren().removeAll(contenedorRecursos.getChildren());
@@ -179,8 +184,10 @@ public class GestionVacaciones implements ControladorPantalla {
 				
 				ParametroRecurso pGestorRecurso = ((ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_GESTOR));
 				Recurso gestorRecurso = ((Recurso) pGestorRecurso.getValor());
+				 ParametroRecurso parRecAux = ((ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_NAT_COSTE));
+				 MetaConcepto mc = (MetaConcepto) parRecAux.getValor();
 				
-				if (gestorRecurso!=null && gestorRecurso.id == Constantes.getAdministradorSistema().id) {
+				if (gestorRecurso!=null && gestorRecurso.id == Constantes.getAdministradorSistema().id && mc.id == MetaConcepto.SATAD) {
 					contenedorRecurso = new HBox();
 					contenedorRecursos.getChildren().add(contenedorRecurso);
 					

@@ -62,7 +62,7 @@ public class AdministracionParametros implements ControladorPantalla {
 				try {	
 					guardarCambios();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		this.gbGuardar.desActivarBoton();
@@ -102,7 +102,7 @@ public class AdministracionParametros implements ControladorPantalla {
 	       
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Dialogo.error(null, e);
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class AdministracionParametros implements ControladorPantalla {
 			Main.cortinaOFF();
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Dialogo.error(null, ex);
 		}
 		
 	}

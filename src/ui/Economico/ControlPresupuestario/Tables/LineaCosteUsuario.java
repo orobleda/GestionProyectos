@@ -97,6 +97,7 @@ public class LineaCosteUsuario extends ParamTable implements Tableable  {
    				else return "";   				
    			} 
    			if (LineaCosteUsuario.SISTEMA.equals(campo)) {
+   				
    				if (concepto.s==null) return "";
    				return concepto.s.codigo;
    			}

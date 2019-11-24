@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Accordion?>
@@ -14,7 +20,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ControlPresupuestario">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.ControlPresupuestario">
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -92,7 +98,10 @@
             <Accordion fx:id="acDetalles">
               <panes>
                 <TitledPane fx:id="panTopeImput" animated="false" text="Patrón Imputaciones" />
-                <TitledPane fx:id="panDetalleProyecto" animated="false" text="Detalle Proyecto" />
+                <TitledPane fx:id="panDetalleProyecto" animated="false" contentDisplay="CENTER" text="Detalle Proyecto">
+                     <content>
+                        <ScrollPane fx:id="scrDetalles" fitToWidth="true" />
+                     </content></TitledPane>
                   <TitledPane fx:id="panCertificacion" animated="false" text="Detalle Certificaciones" />
               </panes>
             </Accordion>
@@ -108,53 +117,9 @@
                </HBox.margin>
             </Label>
             <TextField fx:id="tProyecto" prefWidth="700.0" />
-            <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../imgs/iconos/aniadir.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <HBox.margin>
-                  <Insets left="5.0" />
-               </HBox.margin>
-            </ImageView>
-            <HBox fx:id="hbContJerarquia">
-               <HBox.margin>
-                  <Insets left="40.0" />
-               </HBox.margin>
-               <children>
-                  <ImageView id="imJerarquia" fx:id="imJerarquia" pickOnBounds="true" preserveRatio="true" styleClass="imJerarquia">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/jerarquia_PAS.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </HBox>
-            <ImageView fx:id="imListado" layoutX="701.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../imgs/iconos/listado_PAS.png" />
-               </image>
-               <HBox.margin>
-                  <Insets left="15.0" />
-               </HBox.margin>
-            </ImageView>
-            <ImageView fx:id="imPPM" layoutX="726.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../imgs/iconos/PPM_PAS.png" />
-               </image>
-               <HBox.margin>
-                  <Insets left="15.0" right="15.0" />
-               </HBox.margin>
-            </ImageView>
-            <ImageView fx:id="imFoto" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../imgs/iconos/PPM_PAS.png" />
-               </image>
-            </ImageView>
          </children>
          <BorderPane.margin>
-            <Insets top="10.0" />
+            <Insets />
          </BorderPane.margin>
       </HBox>
    </top>

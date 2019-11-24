@@ -24,6 +24,7 @@ import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
+import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParametro;
@@ -104,7 +105,7 @@ public class AnalizadorPresupuesto {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	
@@ -507,6 +508,33 @@ public class AnalizadorPresupuesto {
 				}					
 			}				
 		}
+		
+	}
+	
+	public float getRestante(int gestor, Date fecha, MetaConcepto mc) {
+		Iterator<EstimacionAnio> itea = this.estimacionAnual.iterator();
+		float total = 0;
+		
+		Calendar cMarca = Calendar.getInstance();
+		cMarca.setTime(fecha);
+		
+		Calendar cComp = Calendar.getInstance();
+		
+		while (itea.hasNext()) {
+			EstimacionAnio ea = itea.next();
+			
+			if (ea.anio>=cMarca.get(Calendar.YEAR)) {
+				Iterator<EstimacionMes> itMes = ea.estimacionesMensuales.values().iterator();
+				while (itMes.hasNext()) {
+					EstimacionMes em = itMes.next();
+					
+					if (ea.anio>cMarca.get(Calendar.YEAR) || (ea.anio==cMarca.get(Calendar.YEAR) && em.mes>=cMarca.get(Calendar.MONTH)))				
+						total += em.getRestante(gestor,fecha,mc);					
+				}
+			}
+		}
+		
+		return total;
 		
 	}
 	

@@ -21,6 +21,7 @@ public class ReportingInformes implements ControladorPantalla {
 	public static final String AREA_ECONOMICO = "Económico";
 	
 	public static final String INFORME_ECONOMICO_REPORTE_PROYECTOS = "Reporte Proyectos";
+	public static final String INFORME_ECONOMICO_HORAS_MES = "Horas Mes";
 	
 	@FXML
 	private AnchorPane anchor;
@@ -66,6 +67,7 @@ public class ReportingInformes implements ControladorPantalla {
 				if (newValue.equals(ReportingInformes.AREA_ECONOMICO)){
 					cbInforme.getItems().removeAll(cbInforme.getItems());
 					cbInforme.getItems().add(ReportingInformes.INFORME_ECONOMICO_REPORTE_PROYECTOS);
+					cbInforme.getItems().add(ReportingInformes.INFORME_ECONOMICO_HORAS_MES);
 				}
 	    	}
 	    );
@@ -84,6 +86,11 @@ public class ReportingInformes implements ControladorPantalla {
 		if (cbInforme.getValue().equals(ReportingInformes.INFORME_ECONOMICO_REPORTE_PROYECTOS)){
 			FXMLLoader loader = new FXMLLoader();
 	        loader.setLocation(new URL((new ReportingInfEcoReportProy()).getFXML()));
+	        vbInforme.getChildren().add((loader.load()));
+		}		
+		if (cbInforme.getValue().equals(ReportingInformes.INFORME_ECONOMICO_HORAS_MES)){
+			FXMLLoader loader = new FXMLLoader();
+	        loader.setLocation(new URL((new ReportingInfHorasMes()).getFXML()));
 	        vbInforme.getChildren().add((loader.load()));
 		}
 	}

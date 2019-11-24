@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import controller.Log;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -85,7 +86,7 @@ public class FotoDetalle implements Cargable{
 		 		this.tipoConcepto = MetaConcepto.porId((Integer) salida.get("detTipoconcepto"));
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Log.e(ex);
 		}
 		try {
 		 	if (salida.get("detFase")==null)  { 

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.AniadeDemanda">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.AniadeDemanda">
    <children>
       <HBox>
          <children>
@@ -152,7 +157,7 @@
             </HBox>
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <ImageView fx:id="imGuardarConcepto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardarConcepto" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
                      </image>
@@ -169,20 +174,29 @@
       </VBox>
       <HBox alignment="TOP_RIGHT">
          <children>
-            <ImageView fx:id="imGuardarAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imGuardarAniadir" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../imgs/iconos/GuardarAniadir3_ON.png" />
+                  <Image url="@../../../../imgs/iconos/AddElem3_PAS.png" />
                </image>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
             </ImageView>
-            <ImageView fx:id="imGuardarEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imGuardarEliminar" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../imgs/iconos/GuardarBorrar3_PAS.png" />
+                  <Image url="@../../../../imgs/iconos/DelElem3_PAS.png" />
                </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
             </ImageView>
-            <ImageView fx:id="imGuardarEditar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imGuardarEditar" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../imgs/iconos/GuardarEditar3_PAS.png" />
+                  <Image url="@../../../../imgs/iconos/EditElem3_PAS.png" />
                </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
             </ImageView>
          </children>
          <VBox.margin>

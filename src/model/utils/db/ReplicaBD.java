@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import model.beans.Parametro;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
@@ -118,7 +119,7 @@ public class ReplicaBD implements Cargable, Comparable<ReplicaBD> {
 				ReplicaBD.ocurrencias++;
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Log.e(ex);
 		}
 		
 		return null;

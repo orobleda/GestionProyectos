@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ComboBox?>
@@ -13,162 +19,127 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.GestionPresupuestos">
-   <children>
-      <VBox>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.GestionPresupuestos.GestionPresupuestos">
+   <bottom>
+      <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <VBox>
-               <children>
-                  <HBox>
-                     <children>
-                        <Label layoutX="1.0" layoutY="1.0" prefWidth="150.0" text="Proyecto" />
-                        <TextField fx:id="tProyecto" prefWidth="700.0" />
-                        <ImageView fx:id="imConsultaAvanzada" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../imgs/iconos/aniadir.png" />
-                           </image>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </ImageView>
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label prefWidth="150.0" text="Versión" />
-                        <ComboBox fx:id="cbVersion" prefWidth="700.0" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <HBox alignment="TOP_RIGHT">
-                     <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </VBox.margin>
-                     <children>
-                        <ImageView fx:id="imNuevoProyecto" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../imgs/iconos/Nuevo3_PAS.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </ImageView>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <ScrollPane fx:id="scrDatos" fitToHeight="true" fitToWidth="true">
-               <content>
-                  <VBox>
-                     <children>
-                        <HBox>
-                           <children>
-                              <Label prefWidth="150.0" text="Nombre Proyecto" />
-                              <TextField fx:id="tNomProyecto" prefWidth="300.0" />
-                           </children>
-                        </HBox>
-                        <HBox>
-                           <children>
-                              <Label prefWidth="150.0" text="Versión" />
-                              <TextField fx:id="tVsProyecto" prefWidth="300.0" />
-                           </children>
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox>
-                           <children>
-                              <Label prefWidth="150.0" text="Tipo " />
-                              <ComboBox fx:id="cbTipoProy" prefWidth="300.0" />
-                           </children>
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox>
-                           <children>
-                              <TableView fx:id="tDemandas" />
-                              <ImageView fx:id="imAniadirDemanda" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../imgs/iconos/Mas3_PAS.png" />
-                                 </image>
-                                 <HBox.margin>
-                                    <Insets left="15.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                           </VBox.margin>
-                           <padding>
-                              <Insets left="140.0" />
-                           </padding>
-                        </HBox>
-                        <HBox>
-                           <children>
-                              <TableView fx:id="tCoste" />
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                           </VBox.margin>
-                           <padding>
-                              <Insets left="140.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                  </VBox>
-               </content>
+            <HBox alignment="TOP_RIGHT">
                <VBox.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets bottom="15.0" left="400.0" right="15.0" top="15.0" />
                </VBox.margin>
-            </ScrollPane>
-            <VBox alignment="TOP_RIGHT">
                <children>
-                  <HBox alignment="TOP_RIGHT">
-                     <VBox.margin>
-                        <Insets bottom="15.0" left="400.0" right="15.0" top="15.0" />
-                     </VBox.margin>
-                     <children>
-                        <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="imGuardarNuevaVersion" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../imgs/iconos/GuardarAniadir3_PAS.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </ImageView>
-                        <ImageView fx:id="imBorrar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../imgs/iconos/Eliminar3_PAS.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </ImageView>
-                     </children>
-                  </HBox>
+                  <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imGuardarNuevaVersion" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/GuardarAniadir3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <ImageView fx:id="imBorrar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/Eliminar3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
                </children>
-            </VBox>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
+   <center>
+      <VBox fx:id="vbProyecto" BorderPane.alignment="CENTER">
+         <children>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Nombre Proyecto" />
+                  <TextField fx:id="tNomProyecto" prefWidth="300.0" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Versión" />
+                  <TextField fx:id="tVsProyecto" prefWidth="300.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Tipo " />
+                  <ComboBox fx:id="cbTipoProy" prefWidth="300.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <TableView fx:id="tDemandas" />
+                  <ImageView fx:id="imAniadirDemanda" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/EditListado3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets left="140.0" />
+               </padding>
+            </HBox>
+            <HBox>
+               <children>
+                  <TableView fx:id="tCoste" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets left="140.0" />
+               </padding>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
       </VBox>
-   </children>
+   </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox>
+               <children>
+                  <Label layoutX="1.0" layoutY="1.0" prefWidth="150.0" text="Proyecto" />
+                  <TextField fx:id="tProyecto" prefWidth="700.0" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <Label prefWidth="150.0" text="Versión" />
+                  <ComboBox fx:id="cbVersion" prefWidth="700.0" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
    <padding>
-      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
-</Pane>
+</BorderPane>

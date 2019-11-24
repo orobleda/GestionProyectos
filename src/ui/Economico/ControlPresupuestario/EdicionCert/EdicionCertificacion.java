@@ -5,16 +5,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
 import model.beans.CertificacionFaseParcial;
+import ui.Dialogo;
 import ui.Tabla;
 import ui.Economico.ControlPresupuestario.EdicionCert.Tables.LineaCosteCertificacion;
 import ui.interfaces.ControladorPantalla;
@@ -43,11 +46,22 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
     private HBox hbDetalle;
 	
 	@FXML
-	private AnchorPane anchor;
+	private AnchorPane anchor;	
+
+    @FXML
+    private ScrollPane scrDetalle;
 	
 	@Override
 	public void resize(Scene escena) {
+		int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION ) {
+			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.8);
+		}
+		
+		if (res== Main.BAJA_RESOLUCION) {
+			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.7);
+		}
 	}
 	
 	public EdicionCertificacion (Object claseRetorno, String metodoRetorno){
@@ -106,7 +120,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        editarCertificacion.variablesPaso = this.variablesPaso;	
 		        editarCertificacion.pintaValores(this.certificacionFaseParcial.certificacionFase.certificacion);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Dialogo.error(null, e);
 			}
 		}
 		
@@ -124,7 +138,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        editarCertificacion.variablesPaso = this.variablesPaso;	
 		        editarCertificacion.pintaValores(cf);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Dialogo.error(null, e);
 			}
 		}
 		
@@ -144,7 +158,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        editarCertificacion.variablesPaso = this.variablesPaso;	
 		        editarCertificacion.pintaValores(cf);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Dialogo.error(null, e);
 			}
 		}
 		
@@ -161,10 +175,11 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		        parametrosPaso.put(ImportaCertificacion.MODO, ImportaCertificacion.MODO_DETALLE);
 		        importCertificacion.setParametrosPaso(parametrosPaso);	
 			} catch (Exception e) {
-				e.printStackTrace();
+				Dialogo.error(null, e);
 			}
 		}
-			
+		
+		resize(null);
 	}
 
 	@Override

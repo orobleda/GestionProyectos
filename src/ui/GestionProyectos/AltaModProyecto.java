@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,19 +41,12 @@ public class AltaModProyecto implements ControladorPantalla {
 	
 	private Proyecto proySeleccionado;
 	
-    @FXML
-    private ImageView imBuscar;
     private GestionBotones gbBuscar;
 
     @FXML
     private HBox hbPropiedades;
 
-    @FXML
-    private ImageView imAniadir;
     private GestionBotones gbAniadir;
-
-    @FXML
-    private TextField tListaProy;
 
     @FXML
     private TextField tNombreProy;
@@ -66,9 +60,8 @@ public class AltaModProyecto implements ControladorPantalla {
     private GestionBotones gbGuardar;
     
     @FXML
-    private ImageView imConsultaAvanzada;
-    private GestionBotones gbConsultaAvanzada;
-
+    private HBox hbBotones;
+    
     @FXML
     private TextField tID;
     
@@ -79,18 +72,21 @@ public class AltaModProyecto implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		tListaProy.setPrefWidth(escena.getWidth()*0.65);
-		tNombreProy.setPrefWidth(escena.getWidth()*0.65);	
+		int res = Main.resolucion();
 		
-		if (gestPar!=null) {
-			gestPar.tp.setPrefHeight(escena.getHeight()*0.5);
-			gestPar.tp.setPrefWidth(escena.getWidth()*0.65);
+		if (res == Main.ALTA_RESOLUCION || res== Main.BAJA_RESOLUCION) {
+			tNombreProy.setPrefWidth(Main.scene.getWidth()*0.65);	
+			
+			if (gestPar!=null) {
+				gestPar.tp.setPrefHeight(Main.scene.getHeight()*0.6);
+				gestPar.tp.setPrefWidth(Main.scene.getWidth()*0.9);
+			}
 		}
+		
 	}
 	
 	public void initialize(){
-		tListaProy.setDisable(true);
-		gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+		gbAniadir = new GestionBotones(GestionBotones.DER, new ImageView(), "nuevoBombilla", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -99,10 +95,10 @@ public class AltaModProyecto implements ControladorPantalla {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Nueva Demanda");
+            } }, "Crear Nueva Solicitud");
 		gbAniadir.activarBoton();
 		
-		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+		gbBuscar = new GestionBotones(GestionBotones.IZQ, new ImageView(), "Buscar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -111,26 +107,14 @@ public class AltaModProyecto implements ControladorPantalla {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Nueva Demanda");
-		gbConsultaAvanzada.activarBoton();
-	
-		gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
-			@Override
-            public void handle(MouseEvent t)
-            {
-				try {	
-					cargaProyecto();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            } }, "Busca Solicitud");
+            } }, "Buscar Solicitud");
 		gbBuscar.activarBoton();
 		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {	
-					guardarProyecto(); 
+					confirmaGuardado(); 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -142,26 +126,31 @@ public class AltaModProyecto implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-					eliminaProyecto();
+					confirmaEliminacion();
 					limpiarFormulario();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Busca Solicitud");
+            } }, "Borrar Solicitud");
 		gbEliminar.desActivarBoton();
 									
-	
+		hbBotones.setVisible(false);
     }
 	
 	private void consultaAvanzadaProyectos() throws Exception{		
-		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_TODO, this.tListaProy);
+		ConsultaAvanzadaProyectos.getInstance(this, 1, TipoProyecto.ID_TODO, this.tNombreProy);
 	}
 	
 	public void fijaProyecto(ArrayList<Proyecto> listaProyecto) {
 		if (listaProyecto!=null && listaProyecto.size()==1) {
 			this.proySeleccionado = listaProyecto.get(0);
-			this.tListaProy.setText(this.proySeleccionado.nombre);
+			this.tNombreProy.setText(this.proySeleccionado.nombre);
 			ParamTable.po.hide();
+			try {
+				cargaProyecto();
+			} catch (Exception e) {
+				Dialogo.error(null, e);
+			}
 		}
 	}
 	
@@ -176,6 +165,9 @@ public class AltaModProyecto implements ControladorPantalla {
 		filtros.put(TipoDato.FORMATO_TIPO_PROYECTO, TipoProyecto.tiposDemanda());
 		
 		cargaPropiedades(Parametro.SOLO_METAPARAMETROS,filtros,null);
+		resize(null);
+
+		hbBotones.setVisible(true);
 	}
 	
 	private void cargaPropiedades(int idProyecto, HashMap<Integer,Object> filtro, HashMap<String,Boolean> readOnlyProps ) throws Exception {
@@ -210,16 +202,23 @@ public class AltaModProyecto implements ControladorPantalla {
 		gbEliminar.desActivarBoton();		
 
 		hbPropiedades.getChildren().removeAll(hbPropiedades.getChildren());
+
+		hbBotones.setVisible(false);
 		
-		tListaProy.setText("");
 	}
 	
-	private void guardarProyecto(){	
-		Main.cortinaON();
+	public void confirmaGuardado(){
+		Dialogo.confirm("¿Desea guardar el proyecto?", "Se almacenará tanto el proyecto como sus parámetros informados.", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				guardarProyecto(buttonType);				
+			}
+		});
+	}
 		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el proyecto?", "Se almacenará tanto el proyecto como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
+	private void guardarProyecto(ButtonType bt){			
+		if (bt.equals(ButtonType.YES)){
 			if (!gestPar.validaObligatoriedades()) {
 				Dialogo.error("Error al guardar", "No se ha podido guardar", "Alguno de los parámetros obligatorios no está informado.");
 				Main.cortinaOFF();
@@ -261,24 +260,28 @@ public class AltaModProyecto implements ControladorPantalla {
 				
 				limpiarFormulario();
 				
-				Proyecto.getProyectoEstaticoCargaForzada(-1);
+				Proyecto.getProyectoEstaticoCargaForzada(-1);				
+
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e(e);
 			}
-		} else {
-		}
-		
-		Main.cortinaOFF();
+		} 
 	}
 	
-	private void eliminaProyecto() throws Exception{
-		try {
-			Main.cortinaON();
-			
-			ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
-			
-			if (resultado == ButtonType.OK){
+	public void confirmaEliminacion(){
+		Dialogo.confirm("¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				eliminaProyecto(buttonType);				
+			}
+		});
+	}
+		
+	private void eliminaProyecto(ButtonType bt){
+		try {			
+			if (bt.equals(ButtonType.YES)){
 				String idTransaccion = "eliminaProyecto" + Constantes.fechaActual().getTime();
 				
 				gbGuardar.desActivarBoton();
@@ -298,7 +301,6 @@ public class AltaModProyecto implements ControladorPantalla {
 					
 				Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
 				
-				this.tListaProy.setText("");
 				limpiarFormulario();
 				
 				Proyecto.getProyectoEstaticoCargaForzada(-1);
@@ -306,16 +308,14 @@ public class AltaModProyecto implements ControladorPantalla {
 			} else {
 			}
 		} catch (Exception e) {			
-			throw e;
-		}finally {
-			Main.cortinaOFF();
+			Log.e(e);
 		}
 	}
 	
 	private void cargaProyecto() throws Exception{
 		try {
 			Main.cortinaON();
-			if (tListaProy.getText().equals("")) {
+			if (tNombreProy.getText().equals("")) {
 				Dialogo.error("Campos de entrada mal informados", "Seleccione un proyecto", "Es necesario seleccionar un proyecto");
 				return;
 			}
@@ -333,7 +333,11 @@ public class AltaModProyecto implements ControladorPantalla {
 			HashMap<String,Boolean> readOnlyProps = new HashMap<String,Boolean>();
 			readOnlyProps.put(MetaParametro.PROYECTO_TIPO_PROYECTO, Constantes.FALSE);
 			
-			cargaPropiedades(p.id,null,readOnlyProps);	
+			cargaPropiedades(p.id,null,readOnlyProps);
+			
+			hbBotones.setVisible(true);
+			
+			resize(null);
 		}finally {
 			Main.cortinaOFF();
 		}

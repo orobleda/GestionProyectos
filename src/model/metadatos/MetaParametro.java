@@ -48,6 +48,7 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PROYECTO_NOMPPM = "PROY.NOMPPM";
 	public static final String PROYECTO_ACRONPROY = "PROY.ACRON";
 	public static final String PROYECTO_CODPPM = "PROY.codPPM";
+	public static final String PROYECTO_JP = "PROY.JP";
 	
 	public static final String RECURSO_JORNADA = "REC.jornada";
 	public static final String RECURSO_NAT_COSTE = "REC.natCoste";

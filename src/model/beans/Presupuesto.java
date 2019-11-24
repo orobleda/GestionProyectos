@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import controller.Log;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
@@ -235,7 +236,7 @@ public class Presupuesto implements Cargable {
 				consulta.ejecutaTransaccion(idTransaccion);
 			
 		} catch (Exception e){
-			e.printStackTrace();
+			Log.e(e);
 			throw e;
 		}
 		

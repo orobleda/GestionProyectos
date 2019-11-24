@@ -26,6 +26,31 @@ public class EstimacionMes {
 		
 		return em;
 	}
+	
+	public float getRestante(int gestor, Date fecha, MetaConcepto mc) {
+		Iterator<Sistema> itSist = this.estimacionesPorSistemas.values().iterator();
+		float total = 0;
+		
+		while (itSist.hasNext()) {
+			Sistema s = itSist.next();
+			
+			if (gestor==-1 || (s.responsable==gestor)){
+				Concepto c = s.listaConceptos.get(mc.codigo);
+				
+				Iterator<Estimacion> itEst = c.listaEstimaciones.iterator();
+				while (itEst.hasNext()) {
+					Estimacion est = itEst.next();
+					total+= est.importe;
+				}
+				
+				if (c.topeImputacion!=null) {
+					total+= c.topeImputacion.cantidad;
+				}
+			}
+		}
+		
+		return total;		
+	}
  	
 	public void repartirResto(Sistema s, MetaConcepto c, float reparto) {
 		Sistema sBuscado = estimacionesPorSistemas.get(s.codigo);

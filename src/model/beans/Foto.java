@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import controller.AnalizadorPresupuesto;
+import controller.Log;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
@@ -323,7 +324,7 @@ public class Foto implements Cargable{
 									f.lDetalles.add(fd);
 								}
 							} catch (Exception e) {
-								e.printStackTrace();
+								Log.e(e);
 							}
 						}										
 					}
@@ -366,7 +367,7 @@ public class Foto implements Cargable{
 							f.lDetalles.add(fd);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						Log.e(e);
 					}
 					
 				}

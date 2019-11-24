@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -173,7 +174,7 @@ public class VacacionesAusencias  implements Cargable{
 				this.anio = c.get(Calendar.YEAR);
 				this.dia = c.get(Calendar.DAY_OF_MONTH);
 			}
-		} catch (Exception e){e.printStackTrace();}
+		} catch (Exception e){Log.e(e);}
 		
 		
 		try { 
@@ -184,7 +185,7 @@ public class VacacionesAusencias  implements Cargable{
 				  this.recurso = Recurso.listadoRecursosEstatico().get((Integer) salida.get("vaRecurso"));
 			  }     
 		} catch (Exception e){
-			e.printStackTrace();
+			Log.e(e);
 		}
 		
 					

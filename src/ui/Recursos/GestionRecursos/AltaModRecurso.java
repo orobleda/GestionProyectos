@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.beans.Imputacion;
 import model.beans.Parametro;
@@ -38,13 +41,11 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 
 	public static final String fxml = "file:src/ui/Recursos/GestionRecursos/AltaModRecurso.fxml"; 
 	
+	GestionParametros gestPar = null;
+	
 	@FXML
 	private AnchorPane anchor;
 	
-    @FXML
-    private ImageView imBuscar;
-    private GestionBotones gbBuscar;
-
     @FXML
     private ComboBox<Recurso> cbListaRec;
 
@@ -52,13 +53,14 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
     private VBox vbDetalle;
 
     @FXML
-    private VBox tParametros;
+    private HBox tParametros;
     
     @FXML
     private VBox vbCamposEntada;
-
+    
     @FXML
-    private ImageView imAniadir;
+    private HBox hbBotones;
+
     private GestionBotones gbAniadir;
 
     @FXML
@@ -82,7 +84,17 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
     
     @Override
 	public void resize(Scene escena) {
+    	int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION || res== Main.BAJA_RESOLUCION) {
+			tNombre.setPrefWidth(Main.scene.getWidth()*0.75);	
+			
+			if (gestPar!=null) {
+				gestPar.tp.setPrefHeight(Main.scene.getHeight()*0.5);
+				gestPar.tp.setPrefWidth(Main.scene.getWidth()*0.9);
+				tParametros.setPrefWidth(Main.scene.getWidth()*0.4);
+			}
+		}
 	}
     
 	public AltaModRecurso(){
@@ -90,16 +102,14 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 	
 	public void initialize(){
 			vbDetalle.setDisable(true);
+			hbBotones.setVisible(false);
 			
-			gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
-				@Override
-	            public void handle(MouseEvent t)
-	            {   
-					cargaRecurso();
-	            } }, "Buscar Recurso", this);	
-			gbBuscar.activarBoton();
+			cbListaRec.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+				cargaRecurso();
+		    	}
+		    );
 			
-			gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+			gbAniadir = new GestionBotones(GestionBotones.DER, new ImageView(), "nuevoBombilla", false, new EventHandler<MouseEvent>()  {        
 				@Override
 	            public void handle(MouseEvent t)
 	            {   
@@ -108,7 +118,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-	            } }, "Añadir Recurso", this);	
+	            } }, "Añadir Recurso");	
 			gbAniadir.activarBoton();
 			
 			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
@@ -124,7 +134,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 	            public void handle(MouseEvent t)
 	            {   
 					try {
-						eliminaRecurso();
+						confirmaEliminacionRecurso();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -137,7 +147,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 	
 	private void nuevoRecurso(boolean popUp) throws Exception{
 		gbGuardar.activarBoton();
-		gbEliminar.activarBoton();
+		gbEliminar.desActivarBoton();
 		vbDetalle.setDisable(false);
 		
 		rActual = new Recurso();
@@ -146,6 +156,8 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 		this.tID.setText("");
 		this.tNombre.setText("");
 		this.tID.setDisable(true);
+
+		hbBotones.setVisible(true);
 		
 		cargaPropiedades(Parametro.SOLO_METAPARAMETROS, popUp);				
 	}
@@ -153,7 +165,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 	private void cargaPropiedades(int idRecurso, boolean popUp) throws Exception {
 		tParametros.getChildren().removeAll(tParametros.getChildren());
 		
-		GestionParametros gestPar = new GestionParametros();
+		gestPar = new GestionParametros();
 		
 		FXMLLoader loader = new FXMLLoader();
         loader.setLocation(new URL(gestPar.getFXML()));
@@ -195,10 +207,14 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 					variablesPaso.put("filtro", filtro);
 				}
 			}
+			
         }
         
         gestPar.setParametrosPaso(variablesPaso);
         
+        if (!popUp)
+        	resize(null);
+                
         rActual.listadoParametros = gestPar.listaParametros;
 	}
 	
@@ -219,6 +235,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 					ParametroRecurso pr = (ParametroRecurso) itParams.next();
 					pr.idEntidadAsociada = rActual.id;
 					pr.actualizaParametro(idTransaccion, false);
+					contador++;
 				}
 				
 				ConsultaBD.ejecutaTicket(idTransaccion);
@@ -229,7 +246,7 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 					accion = "Modificación";
 				}
 				
-				Dialogo.alert("Proceso Finalizado", accion + " de usuario completada", "Se ha guardado el usuario y sus " + contador + " asociados.");
+				Dialogo.alert("Proceso Finalizado", accion + " de usuario completada", "Se ha guardado el usuario y sus " + contador + " parámetros asociados.");
 				
 				Recurso.listadoRecursosEstatico(true);
 				
@@ -244,61 +261,80 @@ public class AltaModRecurso implements ControladorPantalla, PopUp {
 					this.di.altaFinalizada();
 				}
 				
+
+				hbBotones.setVisible(false);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}				
 	}
 	
-	private void eliminaRecurso() throws Exception{
-		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
-			Recurso p = cbListaRec.getValue();
+	public void confirmaEliminacionRecurso(){
+		Dialogo.confirm("¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				eliminaRecurso(buttonType);				
+			}
+		});
+	}
+	
+	private void eliminaRecurso(ButtonType bt){
+		try {		
+			if (bt.equals(ButtonType.YES)){
+				Recurso p = cbListaRec.getValue();
+				
+				String idTransaccion = ConsultaBD.getTicket();
+				
+				p.bajaRecurso(idTransaccion);
+				
+				ConsultaBD.ejecutaTicket(idTransaccion);
+				
+				this.tID.setText("");
+				this.tNombre.setText("");
 			
-			String idTransaccion = ConsultaBD.getTicket();
-			
-			p.bajaRecurso(idTransaccion);
-			
-			ConsultaBD.ejecutaTicket(idTransaccion);
-			
-			this.tID.setText("");
-			this.tNombre.setText("");
-		
-			Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
-			
-			p = new Recurso();
-			cbListaRec.getItems().clear();
-			cbListaRec.getItems().addAll(p.listadoRecursos());
-			
-			tParametros.getChildren().removeAll(tParametros.getChildren());
-			gbGuardar.desActivarBoton();
-			gbEliminar.desActivarBoton();
-			vbDetalle.setDisable(true);		
-			
-			Recurso.listadoRecursosEstatico(true);
-		} else {
+				Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
+				
+				p = new Recurso();
+				cbListaRec.getItems().clear();
+				cbListaRec.getItems().addAll(p.listadoRecursos());
+				
+				tParametros.getChildren().removeAll(tParametros.getChildren());
+				gbGuardar.desActivarBoton();
+				gbEliminar.desActivarBoton();
+				vbDetalle.setDisable(true);						
+
+				hbBotones.setVisible(false);
+				
+				Recurso.listadoRecursosEstatico(true);
+			}
+		} catch (Exception e) {
+			Log.e(e);
 		}
 	}
 	
 	private void cargaRecurso(){
 		try {
-			gbGuardar.activarBoton();
-			gbEliminar.activarBoton();
-			vbDetalle.setDisable(false);	
-			
 			rActual = cbListaRec.getValue();
 			
-			rActual.cargaRecurso();
-			
-			this.tID.setText(new Integer(rActual.id).toString());
-			this.tID.setDisable(true);
-			
-			this.tNombre.setText(rActual.nombre);
-			
-			cargaPropiedades(rActual.id, false);	
+			if (rActual!=null) {
+				vbDetalle.setDisable(false);
+				gbGuardar.activarBoton();
+				gbEliminar.activarBoton();
+				rActual.cargaRecurso();
+				
+				this.tID.setText(new Integer(rActual.id).toString());
+				this.tID.setDisable(true);
+				
+				this.tNombre.setText(rActual.nombre);
+
+				hbBotones.setVisible(true);
+				
+				cargaPropiedades(rActual.id, false);
+			}			
+				
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	

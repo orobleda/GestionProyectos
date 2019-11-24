@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 
 import org.controlsfx.control.PopOver;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -88,12 +89,26 @@ public class ListaCertificaciones implements ControladorPantalla {
    @Override
 	public void resize(Scene escena) {
 	   if (tablaCertificaciones!=null) {
-		    vbCertificaciones.setPrefHeight(vbCertificaciones.getScene().getHeight()*0.65);
+		    vbCertificaciones.setPrefHeight(vbCertificaciones.getScene().getHeight()*0.60);
 		    vbCertificaciones.setPrefWidth(vbCertificaciones.getScene().getWidth()*0.75);
 			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
 			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
 			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
 	   }
+	   
+	   int res = Main.resolucion();
+		
+		if (res == Main.ALTA_RESOLUCION ) {
+			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
+			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
+			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
+		}
+		
+		if (res== Main.BAJA_RESOLUCION) {
+			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
+			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
+			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
+		}
 	}
 
 	@Override

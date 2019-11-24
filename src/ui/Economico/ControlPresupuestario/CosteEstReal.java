@@ -13,10 +13,13 @@ import javafx.scene.layout.AnchorPane;
 import model.beans.Concepto;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
+import model.beans.TopeImputacion;
 import model.constantes.Constantes;
 import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
+import ui.Tabla;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteEstReal;
+import ui.Economico.ControlPresupuestario.Tables.LineaCosteTopeEstReal;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 
@@ -33,12 +36,15 @@ public class CosteEstReal implements ControladorPantalla {
 
     @FXML
     private TableView<Tableable> tTitConcHoras;
+    private Tabla tablaTitConcHoras;
 
     @FXML
     private TableView<Tableable> tTitConcCert;
+    private Tabla tablaTitConcCert;
 
     @FXML
     private TableView<Tableable> tTitTOTAL;
+    private Tabla tablaTitTOTAL;
     
 	@Override
 	public AnchorPane getAnchor() {
@@ -131,6 +137,39 @@ public class CosteEstReal implements ControladorPantalla {
 			HashMap<String,Float> conceptos = new HashMap<String,Float>();
 			conceptos.put("Estimado", cA.valorEstimado);
 			conceptos.put("Real", cA.valor);
+			if (tipoCarga == VistaPPM.VISTA_ANUAL) {
+				TopeImputacion tpAux = new TopeImputacion();
+				TopeImputacion tpAux2 = null;
+				Concepto cAux2 = new Concepto();
+				cAux2.tipoConcepto = mc;
+				tpAux.topes = tpAux.listadoTopes(ControlPresupuestario.ap.proyecto);
+								
+				float valor = 0;
+				if (s==null) {
+					Iterator<Sistema> itSistemas = ea.topesAnuales.values().iterator();
+					while (itSistemas.hasNext()) {
+						Sistema sAux = itSistemas.next();
+						try {
+							tpAux2 = tpAux.dameTope(sAux, cAux2, ea.anio);
+							if (tpAux2.cantidad != -1) 
+							 valor += tpAux2.porcentaje*ControlPresupuestario.ap.presupuesto.costes.get(sAux.id).conceptosCoste.get(mc.codigo).valorEstimado/100;
+						} catch (Exception e) {
+							valor += 0;
+						}
+					}
+					if (valor==0) valor = -9999;
+				} else {
+					tpAux2 = tpAux.dameTope(s, cAux2, ea.anio);
+					try {
+						if (tpAux2.cantidad == -1) valor = -9999;
+						else valor = tpAux2.porcentaje*ControlPresupuestario.ap.presupuesto.costes.get(s.id).conceptosCoste.get(mc.codigo).valorEstimado/100;
+					} catch (Exception e) {
+						valor = 0;
+					}
+				}
+								
+				conceptos.put("Tope Estimado", valor);
+			}
 			
 			if (mc.tipoGestionEconomica == MetaConcepto.GESTION_HORAS){
 				lista.add(conceptos);
@@ -186,23 +225,61 @@ public class CosteEstReal implements ControladorPantalla {
 		
 		listaTotal.add(conceptos);
 		
-		ObservableList<Tableable> dataTable = (new LineaCosteEstReal()).toListTableable(lista);
-		tTitConcHoras.setItems(dataTable);
-		(new LineaCosteEstReal()).fijaColumnas(tTitConcHoras);
+		ObservableList<Tableable> dataTable = null;
 		
-		tTitConcHoras.setPrefSize(15*10, lista.size()==1?40+40*lista.size():40*lista.size());
+		if (tipoCarga == VistaPPM.VISTA_ANUAL) {
+			tablaTitConcHoras = new Tabla(tTitConcHoras,new LineaCosteTopeEstReal(),this);
+			tablaTitConcHoras.pintaTabla(lista);
+			tablaTitConcHoras.fijaAlto(lista.size()==1?40+40*lista.size():40*lista.size());
+			
+			tablaTitConcCert = new Tabla(tTitConcCert,new LineaCosteTopeEstReal(),this);
+			tablaTitConcCert.pintaTabla(listaCertif);
+			tablaTitConcCert.fijaAlto(170);//listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
+			
+			tablaTitTOTAL = new Tabla(tTitTOTAL,new LineaCosteTopeEstReal(),this);
+			tablaTitTOTAL.pintaTabla(listaCertif);
+			tablaTitTOTAL.fijaAlto(listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
+			
+			
+			/*
+			dataTable = (new LineaCosteTopeEstReal()).toListTableable(lista);
+			tTitConcHoras.setItems(dataTable);
+			(new LineaCosteTopeEstReal()).fijaColumnas(tTitConcHoras);
+			
+			tTitConcHoras.setPrefSize(40*10, );
+			
+			dataTable =  (new LineaCosteTopeEstReal()).toListTableable(listaCertif);
+			tTitConcCert.setItems(dataTable);
+			(new LineaCosteTopeEstReal()).fijaColumnas(tTitConcCert);
+			
+			tTitConcCert.setPrefSize(40*10, listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
+			
+			dataTable = (new LineaCosteTopeEstReal()).toListTableable(listaTotal);
+			tTitTOTAL.setItems(dataTable);
+			(new LineaCosteTopeEstReal()).fijaColumnas(tTitTOTAL);
+			
+			tTitTOTAL.setPrefSize(40*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());*/
+			
+		} else {
+			dataTable = (new LineaCosteEstReal()).toListTableable(lista);
+			tTitConcHoras.setItems(dataTable);
+			(new LineaCosteEstReal()).fijaColumnas(tTitConcHoras);
+			
+			tTitConcHoras.setPrefSize(15*10, lista.size()==1?40+40*lista.size():40*lista.size());
+			
+			dataTable =  (new LineaCosteEstReal()).toListTableable(listaCertif);
+			tTitConcCert.setItems(dataTable);
+			(new LineaCosteEstReal()).fijaColumnas(tTitConcCert);
+			
+			tTitConcCert.setPrefSize(15*10, listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
+			
+			dataTable = (new LineaCosteEstReal()).toListTableable(listaTotal);
+			tTitTOTAL.setItems(dataTable);
+			(new LineaCosteEstReal()).fijaColumnas(tTitTOTAL);
+			
+			tTitTOTAL.setPrefSize(15*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
+		}		
 		
-		dataTable =  (new LineaCosteEstReal()).toListTableable(listaCertif);
-		tTitConcCert.setItems(dataTable);
-		(new LineaCosteEstReal()).fijaColumnas(tTitConcCert);
-		
-		tTitConcCert.setPrefSize(15*10, listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
-		
-		dataTable = (new LineaCosteEstReal()).toListTableable(listaTotal);
-		tTitTOTAL.setItems(dataTable);
-		(new LineaCosteEstReal()).fijaColumnas(tTitTOTAL);
-		
-		tTitTOTAL.setPrefSize(15*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
 		
 		return listaSalida;
 	}

@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import controller.Log;
+
 public class ConsultaImputaciones implements LectorXLS {
 	String nombreArchivo = "Imputaciones+DSI.xlsx";
 	String rutaArchivo = nombreArchivo;
@@ -36,7 +38,7 @@ public class ConsultaImputaciones implements LectorXLS {
 		try {
 			worbook.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 		

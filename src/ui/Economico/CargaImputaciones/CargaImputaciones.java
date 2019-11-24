@@ -45,6 +45,7 @@ import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.utils.xls.ConsultaImputaciones;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Persiana;
 import ui.Semaforo;
@@ -148,8 +149,10 @@ public class CargaImputaciones implements ControladorPantalla  {
 	
 	@Override
 	public void resize(Scene escena) {
-		scrImputaciones.setMaxWidth(scrImputaciones.getScene().getWidth()*0.95);
-		scrImputaciones.setMaxHeight(scrImputaciones.getScene().getHeight()*0.40);
+		if (escena!=null) {
+			scrImputaciones.setMaxWidth(escena.getWidth()*0.95);
+			scrImputaciones.setMaxHeight(escena.getHeight()*0.40);
+		}
 	}
 
 	@Override
@@ -180,21 +183,21 @@ public class CargaImputaciones implements ControladorPantalla  {
 					
 					analizaFichero ();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Analiza Fichero", this);	
 		gbAnalizar.activarBoton();
 		
 		this.cbProyectos.setDisable(true);
 		
-		this.tFichero.setText("C:\\Users\\Oscar\\workspace\\Gestion Proyectos ENAGAS\\Imputaciones+DSI.xlsx");
+		this.tFichero.setText("");
 		
 		this.cbProyectos.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 			if (cbProyectos.getValue()!=null) {
 				try {
 					cargaProyecto();					
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 			}
 		});
@@ -210,7 +213,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 			try {
 				mostrarResumen();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Dialogo.error(null, e);
 			}
 		});
 
@@ -411,7 +414,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 			
 			this.cbProyectos.setValue(p);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Dialogo.error(null, e);
 		}
 	}
 	
@@ -504,7 +507,7 @@ public class CargaImputaciones implements ControladorPantalla  {
 			
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Dialogo.error(null, ex);
 		} 
 		return null;
 	}

@@ -3,6 +3,7 @@ package model.constantes;
 import java.io.FileReader;
 import java.util.Properties;
 
+import controller.Log;
 import model.beans.Proveedor;
 import model.beans.Proyecto;
 import model.beans.Recurso;
@@ -44,7 +45,7 @@ public class CargaInicial {
 			ConsultaBD.init(prop.getProperty("BD.URL"));
 			ConsultaBDReplica.init(prop.getProperty("BD.REPLICAS.URL"));
 		} catch (Exception e){
-			e.printStackTrace();
+			Log.e(e);
 		}
 		
 		ConsultaBD cbd = new ConsultaBD();
@@ -65,7 +66,7 @@ public class CargaInicial {
 			ConsultaBD.init(urlBD);
 			ConsultaBDReplica.init(prop.getProperty("BD.REPLICAS.URL"));
 		} catch (Exception e){
-			e.printStackTrace();
+			Log.e(e);
 		}
 		
 		ConsultaBD cbd = new ConsultaBD();

@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+import controller.Log;
 import model.constantes.Constantes;
 import model.constantes.FormateadorDatos;
 
@@ -102,7 +103,7 @@ public class ProcesaCertificacion {
 			
 			return estandarizaFecha(salida);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 		return null;
 	}
@@ -242,15 +243,14 @@ public class ProcesaCertificacion {
 			pdDoc = new PDDocument(cosDoc);
 			parsedText = pdfStripper.getText(pdDoc);
 		} catch (Exception e) {
-			System.out.println("An exception occured in parsing the PDF Document.");
-			e.printStackTrace();
+			Log.e(e);
 			try {
 				if (cosDoc != null)
 					cosDoc.close();
 				if (pdDoc != null)
 					pdDoc.close();
 			} catch (Exception e1) {
-				e.printStackTrace();
+				Log.e(e);
 			}
 			return null;
 		}

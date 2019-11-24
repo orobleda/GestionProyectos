@@ -120,8 +120,7 @@ public class FraccionarImputacion implements ControladorPantalla {
             		analizaCambios();
             	}
             } catch (Exception e) {
-            	Dialogo.error("Guardado de Fracción", "Error al guardar", "Se produjo un error al guardar el elemento");
-            	e.printStackTrace();	
+				Dialogo.error("Se produjo un error al guardar el elemento",e);	
             } }}, "Analizar Slot de destino", this);
 		gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -135,8 +134,7 @@ public class FraccionarImputacion implements ControladorPantalla {
             		ControlPresupuestario.cargaPosicionActual();
             	}
             } catch (Exception e) {
-            	Dialogo.error("Guardado de Fracción", "Error al guardar", "Se produjo un error al guardar el elemento");
-            	e.printStackTrace();}} 
+				Dialogo.error("Se produjo un error al guardar el elemento", e);}} 
 			}, "Guardar");
 		this.tFraccion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 			if (this.fui==null) return; 
@@ -421,7 +419,8 @@ public class FraccionarImputacion implements ControladorPantalla {
 		        fui.add(fraImputacion);
 		        
 			} catch (Exception e) {
-				e.printStackTrace();
+
+				Dialogo.error(null, e);
 			}
 			
 		}

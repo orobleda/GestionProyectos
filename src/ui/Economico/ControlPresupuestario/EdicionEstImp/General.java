@@ -4,10 +4,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +39,9 @@ public class General implements ControladorPantalla, PopUp {
 	public static General objetoThis = null;
 	
 	public Concepto conceptoSeleccionado = null;
+	
+    @FXML
+    private ScrollPane scrDetalle;
 	
 	public boolean esPopUp = false;
 	
@@ -80,7 +85,15 @@ public class General implements ControladorPantalla, PopUp {
     
     @Override
 	public void resize(Scene escena) {
+    	int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION ) {
+			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.8);
+		}
+		
+		if (res== Main.BAJA_RESOLUCION) {
+			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.7);
+		}
 	}
     
 	public General (Object claseRetorno, String metodoRetorno){
@@ -314,7 +327,9 @@ public class General implements ControladorPantalla, PopUp {
 					General.objetoThis.gbAprobar.desActivarBoton();				
 				}
 			} 
-								
+		
+			resize(null);
+			
 		} catch (Exception e) {
 			
 		}		

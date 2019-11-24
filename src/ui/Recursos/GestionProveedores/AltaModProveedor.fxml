@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionProveedores.AltaModProveedor">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionProveedores.AltaModProveedor">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -51,32 +51,6 @@
                <padding>
                   <Insets bottom="15.0" />
                </padding>
-            </HBox>
-            <HBox>
-               <children>
-                  <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/aniadir.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets right="25.0" />
-                     </HBox.margin>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-                  <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/buscar.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="25.0" left="650.0" />
-               </VBox.margin>
             </HBox>
          </children>
          <BorderPane.margin>
@@ -123,34 +97,29 @@
                   <TextField fx:id="tNombre" prefWidth="600.0" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox fx:id="tParametros" prefHeight="100.0" prefWidth="200.0" />
+            <HBox fx:id="hbBotones" alignment="TOP_RIGHT">
                <children>
-                  <VBox fx:id="tParametros">
-                     <HBox.margin>
-                        <Insets top="25.0" />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox>
-               <children>
-                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../../imgs/iconos/guardar.jpg" />
+                        <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
                      </image>
                      <HBox.margin>
                         <Insets left="630.0" right="25.0" />
                      </HBox.margin>
                   </ImageView>
-                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imEliminar" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../../imgs/iconos/eliminar.png" />
+                        <Image url="@../../../../imgs/iconos/Eliminar3_PAS.png" />
                      </image>
                   </ImageView>
                </children>
                <VBox.margin>
                   <Insets top="45.0" />
                </VBox.margin>
+               <padding>
+                  <Insets right="200.0" />
+               </padding>
             </HBox>
          </children>
          <BorderPane.margin>

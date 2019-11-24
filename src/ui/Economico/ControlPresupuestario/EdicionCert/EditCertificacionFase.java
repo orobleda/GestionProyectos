@@ -125,7 +125,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Borrado de Certificación correcto", "Eliminación Correcta", "Se eliminó la certificación");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Borrar Asignación de fase");
@@ -142,7 +142,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Guardado de Certificación correcto", "Guardado Correcto", "Se guardó la certificación");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Guardar Cambios fase");
@@ -159,7 +159,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Cambio de fase correcto", "Cambio de fase Correcto", "Se cambió la fase correctamente");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Cambiar fase");
@@ -176,7 +176,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Añadida Fase", "Fase añadida correctamente", "Se añadió la fase correctamente");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Borrar Asignación de fase");

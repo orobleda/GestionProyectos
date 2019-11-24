@@ -2,6 +2,9 @@ package ui;
 
 import java.util.HashMap;
 
+import com.dlsc.workbenchfx.view.controls.ToolbarItem;
+
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -11,6 +14,10 @@ import model.constantes.Constantes;
 
 public class GestionBotones {
 	public static int MODO_SWITCH = 1;
+	
+	public static int IZQ = 0;
+	public static int DER = 1;
+	public static int PANT = 2;
 	
 	ImageView boton = null;
 	public Object objetoPadre = null;
@@ -39,6 +46,19 @@ public class GestionBotones {
 		this.modoFuncionamiento = modo;
 		switchBotones = new HashMap<Boolean, String>();
 		getInstancia(boton, nombreBoton, dejarPresionado,manejador, textoContextual);		
+	}
+	
+	public GestionBotones(int lado, ImageView boton, String nombreBoton, boolean dejarPresionado,EventHandler<MouseEvent> manejador, String nombre) {
+		getInstancia(boton, nombreBoton, dejarPresionado,manejador, nombre);
+		if (lado != GestionBotones.PANT) {
+			ToolbarItem tbi = new ToolbarItem(nombre,this.boton, manejador);
+			if (lado == GestionBotones.IZQ) {
+				Main.customWorkbench.getToolbarControlsLeft().add(tbi);
+			}  else {
+				Main.customWorkbench.getToolbarControlsRight().add(tbi);
+			}
+		}
+		
 	}
 	
 	public void getInstancia(ImageView boton, String nombreBoton, boolean dejarPresionado,EventHandler<MouseEvent> manejador, String textoContextual) {

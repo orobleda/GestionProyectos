@@ -31,6 +31,7 @@ import model.beans.RelRecursoSistema;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Semaforo;
@@ -104,7 +105,7 @@ public class DetalleImputacion implements ControladorPantalla  {
 				try {
 					altaUsuario();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Alta Usuario", this);	
 		gbAltaUsuario.activarBoton();
@@ -116,7 +117,7 @@ public class DetalleImputacion implements ControladorPantalla  {
 				try {
 					altaTarifa();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Alta Tarifa", this);	
 		gbAltaTarifa.activarBoton();
@@ -201,7 +202,7 @@ public class DetalleImputacion implements ControladorPantalla  {
 					this.tsAccionEstimacion.setSelected(true);
 					gestionaImputacion();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 			}
 		});

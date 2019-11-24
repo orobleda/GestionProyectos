@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.xssf.usermodel.IndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import controller.Log;
 
 public class InformeGenerico implements EscritorXLS {
 	String nombreArchivo = "";
@@ -34,8 +31,7 @@ public class InformeGenerico implements EscritorXLS {
             try {
                 newExcelFile.createNewFile();
             } catch (IOException ioe) {
-                System.out.println("(Error al crear el fichero nuevo)" + ioe);
-                ioe.printStackTrace();
+                Log.e("(Error al crear el fichero nuevo)", ioe);
             }
         }
 	}
@@ -45,7 +41,7 @@ public class InformeGenerico implements EscritorXLS {
 		try {
 			worbook.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	

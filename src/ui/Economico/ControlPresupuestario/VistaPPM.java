@@ -89,7 +89,10 @@ public class VistaPPM implements ControladorPantalla {
 	public void resize(Scene escena) {
 		if (bpVPPM!=null){
 			bpVPPM.setMaxWidth(bpVPPM.getScene().getWidth());
+			bpVPPM.setPrefHeight(bpVPPM.getScene().getHeight());
+			bpVPPM.setMaxHeight(bpVPPM.getScene().getHeight()*0.8);
 			((ScrollPane) bpVPPM.getCenter()).setPrefWidth(bpVPPM.getScene().getWidth()*0.20);
+			((ScrollPane) bpVPPM.getCenter()).setPrefHeight((bpVPPM.getScene().getHeight()*0.70));
 		}
 	}
 

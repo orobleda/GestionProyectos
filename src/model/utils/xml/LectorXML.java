@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import controller.Log;
 import model.interfaces.Cargable;
 
 public class LectorXML {
@@ -37,10 +38,8 @@ public class LectorXML {
 	        
 	        return listaSalida;
 	        
-	    }catch ( IOException io ) {
-	        io.printStackTrace();
 	    }catch ( Exception e ) {
-	        e.printStackTrace();
+	        Log.e(e);
 	    }
 		return null;
 	}

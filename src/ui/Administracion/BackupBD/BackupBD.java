@@ -21,6 +21,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ReplicaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Tabla;
 import ui.Administracion.BackupBD.tables.LineaCopiaBD;
@@ -86,7 +87,7 @@ public class BackupBD  implements ControladorPantalla, PopUp {
 					
 					tablaCopiasBD.pintaTabla(TipoDato.toListaObjetos(lrbd));
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		this.gbHacerBackup.activarBoton();	
@@ -97,7 +98,7 @@ public class BackupBD  implements ControladorPantalla, PopUp {
 				try {	
 					reload();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		this.gbReload.activarBoton();
@@ -108,7 +109,7 @@ public class BackupBD  implements ControladorPantalla, PopUp {
 				try {	
 					borra();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		this.gbBorrar.desActivarBoton();
@@ -119,7 +120,7 @@ public class BackupBD  implements ControladorPantalla, PopUp {
 				try {	
 					cambioBD();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		this.gbRestaurar.desActivarBoton();	
@@ -182,7 +183,7 @@ public class BackupBD  implements ControladorPantalla, PopUp {
 			
 			this.lBDenUso.setText(bdActual);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Dialogo.error(null, ex);
 		}
 	}
 	

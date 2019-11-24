@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -153,7 +154,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 				try {
 					procesaArchivo();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
             } }, "Procesa Certificacion");
 		gbCargaCertificacion.activarBoton();
@@ -168,7 +169,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Certificación añadida", "Certificación añadida", "Certificación añadida correctamente");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
             } }, "Guarda Certificacion");
 		gbGuardar.desActivarBoton();
@@ -178,11 +179,11 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
             { 
 				try {
 					ControlPresupuestario.salvaPosicionActual();
-					borrarCertificacion();
+					confirmaBorrarCertificacion();
 	            	Dialogo.alert("Certificación borrada", "Certificación borrada", "Certificación borrada correctamente");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
             } }, "Elimina Certificacion");
 		gbBorrar.desActivarBoton();
@@ -193,7 +194,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 				try {
 					altaTarifa();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
             } }, "Alta nueva Tarifa");
 		gbAltaTarifa.desActivarBoton();
@@ -262,8 +263,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 		            	Desktop desktop = Desktop.getDesktop();
 		            	desktop.open(file);
 	            	} catch (Exception e) {
-	            		Dialogo.error("Error al abrir", "Error al abrir", "Error al abrir la carpeta de certificaciones");
-	            		e.printStackTrace();
+						Dialogo.error("Error al abrir la carpeta de certificaciones", e);
 	            	}
 	            }
 	        });
@@ -299,7 +299,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 			
 			cargaTarifa(horas, importe, cr.prov);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Dialogo.error(null, ex);
 		}
 		
 		this.gbCargaCertificacion.desActivarBoton();
@@ -354,8 +354,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 	            	Desktop desktop = Desktop.getDesktop();
 	            	desktop.open(file);
             	} catch (Exception e) {
-            		Dialogo.error("Error al abrir", "Error al abrir", "Error al abrir la carpeta de certificaciones");
-            		e.printStackTrace();
+					Dialogo.error( "Error al abrir la carpeta de certificaciones", e);
             	}
             }
         });
@@ -479,62 +478,75 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 			cargaTarifa(horas,importe,prov); 
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Dialogo.error(null, e);
 		}
 		
 	}
 	
-	public void borrarCertificacion() throws Exception{
-		ButtonType res = Dialogo.confirm("Borrado de certificación", "Borrado de certificación", "¿Desea actualizar la cantidad imputada?");
-		boolean eliminarCantidades = (res == ButtonType.OK);
+	public void confirmaBorrarCertificacion(){
+		Dialogo.confirm("Borrado de certificación", "¿Desea actualizar la cantidad imputada?", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				borrarCertificacion(buttonType);				
+			}
+		});
+	}
 		
-		String idTransaccion = ConsultaBD.getTicket();
-		crAsignada.borraCertificacionReal(idTransaccion, CertificacionReal.CONSULTA_NUMSOLI);
-		CertificacionReal.copiadas = new ArrayList<CertificacionReal>();
-		CertificacionReal.copiadas.add(crAsignada);
-		crAsignada.modo = CertificacionReal.ACCION_ELIMINAR;
-		
-		if (eliminarCantidades) {
-			ArrayList<CertificacionReal> lcr = crAsignada.listado(CertificacionReal.CONSULTA_NUMSOLI, 0, crAsignada.nSolicitud);
+	public void borrarCertificacion(ButtonType buttonType){
+		try {
+			boolean eliminarCantidades = (buttonType.equals(ButtonType.YES));
 			
-			ArrayList<Certificacion> lCert = new ArrayList<Certificacion>();
+			String idTransaccion = ConsultaBD.getTicket();
+			crAsignada.borraCertificacionReal(idTransaccion, CertificacionReal.CONSULTA_NUMSOLI);
+			CertificacionReal.copiadas = new ArrayList<CertificacionReal>();
+			CertificacionReal.copiadas.add(crAsignada);
+			crAsignada.modo = CertificacionReal.ACCION_ELIMINAR;
 			
-			Iterator<Certificacion> itCerts = ControlPresupuestario.ap.certificaciones.iterator();
-			while (itCerts.hasNext()) {
-				Certificacion cert = itCerts.next();
-				Iterator<CertificacionFase> itCF = cert.certificacionesFases.iterator();
-				while (itCF.hasNext()) {
-					CertificacionFase cf = itCF.next();
-					Iterator<CertificacionFaseParcial> itcfp = cf.certificacionesParciales.iterator();
-					while (itcfp.hasNext()) {
-						CertificacionFaseParcial cfp = itcfp.next();
-						
-						Iterator<CertificacionReal> iCr = lcr.iterator();
-						while (iCr.hasNext()) {
-							CertificacionReal cr = iCr.next();
-							if (cr.idCertiAsignada == cfp.id) {
-								cfp.horReal = 0;
-								cfp.valReal = 0;
-								if (!lCert.contains(cert)) {
-									lCert.add(cert);
+			if (eliminarCantidades) {
+				ArrayList<CertificacionReal> lcr = crAsignada.listado(CertificacionReal.CONSULTA_NUMSOLI, 0, crAsignada.nSolicitud);
+				
+				ArrayList<Certificacion> lCert = new ArrayList<Certificacion>();
+				
+				Iterator<Certificacion> itCerts = ControlPresupuestario.ap.certificaciones.iterator();
+				while (itCerts.hasNext()) {
+					Certificacion cert = itCerts.next();
+					Iterator<CertificacionFase> itCF = cert.certificacionesFases.iterator();
+					while (itCF.hasNext()) {
+						CertificacionFase cf = itCF.next();
+						Iterator<CertificacionFaseParcial> itcfp = cf.certificacionesParciales.iterator();
+						while (itcfp.hasNext()) {
+							CertificacionFaseParcial cfp = itcfp.next();
+							
+							Iterator<CertificacionReal> iCr = lcr.iterator();
+							while (iCr.hasNext()) {
+								CertificacionReal cr = iCr.next();
+								if (cr.idCertiAsignada == cfp.id) {
+									cfp.horReal = 0;
+									cfp.valReal = 0;
+									if (!lCert.contains(cert)) {
+										lCert.add(cert);
+									}
 								}
 							}
 						}
 					}
 				}
+				
+				itCerts = lCert.iterator();
+				while (itCerts.hasNext()) {
+					Certificacion cert = itCerts.next();
+					cert.guardarCertificacion(null);
+				}
 			}
 			
-			itCerts = lCert.iterator();
-			while (itCerts.hasNext()) {
-				Certificacion cert = itCerts.next();
-				cert.guardarCertificacion(null);
-			}
+			ConsultaBD.ejecutaTicket(idTransaccion);
+			
+			Certificacion c = new Certificacion();
+			c.gestionCertificacionesReales(this.cfpAsignada.certificacionFase.certificacion.p);
+		} catch (Exception e) {
+			Log.e(e);
 		}
-		
-		ConsultaBD.ejecutaTicket(idTransaccion);
-		
-		Certificacion c = new Certificacion();
-		c.gestionCertificacionesReales(this.cfpAsignada.certificacionFase.certificacion.p);
 	}
 	
 	public void guardarCertificacion() throws Exception{
@@ -603,7 +615,7 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 				}
 				
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				Dialogo.error(null, ex);
 			}
 				
 			if (!certs.contains(cfparc.certificacionFase.certificacion)) {

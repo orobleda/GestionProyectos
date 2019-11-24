@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.beans.Parametro;
 import model.beans.Proveedor;
@@ -27,13 +30,11 @@ public class AltaModProveedor implements ControladorPantalla {
 
 	public static final String fxml = "file:src/ui/Recursos/GestionProveedores/AltaModProveedor.fxml"; 
 	
+	GestionParametros gestPar = null;
+	
 	@FXML
 	private AnchorPane anchor;
 	
-    @FXML
-    private ImageView imBuscar;
-    private GestionBotones gbBuscar;
-
     @FXML
     private ComboBox<Proveedor> cbListaRec;
 
@@ -41,10 +42,12 @@ public class AltaModProveedor implements ControladorPantalla {
     private VBox vbDetalle;
 
     @FXML
-    private VBox tParametros;
+    private HBox tParametros;    
 
     @FXML
-    private ImageView imAniadir;
+    private HBox hbBotones;
+
+    @FXML
     private GestionBotones gbAniadir;
 
     @FXML
@@ -68,7 +71,17 @@ public class AltaModProveedor implements ControladorPantalla {
 
     @Override
 	public void resize(Scene escena) {
+    	int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION || res== Main.BAJA_RESOLUCION) {
+			tNombre.setPrefWidth(Main.scene.getWidth()*0.75);	
+			
+			if (gestPar!=null) {
+				gestPar.tp.setPrefHeight(Main.scene.getHeight()*0.45);
+				gestPar.tp.setPrefWidth(Main.scene.getWidth()*0.9);
+				tParametros.setPrefWidth(Main.scene.getWidth()*0.4);
+			}
+		}
 	}
     
 	public AltaModProveedor(){
@@ -77,15 +90,11 @@ public class AltaModProveedor implements ControladorPantalla {
 	public void initialize(){
 			vbDetalle.setDisable(true);
 			
-			gbBuscar = new GestionBotones(imBuscar, "Buscar3", false, new EventHandler<MouseEvent>() {        
-				@Override
-	            public void handle(MouseEvent t)
-	            {   
+			cbListaRec.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
 					cargaRecurso();
-	            } }, "Buscar Recurso", this);	
-			gbBuscar.activarBoton();
+	            } );
 			
-			gbAniadir = new GestionBotones(imAniadir, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+			gbAniadir = new GestionBotones(GestionBotones.DER, new ImageView(), "nuevoBombilla", false,  new EventHandler<MouseEvent>() {        
 				@Override
 	            public void handle(MouseEvent t)
 	            {   
@@ -94,14 +103,14 @@ public class AltaModProveedor implements ControladorPantalla {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-	            } }, "Añadir Recurso", this);	
+	            } }, "Añadir Recurso");	
 			gbAniadir.activarBoton();
 			
 			gbGuardar = new GestionBotones(imGuardar, "Guardar3", false, new EventHandler<MouseEvent>() {        
 				@Override
 	            public void handle(MouseEvent t)
 	            {   
-					guardarRecurso();
+					confirmaguardarRecurso();
 	            } }, "Guardar Recurso", this);	
 			gbGuardar.desActivarBoton();
 			
@@ -110,7 +119,7 @@ public class AltaModProveedor implements ControladorPantalla {
 	            public void handle(MouseEvent t)
 	            {   
 					try {
-						eliminaRecurso();
+						confirmaEliminaRecurso();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -118,11 +127,13 @@ public class AltaModProveedor implements ControladorPantalla {
 			gbEliminar.desActivarBoton();
 
 			cbListaRec.getItems().addAll(Proveedor.listado.values());
+			
+			hbBotones.setVisible(false);
     }
 	
 	private void nuevoRecurso() throws Exception{
 		gbGuardar.activarBoton();
-		gbEliminar.activarBoton();
+		gbEliminar.desActivarBoton();
 		vbDetalle.setDisable(false);
 		
 		pActual = new Proveedor();
@@ -139,7 +150,7 @@ public class AltaModProveedor implements ControladorPantalla {
 	private void cargaPropiedades(int idRecurso) throws Exception {
 		tParametros.getChildren().removeAll(tParametros.getChildren());
 		
-		GestionParametros gestPar = new GestionParametros();
+		gestPar = new GestionParametros();
 		
 		FXMLLoader loader = new FXMLLoader();
         loader.setLocation(new URL(gestPar.getFXML()));
@@ -156,14 +167,24 @@ public class AltaModProveedor implements ControladorPantalla {
         gestPar.setParametrosPaso(variablesPaso);
         
         pActual.listadoParametros = gestPar.listaParametros;
+        hbBotones.setVisible(true);
+        resize(null);
 	}
 	
-	private void guardarRecurso(){
+	public void confirmaguardarRecurso(){
+		Dialogo.confirm("¿Desea guardar el recurso?", "Se almacenará tanto el recurso como sus parámetros informados.", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				guardarRecurso(buttonType);				
+			}
+		});
+	}
+		
+	private void guardarRecurso(ButtonType bt){
 		boolean modificacion = false;
-		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea guardar el recurso?", "Se almacenará tanto el recurso como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
+				
+		if (bt.equals(ButtonType.YES)){
 			pActual.descripcion = this.tNombre.getText();
 			pActual.nomCorto = this.tNombreCorto.getText();
 			
@@ -203,42 +224,53 @@ public class AltaModProveedor implements ControladorPantalla {
 				
 				
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e(e);
 			}				
-		} else {
-		}
+		} 
 	}
 	
-	private void eliminaRecurso() throws Exception{
+	public void confirmaEliminaRecurso(){
+		Dialogo.confirm("¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				eliminaRecurso(buttonType);				
+			}
+		});
+	}
+	
+	private void eliminaRecurso(ButtonType bt){
+		try {
 		
-		ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea eliminar el elemento?", "Se eliminará tanto el elemento como sus parámetros informados.");
-		
-		if (resultado == ButtonType.OK){
-			Proveedor p = cbListaRec.getValue();
+			if (bt.equals(ButtonType.YES)){
+				Proveedor p = cbListaRec.getValue();
+				
+				String idTransaccion = ConsultaBD.getTicket();
+				
+				p.bajaRecurso(idTransaccion);
+				
+				ConsultaBD.ejecutaTicket(idTransaccion);
+				
+				this.tID.setText("");
+				this.tNombre.setText("");
+				this.tNombreCorto.setText("");
 			
-			String idTransaccion = ConsultaBD.getTicket();
-			
-			p.bajaRecurso(idTransaccion);
-			
-			ConsultaBD.ejecutaTicket(idTransaccion);
-			
-			this.tID.setText("");
-			this.tNombre.setText("");
-			this.tNombreCorto.setText("");
-		
-			Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
-			
-			p = new Proveedor();
-			p.load();
-			cbListaRec.getItems().clear();
-			cbListaRec.getItems().addAll(Proveedor.listado.values());
-			
-			tParametros.getChildren().removeAll(tParametros.getChildren());
-			gbGuardar.desActivarBoton();
-			gbEliminar.desActivarBoton();
-			vbDetalle.setDisable(true);		
-			
-		} else {
+				Dialogo.alert("Proceso Finalizado", "Eliminación de elemento completada", "Se ha eliminado el elemento.");
+				
+				p = new Proveedor();
+				p.load();
+				cbListaRec.getItems().clear();
+				cbListaRec.getItems().addAll(Proveedor.listado.values());
+				
+				tParametros.getChildren().removeAll(tParametros.getChildren());
+				gbGuardar.desActivarBoton();
+				gbEliminar.desActivarBoton();
+				vbDetalle.setDisable(true);		
+				
+			} else {
+			}
+		} catch (Exception e) {
+			Log.e(e);
 		}
 	}
 	
@@ -260,7 +292,7 @@ public class AltaModProveedor implements ControladorPantalla {
 			
 			cargaPropiedades(pActual.id);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	

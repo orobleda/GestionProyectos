@@ -78,6 +78,27 @@ public class Estimacion implements Cargable{
 		return salida;
 	}
 	
+	public ArrayList<Estimacion> listado (Recurso r, Date fInicio, Date fFin) {
+		
+		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
+		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, r.id));
+		listaParms.add(new ParametroBD(5, ConstantesBD.PARAMBD_LONG, fInicio.getTime()));
+		listaParms.add(new ParametroBD(6, ConstantesBD.PARAMBD_LONG, fFin.getTime()));
+
+		ConsultaBD consulta = new ConsultaBD();
+		ArrayList<Cargable> tarifas = consulta.ejecutaSQL("cConsultaEstimacionesProyecto", listaParms, this);
+		
+		Iterator<Cargable> itProyecto = tarifas.iterator();
+		ArrayList<Estimacion> salida = new ArrayList<Estimacion>();
+		
+		while (itProyecto.hasNext()) {
+			Estimacion est = (Estimacion) itProyecto.next();
+			salida.add(est);
+		}
+				
+		return salida;
+	}
+	
 	public boolean existeEstimacion (Estimacion e) {		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
 		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, e.proyecto.id));

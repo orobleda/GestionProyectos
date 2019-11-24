@@ -1,9 +1,11 @@
 package model.beans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.metadatos.EstadoProyecto;
@@ -13,7 +15,7 @@ import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
 import model.utils.db.ParametroBD;
 
-public class Proyecto implements Cargable{
+public class Proyecto implements Cargable, Comparable<Proyecto>{
 	public int id = 0;
 	public String nombre = "";
 	
@@ -121,7 +123,7 @@ public class Proyecto implements Cargable{
 						}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e(e);
 			}
 		}
 		
@@ -251,7 +253,7 @@ public class Proyecto implements Cargable{
 					salida.add(p);
 				
 			} catch (Exception  ex) {
-				ex.printStackTrace();
+				Log.e(ex);
 			}
 			
 		}
@@ -276,7 +278,7 @@ public class Proyecto implements Cargable{
 					salida.add(p);
 				
 			} catch (Exception  ex) {
-				ex.printStackTrace();
+				Log.e(ex);
 			}
 			
 		}
@@ -467,6 +469,17 @@ public class Proyecto implements Cargable{
 	@Override
 	public String toString() {
 		return this.id + " - " + this.nombre;
+	}
+
+	@Override
+	public int compareTo(Proyecto arg0) {
+		try {
+			Date fFin = (Date) this.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();;
+			Date fFin2 = (Date) arg0.getValorParametro(MetaParametro.PROYECTO_FX_FIN).getValor();;
+			return fFin.compareTo(fFin2);
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 
 }

@@ -14,11 +14,11 @@
             <TableView fx:id="tCertificaciones" />
          </children>
       </HBox>
-      <HBox fx:id="hbDetalle">
-         <VBox.margin>
-            <Insets top="15.0" />
-         </VBox.margin>
-      </HBox>
+      <ScrollPane fx:id="scrDetalle">
+         <content>
+            <HBox fx:id="hbDetalle" />
+         </content>
+      </ScrollPane>
    </children>
    <padding>
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

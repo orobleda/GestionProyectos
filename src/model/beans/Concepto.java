@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import controller.Log;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
 import model.metadatos.MetaConcepto;
@@ -193,7 +194,7 @@ public class Concepto implements Cargable, Comparable<Concepto> {
 			}
 			
 		} catch (Exception e){
-			e.printStackTrace();
+			Log.e(e);
 			throw e;
 		}
 		

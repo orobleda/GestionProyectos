@@ -5,7 +5,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import model.beans.EstimacionAnio;
 import model.beans.EstimacionMes;
@@ -52,6 +55,9 @@ public class VistaJerarquizada implements ControladorPantalla {
     private TabPane tbPane;
     
     @FXML
+    private BorderPane bpPanel;
+    
+    @FXML
     private Pane pnPanelListado;
 	
     	@Override
@@ -59,10 +65,12 @@ public class VistaJerarquizada implements ControladorPantalla {
 		return anchor;
 	}
     	
-    	@Override
-    	public void resize(Scene escena) {
-    		
-    	}
+	@Override
+	public void resize(Scene escena) {
+		bpPanel.setPrefWidth(Main.scene.getWidth()*0.97);
+		tbPane.setPrefWidth(Main.scene.getWidth()*0.97);
+		pnPanelListado.setPrefWidth(Main.scene.getWidth()*0.97);
+	}
 
 	@Override
 	public String getFXML() {
@@ -149,8 +157,10 @@ public class VistaJerarquizada implements ControladorPantalla {
 					}
 				}
 			}
+			
+			resize(null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	
@@ -191,9 +201,11 @@ public class VistaJerarquizada implements ControladorPantalla {
 	        Calendar c = procesaValor(cbMeses.getValue());
 	        
 	        tbSistema.pintaConceptos(ap,c.get(Calendar.MONTH), c.get(Calendar.YEAR),null);
+	        
+	        resize(null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 	

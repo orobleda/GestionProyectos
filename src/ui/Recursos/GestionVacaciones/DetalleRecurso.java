@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,11 +19,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import model.beans.JornadasMes;
 import model.beans.Recurso;
 import model.beans.VacacionesAusencias;
 import model.constantes.FormateadorDatos;
 import ui.Dialogo;
+import ui.Tabla;
 import ui.Recursos.GestionVacaciones.Tables.HorasJornada;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -54,15 +57,19 @@ public class DetalleRecurso implements ControladorPantalla {
 
     @FXML
     private TableView<Tableable> tVacaciones;
+    private Tabla tablaVacaciones;
 
     @FXML
     private TableView<Tableable> tAusencias;
+    private Tabla tablaAusencias;
 
     @FXML
     private TableView<Tableable> tJornada;
+    private Tabla tablaJornada;
 
     @FXML
     private TableView<Tableable> tTotal;
+    private Tabla tablaTotal;
     
     @FXML
     private ScrollPane tJornadaSP;
@@ -71,7 +78,10 @@ public class DetalleRecurso implements ControladorPantalla {
     @FXML
     private ScrollPane tVacacionesSP;
     @FXML
-    private ScrollPane tTotalSP;
+    private ScrollPane tTotalSP;    
+
+    @FXML
+    private VBox vbDetalle;
 	
 	public ArrayList<TableView<Tableable>> tablas = new ArrayList<TableView<Tableable>>();
 		
@@ -87,7 +97,12 @@ public class DetalleRecurso implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
+		int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION || res== Main.BAJA_RESOLUCION) {
+			if (vbDetalle!=null) {
+			}
+		}
 	}
 	
 	public DetalleRecurso(Recurso r, int mes, int anio){
@@ -157,8 +172,7 @@ public class DetalleRecurso implements ControladorPantalla {
 	          }
 	     });
 		 
-		 
-		 	 
+		 resize(null);		 	 
 	}
 	
 	private void informaHorasTotal(){
@@ -167,10 +181,8 @@ public class DetalleRecurso implements ControladorPantalla {
 		HorasJornada hj = new HorasJornada(jm);
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.add(hj);
-		ObservableList<Tableable> dataTable = hj.toListTableable(lista);
-		tTotal.setItems(dataTable);
-
-		hj.fijaColumnas(tTotal);	
+		tablaTotal = new Tabla(tTotal,hj,this);		
+		tablaTotal.pintaTabla(lista);
 		
 		ObservableList<TableColumn<Tableable,?>> columnas = tTotal.getColumns(); 
 		Iterator<TableColumn<Tableable,?>> itCol = columnas.iterator();
@@ -223,10 +235,8 @@ public class DetalleRecurso implements ControladorPantalla {
 		HorasJornada hj = new HorasJornada(jm);
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.add(hj);
-		ObservableList<Tableable> dataTable = hj.toListTableable(lista);
-		tJornada.setItems(dataTable);
-		
-		hj.fijaColumnas(tJornada);	
+		tablaTotal = new Tabla(tJornada,hj,this);		
+		tablaTotal.pintaTabla(lista);	
 		
 		ObservableList<TableColumn<Tableable,?>> columnas = tJornada.getColumns(); 
 		Iterator<TableColumn<Tableable,?>> itCol = columnas.iterator();
@@ -275,10 +285,9 @@ public class DetalleRecurso implements ControladorPantalla {
 		HorasJornada hj = new HorasJornada(jm);
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.add(hj);
-		ObservableList<Tableable> dataTable = hj.toListTableable(lista);
-		tVacaciones.setItems(dataTable);
-
-		hj.fijaColumnas(tVacaciones);	
+		tablaTotal = new Tabla(tVacaciones,hj,this);		
+		tablaTotal.pintaTabla(lista);
+		
 		tVacaciones.getSelectionModel().setCellSelectionEnabled(true);
 		
 		tVacaciones.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -415,10 +424,9 @@ public class DetalleRecurso implements ControladorPantalla {
 		HorasJornada hj = new HorasJornada(jm);
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.add(hj);
-		ObservableList<Tableable> dataTable = hj.toListTableable(lista);
-		tAusencias.setItems(dataTable);
-
-		hj.fijaColumnas(tAusencias);
+		tablaTotal = new Tabla(tAusencias,hj,this);		
+		tablaTotal.pintaTabla(lista);
+		
 		tAusencias.getSelectionModel().setCellSelectionEnabled(true);
 		
 		tAusencias.setOnMouseClicked(new EventHandler<MouseEvent>() {

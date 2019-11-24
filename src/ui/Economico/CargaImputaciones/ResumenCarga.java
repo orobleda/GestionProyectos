@@ -77,8 +77,7 @@ public class ResumenCarga implements ControladorPantalla  {
 					
 					Dialogo.alert("Guardado correcto", "Se guardaron las imputaciones", "Se guardaron las imputaciones.");
 				} catch (Exception e) {
-					e.printStackTrace();
-					Dialogo.error("Error al guardar", "Se produjo un error al guardar", "Se produjo un error al guardar");
+					Dialogo.error("Se produjo un error al guardar", e);
 				}
             } }, "Guardar Imputaciones", this);	
 		gbGuardar.activarBoton();

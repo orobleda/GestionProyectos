@@ -10,6 +10,7 @@ import model.beans.JornadasMes;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
 import ui.interfaces.Tableable;
 
 public class HorasJornada extends ParamTable implements Tableable  {
@@ -38,10 +39,13 @@ public class HorasJornada extends ParamTable implements Tableable  {
     	
     	Calendar c = Calendar.getInstance();
     	c.set(jm.anio, jm.mes-1, 1);
+    	anchoColumnas = new HashMap<String, Integer>();
     	
     	for (int i=1; i< c.getActualMaximum(Calendar.DAY_OF_MONTH)+1;i++) {
     		configuracionTabla.put(""+i, new ConfigTabla(""+i,""+i,  false,i, false));
+    		anchoColumnas.put(""+i, new Integer(30));
     	}
+    	
     }
     
 	@Override

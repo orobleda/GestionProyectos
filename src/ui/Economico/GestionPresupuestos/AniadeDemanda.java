@@ -130,7 +130,7 @@ public class AniadeDemanda implements ControladorPantalla {
 		this.cbVersionPres.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada ();  	}   );
 		this.cbEstimacion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { buscaPresupuestos (newValue);  	}   );
 		
-		vbDesgloseConceptos.setDisable(true);
+		vbDesgloseConceptos.setVisible(false);
 		
 		gbGuardarConcepto = new GestionBotones(imGuardarConcepto, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
@@ -144,7 +144,7 @@ public class AniadeDemanda implements ControladorPantalla {
             } }, "GuardarConcepto");
 		gbGuardarConcepto.desActivarBoton();
 		
-		gbGuardarAniadir = new GestionBotones(this.imGuardarAniadir, "GuardarAniadir3", false, new EventHandler<MouseEvent>() {        
+		gbGuardarAniadir = new GestionBotones(this.imGuardarAniadir, "AddElem3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -156,7 +156,7 @@ public class AniadeDemanda implements ControladorPantalla {
             } }, "Añade demanda");
 		gbGuardarAniadir.desActivarBoton();
 		
-		gbGuardarEliminar = new GestionBotones(this.imGuardarEliminar, "GuardarBorrar3", false, new EventHandler<MouseEvent>() {        
+		gbGuardarEliminar = new GestionBotones(this.imGuardarEliminar, "DelElem3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -168,7 +168,7 @@ public class AniadeDemanda implements ControladorPantalla {
             } }, "Elimina Demanda");
 		gbGuardarEliminar.desActivarBoton();
 		
-		gbGuardarEditar = new GestionBotones(this.imGuardarEditar, "GuardarEditar3", false, new EventHandler<MouseEvent>() {        
+		gbGuardarEditar = new GestionBotones(this.imGuardarEditar, "EditElem3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -660,14 +660,14 @@ public class AniadeDemanda implements ControladorPantalla {
 		}
 		
 		if (pSeleccionado.apunteContable) {
-			this.vbDesgloseConceptos.setDisable(false);
+			this.vbDesgloseConceptos.setVisible(true);
 			this.hbPorcentaje.setVisible(false);
 			this.hbCantidad.setVisible(false);
 			this.hbTarifa.setVisible(false);
 			gbGuardarConcepto.activarBoton();
 			seleccionaBaseCalculo(null);
 		} else {
-			this.vbDesgloseConceptos.setDisable(true);			
+			this.vbDesgloseConceptos.setVisible(false);			
 			gbGuardarConcepto.desActivarBoton();
 		}
 		

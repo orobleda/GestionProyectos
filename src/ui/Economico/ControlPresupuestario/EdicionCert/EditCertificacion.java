@@ -104,7 +104,7 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Guardado de Certificación correcto", "Guardado Correcto", "Se guardó la certificación");
 	            	ControlPresupuestario.cargaPosicionActual();					
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Guardar Certificación");
@@ -121,7 +121,7 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 	            	Dialogo.alert("Borrado de Certificación correcto", "Eliminación Correcta", "Se eliminó la certificación");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Borrar Certificación");

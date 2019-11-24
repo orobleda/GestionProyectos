@@ -12,6 +12,7 @@ import model.beans.CertificacionFaseParcial;
 import model.constantes.FormateadorDatos;
 import model.metadatos.TipoDato;
 import model.utils.pdf.ProcesaCertificacion;
+import ui.Dialogo;
 import ui.Tabla;
 import ui.Economico.ControlPresupuestario.EdicionCert.Tables.LineaCosteCertificacionReal;
 import ui.interfaces.ControladorPantalla;
@@ -81,7 +82,7 @@ public class AsignacionCertificacion implements ControladorPantalla {
 				this.cbCertificaciones.setVisible(false);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Dialogo.error(null, e);
 		}
 	}
 

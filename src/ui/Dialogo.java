@@ -1,15 +1,21 @@
 package ui;
 
-import java.util.Optional;
-
-import javafx.scene.control.Alert;
+import application.Main;
+import controller.Log;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Alert.AlertType;
 
 public class Dialogo {
+
+	@FunctionalInterface
+	public interface Manejador<ButtonType> {
+	   public void maneja(ButtonType buttonType);
+	}
 	
-	public static ButtonType confirm(String titulo, String cabecera, String contenido){
-		
+	public static void confirm(String titulo, String contenido, Manejador<ButtonType> m){
+		Main.customWorkbench.showConfirmationDialog(titulo, contenido, buttonType -> {
+			m.maneja(buttonType);
+		});		
+		/*
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(titulo);
 		alert.setHeaderText(cabecera);
@@ -17,26 +23,40 @@ public class Dialogo {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		
-		return result.get();
+		return result.get();*/
 	}
 	
 	public static void alert(String titulo, String cabecera, String contenido){
-		
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle(titulo);
-		alert.setHeaderText(cabecera);
-		alert.setContentText(contenido);
-
-		alert.showAndWait();
+		Main.customWorkbench.showInformationDialog(
+				  titulo,
+				  contenido,
+		    buttonType -> { // Proceed and validate the result 
+		    	}
+		    );
 	}
 	
     public static void error(String titulo, String cabecera, String contenido){
-		
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle(titulo);
-		alert.setHeaderText(cabecera);
-		alert.setContentText(contenido);
-
-		alert.showAndWait();
+		Main.customWorkbench.showErrorDialog(
+				  titulo,
+				  contenido,
+		    buttonType -> { // Proceed and validate the result 
+		    	}
+		    );
+	}
+    
+    public static void error(String descripcion, Exception e){
+		if (null == descripcion) {
+			descripcion = "Algo fue mal al procesar la petición";
+		}    	
+    	
+    	Main.customWorkbench.showErrorDialog(
+    		    "Se produjo un error",
+    		    descripcion,
+    		    e,
+    		    buttonType -> { // Proceed and validate the result 
+    		    	}
+    		  );
+    	
+    	Log.e(e);
 	}
 }

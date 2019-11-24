@@ -34,6 +34,8 @@ public class HojaExcel {
 		int filaActual = celda.getRowIndex();
 		int colActual = celda.getColumnIndex();
 		
+		System.out.println(filaActual+","+colActual+","+(fila+filaActual)+","+(columna+colActual));
+		
 		return get(fila+filaActual, columna+colActual);
 	}
 	

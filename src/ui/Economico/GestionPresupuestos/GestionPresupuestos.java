@@ -7,18 +7,20 @@ import java.util.Iterator;
 
 import org.controlsfx.control.PopOver;
 
+import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import model.beans.ApunteContable;
 import model.beans.BaseCalculoConcepto;
 import model.beans.Concepto;
@@ -53,6 +55,9 @@ public class GestionPresupuestos implements ControladorPantalla {
     private TextField tNomProyecto;
 
     @FXML
+    private VBox vbProyecto;
+
+    @FXML
     private TableView<Tableable> tCoste;
     public Tabla tablaCoste;
 
@@ -63,8 +68,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 	@FXML
 	private TextField tProyecto = null;	
 	private Proyecto proySeleccionado;
-    @FXML
-    private ImageView imConsultaAvanzada;
+
     private GestionBotones gbConsultaAvanzada;
 
     @FXML
@@ -74,8 +78,6 @@ public class GestionPresupuestos implements ControladorPantalla {
     @FXML
     private TextField tVsProyecto;
 
-    @FXML
-    private ImageView imNuevoProyecto;
     private GestionBotones gbNuevoProyecto;
 
     @FXML
@@ -92,10 +94,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 
     @FXML
     public ComboBox<Presupuesto> cbVersion;
-    
-    @FXML
-    private ScrollPane scrDatos;
-	
+    	
 	@FXML
 	private AnchorPane anchor;
 	
@@ -111,12 +110,20 @@ public class GestionPresupuestos implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		tProyecto.setPrefWidth(escena.getWidth()*0.65);
-		this.cbVersion.setPrefWidth(escena.getWidth()*0.65);
-		tCoste.setPrefWidth(escena.getWidth()*0.65);
-		tNomProyecto.setPrefWidth(escena.getWidth()*0.65);
+		int res = Main.resolucion();
 		
-		this.tablaCoste.fijaAlto(escena.getHeight()*0.40);
+		if (res == Main.ALTA_RESOLUCION || res== Main.BAJA_RESOLUCION) {
+			tProyecto.setPrefWidth(Main.scene.getWidth()*0.65);
+			this.cbVersion.setPrefWidth(Main.scene.getWidth()*0.65);
+			tCoste.setPrefWidth(Main.scene.getWidth()*0.65);
+			tNomProyecto.setPrefWidth(Main.scene.getWidth()*0.65);
+			
+			tablaCoste.fijaAlto(Main.scene.getHeight()*0.40);
+			tablaDemandas.fijaAlto(Main.scene.getHeight()*0.20);
+			tablaCoste.componenteTabla.setPrefHeight(Main.scene.getHeight()*0.40);
+			tablaDemandas.componenteTabla.setPrefHeight(Main.scene.getHeight()*0.20);
+		}
+		
 	}
 	
 	private void consultaAvanzadaProyectos() throws Exception{		
@@ -124,12 +131,12 @@ public class GestionPresupuestos implements ControladorPantalla {
 	}
 	
 	public void initialize(){
+		vbProyecto.setVisible(false);
+		
 		tablaDemandas = new Tabla(tDemandas,new DesgloseDemandasAsocidasTabla());
 		tablaCoste = new Tabla(tCoste,new LineaCosteDesglosado());
-		
-		scrDatos.setDisable(true);
-		
-		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+				
+		gbConsultaAvanzada = new GestionBotones(GestionBotones.IZQ, new ImageView(), "Buscar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -138,7 +145,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            } }, "Consulta elementos");
+            } }, "Selección Proyecto");
 		
 		cbVersion.getItems().removeAll(cbVersion.getItems());
 		cbVersion.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { versionSeleccionada (true);  	}   );
@@ -184,7 +191,7 @@ public class GestionPresupuestos implements ControladorPantalla {
             } }, "Guardar como nueva versión del presupuesto");
 		gbGuardarNuevaVersion.desActivarBoton();
 		
-		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "Editar3", false, new EventHandler<MouseEvent>() {        
+		gbAniadirDemanda = new GestionBotones(imAniadirDemanda, "EditListado3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -196,7 +203,7 @@ public class GestionPresupuestos implements ControladorPantalla {
             } }, "Añadir Demanda");
 		gbAniadirDemanda.desActivarBoton();
 		
-		gbNuevoProyecto = new GestionBotones(imNuevoProyecto, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+		gbNuevoProyecto = new GestionBotones(GestionBotones.DER, new ImageView(), "nuevoBombilla", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
@@ -213,6 +220,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 	}
 	
 	public void nuevoProyecto() {
+		vbProyecto.setVisible(true);
 		this.tProyecto.setText("");
 		tProyecto.setDisable(true);
 		
@@ -224,7 +232,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 		cbTipoProy.getItems().removeAll(cbTipoProy.getItems());
 		cbTipoProy.getItems().addAll(TipoProyecto.tiposNoDemanda());
 		cbTipoProy.setDisable(false);
-		scrDatos.setDisable(false);
 		
 		this.tNomProyecto.setText("");
 		this.proySeleccionado = null;
@@ -319,13 +326,14 @@ public class GestionPresupuestos implements ControladorPantalla {
 		tablaCoste.limpiaTabla();
 		tablaDemandas.limpiaTabla();
 		
-		scrDatos.setDisable(true);
 		cbVersion.setDisable(true);
 		gbBorrarVersion.desActivarBoton();
 		gbGuardarNuevaVersion.desActivarBoton();
 		gbActualizarVersion.desActivarBoton();
 		
 		Dialogo.alert("Borrado correcto", "Se eliminó el presupuesto", "El borrado se realizó correctamente");
+
+		vbProyecto.setVisible(false);
 		
 	}
 	
@@ -423,7 +431,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 				
 		tablaCoste.limpiaTabla();
 		tablaDemandas.limpiaTabla();
-		scrDatos.setDisable(true);
 		cbVersion.setDisable(true);
 		gbBorrarVersion.desActivarBoton();
 		gbGuardarNuevaVersion.desActivarBoton();
@@ -569,10 +576,11 @@ public class GestionPresupuestos implements ControladorPantalla {
 
 	public void versionSeleccionada(boolean recargar) {
 		try {
+
+			vbProyecto.setVisible(true);
 			gbActualizarVersion.activarBoton();
 			gbGuardarNuevaVersion.activarBoton();
 			gbBorrarVersion.activarBoton();
-			scrDatos.setDisable(false);
 			
 			Presupuesto p = cbVersion.getValue();
 			
@@ -696,9 +704,10 @@ public class GestionPresupuestos implements ControladorPantalla {
 			tablaCoste.formateaTabla();
 			
 			gbAniadirDemanda.activarBoton();
+			resize(null);
 			
 		} catch (Exception es) {
-			es.printStackTrace();
+			Log.e(es);
 		}
 	}
 	
@@ -720,7 +729,6 @@ public class GestionPresupuestos implements ControladorPantalla {
 			
 			this.presOperado = null;
 			cbVersion.setDisable(false);
-			scrDatos.setDisable(true);
 		}
 	}
 	

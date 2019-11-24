@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import controller.Log;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
@@ -35,8 +36,7 @@ public class ConsultaBDReplica {
 		 try {
 		     connect = DriverManager.getConnection("jdbc:sqlite:"+url);
 		 }catch (SQLException ex) {
-			 	 ex.printStackTrace();
-			     System.err.println("No se ha podido conectar a la base de datos\n"+ex.getMessage());
+			 	 Log.e("No se ha podido conectar a la base de datos\n"+ex.getMessage(),ex);
 		 }
 		 finally {
 			 if (conexiones==null) {

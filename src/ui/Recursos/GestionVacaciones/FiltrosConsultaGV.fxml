@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionVacaciones.FiltrosConsultaGV">
+   <children>
+      <Label fx:id="Mes" text="Mes">
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+         <HBox.margin>
+            <Insets left="25.0" />
+         </HBox.margin>
+      </Label>
+      <ComboBox fx:id="cbMeses" prefWidth="150.0">
+         <HBox.margin>
+            <Insets left="25.0" />
+         </HBox.margin>
+      </ComboBox>
+      <Label layoutX="10.0" layoutY="25.0" text="Año">
+         <padding>
+            <Insets left="70.0" />
+         </padding>
+      </Label>
+      <ComboBox fx:id="cbAnios" layoutX="62.0" layoutY="25.0" prefWidth="150.0">
+         <HBox.margin>
+            <Insets left="25.0" />
+         </HBox.margin>
+      </ComboBox>
+      <ImageView fx:id="imBuscarAn" pickOnBounds="true" preserveRatio="true">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <image>
+            <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+         </image>
+         <HBox.margin>
+            <Insets left="55.0" />
+         </HBox.margin>
+      </ImageView>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</HBox>

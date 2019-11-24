@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionRecursos.AltaModRecurso">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Recursos.GestionRecursos.AltaModRecurso">
    <top>
       <VBox fx:id="vbCamposEntada" BorderPane.alignment="CENTER">
          <children>
@@ -52,32 +52,6 @@
                   <Insets bottom="15.0" />
                </padding>
             </HBox>
-            <HBox>
-               <children>
-                  <ImageView fx:id="imAniadir" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/aniadir.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets right="25.0" />
-                     </HBox.margin>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-                  <ImageView fx:id="imBuscar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../imgs/iconos/buscar.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="25.0" left="650.0" />
-               </VBox.margin>
-            </HBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -85,66 +59,58 @@
       </VBox>
    </top>
    <center>
-      <VBox fx:id="vbDetalle" BorderPane.alignment="CENTER">
+      <VBox fx:id="vbDetalle" BorderPane.alignment="TOP_LEFT">
          <children>
-            <HBox prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Id">
+                  <Label prefWidth="100.0" text="Id">
                      <HBox.margin>
-                        <Insets left="15.0" right="50.0" />
+                        <Insets left="15.0" right="10.0" />
                      </HBox.margin>
-                     <padding>
-                        <Insets right="38.0" />
-                     </padding>
                   </Label>
                   <TextField fx:id="tID" editable="false" />
                </children>
             </HBox>
-            <HBox prefHeight="0.0" prefWidth="200.0">
+            <HBox>
                <children>
-                  <Label text="Nombre">
+                  <Label prefWidth="100.0" text="Nombre">
                      <HBox.margin>
-                        <Insets left="15.0" right="55.0" />
+                        <Insets left="15.0" right="10.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="tNombre" maxWidth="700.0" prefWidth="600.0" />
+                  <TextField fx:id="tNombre" prefWidth="600.0" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" top="15.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox fx:id="tParametros" alignment="TOP_CENTER" />
+            <HBox fx:id="hbBotones" alignment="TOP_RIGHT">
                <children>
-                  <VBox fx:id="tParametros">
-                     <HBox.margin>
-                        <Insets top="25.0" />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox>
-               <children>
-                  <ImageView fx:id="imGuardar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imGuardar" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../../imgs/iconos/guardar.jpg" />
+                        <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
                      </image>
                      <HBox.margin>
-                        <Insets left="630.0" right="25.0" />
+                        <Insets />
                      </HBox.margin>
                   </ImageView>
-                  <ImageView fx:id="imEliminar" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imEliminar" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../../imgs/iconos/eliminar.png" />
+                        <Image url="@../../../../imgs/iconos/Eliminar3_PAS.png" />
                      </image>
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
                   </ImageView>
                </children>
-               <VBox.margin>
-                  <Insets top="45.0" />
-               </VBox.margin>
+               <padding>
+                  <Insets right="200.0" />
+               </padding>
             </HBox>
          </children>
          <BorderPane.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            <Insets left="15.0" right="15.0" top="15.0" />
          </BorderPane.margin>
       </VBox>
    </center>

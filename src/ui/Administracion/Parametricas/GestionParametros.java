@@ -19,6 +19,7 @@ import model.beans.Parametro;
 import model.constantes.CargaInicial;
 import model.constantes.Constantes;
 import model.utils.db.ConsultaBD;
+import ui.Dialogo;
 import ui.GestionBotones;
 import ui.TablaPropiedades;
 import ui.interfaces.ControladorPantalla;
@@ -106,7 +107,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 					
 					
 				} catch (Exception e) {
-					e.printStackTrace();
+					Dialogo.error(null, e);
 				}
             } }, "Guardar Cambios");
 		gbGuardar.activarBoton();

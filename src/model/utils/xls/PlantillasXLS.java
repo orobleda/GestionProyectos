@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import controller.Log;
 import model.constantes.FormateadorDatos;
 import model.interfaces.Cargable;
 import model.interfaces.Loadable;
@@ -83,7 +84,7 @@ public class PlantillasXLS implements Loadable, Cargable{
 				}		
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Log.e(ex);
 		}
 		return this;
 		

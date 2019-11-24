@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -114,10 +115,10 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 	}
 	
 	public void initialize(){
-		this.tImporteEst.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_IMPORTE, tImporteEst, cbTarifasEst, tHorasEst);	} catch (Exception ex) { ex.printStackTrace();} }});
-		this.tHorasEst.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_HORAS, tImporteEst, cbTarifasEst, tHorasEst);	} catch (Exception ex) { ex.printStackTrace();} }});
-		this.tImporteImp.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_IMPORTE, tImporteImp, cbTarifasImp, tHorasImp);	} catch (Exception ex) { ex.printStackTrace();} }});
-		this.tHorasImp.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_HORAS, tImporteImp, cbTarifasImp, tHorasImp);	} catch (Exception ex) { ex.printStackTrace();} }});
+		this.tImporteEst.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_IMPORTE, tImporteEst, cbTarifasEst, tHorasEst);	} catch (Exception ex) { Log.e(ex);} }});
+		this.tHorasEst.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_HORAS, tImporteEst, cbTarifasEst, tHorasEst);	} catch (Exception ex) { Log.e(ex);} }});
+		this.tImporteImp.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_IMPORTE, tImporteImp, cbTarifasImp, tHorasImp);	} catch (Exception ex) { Log.e(ex);} }});
+		this.tHorasImp.focusedProperty().addListener((ov, oldV, newV) -> { if (!newV) { try {	calculaValores(EditCertificacionFaseParcial.MODO_HORAS, tImporteImp, cbTarifasImp, tHorasImp);	} catch (Exception ex) { Log.e(ex);} }});
 		this.cbTarifasEst.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { if (cbTarifasEst.getValue()!=null) {  try {calculaValores(EditCertificacionFaseParcial.MODO_TARIFA, tImporteEst, cbTarifasEst, tHorasEst); } catch (Exception e) {}}});
 		this.cbTarifasImp.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> { if (cbTarifasImp.getValue()!=null) {  try {calculaValores(EditCertificacionFaseParcial.MODO_TARIFA, tImporteImp, cbTarifasImp, tHorasImp); } catch (Exception e) {}}});
 		
@@ -132,7 +133,7 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 	            	Dialogo.alert("Guardado de Certificación correcto", "Guardado Correcto", "Se guardó la certificación");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Dialogo.error(null, ex);
 				}
 				//ParamTable.po.hide();
             } }, "Guardar Cambios fase");

@@ -2,14 +2,13 @@ package ui.Economico.EstimacionesValoraciones;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.controlsfx.control.PopOver;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import application.Main;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,7 +38,6 @@ import model.metadatos.Sistema;
 import model.metadatos.TipoDato;
 import model.metadatos.TipoEnumerado;
 import model.metadatos.TipoProyecto;
-import ui.ConfigTabla;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
@@ -56,7 +54,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	public static final String fxml = "file:src/ui/Economico/EstimacionesValoraciones/EstimacionesValoraciones.fxml";
 	
 	PopOver popUp = null;
-
 	
 	@FXML
 	private AnchorPane anchor;
@@ -92,11 +89,8 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	private ImageView imEliminarPres = null;
     private GestionBotones gbEliminarPres;
 	@FXML
-	private ImageView imAniadirPresupuesto = null;
     private GestionBotones gbAniadirPresupuesto;
-	@FXML
-	private ImageView imBuscarPresupuesto = null;
-    private GestionBotones gbBuscarPresupuesto;
+
 	@FXML
 	private TableView<Tableable> tLineasCoste = null;
 	public Tabla tablaLineasCoste = null;
@@ -112,15 +106,29 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		tProyecto.setPrefWidth(escena.getWidth()*0.65);
-		cbVsPresupuesto.setPrefWidth(escena.getWidth()*0.65);
-		tLineasCoste.setPrefWidth(escena.getWidth()*0.65);
-		tResumenCoste.setPrefWidth(escena.getWidth()*0.65);
-		taDesc.setPrefWidth(escena.getWidth()*0.65);
+		int res = Main.resolucion();
 		
-		tLineasCoste.setPrefHeight(escena.getHeight()*0.30);
-		tResumenCoste.setPrefHeight(escena.getHeight()*0.1);
-		taDesc.setPrefHeight(escena.getWidth()*0.025);
+		if (res == Main.ALTA_RESOLUCION ) {
+			tProyecto.setPrefWidth(escena.getWidth()*0.65);
+			cbVsPresupuesto.setPrefWidth(escena.getWidth()*0.65);
+			tLineasCoste.setPrefWidth(escena.getWidth()*0.65);
+			tResumenCoste.setPrefWidth(escena.getWidth()*0.65);
+			taDesc.setPrefWidth(escena.getWidth()*0.65);
+			
+			tLineasCoste.setPrefHeight(escena.getHeight()*0.30);
+			tResumenCoste.setPrefHeight(escena.getHeight()*0.1);
+			taDesc.setPrefHeight(escena.getWidth()*0.025);
+		} else {
+			tProyecto.setPrefWidth(escena.getWidth()*0.65);
+			cbVsPresupuesto.setPrefWidth(escena.getWidth()*0.65);
+			tLineasCoste.setPrefWidth(escena.getWidth()*0.65);
+			tResumenCoste.setPrefWidth(escena.getWidth()*0.65);
+			taDesc.setPrefWidth(escena.getWidth()*0.65);
+			
+			tLineasCoste.setPrefHeight(escena.getHeight()*0.28);
+			tResumenCoste.setPrefHeight(escena.getHeight()*0.25);
+			taDesc.setPrefHeight(escena.getWidth()*0.025);
+		}
 	}
 	
 	private void consultaAvanzadaProyectos() throws Exception{		
@@ -139,7 +147,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 	}
 		
 	public void fotoInicial(){
-		Proyecto p = new Proyecto();
 		this.tProyecto.setText("");
 		this.proySeleccionado = null;
 		cbVsPresupuesto.getItems().removeAll(cbVsPresupuesto.getItems());
@@ -148,7 +155,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		gbEliminarPres.desActivarBoton();
 		gbVersionarPres.desActivarBoton();
 		gbAniadirSistma.desActivarBoton();
-		gbBuscarPresupuesto.desActivarBoton();
 		gbAniadirPresupuesto.desActivarBoton();		
 		
 		tFxAlta.setText("");
@@ -157,8 +163,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		taDesc.setText("");
 		cbTipoPrep.getItems().removeAll(cbTipoPrep.getItems());
 		
-		//tablaResumenCoste.limpiaTabla();
-		//tablaLineasCoste.limpiaTabla();
 		
 	}
 	
@@ -171,16 +175,17 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		
 		tablaResumenCoste = new Tabla(tResumenCoste, new LineaCostePresupuesto(),this);
 		
-		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "BuscarAvzdo3", false, new EventHandler<MouseEvent>() {        
+		gbConsultaAvanzada = new GestionBotones(imConsultaAvanzada, "Buscar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {	
 					consultaAvanzadaProyectos();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Consulta elementos");
+		gbConsultaAvanzada.activarBoton();
 		gbAniadirSistma = new GestionBotones(imAniadirSistma, "NuevaFila3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
@@ -188,17 +193,17 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 				try {	
 					eligeSistema();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Añadir Sistema");
-		gbAniadirPresupuesto = new GestionBotones(imAniadirPresupuesto, "Nuevo3", false, new EventHandler<MouseEvent>() {        
+		gbAniadirPresupuesto = new GestionBotones(GestionBotones.DER, new ImageView(), "nuevoBombilla", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {	
 					nuevoPresupuesto();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Nuevo Presupuesto");
 		gbVersionarPres = new GestionBotones(imVersionarPres, "GuardarAniadir3", false, new EventHandler<MouseEvent>() {        
@@ -208,9 +213,10 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 				try {	
 					guardarNuevaVsPresupuesto(false);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Versionar presupuesto");
+		
 		gbGuardarPresupuesto = new GestionBotones(imGuardarPresupuesto, "Guardar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
@@ -218,33 +224,30 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 				try {	
 					guardarNuevaVsPresupuesto(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Actualizar presupuesto");
-		gbBuscarPresupuesto = new GestionBotones(imBuscarPresupuesto, "Buscar3", false, new EventHandler<MouseEvent>() {        
-			@Override
-            public void handle(MouseEvent t)
-            {
-				try {	
-					buscarPresupuesto();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            } }, "Buscar presupuesto");
+		
 		gbEliminarPres = new GestionBotones(imEliminarPres, "Eliminar3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             {
 				try {	
-					borrarPresupuesto();
+					confirmaBorrado();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(e);
 				}
             } }, "Borrar presupuesto");
 		
 		fotoInicial();
 				
-		cbVsPresupuesto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {	gbBuscarPresupuesto.activarBoton(); 	}  );
+		cbVsPresupuesto.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {	
+			try {	
+				buscarPresupuesto();
+			} catch (Exception e) {
+				Log.e(e);
+			} 	
+		}  );
 		
 	}
 	
@@ -258,14 +261,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		
 		cbVsPresupuesto.getItems().addAll(listado);
 
-		gbAniadirPresupuesto.activarBoton();
-		
-		if (cbVsPresupuesto.getItems().size()==0) {
-			gbBuscarPresupuesto.desActivarBoton();
-		} else {
-			gbBuscarPresupuesto.activarBoton();
-		}
-		
+		gbAniadirPresupuesto.activarBoton();		
 	}
 	
 	private void eligeSistema(){
@@ -293,11 +289,19 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		}
 	}
 	
-	public void borrarPresupuesto(){
-		try {
-			ButtonType resultado = Dialogo.confirm("Confirmación", "¿Desea borrar la estimación?", "Se eliminará la estimación y todos sus conceptos asociados");
-			
-			if (resultado == ButtonType.OK){
+	public void confirmaBorrado(){
+		Dialogo.confirm("¿Desea borrar la estimación?", "Se eliminará la estimación y todos sus conceptos asociados", 
+				new Dialogo.Manejador<ButtonType>() {			
+			@Override
+			public void maneja(ButtonType buttonType) {
+				borrarPresupuesto(buttonType);				
+			}
+		});
+	}
+	
+	public void borrarPresupuesto(ButtonType bt){
+		try {	
+			if (bt.equals(ButtonType.YES)){
 				EstimacionesValoraciones.presupuesto.borrarPresupuesto(null);
 				
 				fotoInicial();
@@ -305,8 +309,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			}
 			
 		} catch (Exception e) {
-			Dialogo.error("Borrar Presupuesto", "Error al borrar", "Se produjo un error al borrar el presupuesto");
-			return;
+			Log.e(e);
 		}
 	}
 	
@@ -324,7 +327,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			if (mfp==null) throw new Exception();
 			
 		} catch (Exception e) {
-			Dialogo.error("Alta de Sistema", "Falta perfil económico", "Es necesario administrar un perfil económico entre los parámetros del proyecto para continuar.");
+			Dialogo.alert("Falta perfil económico", "", "Es necesario administrar un perfil económico entre los parámetros del proyecto para continuar.");
 			return;
 		}
 		
@@ -390,7 +393,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
 			if (mfp==null) throw new Exception();			
 		} catch (Exception e) {
-			Dialogo.error("Alta de Sistema", "Falta perfil económico", "Es necesario administrar un perfil económico entre los parámetros del proyecto para continuar.");
+			Dialogo.alert("Falta perfil económico", "", "Es necesario administrar un perfil económico entre los parámetros del proyecto para continuar.");
 			return;
 		}
 		
@@ -419,7 +422,6 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		conc.id = 32000;
 		c.conceptosCoste.put(mc.codigo, conc);
 		
-		LineaCostePresupuesto lcp = new LineaCostePresupuesto();
 		ArrayList<Object> lista = new ArrayList<Object>();
 		lista.addAll(EstimacionesValoraciones.presupuesto.costesTotal.values());
 		
@@ -433,159 +435,147 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 		if (popUp!=null) popUp.hide();
 	}
 	
-	private void nuevoPresupuesto() {
+	private void nuevoPresupuesto() throws Exception{
 		
 		gbAniadirSistma.activarBoton();
 		gbVersionarPres.activarBoton();
 		gbGuardarPresupuesto.activarBoton();		
 		gbEliminarPres.activarBoton();
 		vbResultados.setVisible(true);
-		
-		try {
-			EstimacionesValoraciones.presupuesto = new Presupuesto();
-			EstimacionesValoraciones.presupuesto.actualiza = true;
-			int id = presupuesto.maxIdPresupuesto();
-			
-			EstimacionesValoraciones.presupuesto.id = new Integer(id);
-			EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
-			
-			EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
-			EstimacionesValoraciones.proyConsultado.cargaProyecto();
-			
-			tFxAlta.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(), FormateadorDatos.FORMATO_FECHA));
-			tId.setText(new Integer(id).toString());
-			tVersion.setText("1");
-			taDesc.setText("");
-			
-			this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
-			cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
-			
-			HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
-			pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
-			this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
 
-			this.tablaLineasCoste.pintaTabla(new ArrayList<Object>());
-			
-			resumenCoste();
-						
-		} catch (Exception e) {
-			
-		}
+		EstimacionesValoraciones.presupuesto = new Presupuesto();
+		EstimacionesValoraciones.presupuesto.actualiza = true;
+		int id = presupuesto.maxIdPresupuesto();
+		
+		EstimacionesValoraciones.presupuesto.id = new Integer(id);
+		EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
+		
+		EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
+		EstimacionesValoraciones.proyConsultado.cargaProyecto();
+		
+		tFxAlta.setText(FormateadorDatos.formateaDato(Constantes.fechaActual(), FormateadorDatos.FORMATO_FECHA));
+		tId.setText(new Integer(id).toString());
+		tVersion.setText("1");
+		taDesc.setText("");
+		
+		this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
+		cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
+		
+		HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+		pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+		this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
+
+		this.tablaLineasCoste.pintaTabla(new ArrayList<Object>());
+		
+		resumenCoste();
+
 	}
 	
-	private void buscarPresupuesto() {
+	private void buscarPresupuesto() throws Exception{
 		gbAniadirSistma.activarBoton();
 		gbVersionarPres.activarBoton();
 		gbGuardarPresupuesto.activarBoton();		
 		gbEliminarPres.activarBoton();	
 
 		vbResultados.setVisible(true);
+
+		EstimacionesValoraciones.presupuesto = this.cbVsPresupuesto.getValue();
+		
+		EstimacionesValoraciones.presupuesto.cargaCostes();
+		EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
+		
+		EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
+		EstimacionesValoraciones.proyConsultado.cargaProyecto();
+		
+		tFxAlta.setText(FormateadorDatos.formateaDato(EstimacionesValoraciones.presupuesto.fxAlta, FormateadorDatos.FORMATO_FECHA));
+		tId.setText(new Integer(EstimacionesValoraciones.presupuesto.id).toString());
+		tVersion.setText(""+EstimacionesValoraciones.presupuesto.version);
+		taDesc.setText(EstimacionesValoraciones.presupuesto.descripcion);
+		
+		this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
+		cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
+		this.cbTipoPrep.setValue(EstimacionesValoraciones.presupuesto.tipo);
+		
+		Coste cst = null;
+		Iterator<Coste> itCostes = EstimacionesValoraciones.presupuesto.costes.values().iterator();
+
+		ArrayList<Object> lista = new ArrayList<Object>();
+		
+		int perfilEconomico = 0;
+		MetaFormatoProyecto mfp = null;
+		ParametroProyecto pp = EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParametro.PROYECTO_PERFIL_ECONOMICO);
+		mfp = (MetaFormatoProyecto) pp.getValor();
+		perfilEconomico = mfp.id;
+		mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
+		if (mfp==null) throw new Exception();
+		
+		
+		while (itCostes.hasNext()) {
+			cst = itCostes.next();
+			
+			for (int i = 0; i<mfp.conceptos.size();i++) {
+				MetaConcepto mcp = (MetaConcepto) mfp.conceptos.values().toArray()[i];
+				if (!cst.conceptosCoste.containsKey(mcp.codigo)){
+					Concepto conc = new Concepto(mcp);
+					conc.coste = cst;
+					cst.conceptosCoste.put(mcp.codigo, conc);
+				}
+			}
+		
+			MetaConcepto mc = new MetaConcepto();
+			mc.codigo = "TOTAL";
+			mc.descripcion = "Total";
+			mc.id = MetaConcepto.ID_TOTAL;
+			
+			Concepto conc = new Concepto();
+			conc.tipoConcepto = mc;
+			conc.baseCalculo = new BaseCalculoConcepto(BaseCalculoConcepto.CALCULO_BASE_COSTE);
+			conc.id = 32000;
+			cst.conceptosCoste.put(mc.codigo, conc);
+			
+			cst.calculaConceptos();				
+		}
+		
+		lista.addAll(EstimacionesValoraciones.presupuesto.costes.values());
 		
 		try {
-			EstimacionesValoraciones.presupuesto = this.cbVsPresupuesto.getValue();
-			
-			EstimacionesValoraciones.presupuesto.cargaCostes();
-			EstimacionesValoraciones.presupuesto.p = this.proySeleccionado;
-			
-			EstimacionesValoraciones.proyConsultado= this.proySeleccionado;
-			EstimacionesValoraciones.proyConsultado.cargaProyecto();
-			
-			tFxAlta.setText(FormateadorDatos.formateaDato(EstimacionesValoraciones.presupuesto.fxAlta, FormateadorDatos.FORMATO_FECHA));
-			tId.setText(new Integer(EstimacionesValoraciones.presupuesto.id).toString());
-			tVersion.setText(""+EstimacionesValoraciones.presupuesto.version);
-			taDesc.setText(EstimacionesValoraciones.presupuesto.descripcion);
-			
-			this.cbTipoPrep.getItems().removeAll(this.cbTipoPrep.getItems());
-			cbTipoPrep.getItems().addAll(TipoEnumerado.listado.get(TipoDato.FORMATO_TIPO_VCT).values());
-			this.cbTipoPrep.setValue(EstimacionesValoraciones.presupuesto.tipo);
-			
-			Coste cst = null;
-			Iterator<Coste> itCostes = EstimacionesValoraciones.presupuesto.costes.values().iterator();
-			LineaCostePresupuesto lcp = new LineaCostePresupuesto();
-			ArrayList<Object> lista = new ArrayList<Object>();
-			
-			int perfilEconomico = 0;
-			MetaFormatoProyecto mfp = null;
-			ParametroProyecto pp = EstimacionesValoraciones.proyConsultado.getValorParametro(MetaParametro.PROYECTO_PERFIL_ECONOMICO);
-			mfp = (MetaFormatoProyecto) pp.getValor();
-			perfilEconomico = mfp.id;
-			mfp = MetaFormatoProyecto.listado.get(perfilEconomico);
-			if (mfp==null) throw new Exception();
-			
-			
-			while (itCostes.hasNext()) {
-				cst = itCostes.next();
-				
-				for (int i = 0; i<mfp.conceptos.size();i++) {
-					MetaConcepto mcp = (MetaConcepto) mfp.conceptos.values().toArray()[i];
-					if (!cst.conceptosCoste.containsKey(mcp.codigo)){
-						Concepto conc = new Concepto(mcp);
-						conc.coste = cst;
-						cst.conceptosCoste.put(mcp.codigo, conc);
-					}
-				}
-			
-				MetaConcepto mc = new MetaConcepto();
-				mc.codigo = "TOTAL";
-				mc.descripcion = "Total";
-				mc.id = MetaConcepto.ID_TOTAL;
-				
-				Concepto conc = new Concepto();
-				conc.tipoConcepto = mc;
-				conc.baseCalculo = new BaseCalculoConcepto(BaseCalculoConcepto.CALCULO_BASE_COSTE);
-				conc.id = 32000;
-				cst.conceptosCoste.put(mc.codigo, conc);
-				
-				cst.calculaConceptos();				
-			}
-			
-			lista.addAll(EstimacionesValoraciones.presupuesto.costes.values());
-			
-			try {
-				HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
-				pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
-				this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
+			HashMap<String,Object> pasoPrimitiva = new HashMap<String,Object>();
+			pasoPrimitiva.put("COSTE", (Coste) EstimacionesValoraciones.presupuesto.costes.values().toArray()[0]);
+			this.tablaLineasCoste.setPasoPrimitiva(pasoPrimitiva);
 
-				this.tablaLineasCoste.pintaTabla(lista);
-			} catch (Exception e) {}
-			
-			if (popUp!=null) popUp.hide();
-			
-			resumenCoste();			
+			this.tablaLineasCoste.pintaTabla(lista);
+		} catch (Exception e) {}
+		
+		if (popUp!=null) popUp.hide();
+		
+		resumenCoste();			
 
-			this.actualizaResumen();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.actualizaResumen();
+
 	}
 	
-	private void guardarNuevaVsPresupuesto(boolean actualiza) {
-		try {
-			EstimacionesValoraciones.presupuesto.descripcion = taDesc.getText();
-			EstimacionesValoraciones.presupuesto.tipo = cbTipoPrep.getValue();
-			
-			if (EstimacionesValoraciones.presupuesto.tipo==null) {
-				Dialogo.error("Guardar Presupuesto", "Error al guardar", "Debe seleccionar un tipo.");
-				return;
-			}
-			
-			if (EstimacionesValoraciones.presupuesto.actualiza) actualiza = false;
-			
-			EstimacionesValoraciones.presupuesto.guardarPresupuesto(actualiza,null);
-			
-			EstimacionesValoraciones.presupuesto.actualiza = false;
-			
-			tVersion.setText(new Integer(EstimacionesValoraciones.presupuesto.version).toString());
-			tId.setText(new Integer(EstimacionesValoraciones.presupuesto.id).toString());			
+	private void guardarNuevaVsPresupuesto(boolean actualiza) throws Exception {
 
-			Dialogo.alert("Guardar Presupuesto", "Presupuesto guardado", "El presupuesto ha sido guardado correctamente");
-			
-			buscaPresupuestos(EstimacionesValoraciones.proyConsultado);			
-		} catch (Exception e) {
-			Dialogo.error("Guardar Presupuesto", "Error al guardar", "No se pudo guardar el presupuesto.");
+		EstimacionesValoraciones.presupuesto.descripcion = taDesc.getText();
+		EstimacionesValoraciones.presupuesto.tipo = cbTipoPrep.getValue();
+		
+		if (EstimacionesValoraciones.presupuesto.tipo==null) {
+			Dialogo.error("Guardar Presupuesto", "Error al guardar", "Debe seleccionar un tipo.");
 			return;
 		}
+		
+		if (EstimacionesValoraciones.presupuesto.actualiza) actualiza = false;
+		
+		EstimacionesValoraciones.presupuesto.guardarPresupuesto(actualiza,null);
+		
+		EstimacionesValoraciones.presupuesto.actualiza = false;
+		
+		tVersion.setText(new Integer(EstimacionesValoraciones.presupuesto.version).toString());
+		tId.setText(new Integer(EstimacionesValoraciones.presupuesto.id).toString());			
+
+		Dialogo.alert("Guardar Presupuesto", "Presupuesto guardado", "El presupuesto ha sido guardado correctamente");
+		
+		buscaPresupuestos(EstimacionesValoraciones.proyConsultado);			
 	}
 	
 	@Override
