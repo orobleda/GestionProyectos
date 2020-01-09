@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +29,7 @@ import model.metadatos.MetaParametro;
 import model.metadatos.TipoProyecto;
 import ui.GestionBotones;
 import ui.ParamTable;
+import ui.VentanaContextual;
 import ui.interfaces.ControladorPantalla;
 
 public class ConsultaAvanzadaProyectos implements ControladorPantalla, PopUp {
@@ -44,12 +43,30 @@ public class ConsultaAvanzadaProyectos implements ControladorPantalla, PopUp {
 		super();
 	}
 	
+	public static ConsultaAvanzadaProyectos getInstance(VentanaContextual vc, ControladorPantalla ventanaPadre, int maxElementos, int tipoElemento, Node elemento) throws Exception {
+		
+		FXMLLoader loader = new FXMLLoader();
+		ConsultaAvanzadaProyectos controlPantalla = new ConsultaAvanzadaProyectos();
+        loader.setLocation(new URL(controlPantalla.getFXML()));
+     	vc.showSubVentana(loader.load());
+     	     	
+     	HashMap<String, Object> variablesPaso = new HashMap<String, Object>();
+     	variablesPaso.put("ventanaPadre", ventanaPadre);
+     	variablesPaso.put("maxElementos", maxElementos);
+     	variablesPaso.put("tipoElemento", tipoElemento);
+     	
+     	controlPantalla = loader.getController();
+     	controlPantalla.setParametrosPaso(variablesPaso);
+     	
+     	return controlPantalla;
+	}
+	
 	public static ConsultaAvanzadaProyectos getInstance(ControladorPantalla ventanaPadre, int maxElementos, int tipoElemento, Node elemento) throws Exception {
 		
 		FXMLLoader loader = new FXMLLoader();
 		ConsultaAvanzadaProyectos controlPantalla = new ConsultaAvanzadaProyectos();
         loader.setLocation(new URL(controlPantalla.getFXML()));
-     	ParamTable.po = new PopOver(loader.load());
+     	ParamTable.po = new VentanaContextual(loader.load());
      	ParamTable.po.show(elemento);
      	ParamTable.po.setAnimated(true);
      	     	

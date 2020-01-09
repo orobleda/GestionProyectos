@@ -27,6 +27,10 @@ public class LineaCosteEstReal extends ParamTable implements Tableable  {
     	configuracionTabla = new HashMap<String, ConfigTabla>();
     	configuracionTabla.put("Estimado", new ConfigTabla("Estimado", "Estimado", false,0, false));
     	configuracionTabla.put("Real", new ConfigTabla("Real", "Real", false,0, false));
+    	
+      	anchoColumnas = new HashMap<String, Integer>();
+    	anchoColumnas.put("Estimado", new Integer(100));
+    	anchoColumnas.put("Real", new Integer(100));
     }
     
    	public void set(String campo, String valor){

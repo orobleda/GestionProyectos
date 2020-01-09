@@ -17,6 +17,7 @@ import ui.interfaces.Propiediable;
 public class MetaParametro implements Cargable, Loadable {
 	
 	public static final String FASE_PROYECTO_FX_IMPLANTACION = "F.PR.fxImplantacion";
+	public static final String FASE_PROYECTO_SISTEMA_FX_DIFERIDA = "F.PR.SIS.fx_diferida";
 	
 	public static final String FASES_COBERTURA_DEMANDA = "F.PR.SIS.DEM.cobertura";
 
@@ -33,6 +34,7 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String PARAMETRO_TARIFA_DEFECTO_DES = "PAR_TAR_DEF_DES";
 	public static final String PARAMETRO_REPO_BD_SEG = "PARM_REPO_BD_SEG";	
 	public static final String PARAMETRO_OCURR_COPIA_BD = "PARM.OCURR_COPIA_BD";
+	public static final String PARAMETRO_HOR_REC_ANIO = "hor.Rec.Anio";
 	
 	public static final String PARAMETRO_SISTEMA_PROVEEDOR = "SIST.Proveedor";
 	
@@ -62,7 +64,6 @@ public class MetaParametro implements Cargable, Loadable {
 	public static final String FOTO_COD_PORFOLIO = "FOTO.COD_PORFOLIO";
 	public static final String FOTO_FX_PPM = "FOTO.EN_PPM";
 	
-
 	public static final String CERTIFICACION_DESCRIPCION = "CERT.desc";
 	public static final String CERTIFICACION_FASE_TIPOVCT = "CERFAS.TipoVCT";
 		

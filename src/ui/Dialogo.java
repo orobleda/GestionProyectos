@@ -1,7 +1,10 @@
 package ui;
 
+import com.dlsc.workbenchfx.model.WorkbenchDialog;
+
 import application.Main;
 import controller.Log;
+import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 
 public class Dialogo {
@@ -33,6 +36,14 @@ public class Dialogo {
 		    buttonType -> { // Proceed and validate the result 
 		    	}
 		    );
+	}
+	
+	public static void alertContenido(String titulo, String cabecera, String contenido, Node eleContenido){
+		WorkbenchDialog dialog = WorkbenchDialog.builder(
+				titulo, eleContenido, ButtonType.OK)
+				    .build();
+		
+		Main.customWorkbench.showDialog(dialog);
 	}
 	
     public static void error(String titulo, String cabecera, String contenido){

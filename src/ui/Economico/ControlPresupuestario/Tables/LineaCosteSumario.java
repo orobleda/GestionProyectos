@@ -9,6 +9,7 @@ import model.beans.Concepto;
 import model.constantes.FormateadorDatos;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.Tableable;
 
 public class LineaCosteSumario extends ParamTable implements Tableable  {
@@ -30,8 +31,8 @@ public class LineaCosteSumario extends ParamTable implements Tableable  {
     	configuracionTabla.put("%", new ConfigTabla("%", "%", false,0, false));
     	configuracionTabla.put("Diferencia", new ConfigTabla("Diferencia", "Diferencia", false,1, false));
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put("%", new Integer(60));
-    	anchoColumnas.put("Diferencia", new Integer(85));
+    	anchoColumnas.put("%", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("Diferencia", ControlPresupuestario.anchoResumen);
     }
     
    	public void set(String campo, String valor){

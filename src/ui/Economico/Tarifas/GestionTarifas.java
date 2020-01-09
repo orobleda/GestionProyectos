@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 
 import application.Main;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -23,7 +20,7 @@ import model.beans.Tarifa;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Tabla;
-import ui.Economico.ControlPresupuestario.Tables.LineaCosteCertificacion;
+import ui.VentanaContextual;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -34,7 +31,7 @@ public class GestionTarifas  implements ControladorPantalla {
 	public static ArrayList<Tableable> listaBorrados = null;
 	public static GestionBotones botonGuardar = null;;
 	
-	PopOver popUp = null;
+	VentanaContextual popUp = null;
 	
 	@FXML
 	private AnchorPane anchor;

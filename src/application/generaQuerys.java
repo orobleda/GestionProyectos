@@ -5,12 +5,12 @@ import java.util.Iterator;
 
 public class generaQuerys {
 	public static void main(String[] args) {
-		String estructura = "REL_BLOQUE_CONCEPTO]{"+
-							"[id] integer NOT NULL UNIQUE,"+
-							"[idBloque] integer NOT NULL,"+
-							"[codRel] text NOT NULL,"+
-							"[idConcepto] integer";
-		
+		String estructura = "REL_PROYECTO_EVENTO ( "+
+                             "[id] integer NOT NULL,"+
+                "[idProy] integer NOT NULL,"+
+                "[idEvento] integer NOT NULL";
+
+				
 		String [] lineasAux = estructura.split("\\(");
 		String tabla = lineasAux[0].replaceAll("CREATE TABLE \\[", "").replaceAll("\\]", "").trim();
 		

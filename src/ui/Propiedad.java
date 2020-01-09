@@ -65,7 +65,7 @@ public class Propiedad implements PropertySheet.Item {
 	@Override
 	public Object getValue() {
 		if (this.tipo == TipoDato.FORMATO_FECHA) {
-			if (this.valor == null) return  Instant.ofEpochMilli((Constantes.fechaActual()).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+			if (this.valor == null) return  null;//Instant.ofEpochMilli((Constantes.fechaActual()).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 			return Instant.ofEpochMilli(((Date)this.valor).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 		return this.valor;

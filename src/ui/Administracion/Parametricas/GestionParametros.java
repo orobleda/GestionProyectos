@@ -49,7 +49,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 	public boolean esPopUp = false;
 	
     @FXML
-    private HBox hbContenedor;
+    public  HBox hbContenedor;
 
     @FXML
     private HBox hbGuardado;
@@ -187,8 +187,7 @@ public class GestionParametros implements ControladorPantalla, PopUp {
 		}
 		
 		this.hbContenedor.getChildren().removeAll(this.hbContenedor.getChildren());
-		this.hbContenedor.getChildren().add(tp);
-		
+		this.hbContenedor.getChildren().add(tp);		
 	}
 	
 	public HashMap<String, Parametro> getParametros() {

@@ -14,7 +14,7 @@
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label prefWidth="100.0" text="Fase" />
-                  <TextField id="tFase" fx:id="tFase" prefWidth="75.0">
+                  <TextField id="tFase" fx:id="tFase" prefHeight="25.0" prefWidth="392.0">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
@@ -29,6 +29,34 @@
                         <Insets left="15.0" />
                      </HBox.margin>
                   </TextField>
+                  <Label text="Asignación">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField id="tPorcentaje" fx:id="tPorcentaje" prefWidth="75.0">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Label text="Estimado">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField id="tEstimado" fx:id="tEstimado" disable="true" prefWidth="75.0">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <ImageView id="imNuevaFila" fx:id="imNuevaFila" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </ImageView>
                </children>
                <VBox.margin>
                   <Insets top="10.0" />
@@ -36,32 +64,6 @@
             </HBox>
          </children>
       </VBox>
-      <Label text="Asignación">
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin>
-      </Label>
-      <TextField id="tPorcentaje" fx:id="tPorcentaje" prefWidth="75.0">
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin></TextField>
-      <Label text="Estimado">
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin></Label>
-      <TextField id="tEstimado" fx:id="tEstimado" disable="true" prefWidth="75.0">
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin>
-      </TextField>
-      <ImageView id="imNuevaFila" fx:id="imNuevaFila" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../imgs/iconos/NuevaFila3_PAS.png" />
-         </image>
-         <HBox.margin>
-            <Insets left="15.0" />
-         </HBox.margin>
-      </ImageView>
    </children>
    <padding>
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

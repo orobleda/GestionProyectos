@@ -64,6 +64,40 @@ public class Constantes {
 		return c.getTime();
 	}
 	
+	public static Date inicioDia(Date d) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+	
+	public static Date inicioDia(int dia, int mes, int anio) {
+		Calendar c = Calendar.getInstance();
+		c.set(anio,mes-1,dia,0,0,0);
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+	
+	public static Date finDia(int dia, int mes, int anio) {
+		Calendar c = Calendar.getInstance();
+		c.set(anio, mes-1,dia,23,59,59); 
+		c.set(Calendar.MILLISECOND, 59);
+		return c.getTime();
+	}
+	
+	public static Date finDia(Date d) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+		c.set(Calendar.HOUR, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 59);
+		return c.getTime();
+	}
+	
 	public static Date inicioMes(Date fecha) {
 		Calendar cAux = Calendar.getInstance();
 		cAux.setTime(fecha);

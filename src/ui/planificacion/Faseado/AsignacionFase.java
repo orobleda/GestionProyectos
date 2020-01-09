@@ -137,7 +137,7 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 			proyectoPadre.fasesProyecto = new ArrayList<FaseProyecto>();
 		} else {
 			FaseProyecto fp = new FaseProyecto();
-			proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
+			//proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
 		}
 		
 		if (proyectoPadre.fasesProyecto.size()==0) {
@@ -147,32 +147,13 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		pintaFases();
 	}
 	
-	public void borraFase(FaseProyecto fasePadre) {
-		FaseProyectoSistema fps = fasePadre.fasesProyecto.get(this.sistema.codigo);
-		ArrayList<FaseProyectoSistemaDemanda> lFpsd = new ArrayList<FaseProyectoSistemaDemanda>();
-		Iterator<FaseProyectoSistemaDemanda> itDemandas = fps.demandasSistema.iterator();
-		while (itDemandas.hasNext()) {
-			FaseProyectoSistemaDemanda fpsd = itDemandas.next();
-			if (fpsd.p.id != this.demanda.id || fpsd.p.apunteContable != this.demanda.apunteContable) {
-				lFpsd.add(fpsd);
-			}
-		}		
-		
-		FaseProyecto fp = new FaseProyecto();
-		proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
-		
-		if (proyectoPadre.fasesProyecto.size()==0) {
-			nuevaFase(null);
-		}
-		
-		pintaFases();
-	}
+	
 	
 	public void nuevaFase(FaseProyecto fasePadre) {
 		FaseProyecto fase = new FaseProyecto();
 		proyectoPadre.fasesProyecto.add(fase);
 		
-		fase.id = Constantes.fechaActual().hashCode();
+		fase.id = -1;
 		fase.idProyecto = proyectoPadre.id;
 		fase.p = proyectoPadre;
 		fase.nombre = "";
@@ -265,9 +246,9 @@ public class AsignacionFase implements ControladorPantalla, PopUp {
 		}
 	}
 	
-	public void guardaAsignacion() {
+	public void guardaAsignacion() throws Exception{
 		FaseProyecto fp = new FaseProyecto();
-		proyectoPadre.fasesProyecto = fp.purgarFases(proyectoPadre.fasesProyecto);
+		
 		
 		float porcAsig = proyectoPadre.coberturaDemandaFases(this.demanda, this.demanda.apunteContable, this.sistema);
 		

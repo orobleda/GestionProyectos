@@ -3,6 +3,7 @@ package ui.Economico.ControlPresupuestario;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import model.beans.Proyecto;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
 import model.metadatos.TipoProyecto;
 import ui.GestionBotones;
 import ui.ParamTable;
@@ -76,6 +78,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public VistaPPM vPPM = null;
 	public VistaJerarquizada vJer = null;
 	public VistaFoto vFoto = null;
+	public static int anchoResumen;
 		
 	public static ArrayList<Object> listaIzqdaResumen = null;
 	public static ArrayList<Object> listaDrchaResumen = null;
@@ -166,6 +169,12 @@ public class ControlPresupuestario implements ControladorPantalla {
     
 	ArrayList<ControladorPantalla> listaPantallas = null; 
 	
+	public ControlPresupuestario() {
+		if (ControlPresupuestario.anchoResumen==0) {
+			ControlPresupuestario.anchoResumen = 300;
+		}
+	}
+	
 	@Override
 	public AnchorPane getAnchor() {
 		return anchor;
@@ -181,11 +190,19 @@ public class ControlPresupuestario implements ControladorPantalla {
 		if (res == Main.ALTA_RESOLUCION ) {
 			scrDetalles.setMaxHeight(Main.scene.getHeight()*0.6);
 			scrDetalles.setMinWidth(Main.scene.getWidth()*0.99);
+			tbResumenIzqda.setMinWidth(Main.scene.getWidth()*0.4);
+			tbResumenDcha.setMinWidth(Main.scene.getWidth()*0.4);
+			tbDiferencia.setMinWidth(Main.scene.getWidth()*0.1);
+			anchoResumen = 100;
 		}
 		
 		if (res== Main.BAJA_RESOLUCION) {
 			scrDetalles.setMaxHeight(Main.scene.getHeight()*0.5);
 			scrDetalles.setMinWidth(Main.scene.getWidth()*0.99);
+			tbResumenIzqda.setMinWidth(Main.scene.getWidth()*0.4);
+			tbResumenDcha.setMinWidth(Main.scene.getWidth()*0.4);
+			tbDiferencia.setMinWidth(Main.scene.getWidth()*0.1);
+			anchoResumen = 70;
 		}
 				
 		if (this.listaPantallas!=null) {
@@ -217,6 +234,8 @@ public class ControlPresupuestario implements ControladorPantalla {
 	}
 	
 	public void initialize(){
+		resize(null);
+		
 		tablaResumenIzqda = new Tabla(tbResumenIzqda, new LineaCoste(),this);
 		tablaResumenDcha = new Tabla(tbResumenDcha, new LineaCoste(),this);
 		tablaResumenDiferencia = new Tabla(tbResumenDiferencia, new LineaCosteSumario(),this);
@@ -570,7 +589,7 @@ public class ControlPresupuestario implements ControladorPantalla {
 	public void cargaPresupuesto(Presupuesto p, Tabla tabla, String lado) {
 		HashMap<String,Concepto> listaConceptos = new HashMap<String,Concepto>();
 		HashMap<String,Concepto> listaConceptosDesglosado = null;
-		ArrayList<Object> listaConceptosDesglosada = new ArrayList<Object>();
+		ArrayList<LineaCosteDesglosado> listaConceptosDesglosada = new ArrayList<LineaCosteDesglosado>();
 		
 		Iterator<Coste> itCoste = p.costes.values().iterator();
 		float acumulado = 0;
@@ -632,17 +651,21 @@ public class ControlPresupuestario implements ControladorPantalla {
 		lista.add(new LineaCoste(listaConceptos));
 		tabla.pintaTabla(lista);
 		
+		Collections.sort(listaConceptosDesglosada);
+		ArrayList<Object> listaObjectosDesglosado = TipoDato.toListaObjetos(listaConceptosDesglosada);
+		
+		
 		if (ControlPresupuestario.COLUMNA_I.equals(lado)) {
 			listaIzqdaResumen = lista;
-			listaIzqda = listaConceptosDesglosada;
+			listaIzqda = listaObjectosDesglosado;
 			tablaDesglosada = tablaIzqda;
 		} else {
 			listaDrchaResumen = lista;
-			listaDrcha = listaConceptosDesglosada;
+			listaDrcha = listaObjectosDesglosado;
 			tablaDesglosada = tablaDrcha;
 		}
 		
-		tablaDesglosada.pintaTabla(listaConceptosDesglosada);
+		tablaDesglosada.pintaTabla(listaObjectosDesglosado);
 	}
 	
 	public void cargaSumario(Presupuesto p, Tabla tabla) {

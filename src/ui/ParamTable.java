@@ -3,13 +3,11 @@ package ui;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.table.TableRowExpanderColumn;
 import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
@@ -26,9 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import model.interfaces.Loadable;
-import model.metadatos.Sistema;
 import ui.interfaces.Tableable;
-import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
 import ui.popUps.PopUp;
 
 public class ParamTable implements Tableable {
@@ -41,7 +37,7 @@ public class ParamTable implements Tableable {
     
     public HashMap<String,Object> variablesMetaDatos = null;
     
-    public static PopOver po = null;
+    public static VentanaContextual po = null;
     
     @Override
     public void limpiarColumnas(TableView<Tableable> tParametros){
@@ -174,7 +170,7 @@ public class ParamTable implements Tableable {
 								        	        Pane pane = loader.load();
 								        	        controlPantalla = (PopUp) loader.getController();
 								        	        controlPantalla.setParametrosPaso(parametrosPaso);
-								        	        po = new PopOver(pane);
+								        	        po = new VentanaContextual(pane);
 								        	        parametrosPaso.put("PopOver", po);
 								        	        po.setTitle("");
 								        			po.show(t.getTableView());
@@ -228,7 +224,7 @@ public class ParamTable implements Tableable {
         pP.informaValor(new Integer(p.getId()).toString(),idColumna);
         pP.modificado = true;
         t.getTableView().refresh();
-        PopOver popUp = (PopOver) parametrosPaso.get("PopOver");
+        VentanaContextual popUp = (VentanaContextual) parametrosPaso.get("PopOver");
         popUp.hide();
         po=null;
     }

@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 
 import controller.AnalizadorPresupuesto;
+import controller.Log;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -29,21 +29,25 @@ import javafx.scene.layout.Pane;
 import model.beans.Concepto;
 import model.beans.Estimacion;
 import model.beans.JornadasMes;
+import model.beans.Parametro;
 import model.beans.ParametroRecurso;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.Recurso;
 import model.beans.Tarifa;
 import model.constantes.Constantes;
+import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
 import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Economico.EstimacionesInternas.tables.LineaCosteProyectoEstimacion;
 import ui.Economico.EstimacionesInternas.tables.LineaDetalleUsuario;
 import ui.interfaces.ControladorPantalla;
@@ -347,16 +351,18 @@ public class EstimacionesInternas implements ControladorPantalla {
 			while (itRecursos.hasNext()) {
 				Integer key = itRecursos.next();
 				HashMap<Integer,HashMap<String,HashMap<String,HashMap<String,Float>>>> recurso = this.listadatos.get(key);
-				Recurso r = Recurso.listaRecursos.get(key);				
+				Recurso r = Recurso.listaRecursos.get(key);		
+				
+				float acumuladorHoras = 0;
+				
+				LineaDetalleUsuario lduPpal = new LineaDetalleUsuario();
+				ParametroRecurso codUsuario = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+				lduPpal.codUsuario = (String) codUsuario.getValor() ;
+				lduPpal.nomUsuario = r.nombre;
+				lduPpal.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_TOTAL;
+				lista.add(lduPpal);
 				
 				LineaDetalleUsuario ldu = new LineaDetalleUsuario();
-				ParametroRecurso codUsuario = (ParametroRecurso) r.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
-				ldu.codUsuario = (String) codUsuario.getValor() ;
-				ldu.nomUsuario = r.nombre;
-				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_TOTAL;
-				lista.add(ldu);
-				
-				ldu = new LineaDetalleUsuario();
 				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_AUSENCIAS;
 				lista.add(ldu);
 				
@@ -370,12 +376,13 @@ public class EstimacionesInternas implements ControladorPantalla {
 				while (itMeses.hasNext()) {
 					Integer keyMes = itMeses.next();
 					HashMap<String,HashMap<String,HashMap<String,Float>>> mes = recurso.get(keyMes);
+					acumuladorHoras += (Float) mes.get(LineaDetalleUsuario.CONCEPTO_HORAS_TOTAL).get(EstimacionesInternas.SISTEMA).get(EstimacionesInternas.HORAS);
 					
 					Iterator<String> keyConcepto = mes.keySet().iterator();
 					
 					while (keyConcepto.hasNext()) {
 						String concepto = keyConcepto.next();
-						System.out.println(concepto);
+						Log.t(concepto);
 						
 						if (!this.conceptosEstaticos.containsKey(concepto)) {
 							HashMap<String,HashMap<String,Float>> proyecto = mes.get(concepto);
@@ -415,15 +422,20 @@ public class EstimacionesInternas implements ControladorPantalla {
 					}
 				}
 				
+				lduPpal.sistema = FormateadorDatos.formateaDato(acumuladorHoras,TipoDato.FORMATO_REAL);
+				
 				ldu = (LineaDetalleUsuario) ldu.clone();
 				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_ASIGNADAS;
 				lista.add(ldu);
 				
 				ldu = (LineaDetalleUsuario) ldu.clone();
 				ldu.concepto = LineaDetalleUsuario.CONCEPTO_HORAS_PENDIENTES;
-				lista.add(ldu);
 				
+				Parametro p = (new Parametro()).getParametro(MetaParametro.PARAMETRO_HOR_REC_ANIO);
+				float valorTotalHoras = (Float) p.getValor();
 				
+				ldu.sistema = FormateadorDatos.formateaDato(valorTotalHoras-acumuladorHoras,TipoDato.FORMATO_REAL);
+				lista.add(ldu);			
 			}
 			
 			ArrayList<Object> listadoAux = new ArrayList<Object>();
@@ -662,7 +674,7 @@ public class EstimacionesInternas implements ControladorPantalla {
 		    Pane pane = loader.load();
 		    controlPantalla = (EditarEstimacion) loader.getController();
 		    controlPantalla.setParametrosPaso(parametrosPaso);
-		    ParamTable.po = new PopOver(pane);
+		    ParamTable.po = new VentanaContextual(pane);
 		    parametrosPaso.put("PopOver", ParamTable.po);
 		    ParamTable.po.setTitle("");
 		    ParamTable.po.show(this.crMes);

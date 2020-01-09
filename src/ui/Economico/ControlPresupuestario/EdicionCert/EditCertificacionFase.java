@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -356,6 +357,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
         
         listaParametros = gestPar.listaParametros;
         certificacion.parametrosCertificacionFase = listaParametros;
+        resize(null);
 	}
 	
 	public void nuevaCertificacion() throws Exception{
@@ -515,6 +517,7 @@ public class EditCertificacionFase implements ControladorPantalla, PopUp {
 
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
+		resize(null);
 	}
 
 	@Override

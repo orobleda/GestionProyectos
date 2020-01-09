@@ -22,6 +22,10 @@ public class TipoEnumerado implements Cargable, Loadable  {
 	
 	public static int TIPO_PRESUPUESTO_EST = 1;
 	public static int TIPO_PRESUPUESTO_VCT = 2;	
+	
+	public static String TIPO_EVENTO_REU = "REU";
+	public static String TIPO_EVENTO_TAR = "TAR";
+	public static String TIPO_EVENTO_PERS = "PERS";
 
 	
 	public static HashMap<Integer, HashMap<Integer,TipoEnumerado>> listado = null;
@@ -109,6 +113,19 @@ public class TipoEnumerado implements Cargable, Loadable  {
 		while (itTipos.hasNext()) {
 			TipoEnumerado tp = itTipos.next();
 			if (tp.valor.trim().toUpperCase().equals(desc.trim().toUpperCase())) {
+				return tp;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static TipoEnumerado getPorCod(int tipoEnumerado, String cod) {
+		HashMap<Integer,TipoEnumerado> listadoEnums = TipoEnumerado.getValores(tipoEnumerado);
+		Iterator<TipoEnumerado> itTipos = listadoEnums.values().iterator();
+		while (itTipos.hasNext()) {
+			TipoEnumerado tp = itTipos.next();
+			if (tp.codigo.trim().toUpperCase().equals(cod.trim().toUpperCase())) {
 				return tp;
 			}
 		}

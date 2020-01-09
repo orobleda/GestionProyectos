@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -160,6 +161,9 @@ public class ResumenCarga implements ControladorPantalla  {
 		
 		this.tablaImputaciones = new Tabla(this.tImputaciones,new LineaEstadoRecursos());
 		this.tablaImputaciones.pintaTabla(TipoDato.toListaObjetos(lImputaciones));
+		
+		this.tablaImputaciones.fijaAlto(Main.scene.getHeight()*0.3);
+		this.tablaEstadoProyectos.fijaAlto(Main.scene.getHeight()*0.4);
 	}
 	
 	private void guardarImputaciones() throws Exception{

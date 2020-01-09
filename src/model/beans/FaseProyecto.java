@@ -149,7 +149,7 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 		ConsultaBD consulta = new ConsultaBD();
 	
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.idProyecto));
+		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_INT, this.id));
 	
 		consulta = new ConsultaBD();
 		consulta.ejecutaSQL("dBorraFasesProyecto", listaParms, this, idTransaccion);
@@ -160,14 +160,30 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 		ConsultaBD consulta = new ConsultaBD();
 		
 		ArrayList<ParametroBD> listaParms = new ArrayList<ParametroBD>();
-		listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_ID, this.id));
-		listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_STR, this.nombre));
-		listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.idProyecto));
-		
 		consulta = new ConsultaBD();
-		consulta.ejecutaSQL("iInsertaFasesProyecto", listaParms, this, idTransaccion);
 		
-		this.id = ParametroBD.ultimoId;
+		if (this.id == -1) {
+			listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_ID, this.id));
+			listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_STR, this.nombre));
+			listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.idProyecto));
+			
+			consulta.ejecutaSQL("iInsertaFasesProyecto", listaParms, this, idTransaccion);
+			
+			this.id = ParametroBD.ultimoId;
+		} else {
+			listaParms.add(new ParametroBD(1, ConstantesBD.PARAMBD_INT, this.id));
+			listaParms.add(new ParametroBD(2, ConstantesBD.PARAMBD_STR, this.nombre));
+			listaParms.add(new ParametroBD(3, ConstantesBD.PARAMBD_INT, this.idProyecto));
+			listaParms.add(new ParametroBD(4, ConstantesBD.PARAMBD_INT, this.id));
+			
+			consulta.ejecutaSQL("iUpdateFasesProyecto", listaParms, this, idTransaccion);
+						
+			Iterator<FaseProyectoSistema> itFps = this.fasesProyecto.values().iterator();
+			while (itFps.hasNext()) {
+				FaseProyectoSistema fps = itFps.next();
+				fps.borraFasesProyectoSistema(idTransaccion);
+			}
+		}
 		
 		if (this.parametrosFase!=null) {
 			Iterator<? extends Parametro> itpf = this.parametrosFase.values().iterator();
@@ -183,19 +199,33 @@ public class FaseProyecto implements Cargable, Comparable<FaseProyecto>{
 			FaseProyectoSistema fps = itFps.next();
 			fps.idFase = this.id;
 			fps.insertFaseProyectoSistema(idTransaccion);
-
 		}
 	}
 		
 	public void updateFasesProyecto(ArrayList<FaseProyecto> listadoFases, String idTransaccion)  throws Exception{
-
-		Iterator<FaseProyecto> itFProyecto = listadoFases.iterator();
-		while (itFProyecto.hasNext()) {
-			FaseProyecto fp = itFProyecto.next();
-			fp.borraFasesProyecto(idTransaccion);
+		Proyecto p = new Proyecto();
+		p.id = this.p.id;
+		p.cargaFasesProyecto();
+		
+		Iterator<FaseProyecto> iFp = p.fasesProyecto.iterator();
+		while (iFp.hasNext()) {
+			FaseProyecto fp = iFp.next();
+			
+			boolean encontrado = false;
+			Iterator<FaseProyecto> itFProyecto = listadoFases.iterator();
+			while (itFProyecto.hasNext()) {
+				FaseProyecto fpAux = itFProyecto.next();
+				if (fp.id == fpAux.id) {
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (!encontrado)
+				fp.borraFasesProyecto(idTransaccion);
 		}
 		
-		itFProyecto = listadoFases.iterator();
+		Iterator<FaseProyecto> itFProyecto = listadoFases.iterator();
 		while (itFProyecto.hasNext()) {
 			FaseProyecto fp = itFProyecto.next();
 			fp.insertFaseProyecto(idTransaccion);

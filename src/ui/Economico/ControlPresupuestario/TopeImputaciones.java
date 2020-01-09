@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -76,8 +77,13 @@ public class TopeImputaciones implements ControladorPantalla {
 	
 	@Override
 	public void resize(Scene escena) {
-		tablaTopes.fijaAlto(cbComboSistemas.getScene().getHeight()*0.4);
-		tablaTopes.componenteTabla.setMaxWidth(cbComboSistemas.getScene().getWidth()*0.8);
+		if (tablaTopes!=null){
+			tablaTopes.fijaAlto(Main.scene.getHeight()*0.4);
+			if (tablaTopes.componenteTabla!=null)
+				tablaTopes.componenteTabla.setMinWidth(Main.scene.getWidth()*0.8);
+				tablaTopes.componenteTabla.setMaxWidth(Main.scene.getWidth()*0.9);
+		}
+		
 	}
 
 	@Override
@@ -158,6 +164,8 @@ public class TopeImputaciones implements ControladorPantalla {
 		cbComboSistemas.getItems().add(s);
 		cbComboSistemas.setValue(s);
 		TopeImputaciones.thisTope = this;
+		
+		resize(null);
 	}
 	
 	public boolean validaTopesParaCargar() {

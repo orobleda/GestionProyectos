@@ -88,7 +88,7 @@ public class ReporteHorasMes extends InformeGenerico{
 		int contador = 2;
 		
 		Calendar c = Calendar.getInstance();
-		c.setTime(Constantes.fechaActual());
+		c.setTime(Constantes.inicioMes(mes, anio));
 		for (int i=0;i<c.getActualMaximum(Calendar.DAY_OF_MONTH);i++) {
 			celdaInicio = xssfSheetResumen.offset(celdaInicio, 0, 1);
 			celdaInicio.setCellValue(i+1);

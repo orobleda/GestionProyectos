@@ -9,10 +9,9 @@ import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 
-import org.controlsfx.control.PopOver;
-
 import application.Main;
 import controller.AnalizadorPresupuesto;
+import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +35,7 @@ import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Economico.ControlPresupuestario.EdicionCert.ImportaCertificacion;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteCertResumenFase;
 import ui.Economico.ControlPresupuestario.Tables.LineaCosteCertResumenSistema;
@@ -90,22 +90,19 @@ public class ListaCertificaciones implements ControladorPantalla {
 	public void resize(Scene escena) {
 	   if (tablaCertificaciones!=null) {
 		    vbCertificaciones.setPrefHeight(vbCertificaciones.getScene().getHeight()*0.60);
-		    vbCertificaciones.setPrefWidth(vbCertificaciones.getScene().getWidth()*0.75);
-			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
-			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
-			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.4);
+		    vbCertificaciones.setPrefWidth(vbCertificaciones.getScene().getWidth()*0.95);
 	   }
 	   
 	   int res = Main.resolucion();
 		
 		if (res == Main.ALTA_RESOLUCION ) {
-			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
+			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.75);
 			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
 			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.35);
 		}
 		
 		if (res== Main.BAJA_RESOLUCION) {
-			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
+			tablaCertificaciones.fijaAlto(vbCertificaciones.getPrefHeight()*0.65);
 			tablaResumenFases.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
 			tablaResumenSistemas.fijaAlto(vbCertificaciones.getPrefHeight()*0.3);
 		}
@@ -117,11 +114,6 @@ public class ListaCertificaciones implements ControladorPantalla {
 	}
 	
 	public void procesaArchivo() throws Exception{
-			if (this.cbSistema.getValue()==null) {
-				Dialogo.alert("Sistema no disponible", "Falta el sistema", "Es necesario seleccionar un sistema");
-				return;
-			}
-		
 			JFileChooser selectorArchivos = new JFileChooser();
 			selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -144,7 +136,7 @@ public class ListaCertificaciones implements ControladorPantalla {
 		        importarCertificacion = loader.getController();
 		        importarCertificacion.setParametrosPaso(variablesPaso);	
 		        
-		        ParamTable.po = new PopOver(pane);
+		        ParamTable.po = new VentanaContextual(pane);
 		        ParamTable.po.setTitle("");
 		        ParamTable.po.show(this.cbSistema);
 		        ParamTable.po.setAnimated(true);
@@ -154,7 +146,7 @@ public class ListaCertificaciones implements ControladorPantalla {
 	
 	public void initialize(){
 
-		gbCargaCertificacion = new GestionBotones(imCargaCertificacion, "BuscaFichero3", false, new EventHandler<MouseEvent>() {        
+		gbCargaCertificacion = new GestionBotones(imCargaCertificacion, "ProcesarFichero3", false, new EventHandler<MouseEvent>() {        
 			@Override
             public void handle(MouseEvent t)
             { 
@@ -162,7 +154,7 @@ public class ListaCertificaciones implements ControladorPantalla {
 					String idTransaccion = ConsultaBD.getTicket();
 					procesaArchivo();					
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Log.e(ex);
 				}
             } }, "Añadir Certificacion Adicional");
 		gbCargaCertificacion.activarBoton();
@@ -172,6 +164,10 @@ public class ListaCertificaciones implements ControladorPantalla {
             public void handle(MouseEvent t)
             { 
 				try {
+					if (cbSistema.getValue()==null) {
+						Dialogo.error("Error al crear certificación", "Error al crear certificación", "Es necesario seleccionar un sistema");
+					}
+					
 					Certificacion cert = new Certificacion();
 					cert.p = ap.proyecto;
 					cert = cert.generaCertificacionVacia(cbSistema.getValue(), ap.proyecto );
@@ -183,7 +179,7 @@ public class ListaCertificaciones implements ControladorPantalla {
 	            	Dialogo.alert("Certificación añadida", "Certificación añadida", "Certificación añadida correctamente");
 	            	ControlPresupuestario.cargaPosicionActual();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Log.e(ex);
 				}
             } }, "Añadir Certificacion Adicional");
 		gbNuevaCertAdicional.activarBoton();
@@ -193,13 +189,12 @@ public class ListaCertificaciones implements ControladorPantalla {
             @Override
             public void handle(MouseEvent t)
             {
-            	try {//
+            	try {
 	            	File file = new File (ap.proyecto.rutaCertificacion());
 	            	Desktop desktop = Desktop.getDesktop();
 	            	desktop.open(file);
             	} catch (Exception e) {
-            		Dialogo.error("Error al abrir", "Error al abrir", "Error al abrir la carpeta de certificaciones");
-            		e.printStackTrace();
+            		Log.e(e);
             	}
             }
         });

@@ -13,6 +13,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.Tableable;
 
 public class LineaCoste extends ParamTable implements Tableable  {
@@ -48,12 +49,12 @@ public class LineaCoste extends ParamTable implements Tableable  {
     	configuracionTabla.put("TOTAL", new ConfigTabla("TOTAL", "TOTAL", false,contador, false));
     	
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put("TREI", new Integer(65));
-    	anchoColumnas.put("CC", new Integer(65));
-    	anchoColumnas.put("SATAD", new Integer(65));
-    	anchoColumnas.put("Desarrollo", new Integer(70));
-    	anchoColumnas.put("GOSC", new Integer(65));
-    	anchoColumnas.put("TOTAL", new Integer(70));
+    	anchoColumnas.put("TREI", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("CC", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("SATAD", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("Desarrollo", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("GOSC", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("TOTAL", ControlPresupuestario.anchoResumen);
     }
     
    	public void set(String campo, String valor){

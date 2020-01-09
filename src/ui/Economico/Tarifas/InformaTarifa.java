@@ -3,9 +3,7 @@ package ui.Economico.Tarifas;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
@@ -27,6 +25,7 @@ import model.metadatos.TipoDato;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
+import ui.VentanaContextual;
 import ui.Economico.CargaImputaciones.DetalleImputacion;
 import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.Economico.Tarifas.Tables.TarifaTabla;
@@ -38,7 +37,7 @@ public class InformaTarifa implements ControladorPantalla, PopUp {
 	
 public static final String fxml = "file:src/ui/Economico/Tarifas/InformaTarifa.fxml";
 	
-	PopOver popUp = null;
+	VentanaContextual popUp = null;
 	static TableRowDataFeatures<Tableable> expander = null;
 	
 	@FXML

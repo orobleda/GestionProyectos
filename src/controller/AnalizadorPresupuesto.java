@@ -25,10 +25,12 @@ import model.beans.Presupuesto;
 import model.beans.Proyecto;
 import model.beans.TopeImputacion;
 import model.constantes.Constantes;
+import model.constantes.FormateadorDatos;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaGerencia;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
+import model.metadatos.TipoDato;
 import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 
@@ -195,7 +197,7 @@ public class AnalizadorPresupuesto {
 				}
 			}
 					
-			System.out.println(conc.s.codigo + " " + conc.porc_trei_ggp);
+			Log.t(conc.s.codigo + " " + conc.porc_trei_ggp);
 		}
 		
 		itEa = this.estimacionAnual.iterator();
@@ -773,7 +775,7 @@ public class AnalizadorPresupuesto {
 		return i;
 	}
 	
-	public ArrayList<Imputacion> getImputacionesHuerfanas(ArrayList<Imputacion> listaLeidas) throws Exception {
+	public ArrayList<Imputacion> getImputacionesHuerfanas(ArrayList<Imputacion> listaLeidas, Date inicio, Date fin) throws Exception {
 		ArrayList<Imputacion> noIncluidas = new ArrayList<Imputacion>();
 		
 		Iterator<Imputacion> itImputacionesExistentes = this.listaImputaciones.iterator();
@@ -781,32 +783,56 @@ public class AnalizadorPresupuesto {
 		while (itImputacionesExistentes.hasNext()) {
 			Imputacion iExistente = itImputacionesExistentes.next();
 			
-			Iterator<Imputacion> itImputacionesLeidas = listaLeidas.iterator();
-			boolean encontrado = false;
+			Calendar cPerImpIni = Calendar.getInstance();
+			cPerImpIni.setTime(Constantes.inicioMes(iExistente.fxInicio));
+
+			Calendar cPerImpFin = Calendar.getInstance();
+			cPerImpFin.setTime(Constantes.finMes(iExistente.fxFin));
 			
-			while (itImputacionesLeidas.hasNext()) {
-				Imputacion iLeida = itImputacionesLeidas.next();
-				if (iLeida.recurso!=null && iLeida.sistema!=null) {
-					if (iExistente.recurso.id == iLeida.recurso.id &&
-						iExistente.sistema.id == iLeida.sistema.id &&
-						iExistente.fxInicio.equals(iLeida.fxInicio) &&
-						iExistente.fxFin.equals(iLeida.fxFin) &&
-						iExistente.proyecto == iLeida.proyecto) {
-						encontrado = true;
-						break;
+			boolean procesar = true;
+
+			if (inicio != null) {
+				Calendar cInicio = Calendar.getInstance();
+				cInicio.setTime(Constantes.finMes(inicio));
+				if (cInicio.after(cPerImpIni))
+					procesar = false;
+			}
+
+			if (fin != null) {
+				Calendar cFin = Calendar.getInstance();
+				cFin.setTime(Constantes.finMes(fin));
+				if (cFin.before(cPerImpFin))
+					procesar = false;
+			}
+			
+			if (procesar) {
+				Iterator<Imputacion> itImputacionesLeidas = listaLeidas.iterator();
+				boolean encontrado = false;
+				
+				while (itImputacionesLeidas.hasNext()) {
+					Imputacion iLeida = itImputacionesLeidas.next();
+					if (iLeida.recurso!=null && iLeida.sistema!=null) {
+						if (iExistente.recurso.id == iLeida.recurso.id &&
+							iExistente.sistema.id == iLeida.sistema.id &&
+							iExistente.fxInicio.equals(iLeida.fxInicio) &&
+							iExistente.fxFin.equals(iLeida.fxFin) &&
+							iExistente.proyecto == iLeida.proyecto) {
+							encontrado = true;
+							break;
+						}
 					}
 				}
-			}
-			
-			if (!encontrado) {
-				noIncluidas.add(iExistente);
-				iExistente.modo_fichero = NuevaEstimacion.MODO_ELIMINAR;
-				iExistente.modo = NuevaEstimacion.MODO_ELIMINAR;
 				
-				ParametroRecurso pr = (ParametroRecurso) iExistente.recurso.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
-				if (pr!=null) iExistente.codRecurso = (String) pr.getValor();
-				
-			}
+				if (!encontrado) {
+					noIncluidas.add(iExistente);
+					iExistente.modo_fichero = NuevaEstimacion.MODO_ELIMINAR;
+					iExistente.modo = NuevaEstimacion.MODO_ELIMINAR;
+					
+					ParametroRecurso pr = (ParametroRecurso) iExistente.recurso.getValorParametro(MetaParametro.RECURSO_COD_USUARIO);
+					if (pr!=null) iExistente.codRecurso = (String) pr.getValor();
+					
+				}
+			}			
 		}
 		
 		return noIncluidas;

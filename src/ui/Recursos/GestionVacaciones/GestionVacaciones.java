@@ -7,15 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
-
 import application.Main;
 import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.ImageView;
@@ -32,6 +29,7 @@ import model.utils.db.ConsultaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
+import ui.VentanaContextual;
 import ui.interfaces.ControladorPantalla;
 
 public class GestionVacaciones implements ControladorPantalla {
@@ -129,7 +127,7 @@ public class GestionVacaciones implements ControladorPantalla {
 						FXMLLoader loader = new FXMLLoader();
 						FiltrosConsultaGV filtros = new FiltrosConsultaGV();
 				        loader.setLocation(new URL(filtros.getFXML()));
-				     	ParamTable.po = new PopOver(loader.load());
+				     	ParamTable.po = new VentanaContextual(loader.load());
 				     	
 				     	HashMap<String,Object> mFiltros = new HashMap<String,Object>();
 				     	mFiltros.put("ventanaPadre", gv);

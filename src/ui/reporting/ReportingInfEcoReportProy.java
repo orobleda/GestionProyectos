@@ -1,5 +1,7 @@
 package ui.reporting;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -116,8 +119,27 @@ public class ReportingInfEcoReportProy implements ControladorPantalla {
             public void handle(MouseEvent t)
             {
 				try {	
-					descargarInforme();
-					Dialogo.alert("Descarga Correcta", "Descarga Correcta", "Se ha descargado el informe correctamente");
+					String nomInforme = descargarInforme();
+					
+					Label l = new Label();
+					l.setText("Abrir Informe");
+					
+					l.setOnMouseClicked(new EventHandler<MouseEvent>()
+			        {
+			            @Override
+			            public void handle(MouseEvent t)
+			            {
+			            	try {
+				            	File file = new File (nomInforme);
+				            	Desktop desktop = Desktop.getDesktop();
+				            	desktop.open(file);
+			            	} catch (Exception e) {
+								Dialogo.error("Error al abrir el informe", e);
+			            	}
+			            }
+			        });
+					
+					Dialogo.alertContenido("Descarga Correcta", "", "", l);
 				} catch (Exception e) {
 					e.printStackTrace();
 					Dialogo.error("Error al descargar el informe", "Error al descargar el informe", "Se ha producido un error al descargar el informe");
@@ -185,10 +207,15 @@ public class ReportingInfEcoReportProy implements ControladorPantalla {
 		
     }
 	
-	public void descargarInforme() throws Exception{
+	public String descargarInforme() throws Exception{
 		HashMap<String,Object> valores = new HashMap<String,Object>();
 		String nomArchivo = "InfoRepEco" + "_" + Constantes.fechaActual().getTime() + ".xlsx";
-		valores.put(InformeGenerico.RUTA, new Parametro().getParametro(MetaParametro.PARAMETRO_RUTA_REPOSITORIO).getValor() + "\\Informes\\" + nomArchivo);
+
+		Parametro pAux = new Parametro();
+		String sAux = pAux.getParametroRuta(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
+		
+		String nomFichCompleto = sAux + "\\Informes\\" + nomArchivo;
+		valores.put(InformeGenerico.RUTA, nomFichCompleto);
 		valores.put(ReporteEconomicoProyectos.LISTA_PROYECTOS, this.lProyectos.getItems());	
 		
 		valores.put(ReporteEconomicoProyectos.HACER_FOTO_GLOBAL, chkFotoGlobal.isSelected());
@@ -206,6 +233,8 @@ public class ReportingInfEcoReportProy implements ControladorPantalla {
 		
 		ReporteEconomicoProyectos rP = new ReporteEconomicoProyectos();
 		rP.ejecutar(valores);
+		
+		return nomFichCompleto;
 	}
 		
 	@Override

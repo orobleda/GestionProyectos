@@ -183,6 +183,16 @@ public class FaseProyectoSistema implements Cargable{
 		return null;
 	}
 	
+	public FaseProyectoSistemaDemanda getDemandaNombre(String nDemanda) {
+		Iterator<FaseProyectoSistemaDemanda> itDemandas = this.demandasSistema.iterator();
+		while (itDemandas.hasNext()) {
+			FaseProyectoSistemaDemanda demanda = itDemandas.next();
+			if (nDemanda.equals(demanda.p.nombre)) 
+				return demanda;
+		}
+		return null;
+	}
+	
 	public float coberturaDemandaFases(Proyecto pDemanda, boolean apunteContable) {
 		Iterator<FaseProyectoSistemaDemanda> itF = this.demandasSistema.iterator();
 		

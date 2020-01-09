@@ -61,6 +61,7 @@ public class ActivityBarRendererPlani<A extends Activity> extends
 		redrawObservable(textFillHover);
 		redrawObservable(textFillPressed);
 		redrawObservable(textFillHighlight);
+		
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import controller.AnalizadorPresupuesto;
 import controller.Log;
 import model.constantes.ConstantesBD;
 import model.interfaces.Cargable;
@@ -21,6 +22,8 @@ public class Proyecto implements Cargable, Comparable<Proyecto>{
 	
 	public Presupuesto presupuestoActual = null;
 	public Presupuesto presupuestoMaxVersion = null;
+	
+	public AnalizadorPresupuesto ap = null;
 	
 	public HashMap<String, ? extends Parametro> listadoParametros = null;
 	public static HashMap<Integer, Proyecto> listaProyecto = null;
@@ -204,10 +207,8 @@ public class Proyecto implements Cargable, Comparable<Proyecto>{
 	
 	public String rutaCertificacion() throws Exception{
 		Parametro p = new Parametro();
-		p = p.getParametro(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
-		
-		String ruta = p.valorTexto;
-		
+		String ruta = p.getParametroRuta(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
+				
 		ParametroProyecto pp = this.getValorParametro(MetaParametro.PROYECTO_TIPO_PROYECTO);
 		TipoProyecto tp = (TipoProyecto) pp.getValor();
 		ruta += "\\"+tp.descripcion;

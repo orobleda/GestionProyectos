@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,7 +90,7 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 	
 	@Override
 	public void resize(Scene escena) {
-		
+
 	}
 	
 	public void initialize(){
@@ -279,6 +280,7 @@ public class EditCertificacion implements ControladorPantalla, PopUp {
 
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
+		resize(null);
 	}
 
 	@Override

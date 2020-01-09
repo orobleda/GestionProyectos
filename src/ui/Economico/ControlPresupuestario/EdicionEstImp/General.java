@@ -89,10 +89,14 @@ public class General implements ControladorPantalla, PopUp {
 		
 		if (res == Main.ALTA_RESOLUCION ) {
 			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.8);
+			scrDetalle.setMinWidth(Main.scene.getWidth()*0.5);
+			scrDetalle.setPrefWidth(Main.scene.getWidth()*0.5);
 		}
 		
 		if (res== Main.BAJA_RESOLUCION) {
 			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.7);
+			scrDetalle.setMinWidth(Main.scene.getWidth()*0.7);
+			scrDetalle.setPrefWidth(Main.scene.getWidth()*0.7);
 		}
 	}
     
@@ -126,7 +130,8 @@ public class General implements ControladorPantalla, PopUp {
 			        vDetalle.getChildren().add(loader.load());
 			        fraImputacion = loader.getController();
 			        fraImputacion.variablesPaso = General.variablesPaso;
-			        fraImputacion.prefijaValores();			        
+			        fraImputacion.prefijaValores();	
+			        ParamTable.po.autosize();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -227,6 +232,8 @@ public class General implements ControladorPantalla, PopUp {
 		gbEditar.desActivarBoton();
 		gbEliminar.desActivarBoton();
 		gbCopiarDrcha.desActivarBoton();
+		
+		resize(null);
 	}	
 
 	@Override

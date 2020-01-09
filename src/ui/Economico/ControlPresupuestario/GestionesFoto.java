@@ -189,7 +189,11 @@ public class GestionesFoto implements ControladorPantalla, PopUp {
 	public void descargar() throws Exception{
 		HashMap<String,Object> valores = new HashMap<String,Object>();
 		String nomArchivo = "InfoFoto" + (String) (foto.proyecto.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).getValor()) + "_" + Constantes.fechaActual().getTime() + ".xlsx";
-		valores.put(InformeGenerico.RUTA, new Parametro().getParametro(MetaParametro.PARAMETRO_RUTA_REPOSITORIO).getValor() + "\\Informes\\" + nomArchivo);
+		
+		Parametro pAux = new Parametro();
+		String sAux = pAux.getParametroRuta(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
+		
+		valores.put(InformeGenerico.RUTA, sAux + "\\Informes\\" + nomArchivo);
 		valores.put(InformeFoto.FOTO, this.foto);
 		InformeFoto iF = new InformeFoto();
 		iF.ejecutar(valores);
@@ -203,7 +207,11 @@ public class GestionesFoto implements ControladorPantalla, PopUp {
 		
 		HashMap<String,Object> valores = new HashMap<String,Object>();
 		String nomArchivo = "InfoCompFoto" + (String) foto.proyecto.getValorParametro(MetaParametro.PROYECTO_ACRONPROY).getValor() + "_" + Constantes.fechaActual().getTime() + ".xlsx";
-		valores.put(InformeGenerico.RUTA, new Parametro().getParametro(MetaParametro.PARAMETRO_RUTA_REPOSITORIO).getValor() + "\\Informes\\" + nomArchivo);
+
+		Parametro pAux = new Parametro();
+		String sAux = pAux.getParametroRuta(MetaParametro.PARAMETRO_RUTA_REPOSITORIO);
+		
+		valores.put(InformeGenerico.RUTA, sAux + "\\Informes\\" + nomArchivo);
 		valores.put(InformeFoto.FOTO, this.foto);		
 		valores.put(InformeFoto.FOTO_COMPARAR, this.cbFotos.getValue());
 		InformeFoto iF = new InformeFoto();

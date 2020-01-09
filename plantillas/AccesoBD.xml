@@ -950,11 +950,12 @@
 		</parametros>
 	</acceso>
 	<acceso>
-		<query>delete from FASE_PROYECTO where 1=1 $B$and idProyecto = ||1||$E$</query>
+		<query>delete from FASE_PROYECTO where 1=1 $B$and idProyecto = ||1||$E$ $B$and id = ||2||$E$</query>
 		<id tipo="D">dBorraFasesProyecto</id>
 		<tabla>FASE_PROYECTO</tabla>
 		<parametros>
-			<parametro id="1" tipo="int"></parametro>		
+			<parametro id="1" tipo="int"></parametro>
+			<parametro id="2" tipo="int"></parametro>			
 		</parametros>
 	</acceso>
 	<acceso>
@@ -965,6 +966,17 @@
 			<parametro id="1" tipo="id"></parametro>	
 			<parametro id="2" tipo="str"></parametro>
 			<parametro id="3" tipo="int"></parametro>		
+		</parametros>
+	</acceso>
+	<acceso>
+		<query>UPDATE FASE_PROYECTO SET id = $B$||1||$E$ , Nombre = $B$||2||$E$ , idProyecto = $B$||3||$E$ where 1=1 $B$and id = ||4||$E$</query>
+		<id tipo="U">iUpdateFasesProyecto</id>
+		<tabla>FASE_PROYECTO</tabla>
+		<parametros>
+			<parametro id="1" tipo="int"></parametro>	
+			<parametro id="2" tipo="str"></parametro>
+			<parametro id="3" tipo="int"></parametro>
+			<parametro id="4" tipo="int"></parametro>		
 		</parametros>
 	</acceso>
 	<acceso>
@@ -1314,5 +1326,91 @@
 		<parametro id="3" tipo="int"></parametro>
 	</parametros>
 </acceso>
-
+<acceso>
+	<query>select descripcion eveDescripcion ,tipo eveTipo ,tsInicio eveTsinicio ,fxInicio eveFxinicio ,tsLimite eveTslimite ,nombre eveNombre ,codAdjunto eveCodadjunto ,fxFin eveFxfin ,eventoDiario eveEventodiario ,criticidad eveCriticidad ,fxLimite eveFxlimite ,tsFin eveTsfin ,id eveId ,idProyEvento eveIdproyevento ,urgencia eveUrgencia	from  EVENTO where 1=1 $B$and id=||1||$E$</query>
+	<id tipo="C">cConsultaEvento</id>
+	<tabla>EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into EVENTO (descripcion ,tipo ,tsInicio ,fxInicio ,tsLimite ,nombre ,codAdjunto ,fxFin ,eventoDiario ,criticidad ,fxLimite ,tsFin ,id ,idProyEvento ,urgencia) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$ ,$B$||4||$E$ ,$B$||5||$E$ ,$B$||6||$E$ ,$B$||7||$E$ ,$B$||8||$E$ ,$B$||9||$E$ ,$B$||10||$E$ ,$B$||11||$E$ ,$B$||12||$E$ ,$B$||13||$E$ ,$B$||14||$E$ ,$B$||15||$E$)</query>
+	<id tipo="I">iInsertaEvento</id>
+	<tabla>EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="str"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="rea"></parametro>
+		<parametro id="4" tipo="dat"></parametro>
+		<parametro id="5" tipo="rea"></parametro>
+		<parametro id="6" tipo="str"></parametro>
+		<parametro id="7" tipo="str"></parametro>
+		<parametro id="8" tipo="dat"></parametro>
+		<parametro id="9" tipo="int"></parametro>
+		<parametro id="10" tipo="int"></parametro>
+		<parametro id="11" tipo="dat"></parametro>
+		<parametro id="12" tipo="rea"></parametro>
+		<parametro id="13" tipo="id"></parametro>
+		<parametro id="14" tipo="int"></parametro>
+		<parametro id="15" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from EVENTO where 1=1 $B$and id=||1||$E$</query>
+	<id tipo="D">dBorraEvento</id>
+	<tabla>EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>UPDATE EVENTO SET descripcion= $B$||2||$E$ , tipo= $B$||3||$E$ , tsInicio= $B$||4||$E$ , fxInicio= $B$||5||$E$ , tsLimite= $B$||6||$E$ , nombre= $B$||7||$E$ , codAdjunto= $B$||8||$E$ , fxFin= $B$||9||$E$ , eventoDiario= $B$||10||$E$ , criticidad= $B$||11||$E$ , fxLimite= $B$||12||$E$ , tsFin= $B$||13||$E$ , id= $B$||14||$E$ , idProyEvento= $B$||15||$E$ , urgencia= $B$||16||$E$ where id = $B$||1||$E$</query>
+	<id tipo="U">uActualizaEvento</id>
+	<tabla>EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="str"></parametro>
+		<parametro id="3" tipo="str"></parametro>
+		<parametro id="4" tipo="rea"></parametro>
+		<parametro id="5" tipo="dat"></parametro>
+		<parametro id="6" tipo="rea"></parametro>
+		<parametro id="7" tipo="str"></parametro>
+		<parametro id="8" tipo="str"></parametro>
+		<parametro id="9" tipo="dat"></parametro>
+		<parametro id="10" tipo="int"></parametro>
+		<parametro id="11" tipo="int"></parametro>
+		<parametro id="12" tipo="dat"></parametro>
+		<parametro id="13" tipo="rea"></parametro>
+		<parametro id="14" tipo="int"></parametro>
+		<parametro id="15" tipo="int"></parametro>
+		<parametro id="16" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>select idProy relIdproy ,idEvento relIdevento ,id relId	from  REL_PROYECTO_EVENTO where 1=1 $B$and idEvento=||1||$E$</query>
+	<id tipo="C">cConsultaRel_proyecto_evento</id>
+	<tabla>REL_PROYECTO_EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>insert into REL_PROYECTO_EVENTO (idProy ,idEvento ,id) values ($B$||1||$E$ ,$B$||2||$E$ ,$B$||3||$E$)</query>
+	<id tipo="I">iInsertaRel_proyecto_evento</id>
+	<tabla>REL_PROYECTO_EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+		<parametro id="2" tipo="int"></parametro>
+		<parametro id="3" tipo="id"></parametro>
+	</parametros>
+</acceso>
+<acceso>
+	<query>delete from REL_PROYECTO_EVENTO where 1=1 $B$and idEvento=||1||$E$</query>
+	<id tipo="D">dBorraRel_proyecto_evento</id>
+	<tabla>REL_PROYECTO_EVENTO</tabla>
+	<parametros>
+		<parametro id="1" tipo="int"></parametro>
+	</parametros>
+</acceso>
 </accesoBD>

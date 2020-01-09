@@ -9,7 +9,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Economico.ControlPresupuestario.EdicionCert.EdicionCertificacion">
    <children>
-      <HBox>
+      <HBox fx:id="hbTabla" alignment="TOP_CENTER">
          <children>
             <TableView fx:id="tCertificaciones" />
          </children>
@@ -18,6 +18,9 @@
          <content>
             <HBox fx:id="hbDetalle" />
          </content>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
       </ScrollPane>
    </children>
    <padding>

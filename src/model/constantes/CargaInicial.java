@@ -3,6 +3,7 @@ package model.constantes;
 import java.io.FileReader;
 import java.util.Properties;
 
+import application.Main;
 import controller.Log;
 import model.beans.Proveedor;
 import model.beans.Proyecto;
@@ -40,7 +41,10 @@ public class CargaInicial {
 		
 		try {
 			prop = new Properties();
-			prop.load(new FileReader("plantillas/log4j.properties"));
+			if (!Main.MODO_DEBUG)
+				prop.load(new FileReader("plantillas/log4j.properties"));
+			else 
+				prop.load(new FileReader("plantillas/log4j2DEBUG.properties"));
 			
 			ConsultaBD.init(prop.getProperty("BD.URL"));
 			ConsultaBDReplica.init(prop.getProperty("BD.REPLICAS.URL"));

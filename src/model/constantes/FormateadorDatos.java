@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
@@ -114,6 +115,22 @@ public class FormateadorDatos {
 			
 			return salida;
 		}
+		
+		if (TipoDato.FORMATO_HORA == formato){
+			String salida = "";
+			
+			try{
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				salida = sdf.format(sdf.parse(Dato));
+			} catch (Exception e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+				SimpleDateFormat salidadf = new SimpleDateFormat("HH:mm");
+				salida = salidadf.format(sdf.parse(Dato));	
+			}
+			
+			return salida;
+		}
+		
 		if (FormateadorDatos.FORMATO_PORC == formato){
 			Dato = Dato.replace(".", "");
 			Dato = Dato.replace("%", "");
@@ -243,6 +260,20 @@ public class FormateadorDatos {
 			
 			return salida;
 		}
+		if (TipoDato.FORMATO_HORA== formato){
+			String salida = "";
+			
+			try{
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				salida = sdf.format(sdf.parse(Dato.toString()));
+			} catch (Exception e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+				SimpleDateFormat salidadf = new SimpleDateFormat("HH:mm");
+				salida = salidadf.format(sdf.parse(Dato.toString()));	
+			}
+			
+			return salida;
+		}
 		if (FormateadorDatos.FORMATO_FORMATO_PROYECTO == formato){
 			return Dato.toString();
 		}
@@ -304,6 +335,13 @@ public class FormateadorDatos {
 			return sdf.parse(Dato);
 		}
 		
+		if (TipoDato.FORMATO_FECHAHORA == formato){
+			String fecha = "01/01/2000 " + Dato;
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			
+			return sdf.parse(fecha);
+		}
+		
 		if (FormateadorDatos.FORMATO_TIPO_PROYECTO == formato){
 			try {
 				Iterator<TipoProyecto> tpProyecto =  TipoProyecto.listado.values().iterator();
@@ -333,5 +371,11 @@ public class FormateadorDatos {
 		if (d==null) return null;
 		
 		return Instant.ofEpochMilli(d.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+	
+	public static LocalTime toLocalTime(Date d) {
+		if (d==null) return null;
+		
+		return Instant.ofEpochMilli(d.getTime()).atZone(ZoneId.systemDefault()).toLocalTime();
 	}
 }

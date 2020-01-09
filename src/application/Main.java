@@ -12,12 +12,17 @@ import com.dlsc.workbenchfx.view.controls.ToolbarItem;
 
 import controller.Log;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -29,6 +34,7 @@ import ui.workbech.modulos.PantallaBlanca.PantallaBlanca;
 import workbench.modulos.Administracion;
 import workbench.modulos.Economico;
 import workbench.modulos.Modulo;
+import workbench.modulos.Personal;
 import workbench.modulos.Planificacion;
 import workbench.modulos.Recursos;
 import workbench.modulos.Reporte;
@@ -40,6 +46,10 @@ import workbench.utils.UtilidadesWB;
 
 
 public class Main extends Application {
+	
+	public static boolean MODO_DEBUG = false;
+	public static ContextMenu menuContexto = null;
+	public static boolean mostrarMenuContexto = true;
 	
 	public static final String PANTALLA_ACTIVA = "pantalla_Activa"; 
 	public static final String CONTROLADOR = "controlador"; 
@@ -54,11 +64,13 @@ public class Main extends Application {
 	public static int ECONOMICO = 2;
 	public static int PLANIFICACION = 3;
 	public static int REPORTES = 4;
-	public static int AJUSTES = 5;
+	public static int AJUSTES = 6;
+	public static int PERSONAL = 5;
 	
 	public static Workbench customWorkbench = null;
 	
 	private MenuNavegacion navigationDrawer;
+	public static Node pantallaActiva = null;
 	
 	private MenuItem menuItem;
 	
@@ -103,7 +115,24 @@ public class Main extends Application {
 			
 			//ReplicaBD.fuerzaGuardado(null); 
 			
-			WorkbenchModule[] modulos = {new Solicitudes(), new Recursos(),new Economico(),new Planificacion(), new Reporte(), new Administracion()};
+			menuContexto = new ContextMenu();
+      		 
+	        MenuItem item1 = new MenuItem("Menu Item 1");
+	        item1.setOnAction(new EventHandler<ActionEvent>() {
+	 
+	            @Override
+	            public void handle(ActionEvent event) {
+	            	Stage stage= new Stage();
+	            	HBox hb = new HBox();
+	            	Scene scn = new Scene(hb);
+	            	stage.setScene(scn);
+	            	stage.show();
+	            }
+	        });
+	        
+	        menuContexto.getItems().add(item1);
+			
+			WorkbenchModule[] modulos = {new Solicitudes(), new Recursos(),new Economico(),new Planificacion(), new Reporte(), new Personal(), new Administracion()};
 	        			
 			navigationDrawer = new MenuNavegacion();
 			
@@ -122,14 +151,22 @@ public class Main extends Application {
 	        	}
 	        });
 	        
+	        if (Main.MODO_DEBUG)
+	        	customWorkbench.getStylesheets().add("styleDebug.css");
+	        else 
+	        	customWorkbench.getStylesheets().add("style.css");
+	        
 	        for (int i=0;i<modulos.length;i++) {
 	        	UtilidadesWB.insertaNodosMenu((Modulo) modulos[i]);
 	        }
 	        
 	        scene = new Scene(customWorkbench);
-	        	        
-	        primaryStage.setMaximized(true);	        
-	        primaryStage.setTitle("Gestión Proyectos");			
+	        
+	        primaryStage.setMaximized(true);	 
+	        if (Main.MODO_DEBUG)
+		        primaryStage.setTitle("Gestión Proyectos DEBUG");	
+	        else 
+	        	primaryStage.setTitle("Gestión Proyectos");	
 			primaryStage.setScene(scene);
 			primaryStage.show();
 						
@@ -146,6 +183,15 @@ public class Main extends Application {
 	}
 	
 	public static void main(String[] args) {
+		for (int i=0;i<args.length;i++) {
+			if (args[i].contains("DEBUG")) {
+				String [] debug = args[i].split("=");
+				if (debug[1].toUpperCase().equals("SI")) {
+					Main.MODO_DEBUG = true;
+				}
+			}
+		}
+		
 		launch(args);
 	}
 	
@@ -166,12 +212,13 @@ public class Main extends Application {
 	}
 	
 	public static Node cargarPantalla (String pantalla) {
-		try {/*
-			  if (Main.lNodos.containsKey(pantalla)) {
-				  Main.customWorkbench.getToolbarControlsLeft().addAll(Main.lBarraHerramientas.get(pantalla));
-				  Main.customWorkbench.getToolbarControlsRight().addAll(Main.rBarraHerramientas.get(pantalla));
-				  return lNodos.get(pantalla);
-			  }*/
+		try {if (!Main.MODO_DEBUG){
+				 if (Main.lNodos.containsKey(pantalla)) {
+					  Main.customWorkbench.getToolbarControlsLeft().addAll(Main.lBarraHerramientas.get(pantalla));
+					  Main.customWorkbench.getToolbarControlsRight().addAll(Main.rBarraHerramientas.get(pantalla));
+					  return lNodos.get(pantalla);
+				  }
+			 }
 			  
 			  FXMLLoader loader = new FXMLLoader();
 		      ControladorPantalla controlPantalla = null;
@@ -180,6 +227,30 @@ public class Main extends Application {
 	
 			   	
 		      Node n = loader.load(); 
+		      
+		   // Create ContextMenu
+		        
+		        
+		        n.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+		 
+		            @Override
+		            public void handle(ContextMenuEvent event) {
+		            	if (Main.mostrarMenuContexto)
+		            		Log.t("Aquí se mostraría el menú");
+				        	//Main.menuContexto.show(n,event.getSceneX(), event.getSceneY());
+		            	else 
+		            		Main.mostrarMenuContexto = true;
+		            }
+		        });
+		        
+		        n.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		   		 
+		            @Override
+		            public void handle(MouseEvent event) {
+		            	Main.menuContexto.hide();
+		            }
+		        });
+		        
 	          ControladorPantalla c = loader.getController();
 	          
 
@@ -188,17 +259,20 @@ public class Main extends Application {
 		      }
 	          
 	          n.getProperties().put(Main.CONTROLADOR, c);
+	          Main.pantallaActiva = n;
 	          c.resize(Main.scene);
-	          /*
-	          if (!lNodos.containsKey(pantalla)) {				  
-				  lNodos.put(pantalla,n);
-				  ArrayList<ToolbarItem> lAux = new ArrayList<ToolbarItem>();
-				  lAux.addAll(Main.customWorkbench.getToolbarControlsLeft());
-				  Main.lBarraHerramientas.put(pantalla,lAux);
-				  lAux = new ArrayList<ToolbarItem>();
-				  lAux.addAll(Main.customWorkbench.getToolbarControlsRight());
-				  Main.rBarraHerramientas.put(pantalla,lAux);
-			  }*/
+	          
+	          if (!Main.MODO_DEBUG){
+		          if (!lNodos.containsKey(pantalla)) {				  
+					  lNodos.put(pantalla,n);
+					  ArrayList<ToolbarItem> lAux = new ArrayList<ToolbarItem>();
+					  lAux.addAll(Main.customWorkbench.getToolbarControlsLeft());
+					  Main.lBarraHerramientas.put(pantalla,lAux);
+					  lAux = new ArrayList<ToolbarItem>();
+					  lAux.addAll(Main.customWorkbench.getToolbarControlsRight());
+					  Main.rBarraHerramientas.put(pantalla,lAux);
+				  }
+	          }
 			  
 		      return n;
 		  } catch (Exception ex) {

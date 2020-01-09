@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -138,7 +139,15 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
    
    @Override
 	public void resize(Scene escena) {
+	   int res = Main.resolucion();
 		
+		if (res == Main.ALTA_RESOLUCION ) {
+			lNombreFichero.setPrefWidth(Main.scene.getWidth()*0.5);
+		}
+		
+		if (res== Main.BAJA_RESOLUCION) {
+			lNombreFichero.setMinWidth(Main.scene.getWidth()*0.7);
+		}
 	}
 
 	@Override
@@ -216,6 +225,8 @@ public class ImportaCertificacion implements ControladorPantalla, PopUp {
 		
 		if (this.modo == ImportaCertificacion.MODO_DETALLE)
 			modoDetalle(variablesPaso);
+		
+		resize(null);
 	}
 	
 	public void modoDetalle(HashMap<String, Object> variablesPaso) {

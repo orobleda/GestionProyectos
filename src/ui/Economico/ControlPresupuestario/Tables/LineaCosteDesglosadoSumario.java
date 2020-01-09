@@ -10,6 +10,7 @@ import model.constantes.FormateadorDatos;
 import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.Tableable;
 
 public class LineaCosteDesglosadoSumario extends ParamTable implements Tableable  {
@@ -33,9 +34,9 @@ public class LineaCosteDesglosadoSumario extends ParamTable implements Tableable
     	configuracionTabla.put("SISTEMA", new ConfigTabla("SISTEMA", "SISTEMA", false,1, false));
     	
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put("%", new Integer(60));
-    	anchoColumnas.put("Diferencia", new Integer(85));
-    	anchoColumnas.put("SISTEMA", new Integer(80));
+    	anchoColumnas.put("%", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("Diferencia", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("SISTEMA", ControlPresupuestario.anchoResumen);
     }
     
    	public void set(String campo, String valor){

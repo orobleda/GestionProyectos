@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -22,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import model.constantes.Constantes;
 import model.metadatos.Festivo;
 import ui.Dialogo;
+import ui.VentanaContextual;
 import ui.Administracion.Festivos.Tables.LineaFestivo;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -29,7 +28,7 @@ import ui.interfaces.Tableable;
 public class GestionFestivos  implements ControladorPantalla {
 	public static final String fxml = "file:src/ui/Administracion/Festivos/GestionFestivos.fxml";
 	
-	PopOver popUp = null;
+	VentanaContextual popUp = null;
 	
 	@FXML
 	private AnchorPane anchor;

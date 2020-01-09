@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
+import application.Main;
 import model.constantes.Constantes;
 import model.constantes.ConstantesBD;
 import model.constantes.FormateadorDatos;
@@ -227,6 +228,17 @@ public class Parametro extends Observable implements Propiediable, Cargable {
 		}
 		
 		return this;
+	}
+	
+	public String getParametroRuta(String codParametro) {
+		Parametro p = new Parametro();
+		p = p.getParametro(codParametro);
+		
+		if (Main.MODO_DEBUG) {
+			return p.valorTexto.replace("Repositorio", "Repositorio DES");
+		}
+		
+		return p.valorTexto;
 	}
 	
 	public Parametro getParametro(String codParametro) {

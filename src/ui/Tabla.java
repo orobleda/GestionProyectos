@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import org.controlsfx.control.ToggleSwitch;
 
+import application.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -122,6 +123,7 @@ public class Tabla {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
                 if (event.getButton() == MouseButton.SECONDARY){
+                	Main.mostrarMenuContexto = false;
                     contextMenu.show(componenteTabla,event.getScreenX(),event.getScreenY());
                 }
  

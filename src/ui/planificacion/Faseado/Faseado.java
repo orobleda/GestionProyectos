@@ -2,7 +2,7 @@ package ui.planificacion.Faseado;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -17,13 +17,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import model.beans.Certificacion;
+import model.beans.CertificacionFase;
 import model.beans.Coste;
 import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
 import model.beans.Parametro;
+import model.beans.PlanificacionTarea;
 import model.beans.Presupuesto;
 import model.beans.Proyecto;
+import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
 import model.metadatos.TipoProyecto;
 import model.utils.db.ConsultaBD;
@@ -31,6 +35,7 @@ import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.charts.TareaGantt;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
 import ui.planificacion.Faseado.tables.DemandasAsociadasTabla;
@@ -162,37 +167,21 @@ public class Faseado implements ControladorPantalla {
 		}
 	}
 	
-	public void pintaFases() {
+	public void pintaFases() throws Exception{
 		this.vbContenedorFases.getChildren().removeAll(this.vbContenedorFases.getChildren());
 		
 		HashMap<String, Object> variablesPaso = null;
 		
-		if (this.pActual.fasesProyecto!=null)  {
-			Collections.sort(this.pActual.fasesProyecto);
-			Iterator<FaseProyecto> itFases = this.pActual.fasesProyecto.iterator();
-			
-			while (itFases.hasNext()) {
-				FaseProyecto fase = itFases.next();
-				variablesPaso = new HashMap<String, Object>();
-				variablesPaso.put(InfoFase.FASE, fase);
-				variablesPaso.put(InfoFase.PADRE, this);
-				
-				try {
-					InfoFase asigFaseS = new InfoFase();
-			        FXMLLoader loader = new FXMLLoader();
-			        loader.setLocation(new URL(asigFaseS.getFXML()));
-			        this.vbContenedorFases.getChildren().add(loader.load());
-			        asigFaseS = loader.getController();
-			        asigFaseS.setParPaso(variablesPaso);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				
-				
-			}
-			
-			this.tablaDemandas.refrescaTabla();			
-		}
+		variablesPaso = new HashMap<String, Object>();
+		variablesPaso.put(VisorFases.PROYECTO, this.pActual);
+		variablesPaso.put(VisorFases.PADRE, this);
+		
+		VisorFases asigFaseS = new VisorFases();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(new URL(asigFaseS.getFXML()));
+        this.vbContenedorFases.getChildren().add(loader.load());
+        asigFaseS = loader.getController();
+        asigFaseS.setParametrosPaso(variablesPaso);
 		
 	}
 	
@@ -201,12 +190,77 @@ public class Faseado implements ControladorPantalla {
 		
 		String idTransaccion = ConsultaBD.getTicket();
 		
-		FaseProyecto fp = new FaseProyecto();
-		fp.updateFasesProyecto(pActual.fasesProyecto, idTransaccion);
+		ArrayList<Sistema> sistemasSinFase = compruebaCertificaciones();
 		
-		ConsultaBD.ejecutaTicket(idTransaccion);
+		if (sistemasSinFase.size()>0) {
+			String salida = "";
+			Iterator<Sistema> itSistemas = sistemasSinFase.iterator();
+			while (itSistemas.hasNext()) {
+				Sistema s = itSistemas.next();
+				salida += s.codigo;
+				if (itSistemas.hasNext()) salida += ",";
+			}
 		
-		Dialogo.alert("Guardado Correcto", "Faseado Almacenado", "El mapa de fases del proyecto y su faseado se guardó correctamente.");
+			Dialogo.error("No se puede guardar", "No se puede guardar", "Los sistemas ("+ salida + ") tienen certificaciones asignadas a una fase eliminada");
+		} else {
+			FaseProyecto fp = new FaseProyecto();
+			fp.p = this.pActual;
+			this.pActual.fasesProyecto = fp.purgarFases(this.pActual.fasesProyecto);
+			
+			fp.updateFasesProyecto(pActual.fasesProyecto, idTransaccion);
+			
+			ConsultaBD.ejecutaTicket(idTransaccion);
+			
+			Dialogo.alert("Guardado Correcto", "Faseado Almacenado", "El mapa de fases del proyecto y su faseado se guardó correctamente.");
+		}		
+	}
+	
+	public ArrayList<Sistema> compruebaCertificaciones() {
+		ArrayList<Sistema> salida = new ArrayList<Sistema> ();
+		
+		Certificacion c = new Certificacion();
+		c.p = this.pActual;
+		Iterator<Certificacion> iCertis = c.listado().iterator();
+		
+		while (iCertis.hasNext()) {
+			c = iCertis.next();
+						
+			Iterator<CertificacionFase> icf = c.certificacionesFases.iterator();
+			while (icf.hasNext()){
+				CertificacionFase cf = icf.next();
+				
+				Iterator<FaseProyecto> iFases = this.pActual.fasesProyecto.iterator();
+				boolean encontrado = false;
+				while (iFases.hasNext()) {
+					FaseProyecto f = iFases.next();
+					if (f.id == cf.idFase) {
+						if (f.fasesProyecto.containsKey(c.s.codigo)) {
+							FaseProyectoSistema fps = f.fasesProyecto.get(c.s.codigo);
+							Iterator<FaseProyectoSistemaDemanda> ifpsd = fps.demandasSistema.iterator();
+							while (ifpsd.hasNext()) {
+								FaseProyectoSistemaDemanda fpsd = ifpsd.next();
+								try {
+									Float cobertura = (Float) fpsd.parametrosFaseSistemaDemanda.get(MetaParametro.FASES_COBERTURA_DEMANDA).getValor();
+									if (cobertura >0) {
+										encontrado = true;
+										break;
+									}							
+								} catch (Exception e) {
+									
+								}
+							}
+						}
+					}
+				}
+				
+				if (!encontrado) {
+					salida.add(c.s);
+					break;
+				}
+			}			
+		}
+		
+		return salida;
 	}
 	
 	public boolean validaDatos() throws Exception {

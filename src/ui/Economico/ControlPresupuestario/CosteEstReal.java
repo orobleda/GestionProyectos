@@ -234,33 +234,28 @@ public class CosteEstReal implements ControladorPantalla {
 			
 			tablaTitConcCert = new Tabla(tTitConcCert,new LineaCosteTopeEstReal(),this);
 			tablaTitConcCert.pintaTabla(listaCertif);
-			tablaTitConcCert.fijaAlto(170);//listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
+			tablaTitConcCert.fijaAlto(170);
 			
 			tablaTitTOTAL = new Tabla(tTitTOTAL,new LineaCosteTopeEstReal(),this);
-			tablaTitTOTAL.pintaTabla(listaCertif);
+			tablaTitTOTAL.pintaTabla(listaTotal);
 			tablaTitTOTAL.fijaAlto(listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
 			
 			
-			/*
-			dataTable = (new LineaCosteTopeEstReal()).toListTableable(lista);
-			tTitConcHoras.setItems(dataTable);
-			(new LineaCosteTopeEstReal()).fijaColumnas(tTitConcHoras);
-			
-			tTitConcHoras.setPrefSize(40*10, );
-			
-			dataTable =  (new LineaCosteTopeEstReal()).toListTableable(listaCertif);
-			tTitConcCert.setItems(dataTable);
-			(new LineaCosteTopeEstReal()).fijaColumnas(tTitConcCert);
-			
-			tTitConcCert.setPrefSize(40*10, listaCertif.size()==1?40+40*listaCertif.size():40*listaCertif.size());
-			
-			dataTable = (new LineaCosteTopeEstReal()).toListTableable(listaTotal);
-			tTitTOTAL.setItems(dataTable);
-			(new LineaCosteTopeEstReal()).fijaColumnas(tTitTOTAL);
-			
-			tTitTOTAL.setPrefSize(40*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());*/
 			
 		} else {
+			tablaTitConcHoras = new Tabla(tTitConcHoras,new LineaCosteEstReal(),this);
+			tablaTitConcHoras.pintaTabla(lista);
+			tablaTitConcHoras.fijaAlto(lista.size()==1?40+40*lista.size():40*lista.size());
+			
+			tablaTitConcCert = new Tabla(tTitConcCert,new LineaCosteEstReal(),this);
+			tablaTitConcCert.pintaTabla(listaCertif);
+			tablaTitConcCert.fijaAlto(170);
+			
+			tablaTitTOTAL = new Tabla(tTitTOTAL,new LineaCosteEstReal(),this);
+			tablaTitTOTAL.pintaTabla(listaTotal);
+			tablaTitTOTAL.fijaAlto(listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
+			
+			/*
 			dataTable = (new LineaCosteEstReal()).toListTableable(lista);
 			tTitConcHoras.setItems(dataTable);
 			(new LineaCosteEstReal()).fijaColumnas(tTitConcHoras);
@@ -277,7 +272,7 @@ public class CosteEstReal implements ControladorPantalla {
 			tTitTOTAL.setItems(dataTable);
 			(new LineaCosteEstReal()).fijaColumnas(tTitTOTAL);
 			
-			tTitTOTAL.setPrefSize(15*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());
+			tTitTOTAL.setPrefSize(15*10, listaTotal.size()==1?40+40*listaTotal.size():40*listaTotal.size());*/
 		}		
 		
 		

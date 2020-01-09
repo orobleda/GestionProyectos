@@ -57,19 +57,21 @@ public class ConsultaBD {
 		Statement stmt = null;
 	    this.connect();
 	    
-	    Parametro pAux = (Parametro) Parametro.getParametro(new Parametro().getClass().getSimpleName(), -1, MetaParametro.PARAMETRO_REPO_BD_SEG);
-	    String nomFichero = (String)pAux.getValor()+"\\BD_"+Constantes.fechaActual().getTime();
+	    Parametro pAux = new Parametro();
+	    String sAux = pAux.getParametroRuta(MetaParametro.PARAMETRO_REPO_BD_SEG);
+	    
+	    String nomFichero = sAux+"\\BD_"+Constantes.fechaActual().getTime();
 	   
 	    try {
 	      String query = "backup to '" + nomFichero+".s3db'";
-	      System.out.println(query);
+	      Log.t(query);
 	       	
 	      stmt = connect.createStatement();
 	      stmt.execute(query );
 	      stmt.close();
 	      
 	    } catch ( Exception e ) {
-	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      Log.e( e );
 	    } 
 	    finally {
 	    	this.close();			    
@@ -81,7 +83,7 @@ public class ConsultaBD {
 	        try {
 	            connect.close();
 	        } catch (SQLException ex) {
-	        	System.err.println("Error al cerrar la BD\n"+ex.getMessage());
+	        	Log.e(ex);
 	        }
 	 }
 	 
@@ -114,7 +116,7 @@ public class ConsultaBD {
 	    try {
 	      String query = this.preparaQuery(QuerysBD.querys.get(codQuery), filtros, null);
 	      query = FormateadorDatos.cambiaAcutes(query,FormateadorDatos.MODO_ACUTE);
-	      System.out.println(query);
+	      Log.t(query);
 	       	
 	      if (ConstantesBD.QUERYCONSULTA.equals(QuerysBD.querys.get(codQuery).tipo)){
 	    	  stmt = connect.createStatement();
@@ -154,7 +156,7 @@ public class ConsultaBD {
 	    	
 	      return salida;
 	    } catch ( Exception e ) {
-	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      Log.e(e);
 	      return null;
 	    } 
 	    finally {
@@ -209,7 +211,7 @@ public class ConsultaBD {
 	    	
 	      return null;
 	    } catch ( Exception e ) {
-	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      Log.e(e);
 	      return null;
 	    } 
 	    finally {
@@ -244,7 +246,7 @@ public class ConsultaBD {
 			 ConsultaBD.transacciones.remove(idTransaccion);
 			 ConsultaBD.idsAcumulados.remove(idTransaccion);
 		 } catch (Exception e) {
-			 System.out.println(e);
+			 Log.e(e);
 			 connect.rollback();
 			 throw e;
 			 

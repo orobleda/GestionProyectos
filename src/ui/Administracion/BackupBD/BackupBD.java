@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.controlsfx.control.PopOver;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -24,6 +22,7 @@ import model.utils.db.ReplicaBD;
 import ui.Dialogo;
 import ui.GestionBotones;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Administracion.BackupBD.tables.LineaCopiaBD;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -32,7 +31,7 @@ import ui.popUps.PopUp;
 public class BackupBD  implements ControladorPantalla, PopUp {
 	public static final String fxml = "file:src/ui/Administracion/BackupBD/BackupBD.fxml";
 	
-	PopOver popUp = null;
+	VentanaContextual popUp = null;
 	
 	@FXML
 	private AnchorPane anchor;

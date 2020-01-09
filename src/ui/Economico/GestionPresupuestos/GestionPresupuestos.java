@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
-
 import application.Main;
 import controller.Log;
 import javafx.event.EventHandler;
@@ -40,6 +38,7 @@ import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Economico.GestionPresupuestos.Tables.DesgloseDemandasAsocidasTabla;
 import ui.Economico.GestionPresupuestos.Tables.LineaCosteDesglosado;
 import ui.interfaces.ControladorPantalla;
@@ -638,6 +637,10 @@ public class GestionPresupuestos implements ControladorPantalla {
 			HashMap<String,Concepto> listaConceptosDesglosado = null;
 			ArrayList<Object> listaConceptosDesglosada = new ArrayList<Object>();
 			
+			if (this.presOperado.costes!=null && this.presOperado.costes.size()==0){
+				this.presOperado.cargaCostes();
+			}
+			
 			Iterator<Coste> itCoste = this.presOperado.costes.values().iterator();
 			float acumulado = 0;
 			float acumuladoSistema = 0;
@@ -773,7 +776,7 @@ public class GestionPresupuestos implements ControladorPantalla {
 		    Pane pane = loader.load();
 		    controlPantalla = (AniadeDemanda) loader.getController();
 		    controlPantalla.setParametrosPaso(parametrosPaso);
-		    ParamTable.po = new PopOver(pane);
+		    ParamTable.po = new VentanaContextual(pane);
 		    parametrosPaso.put("PopOver", ParamTable.po);
 		    ParamTable.po.setTitle("");
 		    ParamTable.po.show(this.tDemandas);

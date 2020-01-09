@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import controller.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -135,7 +136,6 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 				} catch (Exception ex) {
 					Dialogo.error(null, ex);
 				}
-				//ParamTable.po.hide();
             } }, "Guardar Cambios fase");
 		gbGuardar.activarBoton();
 		
@@ -281,6 +281,8 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
         
         listaParametros = gestPar.listaParametros;
         certificacion.paramCertificacionFaseParcial = listaParametros;
+        
+        resize(null);
 	}
 	
 	public void calculaValores(String modo, TextField importe, ComboBox<Tarifa> tarifa, TextField horas) throws Exception {
@@ -337,6 +339,7 @@ public class EditCertificacionFaseParcial implements ControladorPantalla, PopUp 
 
 	@Override
 	public void setParametrosPaso(HashMap<String, Object> variablesPaso) {
+		resize(null);
 	}
 
 	@Override

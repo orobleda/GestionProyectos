@@ -20,6 +20,7 @@ public class LineaCosteCertificacionReal extends ParamTable implements Tableable
 	public static final String DESCRIPCION = "Descripción";
 	public static final String IMPORTE = "Importe";
 	public static final String HORAS = "Horas";
+	public static final String TARIFA = "Tarifa";
 	
 	public CertificacionFaseParcial cfp = null;
 	
@@ -37,6 +38,7 @@ public class LineaCosteCertificacionReal extends ParamTable implements Tableable
 		configuracionTabla.put(LineaCosteCertificacionReal.DESCRIPCION, new ConfigTabla(LineaCosteCertificacionReal.DESCRIPCION, LineaCosteCertificacionReal.DESCRIPCION, true,0, false));
 		configuracionTabla.put(LineaCosteCertificacionReal.IMPORTE, new ConfigTabla(LineaCosteCertificacionReal.IMPORTE, LineaCosteCertificacionReal.IMPORTE, true,1, false));
 		configuracionTabla.put(LineaCosteCertificacionReal.HORAS, new ConfigTabla(LineaCosteCertificacionReal.HORAS, LineaCosteCertificacionReal.HORAS, true,2, false));
+		configuracionTabla.put(LineaCosteCertificacionReal.TARIFA, new ConfigTabla(LineaCosteCertificacionReal.TARIFA, LineaCosteCertificacionReal.TARIFA, true,3, false));
 		
     }
     
@@ -51,6 +53,7 @@ public class LineaCosteCertificacionReal extends ParamTable implements Tableable
    			if (LineaCosteCertificacionReal.DESCRIPCION.equals(campo))  return this.cfp.nombre;
    			if (LineaCosteCertificacionReal.IMPORTE.equals(campo))   return FormateadorDatos.formateaDato(this.cfp.valReal,TipoDato.FORMATO_MONEDA);;
    			if (LineaCosteCertificacionReal.HORAS.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.horReal,TipoDato.FORMATO_REAL);
+   			if (LineaCosteCertificacionReal.TARIFA.equals(campo))  return FormateadorDatos.formateaDato(this.cfp.valReal/this.cfp.horReal,TipoDato.FORMATO_REAL);
    				   			
    			return "";
    		} catch ( Exception e) {

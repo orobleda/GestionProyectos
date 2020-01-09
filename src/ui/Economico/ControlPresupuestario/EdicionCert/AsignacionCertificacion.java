@@ -3,6 +3,7 @@ package ui.Economico.ControlPresupuestario.EdicionCert;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import application.Main;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -39,7 +40,6 @@ public class AsignacionCertificacion implements ControladorPantalla {
    
    @Override
 	public void resize(Scene escena) {
-		
 	}
 
 	@Override
@@ -81,6 +81,8 @@ public class AsignacionCertificacion implements ControladorPantalla {
 			else {
 				this.cbCertificaciones.setVisible(false);
 			}
+			
+			resize(null);
 		} catch (Exception e) {
 			Dialogo.error(null, e);
 		}

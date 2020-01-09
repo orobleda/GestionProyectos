@@ -75,6 +75,11 @@
                   </VBox>
                   <VBox>
                      <children>
+                        <ComboBox fx:id="cbIzquda1" visible="false">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </ComboBox>
                         <TableView fx:id="tbResumenDiferencia" prefHeight="65.0" />
                         <Accordion fx:id="acResumen">
                            <panes>
@@ -90,7 +95,7 @@
                         <Insets right="15.0" />
                      </HBox.margin>
                      <padding>
-                        <Insets bottom="15.0" top="50.0" />
+                        <Insets bottom="15.0" top="15.0" />
                      </padding>
                   </VBox>
                </children>

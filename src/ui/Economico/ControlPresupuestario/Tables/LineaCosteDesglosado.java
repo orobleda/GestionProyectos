@@ -14,9 +14,10 @@ import model.metadatos.MetaConcepto;
 import model.metadatos.Sistema;
 import ui.ConfigTabla;
 import ui.ParamTable;
+import ui.Economico.ControlPresupuestario.ControlPresupuestario;
 import ui.interfaces.Tableable;
 
-public class LineaCosteDesglosado extends ParamTable implements Tableable  {
+public class LineaCosteDesglosado extends ParamTable implements Tableable, Comparable<LineaCosteDesglosado>  {
 	
 	public HashMap<String,Concepto> listaConceptos = null;
 	
@@ -50,13 +51,13 @@ public class LineaCosteDesglosado extends ParamTable implements Tableable  {
     	configuracionTabla.put("SISTEMA", new ConfigTabla("SISTEMA", "SISTEMA", false,contador, false));
     	
     	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put("TREI", new Integer(65));
-    	anchoColumnas.put("CC", new Integer(65));
-    	anchoColumnas.put("SATAD", new Integer(65));
-    	anchoColumnas.put("Desarrollo", new Integer(70));
-    	anchoColumnas.put("GOSC", new Integer(65));
-    	anchoColumnas.put("TOTAL", new Integer(70));
-    	anchoColumnas.put("SISTEMA", new Integer(80));
+    	anchoColumnas.put("TREI", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("CC", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("SATAD",ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("Desarrollo",ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("GOSC", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("TOTAL", ControlPresupuestario.anchoResumen);
+    	anchoColumnas.put("SISTEMA", ControlPresupuestario.anchoResumen);
     	
     }
     
@@ -109,6 +110,16 @@ public class LineaCosteDesglosado extends ParamTable implements Tableable  {
 	@Override
 	public AnchorPane getFilaEmbebida(TableRowDataFeatures<Tableable> expander) {
 		return null;
+	}
+
+	@Override
+	public int compareTo(LineaCosteDesglosado arg0) {
+		try {
+			return this.listaConceptos.get("SISTEMA").coste.sistema.compareTo(arg0.listaConceptos.get("SISTEMA").coste.sistema);
+		} catch (Exception e) {
+			
+		}
+		return 0;
 	}
 	  	
 }

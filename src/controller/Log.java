@@ -11,7 +11,6 @@ public class Log {
 	 
 	 public static void t(String texto) {
 		 log.debug(texto);
-		 System.out.println(texto);
 	 }
 	 
 	 public static void e(String texto) {

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Personal.Calendario.DetalleEvento">
+   <top>
+      <HBox alignment="TOP_CENTER" prefWidth="700.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="tNombreTarea">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </TextField>
+         </children>
+      </HBox>
+   </top>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+   <bottom> 
+      <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imBorrar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imGuardar" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox> 
+   </bottom>
+   <right>
+      <ScrollPane fx:id="scrDetalles" fitToWidth="true" prefHeight="900.0" prefViewportHeight="345.0" prefViewportWidth="400.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="contenedor" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox>
+                     <children>
+                        <Label prefWidth="110.0" text="Tipo Evento" />
+                        <ComboBox fx:id="cbTipoEvento" prefWidth="250.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox alignment="TOP_CENTER">
+                     <children>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <Label text="Descripción" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <TextArea fx:id="tCuerpo" prefHeight="300.0" prefWidth="575.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label prefWidth="110.0" text="Inicio" />
+                        <DatePicker fx:id="dpInicio" prefWidth="200.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Label text="Hora">
+                           <HBox.margin>
+                              <Insets left="30.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="hInicio" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="365.0">
+                     <children>
+                        <Label prefWidth="110.0" text="Fin" />
+                        <DatePicker fx:id="dpFin" prefWidth="200.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Label text="Hora">
+                           <HBox.margin>
+                              <Insets left="30.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="tHoraFin" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="517.0">
+                     <children>
+                        <Label prefWidth="200.0" text="Duración Estimada" />
+                        <TextField fx:id="tDurHoras" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Label text="horas">
+                           <HBox.margin>
+                              <Insets left="30.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="40.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="446.0">
+                     <children>
+                        <Label prefWidth="110.0" text="Fin Límite" />
+                        <DatePicker fx:id="dpFinLImite" prefWidth="200.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Label text="Hora">
+                           <HBox.margin>
+                              <Insets left="30.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="tHoraFinLimite" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label text="Urgencia" />
+                        <Slider fx:id="slUrgencia" blockIncrement="20.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
+                           <padding>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </Slider>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox alignment="CENTER" layoutX="10.0" layoutY="598.0">
+                     <children>
+                        <Label text="Criticidad" />
+                        <Slider fx:id="slCriticidad" blockIncrement="20.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
+                           <padding>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </Slider>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="vbProyectos" alignment="TOP_CENTER">
+                     <children>
+                        <Label text="Proyectos Asociados" />
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <ListView fx:id="lProyectos" prefHeight="100.0" prefWidth="575.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <ImageView fx:id="imModProyectos" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="imVaciaProyectos" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="vbPadreChkList">
+                     <children>
+                        <CheckBox fx:id="chkList" mnemonicParsing="false" text="Checklist" />
+                        <VBox fx:id="vbContenidoAdjunto">
+                           <children>
+                              <VBox fx:id="vbChkList">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <HBox alignment="TOP_CENTER">
+                                 <children>
+                                    <ImageView fx:id="imEditarChkList" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="30.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="vbPadreAjuntos" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Adjuntos" />
+                        <VBox fx:id="vbListaAdjuntos" prefHeight="200.0" prefWidth="100.0" />
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <ImageView fx:id="imEditarAdjuntos" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../imgs/iconos/Guardar3_PAS.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="vbPropiedades" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </right>
+</BorderPane>

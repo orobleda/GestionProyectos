@@ -143,9 +143,12 @@ public class Imputacion implements Cargable, Comparable<Imputacion> {
 						|| i.estado == Imputacion.ESTADO_RECHAZADO || i.estado == Imputacion.ESTADO_SIN_ENVIAR) {
 					insertar = false;
 				}
-
-				if (insertar)
+				
+				
+				if (insertar){
+					
 					salida.add(i);
+				}
 			}
 
 		}

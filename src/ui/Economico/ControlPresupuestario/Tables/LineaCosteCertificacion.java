@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.controlsfx.control.table.TableRowExpanderColumn.TableRowDataFeatures;
 
+import application.Main;
 import javafx.scene.layout.AnchorPane;
 import model.beans.CertificacionFaseParcial;
 import model.beans.Concepto;
@@ -49,12 +50,21 @@ public class LineaCosteCertificacion extends ParamTable implements Tableable  {
 		configuracionTabla.put(LineaCosteCertificacion.VALOR_REAL, new ConfigTabla(LineaCosteCertificacion.VALOR_REAL, LineaCosteCertificacion.VALOR_REAL, true,7, false));
 		this.controlPantalla =  new EdicionCertificacion(new ParamTable(), "vueltaPopUp");
 		
-    	anchoColumnas = new HashMap<String, Integer>();
-    	anchoColumnas.put(LineaCosteCertificacion.SISTEMA, new Integer(60));
-    	anchoColumnas.put(LineaCosteCertificacion.FASE, new Integer(150));
-    	anchoColumnas.put(LineaCosteCertificacion.TOTAL, new Integer(100));
-    	anchoColumnas.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new Integer(80));
-    	anchoColumnas.put(LineaCosteCertificacion.TIPO_ESTIMACION, new Integer(80));
+		if (Main.resolucion() == Main.ALTA_RESOLUCION) {
+			anchoColumnas = new HashMap<String, Integer>();
+	    	anchoColumnas.put(LineaCosteCertificacion.SISTEMA, new Integer(60));
+	    	anchoColumnas.put(LineaCosteCertificacion.FASE, new Integer(150));
+	    	anchoColumnas.put(LineaCosteCertificacion.TOTAL, new Integer(100));
+	    	anchoColumnas.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new Integer(80));
+	    	anchoColumnas.put(LineaCosteCertificacion.TIPO_ESTIMACION, new Integer(80));
+		} else {
+			anchoColumnas = new HashMap<String, Integer>();
+	    	anchoColumnas.put(LineaCosteCertificacion.SISTEMA, new Integer(60));
+	    	anchoColumnas.put(LineaCosteCertificacion.FASE, new Integer(150));
+	    	anchoColumnas.put(LineaCosteCertificacion.TOTAL, new Integer(100));
+	    	anchoColumnas.put(LineaCosteCertificacion.PORCENTAJE_ESTIMADO, new Integer(80));
+	    	anchoColumnas.put(LineaCosteCertificacion.TIPO_ESTIMACION, new Integer(80));
+		}
     }
     
    	public void set(String campo, String valor){

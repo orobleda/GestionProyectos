@@ -44,6 +44,9 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 	
     @FXML
     private HBox hbDetalle;
+    
+    @FXML
+    private HBox hbTabla;
 	
 	@FXML
 	private AnchorPane anchor;	
@@ -53,15 +56,25 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 	
 	@Override
 	public void resize(Scene escena) {
-		int res = Main.resolucion();
-		
-		if (res == Main.ALTA_RESOLUCION ) {
-			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.8);
+		try {
+			int res = Main.resolucion();
+			
+			if (res == Main.ALTA_RESOLUCION ) {
+				scrDetalle.setMaxHeight(Main.scene.getHeight()*0.8);
+				hbTabla.setMinWidth(Main.scene.getWidth()*0.6);
+				hbTabla.setMinHeight(Main.scene.getHeight()*0.2);
+			}
+			
+			if (res== Main.BAJA_RESOLUCION) {
+				scrDetalle.setMaxHeight(Main.scene.getHeight()*0.7);
+				hbTabla.setMinWidth(Main.scene.getWidth()*0.8);
+				hbTabla.setMinHeight(Main.scene.getHeight()*0.12);
+			}
+			
+		} catch (Exception e) {
+			
 		}
 		
-		if (res== Main.BAJA_RESOLUCION) {
-			scrDetalle.setMaxHeight(Main.scene.getHeight()*0.7);
-		}
 	}
 	
 	public EdicionCertificacion (Object claseRetorno, String metodoRetorno){
@@ -193,6 +206,7 @@ public class EdicionCertificacion implements ControladorPantalla, PopUp {
 		certificacionFaseParcial = ((ui.Economico.ControlPresupuestario.Tables.LineaCosteCertificacion)variablesPaso.get("filaDatos")).cfp;
 		if (this.tCertificaciones!=null)
 			pintaCertificaciones(certificacionFaseParcial.certificacionFase.certificacion);
+		resize(null);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import model.beans.Certificacion;
 import model.beans.CertificacionFase;
 import model.beans.CertificacionFaseParcial;
+import model.beans.Evento;
 import model.beans.FaseProyecto;
 import model.beans.FaseProyectoSistema;
 import model.beans.FaseProyectoSistemaDemanda;
@@ -67,6 +68,8 @@ public interface Propiediable {
 		if (CertificacionFaseParcial.class.getSimpleName().equals(entidad))
 			return new ParametroCertificacion();
 		if (Foto.class.getSimpleName().equals(entidad))
+			return new Parametro();
+		if (Evento.class.getSimpleName().equals(entidad))
 			return new Parametro();
 		return null;
 	}

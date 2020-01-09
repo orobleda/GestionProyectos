@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
-
 import application.Main;
 import controller.Log;
 import javafx.event.EventHandler;
@@ -42,6 +40,7 @@ import ui.Dialogo;
 import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Economico.EstimacionesValoraciones.Tables.LineaCostePresupuesto;
 import ui.interfaces.ControladorPantalla;
 import ui.interfaces.Tableable;
@@ -53,7 +52,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 
 	public static final String fxml = "file:src/ui/Economico/EstimacionesValoraciones/EstimacionesValoraciones.fxml";
 	
-	PopOver popUp = null;
+	VentanaContextual popUp = null;
 	
 	@FXML
 	private AnchorPane anchor;
@@ -281,7 +280,7 @@ public class EstimacionesValoraciones implements ControladorPantalla {
 			FXMLLoader loader = new FXMLLoader();
 			SeleccionElemento controlPantalla = new SeleccionElemento(this, "sistemaSeleccionado",  new Sistema(), new HashMap<String, Object>(),yaIncluidos);
 	        loader.setLocation(new URL(controlPantalla.getFXML()));
-	     	popUp = new PopOver((AnchorPane) loader.load());
+	     	popUp = new VentanaContextual((AnchorPane) loader.load());
 	     	popUp.show(imAniadirSistma);
 	     	popUp.setAnimated(true);
 		} catch (Exception e) {

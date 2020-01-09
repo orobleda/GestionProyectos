@@ -26,6 +26,6 @@ public class TareaGantt extends MutableActivityBase<PlanificacionTarea> {
 		setStartTime(Instant.ofEpochMilli(pt.fxInicio.getTime()));
 		setEndTime(Instant.ofEpochMilli(pt.fxFin.getTime()));
 		listaTareas = new ArrayList<TareaGantt>();
-		clase.put(pt.clase,pt.clase);
+		clase.put(pt.clase,pt.clase);		
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import application.Main;
 import controller.AnalizadorPresupuesto;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -91,8 +92,8 @@ public class VistaPPM implements ControladorPantalla {
 			bpVPPM.setMaxWidth(bpVPPM.getScene().getWidth());
 			bpVPPM.setPrefHeight(bpVPPM.getScene().getHeight());
 			bpVPPM.setMaxHeight(bpVPPM.getScene().getHeight()*0.8);
-			((ScrollPane) bpVPPM.getCenter()).setPrefWidth(bpVPPM.getScene().getWidth()*0.20);
-			((ScrollPane) bpVPPM.getCenter()).setPrefHeight((bpVPPM.getScene().getHeight()*0.70));
+			scrIterado.setPrefWidth(bpVPPM.getScene().getWidth()*0.20);
+			scrIterado.setMinHeight(Main.scene.getHeight()*0.5);
 		}
 	}
 

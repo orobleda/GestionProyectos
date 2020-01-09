@@ -121,7 +121,7 @@ public class RelProyectoDemanda implements Cargable{
 				
 				
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
 			
 		}

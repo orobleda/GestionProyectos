@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 
 import javafx.event.EventHandler;
@@ -20,14 +19,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import model.beans.Concepto;
 import model.beans.Coste;
 import model.beans.Estimacion;
-import model.beans.EstimacionAnio;
-import model.beans.EstimacionMes;
 import model.beans.Imputacion;
 import model.beans.ParametroRecurso;
-import model.beans.RelRecursoSistema;
 import model.metadatos.MetaConcepto;
 import model.metadatos.MetaParametro;
 import model.metadatos.Sistema;
@@ -36,6 +31,7 @@ import ui.GestionBotones;
 import ui.ParamTable;
 import ui.Semaforo;
 import ui.Tabla;
+import ui.VentanaContextual;
 import ui.Economico.CargaImputaciones.Tables.LineaDetalleImputacion;
 import ui.Economico.ControlPresupuestario.EdicionEstImp.NuevaEstimacion;
 import ui.Economico.Tarifas.InformaTarifa;
@@ -250,7 +246,7 @@ public class DetalleImputacion implements ControladorPantalla  {
         paramPaso.put("padre", this);
         
         controlPantalla.setParametrosPaso(paramPaso);
-        ParamTable.po = new PopOver(pane);
+        ParamTable.po = new VentanaContextual(pane);
         ParamTable.po.setTitle("");
         ParamTable.po.show(this.imAltaUsuario);
         ParamTable.po.setAnimated(true);
@@ -274,7 +270,7 @@ public class DetalleImputacion implements ControladorPantalla  {
         paramPaso.put("padre", this);
 
         controlPantalla.setParametrosPaso(paramPaso);
-        ParamTable.po = new PopOver(pane);
+        ParamTable.po = new VentanaContextual(pane);
         ParamTable.po.setTitle("");
         ParamTable.po.show(this.imAltaTarifa);
         ParamTable.po.setAnimated(true);
